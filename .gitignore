@@ -1,0 +1,6 @@
+/target/
+.project
+.classpath
+.settings/
+/.tern-project
+/src/main/java/test
