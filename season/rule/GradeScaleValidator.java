@@ -99,7 +99,8 @@ public class GradeScaleValidator extends GradeScaleValidator_Base {
     @Override
     public LocalizedString getDescriptionI18N() {
         final Builder builder = ULisboaSpecificationsUtil.bundleI18N(getClass().getSimpleName()).builder();
-        builder.append(getGradeValues(), ": ");
+        builder.append(getGradeScale().getDescription(), " [");
+        builder.append(getGradeValues(), "]: ");
         builder.append(String.valueOf(getDegreeTypeSet().stream().count()), " [");
         builder.append(ULisboaSpecificationsUtil.bundle("label.Degree.degreeType"), " ");
         builder.append("]");
