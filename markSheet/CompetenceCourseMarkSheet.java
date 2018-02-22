@@ -64,11 +64,7 @@ import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.curriculum.EnrolmentEvaluationContext;
 import org.fenixedu.academic.domain.degree.DegreeType;
 import org.fenixedu.academic.domain.degreeStructure.Context;
-import org.fenixedu.academic.domain.student.Registration;
-import org.fenixedu.academic.domain.studentCurriculum.CurriculumModule;
-import org.fenixedu.academic.util.EnrolmentEvaluationState;
-import org.fenixedu.bennu.core.security.Authenticate;
-import org.fenixedu.commons.i18n.I18N;
+import org.fenixedu.academic.domain.degreeStructure.CourseGroup;
 import org.fenixedu.academic.domain.evaluation.EvaluationComparator;
 import org.fenixedu.academic.domain.evaluation.EvaluationServices;
 import org.fenixedu.academic.domain.evaluation.config.MarkSheetSettings;
@@ -77,6 +73,11 @@ import org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonPeriod.Eva
 import org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonServices;
 import org.fenixedu.academic.domain.evaluation.season.rule.EvaluationSeasonRule;
 import org.fenixedu.academic.domain.evaluation.season.rule.GradeScaleValidator;
+import org.fenixedu.academic.domain.student.Registration;
+import org.fenixedu.academic.domain.studentCurriculum.CurriculumModule;
+import org.fenixedu.academic.util.EnrolmentEvaluationState;
+import org.fenixedu.bennu.core.security.Authenticate;
+import org.fenixedu.commons.i18n.I18N;
 import org.fenixedu.ulisboa.specifications.domain.exceptions.ULisboaSpecificationsDomainException;
 import org.fenixedu.ulisboa.specifications.domain.services.enrollment.EnrolmentServices;
 import org.fenixedu.ulisboa.specifications.domain.services.evaluation.EnrolmentEvaluationServices;
@@ -959,8 +960,8 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
             // try to find aggregation context for each associated curricular course
             final Set<Context> contexts = getExecutionCourse().getAssociatedCurricularCoursesSet().stream()
                     .filter(c -> !c.getEnrolmentsByExecutionPeriod(getExecutionSemester()).isEmpty())
-                    .map(i -> CurriculumAggregatorServices.getContext(i, getExecutionSemester())).filter(i -> i != null)
-                    .collect(Collectors.toSet());
+                    .map(i -> CurriculumAggregatorServices.getContext(i, getExecutionSemester(), (CourseGroup) null))
+                    .filter(i -> i != null).collect(Collectors.toSet());
 
             if (!contexts.isEmpty()) {
                 // we don't know if we are dealing with aggregators or entries...
