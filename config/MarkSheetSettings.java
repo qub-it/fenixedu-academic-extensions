@@ -1,5 +1,6 @@
 package org.fenixedu.academic.domain.evaluation.config;
 
+import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.ulisboa.specifications.domain.ULisboaSpecificationsRoot;
 import org.fenixedu.ulisboa.specifications.domain.exceptions.ULisboaSpecificationsDomainException;
 
@@ -9,12 +10,19 @@ public class MarkSheetSettings extends MarkSheetSettings_Base {
 
     protected MarkSheetSettings() {
         super();
+        setRoot(Bennu.getInstance());
     }
 
     public static void init() {
         if (getInstance() == null) {
             makeInstance();
         }
+
+        // temp init of bennu root 
+        if (getInstance() != null && getInstance().getRoot() == null) {
+            getInstance().setRoot(Bennu.getInstance());
+        }
+
     }
 
     public static MarkSheetSettings getInstance() {
