@@ -35,8 +35,8 @@ import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.academic.domain.Grade;
 import org.fenixedu.commons.i18n.LocalizedString;
 import org.fenixedu.commons.i18n.LocalizedString.Builder;
-import org.fenixedu.ulisboa.specifications.domain.exceptions.ULisboaSpecificationsDomainException;
-import org.fenixedu.ulisboa.specifications.util.ULisboaSpecificationsUtil;
+import org.fenixedu.academicextensions.domain.exceptions.AcademicExtensionsDomainException;
+import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 
 import com.google.common.collect.Sets;
 
@@ -57,11 +57,11 @@ abstract public class EvaluationSeasonRule extends EvaluationSeasonRule_Base {
         final EvaluationSeason season = getSeason();
 
         if (season == null) {
-            throw new ULisboaSpecificationsDomainException("error.EvaluationSeasonRule.evaluationSeason.required");
+            throw new AcademicExtensionsDomainException("error.EvaluationSeasonRule.evaluationSeason.required");
         }
 
         if (season.getRulesSet().stream().anyMatch(checkDuplicate())) {
-            throw new ULisboaSpecificationsDomainException("error.EvaluationSeasonRule.duplicated");
+            throw new AcademicExtensionsDomainException("error.EvaluationSeasonRule.duplicated");
         }
     }
 
@@ -71,7 +71,7 @@ abstract public class EvaluationSeasonRule extends EvaluationSeasonRule_Base {
 
     static protected void checkRules(final Grade grade) {
         if (grade == null || grade.isEmpty()) {
-            throw new ULisboaSpecificationsDomainException("error.EvaluationSeasonRule.grade.required");
+            throw new AcademicExtensionsDomainException("error.EvaluationSeasonRule.grade.required");
         }
     }
 
@@ -82,7 +82,7 @@ abstract public class EvaluationSeasonRule extends EvaluationSeasonRule_Base {
 
     @Atomic
     public void delete() {
-        ULisboaSpecificationsDomainException.throwWhenDeleteBlocked(getDeletionBlockers());
+        AcademicExtensionsDomainException.throwWhenDeleteBlocked(getDeletionBlockers());
         setSeason(null);
         deleteDomainObject();
     }
@@ -92,7 +92,7 @@ abstract public class EvaluationSeasonRule extends EvaluationSeasonRule_Base {
     abstract public LocalizedString getDescriptionI18N();
 
     static protected LocalizedString getDescriptionI18N(final Class<? extends EvaluationSeasonRule> clazz, final Grade grade) {
-        final Builder builder = ULisboaSpecificationsUtil.bundleI18N(clazz.getSimpleName()).builder();
+        final Builder builder = AcademicExtensionsUtil.bundleI18N(clazz.getSimpleName()).builder();
         builder.append(grade.getExtendedValue(), ": ");
         builder.append(grade.getValue(), " [");
         builder.append(grade.getGradeScale().getDescription(), ", ");

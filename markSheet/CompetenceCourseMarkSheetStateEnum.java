@@ -28,7 +28,7 @@
 package org.fenixedu.academic.domain.evaluation.markSheet;
 
 import org.fenixedu.commons.i18n.LocalizedString;
-import org.fenixedu.ulisboa.specifications.util.ULisboaSpecificationsUtil;
+import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 
 public enum CompetenceCourseMarkSheetStateEnum {
 
@@ -41,7 +41,7 @@ public enum CompetenceCourseMarkSheetStateEnum {
     ;
 
     public LocalizedString getDescriptionI18N() {
-        return ULisboaSpecificationsUtil.bundleI18N(getClass().getSimpleName() + "." + name());
+        return AcademicExtensionsUtil.bundleI18N(getClass().getSimpleName() + "." + name());
     }
 
     static public CompetenceCourseMarkSheetStateEnum findEdition() {

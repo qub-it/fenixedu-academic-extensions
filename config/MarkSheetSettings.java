@@ -1,8 +1,7 @@
 package org.fenixedu.academic.domain.evaluation.config;
 
 import org.fenixedu.bennu.core.domain.Bennu;
-import org.fenixedu.ulisboa.specifications.domain.ULisboaSpecificationsRoot;
-import org.fenixedu.ulisboa.specifications.domain.exceptions.ULisboaSpecificationsDomainException;
+import org.fenixedu.academicextensions.domain.exceptions.AcademicExtensionsDomainException;
 
 import pt.ist.fenixframework.Atomic;
 
@@ -17,21 +16,15 @@ public class MarkSheetSettings extends MarkSheetSettings_Base {
         if (getInstance() == null) {
             makeInstance();
         }
-
-        // temp init of bennu root 
-        if (getInstance() != null && getInstance().getRoot() == null) {
-            getInstance().setRoot(Bennu.getInstance());
-        }
-
     }
 
     public static MarkSheetSettings getInstance() {
-        return ULisboaSpecificationsRoot.getInstance().getMarkSheetSettings();
+        return Bennu.getInstance().getMarkSheetSettings();
     }
 
     @Atomic
     private static void makeInstance() {
-        ULisboaSpecificationsRoot.getInstance().setMarkSheetSettings(new MarkSheetSettings());
+        new MarkSheetSettings();
     }
 
     @Atomic
@@ -59,15 +52,15 @@ public class MarkSheetSettings extends MarkSheetSettings_Base {
         }
 
         if (isNotAllowedShifts() && input != 0) {
-            throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheet.shifts.not.allowed");
+            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheet.shifts.not.allowed");
         }
 
         if (isRequiredAtLeastOneShift() && input <= 0) {
-            throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheet.shift.required");
+            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheet.shift.required");
         }
 
         if (!isRequiredAtLeastOneShift() && getInstance().getRequiredNumberOfShifts() != input) {
-            throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheet.shifts.required",
+            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheet.shifts.required",
                     String.valueOf(MarkSheetSettings.getInstance().getRequiredNumberOfShifts()));
         }
 

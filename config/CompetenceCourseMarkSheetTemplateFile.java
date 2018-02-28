@@ -1,7 +1,7 @@
 package org.fenixedu.academic.domain.evaluation.config;
 
 import org.fenixedu.bennu.core.domain.User;
-import org.fenixedu.ulisboa.specifications.domain.exceptions.ULisboaSpecificationsDomainException;
+import org.fenixedu.academicextensions.domain.exceptions.AcademicExtensionsDomainException;
 
 import pt.ist.fenixframework.Atomic;
 
@@ -21,19 +21,19 @@ public class CompetenceCourseMarkSheetTemplateFile extends CompetenceCourseMarkS
     private void checkRules() {
 
         if (getMarkSheetSettings() == null) {
-            throw new ULisboaSpecificationsDomainException(
+            throw new AcademicExtensionsDomainException(
                     "error.CompetenceCourseMarkSheetTemplateFile.markSheetSettings.required");
         }
 
         if (getFilename() == null) {
-            throw new ULisboaSpecificationsDomainException("error.ULisboaSpecificationsTemporaryFile.filename.required");
+            throw new AcademicExtensionsDomainException("error.temporaryFile.filename.required");
         }
 
     }
 
     @Atomic
     public void delete() {
-        ULisboaSpecificationsDomainException.throwWhenDeleteBlocked(getDeletionBlockers());
+        AcademicExtensionsDomainException.throwWhenDeleteBlocked(getDeletionBlockers());
 
         super.setMarkSheetSettings(null);
         super.delete();

@@ -2,7 +2,7 @@ package org.fenixedu.academic.domain.evaluation;
 
 import org.fenixedu.academic.domain.EnrolmentEvaluation;
 import org.fenixedu.bennu.core.domain.Bennu;
-import org.fenixedu.ulisboa.specifications.domain.exceptions.ULisboaSpecificationsDomainException;
+import org.fenixedu.academicextensions.domain.exceptions.AcademicExtensionsDomainException;
 
 import pt.ist.fenixframework.FenixFramework;
 
@@ -51,7 +51,7 @@ public class EnrolmentEvaluationExtendedInformation extends EnrolmentEvaluationE
 
     private void checkRules() {
         if (getEnrolmentEvaluation() == null) {
-            throw new ULisboaSpecificationsDomainException(
+            throw new AcademicExtensionsDomainException(
                     "error.EnrolmentEvaluationExtendedInformation.enrolmentEvaluation.cannot.be.null");
         }
     }

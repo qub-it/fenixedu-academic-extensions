@@ -29,7 +29,7 @@ package org.fenixedu.academic.domain.evaluation.season.rule;
 
 import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.commons.i18n.LocalizedString;
-import org.fenixedu.ulisboa.specifications.util.ULisboaSpecificationsUtil;
+import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 
 import pt.ist.fenixframework.Atomic;
 
@@ -53,7 +53,7 @@ public class BlockingTreasuryEventInDebt extends BlockingTreasuryEventInDebt_Bas
 
     @Override
     public LocalizedString getDescriptionI18N() {
-        return ULisboaSpecificationsUtil.bundleI18N(getClass().getSimpleName());
+        return AcademicExtensionsUtil.bundleI18N(getClass().getSimpleName());
     }
 
 }

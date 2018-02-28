@@ -53,9 +53,9 @@ import org.fenixedu.academic.domain.evaluation.season.rule.EvaluationSeasonStatu
 import org.fenixedu.academic.domain.evaluation.season.rule.PreviousSeasonBlockingGrade;
 import org.fenixedu.academic.domain.evaluation.season.rule.PreviousSeasonEvaluation;
 import org.fenixedu.academic.domain.evaluation.season.rule.PreviousSeasonMinimumGrade;
-import org.fenixedu.ulisboa.specifications.domain.exceptions.ULisboaSpecificationsDomainException;
+import org.fenixedu.academicextensions.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.ulisboa.specifications.domain.services.statute.StatuteServices;
-import org.fenixedu.ulisboa.specifications.util.ULisboaSpecificationsUtil;
+import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,24 +81,24 @@ abstract public class EvaluationSeasonServices {
 
     static private void checkRules(final EvaluationSeason season) {
         if (season.getInformation() == null) {
-            throw new ULisboaSpecificationsDomainException("error.EvaluationSeason.evaluationSeasonInformation.required");
+            throw new AcademicExtensionsDomainException("error.EvaluationSeason.evaluationSeasonInformation.required");
         }
 
         if (Strings.isNullOrEmpty(season.getCode())) {
-            throw new ULisboaSpecificationsDomainException("error.EvaluationSeason.code.required");
+            throw new AcademicExtensionsDomainException("error.EvaluationSeason.code.required");
         }
 
         if (LocalizedStringUtil.isTrimmedEmpty(season.getAcronym())) {
-            throw new ULisboaSpecificationsDomainException("error.EvaluationSeason.acronym.required");
+            throw new AcademicExtensionsDomainException("error.EvaluationSeason.acronym.required");
         }
 
         if (LocalizedStringUtil.isTrimmedEmpty(season.getName())) {
-            throw new ULisboaSpecificationsDomainException("error.EvaluationSeason.name.required");
+            throw new AcademicExtensionsDomainException("error.EvaluationSeason.name.required");
         }
 
         if (!checkNTrue(1, season.getNormal(), season.getImprovement(), season.getSpecial())
                 && !season.getSpecialAuthorization()) {
-            throw new ULisboaSpecificationsDomainException("error.EvaluationSeason.type.not.unique");
+            throw new AcademicExtensionsDomainException("error.EvaluationSeason.type.not.unique");
         }
 
         checkSeasonExistsForName(season, season.getName());
@@ -108,7 +108,7 @@ abstract public class EvaluationSeasonServices {
 
         for (final EvaluationSeason season : findByName(name).collect(Collectors.toSet())) {
             if (season != evaluationSeason) {
-                throw new ULisboaSpecificationsDomainException("error.EvaluationSeason.duplicated.name");
+                throw new AcademicExtensionsDomainException("error.EvaluationSeason.duplicated.name");
             }
         }
     }
@@ -442,7 +442,7 @@ abstract public class EvaluationSeasonServices {
     @Atomic
     static public void delete(final EvaluationSeason evaluationSeason) {
         if (!isDeletable(evaluationSeason)) {
-            throw new ULisboaSpecificationsDomainException("error.EvaluationSeason.not.empty.to.delete");
+            throw new AcademicExtensionsDomainException("error.EvaluationSeason.not.empty.to.delete");
         }
 
         AbstractDomainObjectServices.deleteDomainObject(evaluationSeason);
@@ -465,7 +465,7 @@ abstract public class EvaluationSeasonServices {
         }
 
         public LocalizedString getDescriptionI18N() {
-            return ULisboaSpecificationsUtil.bundleI18N(this.descriptionKey);
+            return AcademicExtensionsUtil.bundleI18N(this.descriptionKey);
         }
     }
 
@@ -480,7 +480,7 @@ abstract public class EvaluationSeasonServices {
             return EnrolmentEvaluationType.IMPROVEMENT;
         }
 
-        throw new ULisboaSpecificationsDomainException("error.EvaluationSeason.missing.type");
+        throw new AcademicExtensionsDomainException("error.EvaluationSeason.missing.type");
     }
 
     static private Integer getEnrolmentEvaluationTypePrecedence(final EvaluationSeason input) {

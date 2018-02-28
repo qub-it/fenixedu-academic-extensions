@@ -12,8 +12,8 @@ import org.fenixedu.academic.domain.GradeScale;
 import org.fenixedu.academic.domain.degree.DegreeType;
 import org.fenixedu.commons.i18n.LocalizedString;
 import org.fenixedu.commons.i18n.LocalizedString.Builder;
-import org.fenixedu.ulisboa.specifications.domain.exceptions.ULisboaSpecificationsDomainException;
-import org.fenixedu.ulisboa.specifications.util.ULisboaSpecificationsUtil;
+import org.fenixedu.academicextensions.domain.exceptions.AcademicExtensionsDomainException;
+import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -53,19 +53,19 @@ public class GradeScaleValidator extends GradeScaleValidator_Base {
 
     private void checkRules() {
         if (getGradeScale() == null) {
-            throw new ULisboaSpecificationsDomainException("error.GradeScaleValidator.gradeScale.required");
+            throw new AcademicExtensionsDomainException("error.GradeScaleValidator.gradeScale.required");
         }
 
         if (StringUtils.isBlank(getGradeValues())) {
-            throw new ULisboaSpecificationsDomainException("error.GradeScaleValidator.gradeValues.required");
+            throw new AcademicExtensionsDomainException("error.GradeScaleValidator.gradeValues.required");
         }
 
         if (getRuleDescription() == null || getRuleDescription().isEmpty()) {
-            throw new ULisboaSpecificationsDomainException("error.GradeScaleValidator.description.required");
+            throw new AcademicExtensionsDomainException("error.GradeScaleValidator.description.required");
         }
 
         if (getDegreeTypeSet().isEmpty()) {
-            throw new ULisboaSpecificationsDomainException("error.GradeScaleValidator.degreeTypes.required");
+            throw new AcademicExtensionsDomainException("error.GradeScaleValidator.degreeTypes.required");
         }
     }
 
@@ -98,11 +98,11 @@ public class GradeScaleValidator extends GradeScaleValidator_Base {
 
     @Override
     public LocalizedString getDescriptionI18N() {
-        final Builder builder = ULisboaSpecificationsUtil.bundleI18N(getClass().getSimpleName()).builder();
+        final Builder builder = AcademicExtensionsUtil.bundleI18N(getClass().getSimpleName()).builder();
         builder.append(getGradeScale().getDescription(), " [");
         builder.append(getGradeValues(), "]: ");
         builder.append(String.valueOf(getDegreeTypeSet().stream().count()), " [");
-        builder.append(ULisboaSpecificationsUtil.bundle("label.Degree.degreeType"), " ");
+        builder.append(AcademicExtensionsUtil.bundle("label.Degree.degreeType"), " ");
         builder.append("]");
         return builder.build();
     }

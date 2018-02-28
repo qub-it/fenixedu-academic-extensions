@@ -31,7 +31,7 @@ import java.util.Collection;
 import java.util.stream.Stream;
 
 import org.fenixedu.bennu.core.security.Authenticate;
-import org.fenixedu.ulisboa.specifications.domain.exceptions.ULisboaSpecificationsDomainException;
+import org.fenixedu.academicextensions.domain.exceptions.AcademicExtensionsDomainException;
 import org.joda.time.DateTime;
 
 import pt.ist.fenixframework.Atomic;
@@ -57,20 +57,20 @@ public class CompetenceCourseMarkSheetStateChange extends CompetenceCourseMarkSh
 
     private void checkRules() {
         if (getCompetenceCourseMarkSheet() == null) {
-            throw new ULisboaSpecificationsDomainException(
+            throw new AcademicExtensionsDomainException(
                     "error.CompetenceCourseMarkSheetStateChange.competenceCourseMarkSheet.required");
         }
 
         if (getState() == null) {
-            throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheetStateChange.state.required");
+            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheetStateChange.state.required");
         }
 
         if (getDate() == null) {
-            throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheetStateChange.date.required");
+            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheetStateChange.date.required");
         }
 
         if (getResponsible() == null) {
-            throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheetStateChange.responsible.required");
+            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheetStateChange.responsible.required");
         }
     }
 
@@ -100,7 +100,7 @@ public class CompetenceCourseMarkSheetStateChange extends CompetenceCourseMarkSh
         super.setCompetenceCourseMarkSheet(null);
         super.setResponsible(null);
 
-        ULisboaSpecificationsDomainException.throwWhenDeleteBlocked(getDeletionBlockers());
+        AcademicExtensionsDomainException.throwWhenDeleteBlocked(getDeletionBlockers());
         deleteDomainObject();
     }
 

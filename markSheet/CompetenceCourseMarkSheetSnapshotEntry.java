@@ -3,7 +3,7 @@ package org.fenixedu.academic.domain.evaluation.markSheet;
 import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.Grade;
 import org.fenixedu.commons.i18n.LocalizedString;
-import org.fenixedu.ulisboa.specifications.domain.exceptions.ULisboaSpecificationsDomainException;
+import org.fenixedu.academicextensions.domain.exceptions.AcademicExtensionsDomainException;
 
 import pt.ist.fenixframework.Atomic;
 
@@ -30,30 +30,30 @@ public class CompetenceCourseMarkSheetSnapshotEntry extends CompetenceCourseMark
     private void checkRules() {
 
         if (getSnapshot() == null) {
-            throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheetSnapshotEntry.snapshot.required");
+            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheetSnapshotEntry.snapshot.required");
         }
 
         if (getStudentNumber() == null) {
-            throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheetSnapshotEntry.studentNumber.required");
+            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheetSnapshotEntry.studentNumber.required");
         }
 
         if (StringUtils.isEmpty(getStudentName())) {
-            throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheetSnapshotEntry.studentName.required");
+            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheetSnapshotEntry.studentName.required");
         }
 
         if (getGrade() == null) {
-            throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheetSnapshotEntry.grade.required");
+            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheetSnapshotEntry.grade.required");
         }
 
         if (getDegreeName() == null || getDegreeName().isEmpty()) {
-            throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheetSnapshotEntry.degreeName.required");
+            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheetSnapshotEntry.degreeName.required");
         }
 
     }
 
     @Atomic
     public void delete() {
-        ULisboaSpecificationsDomainException.throwWhenDeleteBlocked(getDeletionBlockers());
+        AcademicExtensionsDomainException.throwWhenDeleteBlocked(getDeletionBlockers());
 
         super.setSnapshot(null);
 

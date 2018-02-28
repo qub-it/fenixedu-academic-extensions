@@ -5,11 +5,11 @@ import java.util.stream.Collectors;
 
 import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.academic.domain.ShiftType;
+import org.fenixedu.academic.domain.ShiftTypes;
 import org.fenixedu.commons.i18n.LocalizedString;
 import org.fenixedu.commons.i18n.LocalizedString.Builder;
-import org.fenixedu.ulisboa.specifications.domain.ShiftTypes;
-import org.fenixedu.ulisboa.specifications.domain.exceptions.ULisboaSpecificationsDomainException;
-import org.fenixedu.ulisboa.specifications.util.ULisboaSpecificationsUtil;
+import org.fenixedu.academicextensions.domain.exceptions.AcademicExtensionsDomainException;
+import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 
 import pt.ist.fenixframework.Atomic;
 
@@ -35,7 +35,7 @@ public class EvaluationSeasonShiftType extends EvaluationSeasonShiftType_Base {
 
     private void checkRules() {
         if (getShiftTypes() == null || getShiftTypes().getTypes().isEmpty()) {
-            throw new ULisboaSpecificationsDomainException("error.EvaluationSeasonShiftType.shiftTypes.required");
+            throw new AcademicExtensionsDomainException("error.EvaluationSeasonShiftType.shiftTypes.required");
         }
     }
 
@@ -51,7 +51,7 @@ public class EvaluationSeasonShiftType extends EvaluationSeasonShiftType_Base {
 
     @Override
     public LocalizedString getDescriptionI18N() {
-        final Builder builder = ULisboaSpecificationsUtil.bundleI18N(getClass().getSimpleName()).builder();
+        final Builder builder = AcademicExtensionsUtil.bundleI18N(getClass().getSimpleName()).builder();
         builder.append(getShiftTypes().getTypes().stream()
                 .map(i -> String.format("%s [%s]", i.getFullNameTipoAula(), i.getSiglaTipoAula()))
                 .collect(Collectors.joining("; ")), ": ");

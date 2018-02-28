@@ -30,7 +30,7 @@ package org.fenixedu.academic.domain.evaluation.season;
 import java.util.Collection;
 
 import org.fenixedu.academic.domain.EvaluationSeason;
-import org.fenixedu.ulisboa.specifications.domain.exceptions.ULisboaSpecificationsDomainException;
+import org.fenixedu.academicextensions.domain.exceptions.AcademicExtensionsDomainException;
 
 import pt.ist.fenixframework.Atomic;
 
@@ -54,11 +54,11 @@ public class EvaluationSeasonInformation extends EvaluationSeasonInformation_Bas
 
     private void checkRules() {
         if (getSeason() == null) {
-            throw new ULisboaSpecificationsDomainException("error.EvaluationSeasonInformation.evaluationSeason.required");
+            throw new AcademicExtensionsDomainException("error.EvaluationSeasonInformation.evaluationSeason.required");
         }
 
         if (getSeasonOrder() == null) {
-            throw new ULisboaSpecificationsDomainException("error.EvaluationSeasonInformation.order.required");
+            throw new AcademicExtensionsDomainException("error.EvaluationSeasonInformation.order.required");
         }
     }
 
@@ -80,7 +80,7 @@ public class EvaluationSeasonInformation extends EvaluationSeasonInformation_Bas
 
     @Atomic
     public void delete() {
-        ULisboaSpecificationsDomainException.throwWhenDeleteBlocked(getDeletionBlockers());
+        AcademicExtensionsDomainException.throwWhenDeleteBlocked(getDeletionBlockers());
         deleteDomainObject();
     }
 

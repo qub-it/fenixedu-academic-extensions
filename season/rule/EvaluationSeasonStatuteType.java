@@ -7,8 +7,8 @@ import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.academic.domain.student.StatuteType;
 import org.fenixedu.commons.i18n.LocalizedString;
 import org.fenixedu.commons.i18n.LocalizedString.Builder;
-import org.fenixedu.ulisboa.specifications.domain.exceptions.ULisboaSpecificationsDomainException;
-import org.fenixedu.ulisboa.specifications.util.ULisboaSpecificationsUtil;
+import org.fenixedu.academicextensions.domain.exceptions.AcademicExtensionsDomainException;
+import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 
 import pt.ist.fenixframework.Atomic;
 
@@ -34,7 +34,7 @@ public class EvaluationSeasonStatuteType extends EvaluationSeasonStatuteType_Bas
 
     private void checkRules() {
         if (getStatuteTypesSet() == null || getStatuteTypesSet().isEmpty()) {
-            throw new ULisboaSpecificationsDomainException("error.EvaluationSeasonStatuteType.statuteType.required");
+            throw new AcademicExtensionsDomainException("error.EvaluationSeasonStatuteType.statuteType.required");
         }
     }
 
@@ -50,7 +50,7 @@ public class EvaluationSeasonStatuteType extends EvaluationSeasonStatuteType_Bas
 
     @Override
     public LocalizedString getDescriptionI18N() {
-        final Builder builder = ULisboaSpecificationsUtil.bundleI18N(getClass().getSimpleName()).builder();
+        final Builder builder = AcademicExtensionsUtil.bundleI18N(getClass().getSimpleName()).builder();
         builder.append(getStatuteTypesSet().stream().map(i -> String.format("%s [%s]", i.getName().getContent(), i.getCode()))
                 .collect(Collectors.joining("; ")), ": ");
         return builder.build();

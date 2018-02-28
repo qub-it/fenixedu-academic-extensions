@@ -78,7 +78,7 @@ import org.fenixedu.academic.domain.studentCurriculum.CurriculumModule;
 import org.fenixedu.academic.util.EnrolmentEvaluationState;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.commons.i18n.I18N;
-import org.fenixedu.ulisboa.specifications.domain.exceptions.ULisboaSpecificationsDomainException;
+import org.fenixedu.academicextensions.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.ulisboa.specifications.domain.services.enrollment.EnrolmentServices;
 import org.fenixedu.ulisboa.specifications.domain.services.evaluation.EnrolmentEvaluationServices;
 import org.fenixedu.ulisboa.specifications.domain.studentCurriculum.CurriculumAggregator;
@@ -151,42 +151,42 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
     private void checkRules() {
 
         if (getExecutionSemester() == null) {
-            throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheet.executionSemester.required");
+            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheet.executionSemester.required");
         }
 
         if (getCompetenceCourse() == null) {
-            throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheet.competenceCourse.required");
+            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheet.competenceCourse.required");
         }
 
         if (getExecutionCourse() == null) {
-            throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheet.executionCourse.required");
+            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheet.executionCourse.required");
         }
 
         if (getEvaluationSeason() == null) {
-            throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheet.evaluationSeason.required");
+            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheet.evaluationSeason.required");
         }
 
         if (getEvaluationDate() == null) {
-            throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheet.evaluationDate.required");
+            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheet.evaluationDate.required");
         }
 
         if (getCertifier() == null) {
-            throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheet.certifier.required");
+            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheet.certifier.required");
         }
 
         if (getGradeScale() == null) {
-            throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheet.gradeScale.required");
+            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheet.gradeScale.required");
         }
 
         for (final EnrolmentEvaluation enrolmentEvaluation : getEnrolmentEvaluationSet()) {
             if (enrolmentEvaluation.getGradeScale() != getGradeScale()) {
-                throw new ULisboaSpecificationsDomainException(
+                throw new AcademicExtensionsDomainException(
                         "error.CompetenceCourseMarkSheet.marksheet.already.contains.evaluations.with.another.grade.scale");
             }
         }
 
         if (getEnrolmentEvaluationSet().isEmpty() && getExecutionCourseEnrolmentsNotInAnyMarkSheet().isEmpty()) {
-            throw new ULisboaSpecificationsDomainException(
+            throw new AcademicExtensionsDomainException(
                     "error.CompetenceCourseMarkSheet.no.enrolments.found.for.grade.submission");
         }
 
@@ -201,7 +201,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
 
     private void checkIfEvaluationDateIsWorkingDay() {
         if (getEvaluationDate().getDayOfWeek() == DateTimeConstants.SUNDAY || Holiday.isHoliday(getEvaluationDate())) {
-            throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheet.evaluationDateNotInWorkingDay",
+            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheet.evaluationDateNotInWorkingDay",
                     getEvaluationDate().toString());
         }
     }
@@ -210,7 +210,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
         final Set<EvaluationSeasonPeriod> periods = getExamsPeriods();
 
         if (periods.isEmpty()) {
-            throw new ULisboaSpecificationsDomainException(
+            throw new AcademicExtensionsDomainException(
                     "error.CompetenceCourseMarkSheet.evaluationDateNotInExamsPeriod.undefined",
                     EvaluationSeasonServices.getDescriptionI18N(getEvaluationSeason()).getContent(),
                     getExecutionSemester().getQualifiedName());
@@ -222,7 +222,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
             }
         }
 
-        throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheet.evaluationDateNotInExamsPeriod",
+        throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheet.evaluationDateNotInExamsPeriod",
                 getEvaluationDate().toString(), EvaluationSeasonPeriod.getIntervalsDescription(periods));
     }
 
@@ -231,7 +231,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
         if (getExpireDate() != null) {
 
             if (getExpireDate().isBefore(new LocalDate())) {
-                throw new ULisboaSpecificationsDomainException(
+                throw new AcademicExtensionsDomainException(
                         "error.CompetenceCourseMarkSheet.notInGradeSubmissionPeriod.expired");
             }
 
@@ -241,7 +241,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
         final Set<EvaluationSeasonPeriod> periods = getGradeSubmissionPeriods();
 
         if (periods.isEmpty()) {
-            throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheet.notInGradeSubmissionPeriod.undefined",
+            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheet.notInGradeSubmissionPeriod.undefined",
                     EvaluationSeasonServices.getDescriptionI18N(getEvaluationSeason()).getContent(),
                     getExecutionSemester().getQualifiedName());
         }
@@ -253,7 +253,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
             }
         }
 
-        throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheet.notInGradeSubmissionPeriod",
+        throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheet.notInGradeSubmissionPeriod",
                 EvaluationSeasonPeriod.getIntervalsDescription(periods));
     }
 
@@ -261,7 +261,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
         for (final EnrolmentEvaluation iter : getEnrolmentEvaluationSet()) {
             // TODO legidio, use EnrolmentEvaluationServices.getExamDateTime ?
             if (!iter.getExamDateYearMonthDay().toLocalDate().isEqual(getEvaluationDate())) {
-                throw new ULisboaSpecificationsDomainException(
+                throw new AcademicExtensionsDomainException(
                         "error.CompetenceCourseMarkSheet.evaluations.examDate.must.be.equal.marksheet.evaluationDate");
             }
         }
@@ -272,7 +272,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
             final LocalDate expireDate) {
 
         if (!isEdition()) {
-            throw new ULisboaSpecificationsDomainException(
+            throw new AcademicExtensionsDomainException(
                     "error.CompetenceCourseMarkSheet.markSheet.can.only.be.updated.in.edition.state");
         }
 
@@ -301,7 +301,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
     public void delete() {
 
         if (!isEdition()) {
-            throw new ULisboaSpecificationsDomainException(
+            throw new AcademicExtensionsDomainException(
                     "error.CompetenceCourseMarkSheet.markSheet.can.only.be.deleted.in.edition.state");
         }
 
@@ -328,7 +328,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
             changeRequest.delete();
         }
 
-        ULisboaSpecificationsDomainException.throwWhenDeleteBlocked(getDeletionBlockers());
+        AcademicExtensionsDomainException.throwWhenDeleteBlocked(getDeletionBlockers());
         deleteDomainObject();
     }
 
@@ -384,7 +384,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
                 && findBy(semester, competence, execution, season, result.getEvaluationDateTime(), shifts,
                         (CompetenceCourseMarkSheetStateEnum) null, (CompetenceCourseMarkSheetChangeRequestStateEnum) null)
                                 .anyMatch(i -> i != result)) {
-            throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheet.duplicated",
+            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheet.duplicated",
                     season.getName().getContent());
         }
 
@@ -986,16 +986,16 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
     public void confirm(boolean byTeacher) {
 
         if (!isSubmitted()) {
-            throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheet.must.be.submitted.to.confirm");
+            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheet.must.be.submitted.to.confirm");
         }
 
         if (getEnrolmentEvaluationSet().isEmpty()) {
-            throw new ULisboaSpecificationsDomainException(
+            throw new AcademicExtensionsDomainException(
                     "error.CompetenceCourseMarkSheet.enrolmentEvaluations.required.to.confirm.markSheet");
         }
 
         if (byTeacher && !getSupportsTeacherConfirmation()) {
-            throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheet.unauthorized.teacher.confirmation",
+            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheet.unauthorized.teacher.confirmation",
                     getEvaluationSeason().getName().getContent());
         }
 
@@ -1096,7 +1096,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
     public void submit(boolean byTeacher) {
 
         if (!isEdition()) {
-            throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheet.must.be.edition.to.confirm");
+            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheet.must.be.edition.to.confirm");
         }
 
         final CompetenceCourseMarkSheetStateChange stateChange =
@@ -1122,7 +1122,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
     public void revertToEdition(boolean byTeacher, String reason) {
 
         if (isEdition()) {
-            throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheet.already.in.edition");
+            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheet.already.in.edition");
         }
 
         CompetenceCourseMarkSheetStateChange.createEditionState(this, byTeacher, reason);

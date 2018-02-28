@@ -4,9 +4,9 @@ import java.util.Comparator;
 
 import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.ulisboa.specifications.domain.exceptions.ULisboaSpecificationsDomainException;
+import org.fenixedu.academicextensions.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.ulisboa.specifications.domain.services.PersonServices;
-import org.fenixedu.ulisboa.specifications.util.ULisboaSpecificationsUtil;
+import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
@@ -52,34 +52,34 @@ public class CompetenceCourseMarkSheetChangeRequest extends CompetenceCourseMark
     private void checkRules() {
 
         if (getState() == null) {
-            throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheetChangeRequest.state.required");
+            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheetChangeRequest.state.required");
         }
 
         if (getRequestDate() == null) {
-            throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheetChangeRequest.requestDate.required");
+            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheetChangeRequest.requestDate.required");
         }
 
         if (getCompetenceCourseMarkSheet() == null) {
-            throw new ULisboaSpecificationsDomainException(
+            throw new AcademicExtensionsDomainException(
                     "error.CompetenceCourseMarkSheetChangeRequest.competenceCourseMarkSheet.required");
         }
 
         if (getRequester() == null) {
-            throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheetChangeRequest.requester.required");
+            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheetChangeRequest.requester.required");
         }
 
         if (StringUtils.isBlank(getReason())) {
-            throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheetChangeRequest.reason.required");
+            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheetChangeRequest.reason.required");
         }
 
         if (!isPending()) {
 
             if (getResponder() == null) {
-                throw new ULisboaSpecificationsDomainException("error.CompetenceCourseMarkSheetChangeRequest.responder.required");
+                throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheetChangeRequest.responder.required");
             }
 
             if (getResponseDate() == null) {
-                throw new ULisboaSpecificationsDomainException(
+                throw new AcademicExtensionsDomainException(
                         "error.CompetenceCourseMarkSheetChangeRequest.responseDate.required");
             }
         }
@@ -133,7 +133,7 @@ public class CompetenceCourseMarkSheetChangeRequest extends CompetenceCourseMark
 
         if (!key.isEmpty()) {
             final DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-            result = ULisboaSpecificationsUtil.bundle(key, getRequestDate().toString(formatter),
+            result = AcademicExtensionsUtil.bundle(key, getRequestDate().toString(formatter),
                     PersonServices.getDisplayName(getResponder()), getResponseDate().toString(formatter));
         }
 

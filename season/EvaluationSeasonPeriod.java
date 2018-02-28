@@ -17,10 +17,10 @@ import org.fenixedu.academic.domain.OccupationPeriodReference;
 import org.fenixedu.academic.domain.OccupationPeriodType;
 import org.fenixedu.academic.domain.degree.DegreeType;
 import org.fenixedu.commons.i18n.LocalizedString;
-import org.fenixedu.ulisboa.specifications.domain.exceptions.ULisboaSpecificationsDomainException;
+import org.fenixedu.academicextensions.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.ulisboa.specifications.domain.services.OccupationPeriodServices;
 import org.fenixedu.ulisboa.specifications.domain.services.OccupationPeriodServices.OccupationPeriodPartner;
-import org.fenixedu.ulisboa.specifications.util.ULisboaSpecificationsUtil;
+import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 
@@ -101,7 +101,7 @@ public class EvaluationSeasonPeriod extends EvaluationSeasonPeriod_Base
         for (final OccupationPeriodReference reference : getReferences()) {
             for (final EvaluationSeason season : reference.getEvaluationSeasonSet()) {
                 if (season != getSeason()) {
-                    throw new ULisboaSpecificationsDomainException("error.EvaluationSeasonPeriod.evaluationSeason.inconsistent");
+                    throw new AcademicExtensionsDomainException("error.EvaluationSeasonPeriod.evaluationSeason.inconsistent");
                 }
             }
         }
@@ -116,7 +116,7 @@ public class EvaluationSeasonPeriod extends EvaluationSeasonPeriod_Base
             if (iter != this && iter.getSeason() == getSeason()) {
 
                 if (iter.getOccupationPeriod().isEqualTo(getOccupationPeriod())) {
-                    throw new ULisboaSpecificationsDomainException("error.EvaluationSeasonPeriod.occupationPeriod.duplicate");
+                    throw new AcademicExtensionsDomainException("error.EvaluationSeasonPeriod.occupationPeriod.duplicate");
                 }
             }
         }
@@ -160,7 +160,7 @@ public class EvaluationSeasonPeriod extends EvaluationSeasonPeriod_Base
         super.setOccupationPeriod(null);
         OccupationPeriodServices.deleteOccupationPeriod(occupationPeriod);
 
-        ULisboaSpecificationsDomainException.throwWhenDeleteBlocked(getDeletionBlockers());
+        AcademicExtensionsDomainException.throwWhenDeleteBlocked(getDeletionBlockers());
         deleteDomainObject();
     }
 
@@ -217,7 +217,7 @@ public class EvaluationSeasonPeriod extends EvaluationSeasonPeriod_Base
         };
 
         public LocalizedString getDescriptionI18N() {
-            return ULisboaSpecificationsUtil.bundleI18N(name());
+            return AcademicExtensionsUtil.bundleI18N(name());
         }
 
         abstract protected OccupationPeriodType translate();
