@@ -76,9 +76,9 @@ import org.fenixedu.academic.domain.evaluation.season.rule.GradeScaleValidator;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumModule;
 import org.fenixedu.academic.util.EnrolmentEvaluationState;
+import org.fenixedu.academicextensions.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.commons.i18n.I18N;
-import org.fenixedu.academicextensions.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.ulisboa.specifications.domain.services.enrollment.EnrolmentServices;
 import org.fenixedu.ulisboa.specifications.domain.services.evaluation.EnrolmentEvaluationServices;
 import org.fenixedu.ulisboa.specifications.domain.studentCurriculum.CurriculumAggregator;
@@ -231,8 +231,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
         if (getExpireDate() != null) {
 
             if (getExpireDate().isBefore(new LocalDate())) {
-                throw new AcademicExtensionsDomainException(
-                        "error.CompetenceCourseMarkSheet.notInGradeSubmissionPeriod.expired");
+                throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheet.notInGradeSubmissionPeriod.expired");
             }
 
             return;
@@ -1050,6 +1049,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
         evaluation.setEnrolmentEvaluationState(EnrolmentEvaluationState.TEMPORARY_OBJ);
 
         evaluation.setGrade(Grade.createGrade(gradeValue, gradeScale));
+        evaluation.setGradeScale(gradeScale);
         evaluation.setWhenDateTime(new DateTime());
 
         evaluation.setCompetenceCourseMarkSheet(markSheet);
