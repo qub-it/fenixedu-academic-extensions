@@ -11,10 +11,10 @@ import org.fenixedu.academic.domain.DomainObjectUtil;
 import org.fenixedu.academic.domain.EnrolmentEvaluation;
 import org.fenixedu.academic.domain.Grade;
 import org.fenixedu.academic.domain.student.Registration;
+import org.fenixedu.academic.dto.evaluation.markSheet.MarkBean;
 import org.fenixedu.academic.util.FenixDigestUtils;
 import org.fenixedu.commons.i18n.LocalizedString;
 import org.fenixedu.academicextensions.domain.exceptions.AcademicExtensionsDomainException;
-import org.fenixedu.ulisboa.specifications.dto.evaluation.markSheet.MarkBean;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 

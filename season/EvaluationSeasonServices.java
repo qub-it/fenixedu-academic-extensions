@@ -40,22 +40,21 @@ import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.Grade;
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.domain.student.Registration;
-import org.fenixedu.academic.domain.student.StatuteType;
-import org.fenixedu.academic.domain.treasury.IImprovementTreasuryEvent;
-import org.fenixedu.academic.domain.treasury.TreasuryBridgeAPIFactory;
-import org.fenixedu.commons.i18n.LocalizedString;
-import org.fenixedu.treasury.util.LocalizedStringUtil;
-import org.fenixedu.ulisboa.specifications.ULisboaConfiguration;
 import org.fenixedu.academic.domain.evaluation.season.rule.BlockingTreasuryEventInDebt;
 import org.fenixedu.academic.domain.evaluation.season.rule.EvaluationSeasonRule;
 import org.fenixedu.academic.domain.evaluation.season.rule.EvaluationSeasonStatuteType;
 import org.fenixedu.academic.domain.evaluation.season.rule.PreviousSeasonBlockingGrade;
 import org.fenixedu.academic.domain.evaluation.season.rule.PreviousSeasonEvaluation;
 import org.fenixedu.academic.domain.evaluation.season.rule.PreviousSeasonMinimumGrade;
+import org.fenixedu.academic.domain.student.Registration;
+import org.fenixedu.academic.domain.student.StatuteType;
+import org.fenixedu.academic.domain.student.services.StatuteServices;
+import org.fenixedu.academic.domain.treasury.IImprovementTreasuryEvent;
+import org.fenixedu.academic.domain.treasury.TreasuryBridgeAPIFactory;
 import org.fenixedu.academicextensions.domain.exceptions.AcademicExtensionsDomainException;
-import org.fenixedu.ulisboa.specifications.domain.services.statute.StatuteServices;
 import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
+import org.fenixedu.commons.i18n.LocalizedString;
+import org.fenixedu.treasury.util.LocalizedStringUtil;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -254,7 +253,7 @@ abstract public class EvaluationSeasonServices {
             final Registration registration = enrolment.getRegistration();
             final Person person = registration.getPerson();
 
-            if (ULisboaConfiguration.getConfiguration().getEnrolmentsInEvaluationsDependOnAcademicalActsBlocked()
+            if (isEnrolmentsInEvaluationsDependOnAcademicalActsBlocked()
                     && TreasuryBridgeAPIFactory.implementation().isAcademicalActsBlocked(person, new LocalDate())) {
                 return true;
             }
@@ -530,6 +529,18 @@ abstract public class EvaluationSeasonServices {
         }
 
         return result;
+    }
+
+    private static boolean enrolmentsInEvaluationsDependOnAcademicalActsBlocked = true;
+
+    public static boolean isEnrolmentsInEvaluationsDependOnAcademicalActsBlocked() {
+        return enrolmentsInEvaluationsDependOnAcademicalActsBlocked;
+    }
+
+    public static void setEnrolmentsInEvaluationsDependOnAcademicalActsBlocked(
+            boolean enrolmentsInEvaluationsDependOnAcademicalActsBlocked) {
+        EvaluationSeasonServices.enrolmentsInEvaluationsDependOnAcademicalActsBlocked =
+                enrolmentsInEvaluationsDependOnAcademicalActsBlocked;
     }
 
 }

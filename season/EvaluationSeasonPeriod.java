@@ -16,11 +16,11 @@ import org.fenixedu.academic.domain.OccupationPeriod;
 import org.fenixedu.academic.domain.OccupationPeriodReference;
 import org.fenixedu.academic.domain.OccupationPeriodType;
 import org.fenixedu.academic.domain.degree.DegreeType;
-import org.fenixedu.commons.i18n.LocalizedString;
+import org.fenixedu.academic.domain.executionPlanning.services.OccupationPeriodServices;
+import org.fenixedu.academic.domain.executionPlanning.services.OccupationPeriodServices.OccupationPeriodPartner;
 import org.fenixedu.academicextensions.domain.exceptions.AcademicExtensionsDomainException;
-import org.fenixedu.ulisboa.specifications.domain.services.OccupationPeriodServices;
-import org.fenixedu.ulisboa.specifications.domain.services.OccupationPeriodServices.OccupationPeriodPartner;
 import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
+import org.fenixedu.commons.i18n.LocalizedString;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 

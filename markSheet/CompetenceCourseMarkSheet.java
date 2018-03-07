@@ -73,14 +73,14 @@ import org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonPeriod.Eva
 import org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonServices;
 import org.fenixedu.academic.domain.evaluation.season.rule.EvaluationSeasonRule;
 import org.fenixedu.academic.domain.evaluation.season.rule.GradeScaleValidator;
+import org.fenixedu.academic.domain.evaluation.services.EnrolmentEvaluationServices;
 import org.fenixedu.academic.domain.student.Registration;
+import org.fenixedu.academic.domain.student.services.EnrolmentServices;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumModule;
 import org.fenixedu.academic.util.EnrolmentEvaluationState;
 import org.fenixedu.academicextensions.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.commons.i18n.I18N;
-import org.fenixedu.ulisboa.specifications.domain.services.enrollment.EnrolmentServices;
-import org.fenixedu.ulisboa.specifications.domain.services.evaluation.EnrolmentEvaluationServices;
 import org.fenixedu.ulisboa.specifications.domain.studentCurriculum.CurriculumAggregator;
 import org.fenixedu.ulisboa.specifications.domain.studentCurriculum.CurriculumAggregatorEntry;
 import org.fenixedu.ulisboa.specifications.domain.studentCurriculum.CurriculumAggregatorServices;
