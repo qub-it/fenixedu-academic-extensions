@@ -1,1 +1,60 @@
 package org.fenixedu.academicextensions.domain;
+
+external class .org.fenixedu.academic.domain.Person;
+
+
+// ==================== BEGIN: DataShareAuthorization ====================
+
+class person.dataShare.DataShareAuthorizationType {
+	String code (REQUIRED);
+	LocalizedString name (REQUIRED);
+	LocalizedString question (REQUIRED);
+}
+	relation DataShareAuthorizationTypeRoot {
+		person.dataShare.DataShareAuthorizationType playsRole dataShareAuthorizationType { multiplicity *; }
+	    .org.fenixedu.bennu.core.domain.Bennu playsRole root { multiplicity 1..1; }
+	}
+    	
+class person.dataShare.DataShareAuthorizationChoice {
+ 	String code (REQUIRED);
+ 	LocalizedString description (REQUIRED);
+	boolean allow (REQUIRED); 					/* any other unspecified use */
+	boolean allowComercialUse (REQUIRED); 		/* biographic, recreational, cultural, etc */
+	boolean allowProfessionalUse (REQUIRED); 	/* job propositions, scholarships, internship, etc */
+}
+	relation DataShareAuthorizationChoiceRoot {
+		person.dataShare.DataShareAuthorizationChoice playsRole dataShareAuthorizationChoice { multiplicity *; }
+	    .org.fenixedu.bennu.core.domain.Bennu playsRole root { multiplicity 1..1; }
+	}
+    	
+	relation DataShareAuthorizationChoiceType {
+		person.dataShare.DataShareAuthorizationChoice playsRole choice { multiplicity *; }
+	    person.dataShare.DataShareAuthorizationType playsRole type { multiplicity *; }
+	}
+    	
+class person.dataShare.DataShareAuthorization {
+	DateTime since (REQUIRED);
+}
+	relation DataShareAuthorizationRoot {
+		person.dataShare.DataShareAuthorization playsRole dataShareAuthorization { multiplicity *; }
+	    .org.fenixedu.bennu.core.domain.Bennu playsRole root { multiplicity 1..1; }
+	}
+    	
+	relation DataShareAuthorizationPerson {
+	    person.dataShare.DataShareAuthorization playsRole dataShareAuthorization { multiplicity *; }
+	    .org.fenixedu.academic.domain.Person playsRole person { multiplicity 1..1; }
+	}
+
+	relation DataShareAuthorizationPersonType {
+	    person.dataShare.DataShareAuthorization playsRole authorization { multiplicity *; }
+	    person.dataShare.DataShareAuthorizationType playsRole type { multiplicity 1..1; }
+	}
+
+	relation DataShareAuthorizationPersonChoice {
+	    person.dataShare.DataShareAuthorization playsRole authorization { multiplicity *; }
+	    person.dataShare.DataShareAuthorizationChoice playsRole choice { multiplicity 1..1; }
+	}
+
+// ==================== END: DataShareAuthorization ====================
+
+
