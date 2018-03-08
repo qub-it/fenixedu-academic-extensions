@@ -78,12 +78,16 @@
 			<artifactId>fenixedu-academic</artifactId>
 			<version>${version.org.fenixedu.academic}</version>
 		</dependency>
-		
         <dependency>
             <groupId>org.fenixedu</groupId>
             <artifactId>fenixedu-commons</artifactId>
             <version>1.1.1</version>
         </dependency>
+		<dependency>
+			<groupId>org.fenixedu</groupId>
+			<artifactId>fenixedu-academic-treasury</artifactId>
+			<version>1.0.0</version>
+		</dependency>        
 		
 	</dependencies>
 
