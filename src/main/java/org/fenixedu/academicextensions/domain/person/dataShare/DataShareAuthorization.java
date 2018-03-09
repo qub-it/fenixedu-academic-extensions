@@ -28,6 +28,7 @@ public class DataShareAuthorization extends DataShareAuthorization_Base {
         setType(null);
         setChoice(null);
 
+        AcademicExtensionsDomainException.throwWhenDeleteBlocked(getDeletionBlockers());
         super.deleteDomainObject();
     }
 

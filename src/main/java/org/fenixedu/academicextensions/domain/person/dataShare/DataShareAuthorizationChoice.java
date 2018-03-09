@@ -24,6 +24,7 @@ public class DataShareAuthorizationChoice extends DataShareAuthorizationChoice_B
     public void delete() {
         setRoot(null);
 
+        AcademicExtensionsDomainException.throwWhenDeleteBlocked(getDeletionBlockers());
         super.deleteDomainObject();
     }
 
