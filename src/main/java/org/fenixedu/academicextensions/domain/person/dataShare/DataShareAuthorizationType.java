@@ -39,10 +39,13 @@ public class DataShareAuthorizationType extends DataShareAuthorizationType_Base 
         }
     }
 
-    protected void init(final String code, final LocalizedString name, final LocalizedString question) {
+    protected void init(final String code, final LocalizedString name, final String groupExpression, final boolean active,
+            final LocalizedString question) {
 
         setCode(code);
         setName(name);
+        setGroupExpression(groupExpression);
+        setActive(active);
         setQuestion(question);
 
         checkRules();
@@ -58,6 +61,10 @@ public class DataShareAuthorizationType extends DataShareAuthorizationType_Base 
             throw new AcademicExtensionsDomainException("error.DataShareAuthorizationType.name.required");
         }
 
+        if (StringUtils.isBlank(getGroupExpression())) {
+            throw new AcademicExtensionsDomainException("error.DataShareAuthorizationType.groupExpression.required");
+        }
+
         if (getQuestion() == null || getQuestion().isEmpty()) {
             throw new AcademicExtensionsDomainException("error.DataShareAuthorizationType.question.required");
         }
@@ -66,21 +73,23 @@ public class DataShareAuthorizationType extends DataShareAuthorizationType_Base 
     }
 
     @Atomic
-    static public DataShareAuthorizationType create(final String code, final LocalizedString name,
-            final LocalizedString question) {
+    static public DataShareAuthorizationType create(final String code, final LocalizedString name, final String groupExpression,
+            final boolean active, final LocalizedString question) {
         final DataShareAuthorizationType result = new DataShareAuthorizationType();
-        result.init(code, name, question);
+        result.init(code, name, groupExpression, active, question);
         return result;
     }
 
     @Atomic
-    public DataShareAuthorizationType edit(final String code, final LocalizedString name, final LocalizedString question) {
+    public DataShareAuthorizationType edit(final String code, final LocalizedString name, final String groupExpression,
+            final boolean active, final LocalizedString question) {
 
-        this.init(code, name, question);
+        this.init(code, name, groupExpression, active, question);
         return this;
     }
 
-    static public Set<DataShareAuthorizationType> find(final String code, final String name, final String question) {
+    static public Set<DataShareAuthorizationType> find(final String code, final String name, final String groupExpression,
+            final boolean active, final String question) {
 
         final Stream<DataShareAuthorizationType> universe = Bennu.getInstance().getDataShareAuthorizationTypeSet().stream();
         return universe
@@ -89,18 +98,24 @@ public class DataShareAuthorizationType extends DataShareAuthorizationType_Base 
 
                 .filter(i -> StringUtils.isBlank(name) || i.getName().anyMatch(c -> c.contains(name)))
 
+                .filter(i -> StringUtils.isBlank(groupExpression) || i.getGroupExpression().contains(groupExpression))
+
                 .filter(i -> StringUtils.isBlank(question) || i.getQuestion().anyMatch(c -> c.contains(question)))
 
                 .collect(Collectors.toSet());
     }
 
     static public DataShareAuthorizationType findUnique(final String code) {
-        final Set<DataShareAuthorizationType> found = find(code, (String) null, (String) null);
+        final Set<DataShareAuthorizationType> found = find(code, (String) null, (String) null, true, (String) null);
         if (found.size() > 1) {
             throw new AcademicExtensionsDomainException("error.DataShareAuthorizationType.duplicated");
         }
 
         return found.size() == 1 ? found.iterator().next() : null;
+    }
+    
+    public boolean isActive() {
+        return super.getActive();
     }
 
 }

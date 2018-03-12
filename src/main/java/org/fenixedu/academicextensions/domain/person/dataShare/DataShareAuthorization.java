@@ -97,13 +97,13 @@ public class DataShareAuthorization extends DataShareAuthorization_Base {
                 .collect(Collectors.toSet());
     }
 
-    static public DataShareAuthorization findActive(final Person person, final DataShareAuthorizationType type) {
+    static public DataShareAuthorization findLatest(final Person person, final DataShareAuthorizationType type) {
         final Set<DataShareAuthorization> found = find(person, type, new DateTime());
         return found.stream().max(Comparator.comparing(DataShareAuthorization::getSince)).orElse(null);
     }
 
-    public boolean isActive() {
-        final DataShareAuthorization active = findActive(getPerson(), getType());
+    public boolean isLast() {
+        final DataShareAuthorization active = findLatest(getPerson(), getType());
         return active == this;
     }
 
