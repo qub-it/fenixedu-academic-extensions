@@ -5,10 +5,10 @@ import java.util.stream.Collectors;
 
 import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.academic.domain.student.StatuteType;
-import org.fenixedu.commons.i18n.LocalizedString;
-import org.fenixedu.commons.i18n.LocalizedString.Builder;
 import org.fenixedu.academicextensions.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
+import org.fenixedu.commons.i18n.LocalizedString;
+import org.fenixedu.commons.i18n.LocalizedString.Builder;
 
 import pt.ist.fenixframework.Atomic;
 
@@ -27,6 +27,7 @@ public class EvaluationSeasonStatuteType extends EvaluationSeasonStatuteType_Bas
 
     private void init(final EvaluationSeason season, final List<StatuteType> statuteTypes) {
         super.init(season);
+        getStatuteTypesSet().clear();
         getStatuteTypesSet().addAll(statuteTypes);
 
         checkRules();
@@ -54,6 +55,12 @@ public class EvaluationSeasonStatuteType extends EvaluationSeasonStatuteType_Bas
         builder.append(getStatuteTypesSet().stream().map(i -> String.format("%s [%s]", i.getName().getContent(), i.getCode()))
                 .collect(Collectors.joining("; ")), ": ");
         return builder.build();
+    }
+
+    @Override
+    public void delete() {
+        getStatuteTypesSet().clear();
+        super.delete();
     }
 
 }
