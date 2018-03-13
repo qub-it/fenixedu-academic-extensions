@@ -1,12 +1,14 @@
 package org.fenixedu.academic.domain.evaluation.season;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.academic.domain.ExecutionDegree;
@@ -193,6 +195,11 @@ public class EvaluationSeasonPeriod extends EvaluationSeasonPeriod_Base
         }
 
         return result;
+    }
+    
+    static public Set<EvaluationSeasonPeriod> findBy(final ExecutionYear executionYear) {
+        return executionYear != null ? executionYear.getExecutionPeriodsSet().stream()
+                .flatMap(es -> es.getEvaluationSeasonPeriodSet().stream()).collect(Collectors.toSet()) : new HashSet<>();
     }
 
     @SuppressWarnings("deprecation")
