@@ -225,7 +225,7 @@ relation CompetenceCourseMarkSheetStateChangeRelation {
 		multiplicity 1..1;
 	}
 	
-	protected evaluation.markSheet.CompetenceCourseMarkSheetStateChange playsRole stateChange {
+	evaluation.markSheet.CompetenceCourseMarkSheetStateChange playsRole stateChange {
 		multiplicity 1..*;
 	}
 }
