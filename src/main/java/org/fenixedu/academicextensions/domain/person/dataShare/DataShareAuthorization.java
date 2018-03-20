@@ -99,7 +99,8 @@ public class DataShareAuthorization extends DataShareAuthorization_Base {
 
     static public DataShareAuthorization findLatest(final Person person, final DataShareAuthorizationType type) {
         final Set<DataShareAuthorization> found = find(person, type, new DateTime());
-        return found.stream().max(Comparator.comparing(DataShareAuthorization::getSince)).orElse(null);
+        return found.stream().filter(i -> i.getType() == type).max(Comparator.comparing(DataShareAuthorization::getSince))
+                .orElse(null);
     }
 
     public boolean isLast() {
