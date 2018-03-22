@@ -251,7 +251,7 @@ relation CompetenceCourseMarkSheetRelation {
 }
 
 relation CompetenceCourseMarkSheetExecutionCourse {
-    protected evaluation.markSheet.CompetenceCourseMarkSheet playsRole competenceCourseMarkSheet {
+    evaluation.markSheet.CompetenceCourseMarkSheet playsRole competenceCourseMarkSheet {
         multiplicity *;
     }
     
