@@ -35,11 +35,11 @@ public class PersonServices {
         return DataShareAuthorizationType.findUnique("CGD");
     }
 
-    static public void setAuthorizeSharingDataWithCGD(final Person person, final boolean authorize) {
+    static public DataShareAuthorization setAuthorizeSharingDataWithCGD(final Person person, final boolean authorize) {
         final DataShareAuthorizationType type = getSharingDataWithCGD();
         final DataShareAuthorizationChoice choice = type == null ? null : type.getChoiceSet().stream()
                 .filter(i -> i.getAllow() == authorize).findFirst().orElse(null);
-        DataShareAuthorization.create(person, type, choice, new DateTime());
+        return DataShareAuthorization.create(person, type, choice, new DateTime());
     }
 
 }
