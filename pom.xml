@@ -6,21 +6,19 @@
 	<parent>
 		<groupId>com.qubit.solution.fenixedu</groupId>
 		<artifactId>versioned-fenix-framework-project</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.0.1-NEW-DEV</version>
 		<relativePath />
 	</parent>
 
 	<groupId>org.fenixedu</groupId>
 	<artifactId>fenixedu-academic-extensions</artifactId>
-	<version>1.2.0</version>
+	<version>1.2.0-NEW-DEV</version>
 	<packaging>jar</packaging>
 
 	<name>FenixEdu Academic Extensions</name>
 
 	<properties>
-		<version.org.fenixedu.bennu>3.4.1</version.org.fenixedu.bennu>
-		<version.org.fenixedu.bennu.spring>1.2.0</version.org.fenixedu.bennu.spring>
-		<version.org.fenixedu.academic>5.2.0-SNAPSHOT</version.org.fenixedu.academic>
+		<version.org.fenixedu.academic>9.0.0-NEW-DEV</version.org.fenixedu.academic>
 	</properties>
 
 	<build>
@@ -67,17 +65,7 @@
 		<dependency>
 			<groupId>com.qubit.solution.fenixedu</groupId>
 			<artifactId>fenixedu-ulisboa-tools</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.fenixedu</groupId>
-			<artifactId>bennu-core</artifactId>
-			<version>${version.org.fenixedu.bennu}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.fenixedu</groupId>
-			<artifactId>bennu-spring</artifactId>
-			<version>${version.org.fenixedu.bennu.spring}</version>
+			<version>1.0.0-NEW-DEV</version>
 		</dependency>
 		<dependency>
 			<groupId>org.fenixedu</groupId>
@@ -92,7 +80,7 @@
 		<dependency>
 			<groupId>org.fenixedu</groupId>
 			<artifactId>fenixedu-academic-treasury</artifactId>
-			<version>1.0.0</version>
+			<version>1.0.4-NEW-DEV</version>
 		</dependency>        
 		
 	</dependencies>
