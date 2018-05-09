@@ -993,16 +993,15 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
         final CompetenceCourseMarkSheetStateChange stateChange =
                 CompetenceCourseMarkSheetStateChange.createSubmitedState(this, byTeacher, null);
 
-        final CompetenceCourseMarkSheetSnapshot snapshot =
-                CompetenceCourseMarkSheetSnapshot.create(stateChange, getCompetenceCourse().getCode(),
-                        getCompetenceCourse().getNameI18N().toLocalizedString(), getExecutionSemester().getQualifiedName(),
-                        getEvaluationSeason().getName(), getCertifier().getName(), getEvaluationDate(), getEvaluationDateTime());
+        final CompetenceCourseMarkSheetSnapshot snapshot = CompetenceCourseMarkSheetSnapshot.create(stateChange,
+                getCompetenceCourse().getCode(), getCompetenceCourse().getNameI18N(), getExecutionSemester().getQualifiedName(),
+                getEvaluationSeason().getName(), getCertifier().getName(), getEvaluationDate(), getEvaluationDateTime());
 
         for (final EnrolmentEvaluation evaluation : getSortedEnrolmentEvaluations()) {
             final Registration registration = evaluation.getRegistration();
             final Degree degree = evaluation.getStudentCurricularPlan().getDegree();
             snapshot.addEntry(registration.getNumber(), registration.getName(), evaluation.getGrade(), degree.getCode(),
-                    degree.getNameI18N().toLocalizedString(),
+                    degree.getNameI18N(),
                     EnrolmentServices.getShiftsDescription(evaluation.getEnrolment(), evaluation.getExecutionPeriod()));
         }
 
