@@ -13,6 +13,7 @@ import org.fenixedu.commons.i18n.LocalizedString;
 
 import pt.ist.fenixframework.Atomic;
 
+@Deprecated
 public class DataShareAuthorizationChoice extends DataShareAuthorizationChoice_Base {
 
     protected DataShareAuthorizationChoice() {

@@ -9,9 +9,8 @@ import java.util.stream.Stream;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academicextensions.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.bennu.core.domain.Bennu;
+import org.fenixedu.bennu.core.groups.Group;
 import org.joda.time.DateTime;
-
-import pt.ist.fenixframework.Atomic;
 
 public class DataShareAuthorization extends DataShareAuthorization_Base {
 
@@ -20,7 +19,6 @@ public class DataShareAuthorization extends DataShareAuthorization_Base {
         setRoot(Bennu.getInstance());
     }
 
-    @Atomic
     public void delete() {
         setRoot(null);
 
@@ -58,29 +56,16 @@ public class DataShareAuthorization extends DataShareAuthorization_Base {
             throw new AcademicExtensionsDomainException("error.DataShareAuthorization.type.required");
         }
 
-        if (getChoice() == null) {
-            throw new AcademicExtensionsDomainException("error.DataShareAuthorization.choice.required");
-        }
     }
 
-    @Atomic
-    static public DataShareAuthorization create(final Person person, final DataShareAuthorizationType type,
-            final DataShareAuthorizationChoice choice, final DateTime since) {
-
+    static public DataShareAuthorization create(final Person person, final DataShareAuthorizationType type, boolean allow) {
         final DataShareAuthorization result = new DataShareAuthorization();
-        result.init(person, type, choice, since);
+        result.init(person, type, null, new DateTime());
+        result.setAllow(allow);
         return result;
     }
 
-    @Atomic
-    public DataShareAuthorization edit(final Person person, final DataShareAuthorizationType type,
-            final DataShareAuthorizationChoice choice, final DateTime since) {
-
-        this.init(person, type, choice, since);
-        return this;
-    }
-
-    static public Set<DataShareAuthorization> find(final Person person, final DataShareAuthorizationType type,
+    static private Set<DataShareAuthorization> find(final Person person, final DataShareAuthorizationType type,
             final DateTime when) {
 
         final Stream<DataShareAuthorization> universe =
@@ -98,26 +83,27 @@ public class DataShareAuthorization extends DataShareAuthorization_Base {
     }
 
     static public DataShareAuthorization findLatest(final Person person, final DataShareAuthorizationType type) {
-        final Set<DataShareAuthorization> found = find(person, type, new DateTime());
-        return found.stream().filter(i -> i.getType() == type).max(Comparator.comparing(DataShareAuthorization::getSince))
-                .orElse(null);
+        return find(person, type, null).stream().max(Comparator.comparing(DataShareAuthorization::getSince)).orElse(null);
     }
 
-    public boolean isLast() {
-        final DataShareAuthorization active = findLatest(getPerson(), getType());
-        return active == this;
+    public Boolean getAllow() {
+        return getChoice() != null ? getChoice().getAllow() : super.getAllow(); // TODO: after choice entity removal, we can delete this override 
     }
 
-    public boolean getAllow() {
-        return getChoice().getAllow();
+    static public boolean isDataShareAllowed(final Person person, final DataShareAuthorizationType type) {
+        final DataShareAuthorization authorization = DataShareAuthorization.findLatest(person, type);
+        return authorization != null && authorization.getAllow() != null && authorization.getAllow();
     }
 
-    public boolean getAllowComercialUse() {
-        return getChoice().getAllowComercialUse();
+    static public Set<DataShareAuthorizationType> findActiveAuthorizationTypes(final Person person) {
+        return Bennu.getInstance().getDataShareAuthorizationTypeSet().stream()
+                .filter(type -> type.isActive() && Group.parse(type.getGroupExpression()).isMember(person.getUser()))
+                .collect(Collectors.toSet());
     }
 
-    public boolean getAllowProfessionalUse() {
-        return getChoice().getAllowProfessionalUse();
+    static public Set<DataShareAuthorizationType> findActiveAuthorizationTypesNotAnswered(final Person person) {
+        return findActiveAuthorizationTypes(person).stream().filter(type -> find(person, type, null).isEmpty())
+                .collect(Collectors.toSet());
     }
 
 }
