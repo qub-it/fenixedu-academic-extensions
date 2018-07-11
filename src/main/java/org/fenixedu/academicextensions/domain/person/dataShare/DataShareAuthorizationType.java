@@ -113,9 +113,13 @@ public class DataShareAuthorizationType extends DataShareAuthorizationType_Base 
 
         return found.size() == 1 ? found.iterator().next() : null;
     }
-    
+
     public boolean isActive() {
         return super.getActive();
+    }
+
+    public boolean isRoot() {
+        return getDataShareAuthorizationTypeParent() == null;
     }
 
 }
