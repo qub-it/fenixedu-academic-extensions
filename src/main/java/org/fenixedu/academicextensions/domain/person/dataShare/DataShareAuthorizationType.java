@@ -23,11 +23,19 @@ public class DataShareAuthorizationType extends DataShareAuthorizationType_Base 
     @Atomic
     public void delete() {
         setRoot(null);
+        setDataShareAuthorizationTypeParent(null);
 
         getChoiceSet().clear();
+        for (; !getDataShareAuthorizationTypeChildrenSet().isEmpty(); getDataShareAuthorizationTypeChildrenSet().iterator().next()
+                .delete());
 
         AcademicExtensionsDomainException.throwWhenDeleteBlocked(getDeletionBlockers());
         super.deleteDomainObject();
+    }
+
+    public boolean isDeletable() {
+        return getAuthorizationSet().isEmpty()
+                && !getDataShareAuthorizationTypeChildrenSet().stream().filter(x -> !x.isDeletable()).findAny().isPresent();
     }
 
     @Override
