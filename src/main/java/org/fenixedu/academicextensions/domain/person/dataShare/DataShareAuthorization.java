@@ -2,6 +2,7 @@ package org.fenixedu.academicextensions.domain.person.dataShare;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -88,6 +89,22 @@ public class DataShareAuthorization extends DataShareAuthorization_Base {
 
     public Boolean getAllow() {
         return getChoice() != null ? getChoice().getAllow() : super.getAllow(); // TODO: after choice entity removal, we can delete this override 
+    }
+
+    @Override
+    public void setAllow(Boolean allow) {
+        super.setAllow(allow);
+        if (Boolean.FALSE.equals(allow) && getType().getDataShareAuthorizationTypeParent() != null) {
+            DataShareAuthorizationType dataShareAuthorizationTypeParent = getType().getDataShareAuthorizationTypeParent();
+            Person person = getPerson();
+            DataShareAuthorization parentAuthorization = findLatest(person, dataShareAuthorizationTypeParent);
+            Optional<DataShareAuthorizationType> anyChildStillAllowed =
+                    dataShareAuthorizationTypeParent.getDataShareAuthorizationTypeChildrenSet().stream()
+                            .filter(x -> x.isActive() && Boolean.TRUE.equals(findLatest(person, x).getAllow())).findAny();
+            if (!anyChildStillAllowed.isPresent()) {
+                parentAuthorization.setAllow(false);
+            }
+        }
     }
 
     static public boolean isDataShareAllowed(final Person person, final DataShareAuthorizationType type) {
