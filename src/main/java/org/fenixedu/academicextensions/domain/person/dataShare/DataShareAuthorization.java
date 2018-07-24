@@ -91,20 +91,30 @@ public class DataShareAuthorization extends DataShareAuthorization_Base {
         return getChoice() != null ? getChoice().getAllow() : super.getAllow(); // TODO: after choice entity removal, we can delete this override 
     }
 
+    private void superSetAllow(Boolean allow) {
+        super.setAllow(allow);
+    }
+
     @Override
     public void setAllow(Boolean allow) {
         super.setAllow(allow);
+        Person person = getPerson();
         if (Boolean.FALSE.equals(allow) && getType().getDataShareAuthorizationTypeParent() != null) {
             DataShareAuthorizationType dataShareAuthorizationTypeParent = getType().getDataShareAuthorizationTypeParent();
-            Person person = getPerson();
             DataShareAuthorization parentAuthorization = findLatest(person, dataShareAuthorizationTypeParent);
             Optional<DataShareAuthorizationType> anyChildStillAllowed =
                     dataShareAuthorizationTypeParent.getDataShareAuthorizationTypeChildrenSet().stream()
                             .filter(x -> x.isActive() && Boolean.TRUE.equals(findLatest(person, x).getAllow())).findAny();
             if (!anyChildStillAllowed.isPresent()) {
-                parentAuthorization.setAllow(false);
+                parentAuthorization.superSetAllow(false);
             }
         }
+        for (DataShareAuthorizationType childType : getType().getDataShareAuthorizationTypeChildrenSet()) {
+            if (childType.isActive()) {
+                DataShareAuthorization.create(person, childType, allow);
+            }
+        }
+
     }
 
     static public boolean isDataShareAllowed(final Person person, final DataShareAuthorizationType type) {
