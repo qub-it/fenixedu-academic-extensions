@@ -2,6 +2,7 @@ package org.fenixedu.academic.domain.evaluation;
 
 import java.util.Comparator;
 
+import org.fenixedu.academic.FenixEduAcademicExtensionsConfiguration;
 import org.fenixedu.academic.domain.EnrolmentEvaluation;
 import org.fenixedu.academic.domain.curriculum.EnrollmentState;
 import org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonServices;
@@ -15,6 +16,10 @@ public class EvaluationComparator implements Comparator<EnrolmentEvaluation> {
 
     @Override
     public int compare(final EnrolmentEvaluation left, final EnrolmentEvaluation right) {
+
+        if (FenixEduAcademicExtensionsConfiguration.getConfiguration().isToUseBestGradeOnlyCriterionForEvaluation()) {
+            return compareByStateAndGradeAndEvaluationDate(left, right);
+        }
 
         if (isFinalInAnyMarkSheet(left) && !isFinalInAnyMarkSheet(right)) {
 
