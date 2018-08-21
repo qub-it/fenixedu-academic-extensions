@@ -12,6 +12,15 @@ valueType org.fenixedu.academic.domain.ShiftTypes as ShiftTypes {
 
 external class .org.fenixedu.bennu.io.domain.GenericFile;
 
+class EnrolmentType {
+	String code (REQUIRED);
+	LocalizedString name (REQUIRED);
+}
+	relation EnrolmentTypeRoot {
+	    .org.fenixedu.bennu.core.domain.Bennu playsRole root { multiplicity 1..1; }
+	    EnrolmentType playsRole enrolmentTypes { multiplicity *; }
+	}
+
 // ==================== BEGIN: Evaluations ====================
 
 class evaluation.season.EvaluationSeasonPeriod {
