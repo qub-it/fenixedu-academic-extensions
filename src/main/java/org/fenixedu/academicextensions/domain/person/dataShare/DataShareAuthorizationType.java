@@ -25,7 +25,6 @@ public class DataShareAuthorizationType extends DataShareAuthorizationType_Base 
         setRoot(null);
         setDataShareAuthorizationTypeParent(null);
 
-        getChoiceSet().clear();
         for (; !getDataShareAuthorizationTypeChildrenSet().isEmpty(); getDataShareAuthorizationTypeChildrenSet().iterator().next()
                 .delete());
 
@@ -101,6 +100,8 @@ public class DataShareAuthorizationType extends DataShareAuthorizationType_Base 
 
         final Stream<DataShareAuthorizationType> universe = Bennu.getInstance().getDataShareAuthorizationTypeSet().stream();
         return universe
+
+                .filter(i -> i.isActive() == active)
 
                 .filter(i -> StringUtils.isBlank(code) || StringUtils.equalsIgnoreCase(i.getCode(), code))
 

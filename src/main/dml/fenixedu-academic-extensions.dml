@@ -21,24 +21,7 @@ class person.dataShare.DataShareAuthorizationType {
 		person.dataShare.DataShareAuthorizationType playsRole dataShareAuthorizationTypeParent { multiplicity 0..1; }
 		person.dataShare.DataShareAuthorizationType playsRole dataShareAuthorizationTypeChildren { multiplicity *; }
 	}
-    	
-class person.dataShare.DataShareAuthorizationChoice {
- 	String code (REQUIRED);
- 	LocalizedString description (REQUIRED);
-	boolean allow (REQUIRED); 					/* any other unspecified use */
-	boolean allowComercialUse (REQUIRED); 		/* biographic, recreational, cultural, etc */
-	boolean allowProfessionalUse (REQUIRED); 	/* job propositions, scholarships, internship, etc */
-}
-	relation DataShareAuthorizationChoiceRoot {
-		person.dataShare.DataShareAuthorizationChoice playsRole dataShareAuthorizationChoice { multiplicity *; }
-	    .org.fenixedu.bennu.core.domain.Bennu playsRole root { multiplicity 1..1; }
-	}
-    	
-	relation DataShareAuthorizationChoiceType {
-		person.dataShare.DataShareAuthorizationChoice playsRole choice { multiplicity *; }
-	    person.dataShare.DataShareAuthorizationType playsRole type { multiplicity *; }
-	}
-    	
+    	    	
 class person.dataShare.DataShareAuthorization {
 	DateTime since (REQUIRED);
 	Boolean allow; // Not primitive Boolean in case of in the future we need defaults for null value, according to DataShareAuthorizationType
@@ -56,11 +39,6 @@ class person.dataShare.DataShareAuthorization {
 	relation DataShareAuthorizationPersonType {
 	    person.dataShare.DataShareAuthorization playsRole authorization { multiplicity *; }
 	    person.dataShare.DataShareAuthorizationType playsRole type { multiplicity 1..1; }
-	}
-
-	relation DataShareAuthorizationPersonChoice {
-	    person.dataShare.DataShareAuthorization playsRole authorization { multiplicity *; }
-	    person.dataShare.DataShareAuthorizationChoice playsRole choice { multiplicity 0..1; }
 	}
 
 // ==================== END: DataShareAuthorization ====================

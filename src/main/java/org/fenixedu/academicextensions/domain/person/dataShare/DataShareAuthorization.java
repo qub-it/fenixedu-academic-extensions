@@ -25,7 +25,6 @@ public class DataShareAuthorization extends DataShareAuthorization_Base {
 
         setPerson(null);
         setType(null);
-        setChoice(null);
 
         AcademicExtensionsDomainException.throwWhenDeleteBlocked(getDeletionBlockers());
         super.deleteDomainObject();
@@ -36,14 +35,10 @@ public class DataShareAuthorization extends DataShareAuthorization_Base {
         super.checkForDeletionBlockers(blockers);
     }
 
-    protected void init(final Person person, final DataShareAuthorizationType type, final DataShareAuthorizationChoice choice,
-            final DateTime since) {
-
+    protected void init(final Person person, final DataShareAuthorizationType type, final DateTime since) {
         setPerson(person);
         setType(type);
-        setChoice(choice);
         setSince(since);
-
         checkRules();
     }
 
@@ -61,7 +56,7 @@ public class DataShareAuthorization extends DataShareAuthorization_Base {
 
     static public DataShareAuthorization create(final Person person, final DataShareAuthorizationType type, boolean allow) {
         final DataShareAuthorization result = new DataShareAuthorization();
-        result.init(person, type, null, new DateTime());
+        result.init(person, type, new DateTime());
         result.setAllow(allow);
         return result;
     }
@@ -85,11 +80,6 @@ public class DataShareAuthorization extends DataShareAuthorization_Base {
 
     static public DataShareAuthorization findLatest(final Person person, final DataShareAuthorizationType type) {
         return find(person, type, null).stream().max(Comparator.comparing(DataShareAuthorization::getSince)).orElse(null);
-    }
-
-    @Override
-    public Boolean getAllow() {
-        return getChoice() != null ? getChoice().getAllow() : super.getAllow(); // TODO: after choice entity removal, we can delete this override 
     }
 
     private void superSetAllow(Boolean allow) {
