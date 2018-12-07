@@ -93,6 +93,8 @@ class evaluation.season.EvaluationSeasonInformation {
 	boolean requiresEnrolmentEvaluation;
 	boolean supportsEmptyGrades;
 	boolean supportsTeacherConfirmation;
+	Integer minPastYearsToAcceptImprovementEnrolments;
+	Integer maxPastYearsToAcceptImprovementEnrolments;	
 }
 
 relation EvaluationSeasonInformationRelation {
