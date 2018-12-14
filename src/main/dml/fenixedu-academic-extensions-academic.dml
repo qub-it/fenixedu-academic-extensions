@@ -395,3 +395,224 @@ relation EnrolmentEvaluationEnrolmentEvaluationExtendedInformation {
 }
 
 // ==================== END: Evaluations ====================
+
+// ==================== BEGIN: Student Mobility ====================
+
+class student.mobility.MobilityProgramType {
+	String code;
+	LocalizedString name;
+	boolean active;
+}
+	
+	relation MobilityProgramTypeBennu {
+		.org.fenixedu.bennu.core.domain.Bennu playsRole bennu {
+			multiplicity 1..1;
+		}
+	
+		student.mobility.MobilityProgramType playsRole mobilityProgramTypes {
+			multiplicity *;
+		}
+	}
+
+class student.mobility.MobilityActivityType {
+	String code;
+	LocalizedString name;
+	boolean active;
+}
+
+	relation MobilityActivityTypeBennu {
+		.org.fenixedu.bennu.core.domain.Bennu playsRole bennu {
+			multiplicity 1..1;
+		}
+	
+		student.mobility.MobilityActivityType playsRole mobilityActivityTypes {
+			multiplicity *;
+		}
+	}
+
+
+class student.mobility.MobilityScientificArea {
+	String code;
+	LocalizedString name;
+}
+
+	relation MobilityScientificAreaBennu {
+		.org.fenixedu.bennu.core.domain.Bennu playsRole bennu {
+			multiplicity 1..1;
+		}
+	
+		student.mobility.MobilityScientificArea playsRole mobilityScientificAreas {
+			multiplicity *;
+		}
+	}
+
+class student.mobility.MobilityProgrammeLevel {
+	String code;
+	LocalizedString name;
+	boolean otherLevel;
+}
+
+	relation MobilityProgrammeLevelBennu {
+		.org.fenixedu.bennu.core.domain.Bennu playsRole bennu {
+			multiplicity 1..1;
+		}
+	
+		student.mobility.MobilityProgrammeLevel playsRole mobilityProgrammeLevels {
+			multiplicity *;
+		}
+	}
+
+class student.mobility.MobilityRegistrationInformation {
+	//The student can be either incoming, external student in mobility program
+	// Or can be an internal student in mobility program
+	boolean incoming;
+	SchoolPeriodDuration programDuration;
+	String otherOriginMobilityProgrammeLevel;
+	String otherIncomingMobilityProgrammeLevel;
+	boolean degreeBased;
+	LocalDate beginDate;
+	LocalDate endDate;
+	String remarks;
+	boolean national;
+	boolean mainInformation;
+}
+
+	relation MobilityRegistrationInformationBennu {
+		.org.fenixedu.bennu.core.domain.Bennu playsRole bennu {
+			multiplicity 1..1;
+		}
+	
+		student.mobility.MobilityRegistrationInformation playsRole mobilityRegistrationInformations {
+			multiplicity *;
+		}
+	}
+
+	relation MobilityRegistrationInformationMobilityProgramType {
+		student.mobility.MobilityRegistrationInformation playsRole mobilityRegistrationInformations {
+			multiplicity *;
+		}
+	
+		student.mobility.MobilityProgramType playsRole mobilityProgramType;
+	}
+	
+	relation MobilityRegistrationInformationMobilityActivityType {
+		student.mobility.MobilityRegistrationInformation playsRole mobilityRegistrationInformations {
+			multiplicity *;
+		}
+	
+		student.mobility.MobilityActivityType playsRole mobilityActivityType;
+	}
+	
+	relation MobilityRegistrationInformationRegistration {
+	
+		student.mobility.MobilityRegistrationInformation playsRole mobilityRegistrationInformations {
+			multiplicity *;
+		}
+	
+		.org.fenixedu.academic.domain.student.Registration playsRole registration {
+			multiplicity 1..1;
+		}
+	}
+	
+	relation MobilityRegistrationInformationBeginExecutionSemester {
+		
+		student.mobility.MobilityRegistrationInformation playsRole {
+			multiplicity *;
+		}
+		
+		.org.fenixedu.academic.domain.ExecutionSemester playsRole begin;
+	}
+	
+	relation MobilityRegistrationInformationEndExecutionSemester {
+		
+		student.mobility.MobilityRegistrationInformation playsRole mobilityRegistrationInformations {
+			multiplicity *;
+		}
+	
+		.org.fenixedu.academic.domain.ExecutionSemester playsRole end;
+	}
+	
+	relation MobilityRegistrationInformationForeignInstitutionUnit {
+		student.mobility.MobilityRegistrationInformation playsRole mobilityRegistrationInformations {
+			multiplicity *;
+		}
+	
+		.org.fenixedu.academic.domain.organizationalStructure.Unit playsRole foreignInstitutionUnit {
+			multiplicity 0..1;
+		}
+	}
+	
+	relation MobilityRegistrationInformationMobilityScientificArea {
+		student.mobility.MobilityRegistrationInformation playsRole mobilityRegistrationInformations {
+			multiplicity *;
+		}
+	
+		student.mobility.MobilityScientificArea playsRole mobilityScientificArea {
+			multiplicity 0..1;
+		}
+	}
+	
+	relation MobilityRegistrationInformationMobilityProgrammeLevel {
+		student.mobility.MobilityRegistrationInformation playsRole mobilityRegistrationInformations {
+			multiplicity *;
+		}
+	
+		student.mobility.MobilityProgrammeLevel playsRole incomingMobilityProgrammeLevel {
+			multiplicity 0..1;
+		}
+	}
+	
+	relation MobilityRegistrationInformationOriginMobilityProgrammeLevel {
+		student.mobility.MobilityRegistrationInformation playsRole mobilityRegistrationInformationsForOrigin {
+			multiplicity *;
+		}
+	
+		student.mobility.MobilityProgrammeLevel playsRole originMobilityProgrammeLevel {
+			multiplicity 0..1;
+		}
+	}
+	
+	relation MobilityRegistrationInformationDegree {
+		student.mobility.MobilityRegistrationInformation playsRole mobilityRegistrationInformations {
+			multiplicity *;
+		}
+	
+		.org.fenixedu.academic.domain.Degree playsRole degree {
+			multiplicity 0..1;
+		}
+	}
+	
+	relation MobilityRegistrationInformationDegreeCurricularPlan {
+		student.mobility.MobilityRegistrationInformation playsRole mobilityRegistrationInformations {
+			multiplicity *;
+		}
+	
+		.org.fenixedu.academic.domain.DegreeCurricularPlan playsRole degreeCurricularPlan {
+			multiplicity 0..1;
+		}
+	}
+	
+	relation MobilityRegistrationInformationBranch {
+		student.mobility.MobilityRegistrationInformation playsRole mobilityRegistrationInformations {
+			multiplicity *;
+		}
+	
+		.org.fenixedu.academic.domain.degreeStructure.CourseGroup playsRole branchCourseGroup {
+			multiplicity 0..1;
+		}
+	}
+	
+	relation MobilityRegistrationInformationCountryUnit {
+		student.mobility.MobilityRegistrationInformation playsRole mobilityRegistrationInformations {
+			multiplicity *;
+		}
+	
+	
+		.org.fenixedu.academic.domain.organizationalStructure.CountryUnit playsRole countryUnit {
+			multiplicity 0..1;
+		}
+	}
+	
+// ==================== END: Student Mobility ====================
+
+	
