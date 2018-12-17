@@ -25,22 +25,28 @@ public class MobilityProgramType extends MobilityProgramType_Base {
         this.setCode(code);
         this.setName(name);
         this.setActive(active);
-
-        checkRules();
     }
 
-    protected void checkRules() {
-
-        if (Strings.isNullOrEmpty(getCode())) {
+    @Override
+    public void setCode(String code) {
+        if (Strings.isNullOrEmpty(code)) {
             throw new AcademicExtensionsDomainException("error.MobilityProgramType.code.required");
         }
 
-        if (getName() == null || Strings.isNullOrEmpty(getName().getContent())) {
-            throw new AcademicExtensionsDomainException("error.MobilityProgramType.name.required");
+        final MobilityProgramType foundByCode = findByCode(code);
+        if (foundByCode != null && foundByCode != this) {
+            throw new AcademicExtensionsDomainException("error.MobilityProgramType.code.duplicated");
         }
 
-        findByCode(getCode());
+        super.setCode(code);
+    }
 
+    @Override
+    public void setName(LocalizedString name) {
+        if (name == null || Strings.isNullOrEmpty(name.getContent())) {
+            throw new AcademicExtensionsDomainException("error.MobilityProgramType.name.required");
+        }
+        super.setName(name);
     }
 
     public boolean isActive() {
@@ -52,8 +58,6 @@ public class MobilityProgramType extends MobilityProgramType_Base {
         setCode(code);
         setName(name);
         setActive(active);
-
-        checkRules();
     }
 
     @Atomic
