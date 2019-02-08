@@ -98,7 +98,9 @@ public class DataShareAuthorization extends DataShareAuthorization_Base {
                             .getDataShareAuthorizationTypeChildrenSet().stream().filter(x -> x.isActive()
                                     && findLatest(person, x) != null && Boolean.TRUE.equals(findLatest(person, x).getAllow()))
                             .findAny();
-            if (!anyChildStillAllowed.isPresent()) {
+            // Parent authorization may not exist if the user has not yet answered the parent authorization
+            // but only childs
+            if (!anyChildStillAllowed.isPresent() && parentAuthorization != null) {
                 parentAuthorization.superSetAllow(false);
             }
         }
