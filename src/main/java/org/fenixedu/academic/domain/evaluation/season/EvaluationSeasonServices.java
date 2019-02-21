@@ -396,7 +396,7 @@ abstract public class EvaluationSeasonServices {
     }
 
     static public boolean isDeletable(final EvaluationSeason evaluationSeason) {
-        return evaluationSeason.getMarkSheetSet().size() == 0 && evaluationSeason.getEvaluationSet().size() == 0;
+        return evaluationSeason.getEvaluationSet().size() == 0;
     }
 
     static public boolean getActive(final EvaluationSeason input) {

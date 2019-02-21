@@ -17,7 +17,7 @@
 	<name>FenixEdu Academic Extensions</name>
 
 	<properties>
-		<version.org.fenixedu.academic>8.4.0</version.org.fenixedu.academic>
+		<version.org.fenixedu.academic>16.1.1</version.org.fenixedu.academic>
 	</properties>
 
 	<build>
