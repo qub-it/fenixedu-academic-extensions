@@ -111,7 +111,7 @@ public class GradeScaleValidator extends GradeScaleValidator_Base {
         if (getGradeScale().belongsTo(input)) {
             for (final String iter : getGradeValues().split(" ")) {
 
-                if (iter.contains(input)) {
+                if (iter.equals(input)) {
                     return true;
                 }
 
