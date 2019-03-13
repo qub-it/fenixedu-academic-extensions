@@ -79,7 +79,9 @@ public class DataShareAuthorization extends DataShareAuthorization_Base {
     }
 
     static public DataShareAuthorization findLatest(final Person person, final DataShareAuthorizationType type) {
-        return find(person, type, null).stream().max(Comparator.comparing(DataShareAuthorization::getSince)).orElse(null);
+        return find(person, type, null).stream()
+                .max(Comparator.comparing(DataShareAuthorization::getSince).thenComparing(DataShareAuthorization::getExternalId))
+                .orElse(null);
     }
 
     private void superSetAllow(Boolean allow) {
