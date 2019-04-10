@@ -68,7 +68,7 @@ import org.fenixedu.academic.domain.evaluation.EvaluationComparator;
 import org.fenixedu.academic.domain.evaluation.EvaluationServices;
 import org.fenixedu.academic.domain.evaluation.config.MarkSheetSettings;
 import org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonPeriod;
-import org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonPeriod.EvaluationSeasonPeriodType;
+import org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonPeriodType;
 import org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonServices;
 import org.fenixedu.academic.domain.evaluation.season.rule.EvaluationSeasonRule;
 import org.fenixedu.academic.domain.evaluation.season.rule.GradeScaleValidator;

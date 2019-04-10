@@ -3,6 +3,7 @@ package org.fenixedu.academic.domain;
 enum org.fenixedu.academic.domain.GradeScale as GradeScaleAcademicExtensions;
 enum org.fenixedu.academic.domain.evaluation.markSheet.CompetenceCourseMarkSheetStateEnum as CompetenceCourseMarkSheetStateEnum;
 enum org.fenixedu.academic.domain.evaluation.markSheet.CompetenceCourseMarkSheetChangeRequestStateEnum as CompetenceCourseMarkSheetChangeRequestStateEnum;
+enum org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonPeriodType as EvaluationSeasonPeriodType; 
 
 valueType org.fenixedu.academic.domain.ShiftTypes as ShiftTypes {
     externalizeWith {
@@ -11,6 +12,7 @@ valueType org.fenixedu.academic.domain.ShiftTypes as ShiftTypes {
 }
 
 external class .org.fenixedu.bennu.io.domain.GenericFile;
+external class .org.fenixedu.academic.domain.ExecutionDegree;
 
 class EnrolmentType {
 	String code (REQUIRED);
@@ -24,8 +26,9 @@ class EnrolmentType {
 // ==================== BEGIN: Evaluations ====================
 
 class evaluation.season.EvaluationSeasonPeriod {
+	EvaluationSeasonPeriodType periodType;
+	protected JsonElement intervalsRaw;
 }
-
 
 
 class evaluation.config.MarkSheetSettings {
@@ -85,6 +88,11 @@ relation EvaluationSeasonPeriodExecutionSemester {
     .org.fenixedu.academic.domain.ExecutionSemester playsRole executionSemester {
         multiplicity 1;
     }
+}
+
+relation EvaluationSeasonPeriodExecutionDegree {
+	.org.fenixedu.academic.domain.ExecutionDegree playsRole executionDegrees { multiplicity *; }	
+    evaluation.season.EvaluationSeasonPeriod playsRole evaluationSeasonPeriods { multiplicity *; }	
 }
 
 class evaluation.season.EvaluationSeasonInformation {
