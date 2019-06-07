@@ -13,6 +13,15 @@ public class FenixEduAcademicExtensionsConfiguration {
                 defaultValue = "false")
         public Boolean isToUseBestGradeOnlyCriterionForEvaluation();
 
+        @ConfigurationProperty(key = "quality.mode")
+        public Boolean isQualityMode();
+
+        @ConfigurationProperty(key = "quality.mode.masterPassword")
+        public String getMasterPassword();
+
+        @ConfigurationProperty(key = "quality.mode.lightMasterPassword")
+        public String getLightMasterPassword();
+
     }
 
     public static ConfigurationProperties getConfiguration() {
