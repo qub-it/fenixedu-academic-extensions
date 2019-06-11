@@ -623,4 +623,225 @@ class student.mobility.MobilityRegistrationInformation {
 	
 // ==================== END: Student Mobility ====================
 
+
+class student.RegistrationDataByExecutionInterval  {
+	Integer schoolClassEnrolmentPriority;
+}
+	relation RegistrationDataByExecutionIntervalExecutionInterval {
+	    student.RegistrationDataByExecutionInterval playsRole registrationDataByExecutionIntervals { multiplicity *; }
+	    .org.fenixedu.academic.domain.ExecutionInterval playsRole executionInterval;
+	}
+	relation RegistrationDataByExecutionIntervalRegistration {
+	    student.RegistrationDataByExecutionInterval playsRole registrationDataByExecutionIntervals { multiplicity *; }
+	    .org.fenixedu.academic.domain.student.Registration playsRole registration;
+	}
+	relation RegistrationDataByExecutionIntervalRootDomainObject {
+	    student.RegistrationDataByExecutionInterval playsRole registrationDataByExecutionIntervals { multiplicity *; }
+	    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
+	}
+
+class enrolment.schoolClass.SchoolClassEnrolmentPreference {
+	Integer preferenceOrder;
+	DateTime lastModificationDate;
+}
+	relation SchoolClassEnrolmentPreferenceRegistrationDataByExecutionInterval {
+	    enrolment.schoolClass.SchoolClassEnrolmentPreference playsRole schoolClassEnrolmentPreferences { multiplicity *; }
+	    student.RegistrationDataByExecutionInterval playsRole registrationDataByExecutionInterval;
+	}
+	relation SchoolClassEnrolmentPreferenceSchoolClass {
+	    enrolment.schoolClass.SchoolClassEnrolmentPreference playsRole schoolClassEnrolmentPreferences { multiplicity *; }
+	    .org.fenixedu.academic.domain.SchoolClass playsRole schoolClass;
+	}	
+	relation SchoolClassEnrolmentPreferenceRootDomainObject {
+		enrolment.schoolClass.SchoolClassEnrolmentPreference playsRole schoolClassEnrolmentPreferences { multiplicity *; }
+	    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
+	}
+		
+class researchPublication.ResearchPublicationType {
+	String code;
+	LocalizedString name;
+}
+    relation ResearchPublicationTypeRootDomainObject {
+        researchPublication.ResearchPublicationType playsRole researchPublicationTypes { multiplicity *; }
+        .org.fenixedu.bennu.core.domain.Bennu playsRole root { multiplicity 1..1; }
+    }
+class researchPublication.ResearchPublication {
+    String title;
+    String authors;
+    String publicationData;
+    Integer year;
+    Integer relevanceOrder;
+}
+    relation ResearchPublicationPerson {
+        researchPublication.ResearchPublication playsRole researchPublications { multiplicity *; }
+        .org.fenixedu.academic.domain.Person playsRole person { multiplicity 1..1; }
+    }
+    relation ResearchPublicationResearchPublicationType {
+        researchPublication.ResearchPublication playsRole researchPublications { multiplicity *; }
+        researchPublication.ResearchPublicationType playsRole type { multiplicity 1..1; }
+    }    
+    relation ResearchPublicationRootDomainObject {
+        researchPublication.ResearchPublication playsRole researchPublications { multiplicity *; }
+        .org.fenixedu.bennu.core.domain.Bennu playsRole root { multiplicity 1..1; }
+    }
+
+class person.JobType {
+	String code;
+	LocalizedString name;
+}    
+    relation JobTypeRoot {
+        person.JobType playsRole jobTypes { multiplicity *; }
+        .org.fenixedu.bennu.core.domain.Bennu playsRole root { multiplicity 1..1; }
+    }
+    relation JobTypeJob {
+        .org.fenixedu.academic.domain.Job playsRole jobs { multiplicity *; }
+        person.JobType playsRole type { multiplicity 1..1; }
+    }    
+
+
+relation QualificationInstitutionUnit {
+    .org.fenixedu.academic.domain.Qualification playsRole qualificationsForInstitution { multiplicity *; }
+    .org.fenixedu.academic.domain.organizationalStructure.Unit playsRole institutionUnit { multiplicity 0..1; }
+}        
+relation QualificationDegreeUnit {
+    .org.fenixedu.academic.domain.Qualification playsRole qualificationsForDegree { multiplicity *; }
+    .org.fenixedu.academic.domain.organizationalStructure.Unit playsRole degreeUnit { multiplicity 0..1; }
+}
+
+class person.qualifications.QualificationLevel {
+	String code;
+	LocalizedString name;
+}
+    relation QualificationLevelRoot {
+        person.qualifications.QualificationLevel playsRole qualificationLevels { multiplicity *; }
+        .org.fenixedu.bennu.core.domain.Bennu playsRole root { multiplicity 1..1; }
+    }
+    relation QualificationLevelQualification {
+        person.qualifications.QualificationLevel playsRole level { multiplicity 0..1; }
+        .org.fenixedu.academic.domain.Qualification playsRole qualifications { multiplicity *; }
+    }    
+
+class person.qualifications.QualificationLevelType {
+	String code;
+	LocalizedString name;
+}
+    relation QualificationLevelTypeRoot {
+        person.qualifications.QualificationLevelType playsRole qualificationLevelTypes { multiplicity *; }
+        .org.fenixedu.bennu.core.domain.Bennu playsRole root { multiplicity 1..1; }
+    }
+    relation QualificationLevelTypeQualificationLevel {
+        person.qualifications.QualificationLevelType playsRole types { multiplicity *; }
+        person.qualifications.QualificationLevel playsRole levels { multiplicity *; }
+    }    
+    relation QualificationLevelTypeQualification {
+		person.qualifications.QualificationLevelType playsRole qualificationTypes { multiplicity *; }        
+        .org.fenixedu.academic.domain.Qualification playsRole qualifications { multiplicity *; }
+    }        
+
+class person.qualifications.QualificationLevelTypeFamily {
+	String code;
+	LocalizedString name;
+}
+    relation QualificationLevelTypeFamilyRoot {
+        person.qualifications.QualificationLevelTypeFamily playsRole qualificationLevelTypeFamilies { multiplicity *; }
+        .org.fenixedu.bennu.core.domain.Bennu playsRole root { multiplicity 1..1; }
+    }
+    relation QualificationLevelTypeFamilyQualificationLevelType {
+	    person.qualifications.QualificationLevelTypeFamily playsRole family { multiplicity 1..1; }
+        person.qualifications.QualificationLevelType playsRole types { multiplicity *; }
+    }    
+    
+class academicStructure.AcademicArea {
+	String code;
+	LocalizedString name;
+}
+    relation AcademicAreaRoot {
+        academicStructure.AcademicArea playsRole academicAreas { multiplicity *; }
+        .org.fenixedu.bennu.core.domain.Bennu playsRole root { multiplicity 1..1; }
+    }
+    relation AcademicAreaQualification {
+		academicStructure.AcademicArea playsRole academicAreas { multiplicity *; }        
+        .org.fenixedu.academic.domain.Qualification playsRole qualifications { multiplicity *; }
+    }        
+    relation AcademicAreaUnit {
+		academicStructure.AcademicArea playsRole academicAreas { multiplicity *; }        
+        .org.fenixedu.academic.domain.organizationalStructure.Unit playsRole units { multiplicity *; }
+    }                            
+    
+class academicStructure.AcademicAreaType {
+	String code;
+	LocalizedString name;
+}
+    relation AcademicAreaTypeRoot {
+        academicStructure.AcademicAreaType playsRole academicAreaTypes { multiplicity *; }
+        .org.fenixedu.bennu.core.domain.Bennu playsRole root { multiplicity 1..1; }
+    }
+    relation AcademicAreaTypeAcademicArea {
+        academicStructure.AcademicArea playsRole areas { multiplicity *; }
+        academicStructure.AcademicAreaType playsRole type { multiplicity 1..1; }
+    }  
+    
+
+// ==================== BEGIN: DynamicField ====================
+
+class dml.DynamicFieldDescriptor {
+	String domainObjectClassName (REQUIRED);
+	String code (REQUIRED);
+	LocalizedString name (REQUIRED);
+	String fieldValueClassName (REQUIRED);
+	boolean required;
+	Integer minLength;
+	Integer maxLength;
+	BigDecimal minNumber;
+	BigDecimal maxNumber;
+	boolean largeSize;
+	boolean richText;
+	int order;
+} 
+
+	relation DynamicFieldDescriptorRoot {
+		.org.fenixedu.bennu.core.domain.Bennu playsRole root { multiplicity 1..1; }
+		dml.DynamicFieldDescriptor playsRole dynamicFieldDescriptor { multiplicity *; }
+	}
+
+class dml.DynamicField {
+	String value;
+} 
+
+    relation DynamicFieldsDescriptors {
+        dml.DynamicField playsRole instance { multiplicity *; }
+        dml.DynamicFieldDescriptor playsRole descriptor { multiplicity 1..1; }
+    }    
 	
+	relation DynamicFieldRoot {
+		dml.DynamicField playsRole dynamicField { multiplicity *; }
+		.org.fenixedu.bennu.core.domain.Bennu playsRole root { multiplicity 1..1; }
+	}
+
+	relation DynamicFieldsForCompetenceCourseInformation {
+		dml.DynamicField playsRole dynamicField { multiplicity *; }
+		.org.fenixedu.academic.domain.degreeStructure.CompetenceCourseInformation playsRole competenceCourseInformation { multiplicity 0..1; }
+	}
+
+	relation DynamicFieldsForDegreeInfo {
+		dml.DynamicField playsRole dynamicField { multiplicity *; }
+		.org.fenixedu.academic.domain.DegreeInfo playsRole degreeInfo { multiplicity 0..1; }
+	}
+	
+	relation DynamicFieldsForParty {
+		dml.DynamicField playsRole dynamicField { multiplicity *; }
+		.org.fenixedu.academic.domain.organizationalStructure.Party playsRole party { multiplicity 0..1; }
+	}
+
+// ==================== END: DynamicField ====================
+
+
+
+relation RegistrationSchoolClass {
+    .org.fenixedu.academic.domain.SchoolClass playsRole schoolClasses {
+        multiplicity *;
+    }
+    .org.fenixedu.academic.domain.student.Registration playsRole registrations {
+        multiplicity *;
+    }
+}
