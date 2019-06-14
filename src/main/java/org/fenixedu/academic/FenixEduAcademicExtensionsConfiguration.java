@@ -9,10 +9,6 @@ public class FenixEduAcademicExtensionsConfiguration {
     @ConfigurationManager(description = "FenixEdu Academic Extensions Configuration")
     public static interface ConfigurationProperties {
 
-        @ConfigurationProperty(key = "org.fenixedu.academic.domain.evaluation.EvaluationComparator.use.best.grade.only.criterion",
-                defaultValue = "false")
-        public Boolean isToUseBestGradeOnlyCriterionForEvaluation();
-
         @ConfigurationProperty(key = "quality.mode")
         public Boolean isQualityMode();
 
@@ -21,6 +17,29 @@ public class FenixEduAcademicExtensionsConfiguration {
 
         @ConfigurationProperty(key = "quality.mode.lightMasterPassword")
         public String getLightMasterPassword();
+
+        @ConfigurationProperty(key = "org.fenixedu.academic.domain.evaluation.EvaluationComparator.use.best.grade.only.criterion",
+                defaultValue = "false")
+        public Boolean isToUseBestGradeOnlyCriterionForEvaluation();
+
+        @ConfigurationProperty(key = "domain.academic.enrolments.EnrolmentEvaluationsDependOnAcademicalActsBlocked",
+                defaultValue = "true")
+        public Boolean getEnrolmentsInEvaluationsDependOnAcademicalActsBlocked();
+
+        @ConfigurationProperty(key = "domain.academic.curricularRules.ApprovalsAwareOfCompetenceCourse", defaultValue = "true")
+        public Boolean getCurricularRulesApprovalsAwareOfCompetenceCourse();
+
+        @ConfigurationProperty(key = "domain.academic.curricularRules.ApprovalsAwareOfCompetenceCourse.studentScope",
+                defaultValue = "false")
+        public Boolean getCurricularRulesApprovalsAwareOfCompetenceCourseAtStudentScope();
+
+        @ConfigurationProperty(key = "domain.academic.curricularYearCalculator.cached", defaultValue = "true")
+        public Boolean getCurricularYearCalculatorCached();
+
+        //TODO: change default value to org.fenixedu.academic.domain.student.curriculum.CurriculumGradeCalculator after setting all configuration.properties in all instances 
+        @ConfigurationProperty(key = "domain.academic.curriculumGradeCalculator.override",
+                defaultValue = "org.fenixedu.ulisboa.specifications.domain.student.curriculum.CurriculumGradeCalculator")
+        public String getCurriculumGradeCalculator();
 
     }
 

@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 
 import org.fenixedu.academic.domain.EnrolmentEvaluation;
 
+//TODO: merge with EnrolmentEvaluationServices from specifications
 public class EnrolmentEvaluationServices {
 
     static final public String EVALUATION_DATE_FORMAT = "yyyy-MM-dd";

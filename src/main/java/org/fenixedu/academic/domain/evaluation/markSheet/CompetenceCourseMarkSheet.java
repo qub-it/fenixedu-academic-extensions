@@ -37,7 +37,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.function.BiPredicate;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -894,14 +893,8 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
             // depends on EnrolmentEvaluationState
             EnrolmentEvaluationServices.onStateChange(evaluation);
             EnrolmentServices.updateState(evaluation.getEnrolment());
-            enrolmentEvaluationChangeListener.accept(evaluation);
+//            enrolmentEvaluationChangeListener.accept(evaluation);
         }
-    }
-
-    private static Consumer<EnrolmentEvaluation> enrolmentEvaluationChangeListener;
-
-    public static void setEnrolmentEvaluationChangeListener(Consumer<EnrolmentEvaluation> enrolmentEvaluationChangeListener) {
-        CompetenceCourseMarkSheet.enrolmentEvaluationChangeListener = enrolmentEvaluationChangeListener;
     }
 
     public boolean getSupportsTeacherConfirmation() {
@@ -952,7 +945,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
         // this was once performed in revertToEdition; depends on EnrolmentEvaluationState
         EnrolmentEvaluationServices.onStateChange(evaluation);
         EnrolmentServices.updateState(evaluation.getEnrolment());
-        enrolmentEvaluationChangeListener.accept(evaluation);
+//        enrolmentEvaluationChangeListener.accept(evaluation);
     }
 
     static public void removeEnrolmentEvaluationData(final EnrolmentEvaluation evaluation) {
@@ -979,7 +972,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
         // FIXME hack for bypass evaluation method type issues
         if (FenixFramework.isDomainObjectValid(evaluation)) {
             EnrolmentServices.updateState(evaluation.getEnrolment());
-            enrolmentEvaluationChangeListener.accept(evaluation);
+//            enrolmentEvaluationChangeListener.accept(evaluation);
         }
     }
 

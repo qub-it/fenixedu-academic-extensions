@@ -9,6 +9,7 @@ import org.fenixedu.academic.domain.Grade;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.curriculum.EnrollmentState;
 
+//TODO: merge with new EnrolmentServices from specifications
 public class EnrolmentServices {
 
     static public void updateState(final Enrolment enrolment) {
