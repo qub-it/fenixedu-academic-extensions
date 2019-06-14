@@ -1,4 +1,6 @@
 - Improvement: Added support for execution interval in StatuteServices
+- Improvement: Added new configuration properties
+- Refactor: Replaced enrolmentEvaluationChangeListener with EnrolmentEvaluationServices.onStateChange
 
 2.8.1 (11-06-2019)
 - Refactor: Added new domain entities (from specifications)
