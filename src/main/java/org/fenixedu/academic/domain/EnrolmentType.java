@@ -2,7 +2,7 @@ package org.fenixedu.academic.domain;
 
 import java.util.Set;
 
-import org.fenixedu.academicextensions.domain.exceptions.AcademicExtensionsDomainException;
+import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.bennu.core.domain.Bennu;
 
 public class EnrolmentType extends EnrolmentType_Base {

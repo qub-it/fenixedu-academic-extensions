@@ -4,8 +4,8 @@ import java.util.Comparator;
 
 import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.Person;
+import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.academic.domain.person.services.PersonServices;
-import org.fenixedu.academicextensions.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;

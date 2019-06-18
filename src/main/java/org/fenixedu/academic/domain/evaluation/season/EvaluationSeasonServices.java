@@ -46,12 +46,12 @@ import org.fenixedu.academic.domain.evaluation.season.rule.EvaluationSeasonStatu
 import org.fenixedu.academic.domain.evaluation.season.rule.PreviousSeasonBlockingGrade;
 import org.fenixedu.academic.domain.evaluation.season.rule.PreviousSeasonEvaluation;
 import org.fenixedu.academic.domain.evaluation.season.rule.PreviousSeasonMinimumGrade;
+import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.StatuteType;
 import org.fenixedu.academic.domain.student.services.StatuteServices;
 import org.fenixedu.academic.domain.treasury.IImprovementTreasuryEvent;
 import org.fenixedu.academic.domain.treasury.TreasuryBridgeAPIFactory;
-import org.fenixedu.academicextensions.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 import org.fenixedu.commons.i18n.LocalizedString;
 import org.fenixedu.treasury.util.LocalizedStringUtil;

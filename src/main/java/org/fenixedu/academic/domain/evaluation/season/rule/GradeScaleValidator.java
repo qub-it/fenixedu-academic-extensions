@@ -10,10 +10,10 @@ import org.apache.commons.validator.routines.BigDecimalValidator;
 import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.academic.domain.GradeScale;
 import org.fenixedu.academic.domain.degree.DegreeType;
+import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
+import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 import org.fenixedu.commons.i18n.LocalizedString;
 import org.fenixedu.commons.i18n.LocalizedString.Builder;
-import org.fenixedu.academicextensions.domain.exceptions.AcademicExtensionsDomainException;
-import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;

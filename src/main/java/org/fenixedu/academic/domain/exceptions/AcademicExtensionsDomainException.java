@@ -1,9 +1,7 @@
-package org.fenixedu.academicextensions.domain.exceptions;
+package org.fenixedu.academic.domain.exceptions;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
-
-import javax.ws.rs.core.Response.Status;
 
 import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 import org.fenixedu.bennu.core.domain.exceptions.DomainException;
@@ -16,16 +14,8 @@ public class AcademicExtensionsDomainException extends DomainException {
         super(AcademicExtensionsUtil.BUNDLE, key, args);
     }
 
-    public AcademicExtensionsDomainException(Status status, String key, String... args) {
-        super(status, AcademicExtensionsUtil.BUNDLE, key, args);
-    }
-
     public AcademicExtensionsDomainException(Throwable cause, String key, String... args) {
         super(cause, AcademicExtensionsUtil.BUNDLE, key, args);
-    }
-
-    public AcademicExtensionsDomainException(Throwable cause, Status status, String key, String... args) {
-        super(cause, status, AcademicExtensionsUtil.BUNDLE, key, args);
     }
 
     public static void throwWhenDeleteBlocked(Collection<String> blockers) {

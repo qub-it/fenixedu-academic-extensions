@@ -30,8 +30,8 @@ package org.fenixedu.academic.domain.evaluation.markSheet;
 import java.util.Collection;
 import java.util.stream.Stream;
 
+import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.bennu.core.security.Authenticate;
-import org.fenixedu.academicextensions.domain.exceptions.AcademicExtensionsDomainException;
 import org.joda.time.DateTime;
 
 import pt.ist.fenixframework.Atomic;

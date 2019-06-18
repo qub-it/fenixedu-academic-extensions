@@ -30,7 +30,7 @@ package org.fenixedu.academic.domain.evaluation.season;
 import java.util.Collection;
 
 import org.fenixedu.academic.domain.EvaluationSeason;
-import org.fenixedu.academicextensions.domain.exceptions.AcademicExtensionsDomainException;
+import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 
 import pt.ist.fenixframework.Atomic;
 

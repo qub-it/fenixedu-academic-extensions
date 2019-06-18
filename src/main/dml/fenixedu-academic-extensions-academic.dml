@@ -3,7 +3,10 @@ package org.fenixedu.academic.domain;
 enum org.fenixedu.academic.domain.GradeScale as GradeScaleAcademicExtensions;
 enum org.fenixedu.academic.domain.evaluation.markSheet.CompetenceCourseMarkSheetStateEnum as CompetenceCourseMarkSheetStateEnum;
 enum org.fenixedu.academic.domain.evaluation.markSheet.CompetenceCourseMarkSheetChangeRequestStateEnum as CompetenceCourseMarkSheetChangeRequestStateEnum;
-enum org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonPeriodType as EvaluationSeasonPeriodType; 
+enum org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonPeriodType as EvaluationSeasonPeriodType;
+enum org.fenixedu.academic.domain.enrolment.period.AcademicEnrolmentPeriodType as AcademicEnrolmentPeriodType;
+enum org.fenixedu.academic.domain.enrolment.period.AutomaticEnrolment as AutomaticEnrolment;
+ 
 
 valueType org.fenixedu.academic.domain.ShiftTypes as ShiftTypes {
     externalizeWith {
@@ -845,3 +848,750 @@ relation RegistrationSchoolClass {
         multiplicity *;
     }
 }
+
+
+
+valueType org.fenixedu.academic.domain.student.gradingTable.GradingTableData as GradingTableData {
+    externalizeWith {
+        String toJson();
+    }
+
+    internalizeWith fromJson();
+}
+
+// ==================== BEGIN: CurricularPeriodConfiguration ====================
+
+class curricularRules.curricularPeriod.CurricularPeriodConfiguration {
+}
+
+relation CurricularPeriodConfigurationBennu {
+
+	.org.fenixedu.bennu.core.domain.Bennu playsRole bennu {
+		multiplicity 1..1;
+	}
+	
+	curricularRules.curricularPeriod.CurricularPeriodConfiguration playsRole curricularPeriodConfigurations {
+		multiplicity *;
+	}
+}
+
+relation CurricularPeriodConfigurations {
+	.org.fenixedu.academic.domain.curricularPeriod.CurricularPeriod playsRole curricularPeriod {
+		multiplicity 1..1;
+	}
+	curricularRules.curricularPeriod.CurricularPeriodConfiguration playsRole configuration {
+		multiplicity 0..1;
+	}
+}
+
+class curricularRules.curricularPeriod.CurricularPeriodRule {
+	BigDecimal value;
+	boolean hideMessagePrefix;
+	Integer semester;
+	Integer yearMin;
+	Integer yearMax;
+	Boolean applyToOptionals;
+}
+
+	class curricularRules.curricularPeriod.RuleEnrolment extends curricularRules.curricularPeriod.CurricularPeriodRule {
+		boolean includeEnrolments;
+		Boolean applyToFlunkedStudents;
+	}
+	
+		class curricularRules.curricularPeriod.enrolment.CreditsInEnrolmentPeriod extends curricularRules.curricularPeriod.RuleEnrolment {
+		}
+		
+			class curricularRules.curricularPeriod.enrolment.CreditsInEnrolmentPeriodForHighestCurricularYear extends curricularRules.curricularPeriod.enrolment.CreditsInEnrolmentPeriod {
+			}
+			
+			class curricularRules.curricularPeriod.enrolment.CreditsInEnrolmentPeriodForFlunkedStudent extends curricularRules.curricularPeriod.enrolment.CreditsInEnrolmentPeriod {
+			}
+		
+			class curricularRules.curricularPeriod.enrolment.CreditsInEnrolmentPeriodByRegistrationData extends curricularRules.curricularPeriod.enrolment.CreditsInEnrolmentPeriod {
+			}
+			
+			class curricularRules.curricularPeriod.enrolment.CreditsInEnrolmentPeriodForPartialRegime extends curricularRules.curricularPeriod.enrolment.CreditsInEnrolmentPeriod {
+			}
+		
+		class curricularRules.curricularPeriod.enrolment.CreditsInCurricularPeriod extends curricularRules.curricularPeriod.RuleEnrolment {
+		}
+		
+		class curricularRules.curricularPeriod.enrolment.CreditsNotEnroled extends curricularRules.curricularPeriod.RuleEnrolment {
+		}
+		
+		class curricularRules.curricularPeriod.enrolment.CreditsEnroledAsFirstTime extends curricularRules.curricularPeriod.RuleEnrolment {
+		}
+		
+	class curricularRules.curricularPeriod.RuleTransition extends curricularRules.curricularPeriod.CurricularPeriodRule {
+		boolean allowToCollectAllCurricularPlans;
+		String codesCSV;
+	}
+
+		class curricularRules.curricularPeriod.transition.RuleTransitionOr extends curricularRules.curricularPeriod.RuleTransition {
+		}
+		
+		class curricularRules.curricularPeriod.transition.FlunkedCredits extends curricularRules.curricularPeriod.RuleTransition {
+		}
+		
+		class curricularRules.curricularPeriod.transition.ApprovedCredits extends curricularRules.curricularPeriod.RuleTransition {
+		}
+		
+		class curricularRules.curricularPeriod.transition.ApprovedCourses extends curricularRules.curricularPeriod.RuleTransition {
+		}
+		
+		class curricularRules.curricularPeriod.transition.FlunkedCurricularCourses extends curricularRules.curricularPeriod.RuleTransition {
+		}
+		
+		class curricularRules.curricularPeriod.transition.StudentStatuteExecutiveRule extends curricularRules.curricularPeriod.RuleTransition {
+		}
+		
+		class curricularRules.curricularPeriod.transition.EnrolmentYears extends curricularRules.curricularPeriod.RuleTransition {
+		}
+		
+		class curricularRules.curricularPeriod.transition.EnrolmentsInCurricularYear extends curricularRules.curricularPeriod.RuleTransition {
+		}
+		
+		class curricularRules.curricularPeriod.transition.MinimumPartialAverage extends curricularRules.curricularPeriod.RuleTransition {
+		}
+		
+relation CurricularPeriodConfigurationRuleEnrolment {
+	curricularRules.curricularPeriod.CurricularPeriodConfiguration playsRole configurationEnrolment {
+		multiplicity 0..1;
+	}
+	curricularRules.curricularPeriod.RuleEnrolment playsRole ruleEnrolment {
+		multiplicity *;
+	}
+}
+
+relation RuleEnrolmentStatuteType {
+	curricularRules.curricularPeriod.RuleEnrolment playsRole ruleEnrolments { multiplicity *; }
+	.org.fenixedu.academic.domain.student.StatuteType playsRole statuteTypes { multiplicity *; }
+}
+
+relation CurricularPeriodConfigurationRuleTransition {
+	curricularRules.curricularPeriod.CurricularPeriodConfiguration playsRole configurationTransition {
+		multiplicity 0..1;
+	}
+	curricularRules.curricularPeriod.RuleTransition playsRole ruleTransition {
+		multiplicity *;
+	}
+}
+
+relation RuleTransitionChildren {
+	curricularRules.curricularPeriod.RuleTransition playsRole parentRuleTransition {
+		multiplicity 0..1;
+	}
+	curricularRules.curricularPeriod.RuleTransition playsRole children {
+		multiplicity *;
+	}
+}
+
+relation StatuteTypeRuleTransition {
+	.org.fenixedu.academic.domain.student.StatuteType playsRole statuteTypeForRuleTransition {
+		multiplicity 0..1;
+	}
+	curricularRules.curricularPeriod.RuleTransition playsRole ruleTransitions {
+		multiplicity *;
+	}
+}
+
+
+
+// ==================== END: CurricularPeriodConfiguration ====================
+
+
+
+
+// ==================== BEGIN: CurricularRule ====================
+
+class curricularRules.ConditionedRoute extends .org.fenixedu.academic.domain.curricularRules.Rule {
+}
+
+class curricularRules.StudentStatuteCurricularRule extends .org.fenixedu.academic.domain.curricularRules.Rule {
+}
+
+	relation StudentStatuteCurricularRuleStatuteType {
+		curricularRules.StudentStatuteCurricularRule playsRole studentStatuteCurricularRules {
+			multiplicity *;
+		}
+		
+		.org.fenixedu.academic.domain.student.StatuteType playsRole statuteType {
+			multiplicity 1..1;
+		}
+	}
+	
+	relation StudentStatuteCurricularRuleCurricularPeriod {
+		curricularRules.StudentStatuteCurricularRule playsRole studentStatuteCurricularRules {
+			multiplicity *;
+		}
+		
+		.org.fenixedu.academic.domain.curricularPeriod.CurricularPeriod playsRole curricularPeriod {
+			multiplicity 0..1;
+		}
+	}
+	
+class curricularRules.StudentSchoolClassCurricularRule extends .org.fenixedu.academic.domain.curricularRules.Rule {
+	String schoolClassNames;
+	Boolean schoolClassMustContainCourse;
+	Boolean courseMustHaveFreeShifts;
+	Boolean enrolInShiftIfUnique;
+	Boolean allAvailableShiftsMustBeEnrolled;
+}
+
+class curricularRules.CreditsLimitWithPreviousApprovals extends .org.fenixedu.academic.domain.curricularRules.Rule {
+}
+
+	relation CreditsLimitWithPreviousApprovalsCurricularRule {
+		curricularRules.CreditsLimitWithPreviousApprovals playsRole creditsLimitWithPreviousApprovals {
+			multiplicity *;
+		}
+		
+		.org.fenixedu.academic.domain.degreeStructure.CourseGroup playsRole previousGroups {
+			multiplicity 1..*;
+		}
+	}
+
+class curricularRules.AnyCurricularCourseRestrictions extends .org.fenixedu.academic.domain.curricularRules.Rule {
+}
+
+    relation AnyCurricularCourseRestrictionsCourseGroup {
+        curricularRules.AnyCurricularCourseRestrictions playsRole anyCurricularCourseRestrictions {
+            multiplicity *;
+        }
+        .org.fenixedu.academic.domain.degreeStructure.CourseGroup playsRole courseGroups {
+            multiplicity *;
+        }
+    }
+	
+// ==================== END: CurricularRule ====================
+
+// ==================== BEGIN: CurricularRule Executor Logics ====================
+
+class curricularRules.AnyCurricularCourseExceptionsConfiguration {
+}
+    
+    relation AnyCurricularCourseExceptionsConfigurationBennu {
+
+		.org.fenixedu.bennu.core.domain.Bennu playsRole bennu {
+			multiplicity 1..1;
+		}
+		
+		curricularRules.AnyCurricularCourseExceptionsConfiguration playsRole anyCurricularCourseExceptionsConfiguration {
+    		multiplicity 0..1;
+    	}
+	}
+    
+    relation AnyCurricularCourseExceptionsCompetenceCourse {
+    	curricularRules.AnyCurricularCourseExceptionsConfiguration playsRole anyCurricularCourseExceptionsConfiguration {
+    		multiplicity *;
+    	}
+    	.org.fenixedu.academic.domain.CompetenceCourse playsRole competenceCourses {
+    		multiplicity *;
+    	}
+    }
+
+// ==================== END: CurricularRule Executor Logics ====================
+
+
+/* Prescriptions */
+class curricularRules.prescription.PrescriptionConfig {
+	String name;
+	BigDecimal partialRegimeBonus;
+	boolean reingressionRestartsYearCount;
+}
+
+
+relation BennuPrescriptionConfig {
+
+	protected .org.fenixedu.bennu.core.domain.Bennu playsRole bennu {
+        multiplicity 1..1;
+    }
+    
+	curricularRules.prescription.PrescriptionConfig playsRole prescriptionConfigs {
+		multiplicity *;
+	}
+	
+}
+
+relation PrescriptionConfigDegreeCurricularPlan {
+
+	curricularRules.prescription.PrescriptionConfig playsRole prescriptionConfigs {
+		multiplicity *;
+	}
+	
+	.org.fenixedu.academic.domain.DegreeCurricularPlan playsRole degreeCurricularPlans {
+        multiplicity *;
+    }			
+	
+}
+
+relation PrescriptionConfigBeginExecutionYear {
+	.org.fenixedu.academic.domain.ExecutionYear playsRole beginExecutionYear;
+	curricularRules.prescription.PrescriptionConfig playsRole prescriptionConfigsAsBeginExecutionYear {
+		multiplicity *;
+	}
+}
+
+class curricularRules.prescription.PrescriptionEntry {
+	BigDecimal enrolmentYears;
+	BigDecimal minEctsApproved;
+}
+
+relation PrescriptionConfigPrescriptionEntry {
+	
+	curricularRules.prescription.PrescriptionConfig playsRole prescriptionConfig {
+        multiplicity 1..1;
+    }
+	
+	curricularRules.prescription.PrescriptionEntry playsRole prescriptionEntries {
+        multiplicity *;
+    }
+}
+
+class curricularRules.prescription.PrescriptionBonificationStatute {
+	BigDecimal bonus;
+}
+
+relation BennuPrescriptionBonificationStatute {
+	
+	protected .org.fenixedu.bennu.core.domain.Bennu playsRole bennu {
+        multiplicity 1..1;
+    }
+    
+	curricularRules.prescription.PrescriptionBonificationStatute playsRole prescriptionBonificationStatutes {
+		multiplicity *;
+	}
+	
+}
+
+relation PrescriptionConfigPrescriptionBonificationStatute {
+
+	curricularRules.prescription.PrescriptionConfig playsRole configuration {
+		multiplicity 1..1;
+	}
+	
+	curricularRules.prescription.PrescriptionBonificationStatute playsRole bonificationStatutes {
+		multiplicity *;
+	}
+}
+
+relation PrescriptionBonificationStatuteStatuteType {
+
+	curricularRules.prescription.PrescriptionBonificationStatute playsRole prescriptionBonificationStatutes {
+		multiplicity *;
+	}
+	
+	.org.fenixedu.academic.domain.student.StatuteType playsRole statuteType {
+		multiplicity 1..1;
+	}
+}
+
+
+//======================= = AcademicEnrolmentPeriod = =========================
+
+class enrolment.period.AcademicEnrolmentPeriod {
+	LocalizedString name;
+    DateTime startDate;
+    DateTime endDate;
+    Boolean firstTimeRegistration;
+    Boolean restrictToSelectedStatutes;
+    Boolean restrictToSelectedIngressionTypes;
+    Integer minStudentNumber;
+    Integer maxStudentNumber;
+    Integer curricularYear;
+    AcademicEnrolmentPeriodType enrolmentPeriodType;
+    AutomaticEnrolment automaticEnrolment;
+    Boolean allowEnrolWithDebts;
+    Boolean schoolClassSelectionMandatory;
+}
+
+relation AcademicEnrolmentPeriodBennu {
+    public enrolment.period.AcademicEnrolmentPeriod playsRole academicEnrolmentPeriods {
+        multiplicity *;
+    }
+
+    protected .org.fenixedu.bennu.core.domain.Bennu playsRole bennu {
+        multiplicity 1..1;
+    }
+}
+
+relation AcademicEnrolmentPeriodExecutionSemester {
+    public enrolment.period.AcademicEnrolmentPeriod playsRole academicEnrolmentPeriods {
+        multiplicity *;
+    }
+
+    public .org.fenixedu.academic.domain.ExecutionSemester playsRole executionSemester {
+        multiplicity 1..1;
+    }    
+}
+
+relation AcademicEnrolmentPeriodDegreeCurricularPlan {
+    public enrolment.period.AcademicEnrolmentPeriod playsRole academicEnrolmentPeriods {
+        multiplicity *;
+    }
+
+    public .org.fenixedu.academic.domain.DegreeCurricularPlan playsRole degreeCurricularPlans {
+        multiplicity *;
+    }    
+}
+
+relation AcademicEnrolmentPeriodStatuteType {
+    public enrolment.period.AcademicEnrolmentPeriod playsRole academicEnrolmentPeriods {
+        multiplicity *;
+    }
+
+    public .org.fenixedu.academic.domain.student.StatuteType playsRole statuteTypes {
+        multiplicity *;
+    }    
+}
+
+relation AcademicEnrolmentPeriodIngressionType {
+    public enrolment.period.AcademicEnrolmentPeriod playsRole academicEnrolmentPeriods {
+        multiplicity *;
+    }
+    public .org.fenixedu.academic.domain.candidacy.IngressionType playsRole ingressionTypes {
+        multiplicity *;
+    }
+}
+
+relation AcademicEnrolmentPeriodEnrolmentType {
+    public enrolment.period.AcademicEnrolmentPeriod playsRole academicEnrolmentPeriods {
+        multiplicity *;
+    }
+    public .org.fenixedu.academic.domain.EnrolmentType playsRole enrolmentTypes {
+        multiplicity *;
+    }
+}
+
+
+//======================= = END AcademicEnrolmentPeriod = =========================
+
+
+
+// ====================== = ECTS Grading Table = ========================
+
+class student.gradingTable.GradingTable {
+	GradingTableData data;
+	boolean copied;
+}
+
+	class student.gradingTable.InstitutionGradingTable extends student.gradingTable.GradingTable {
+	}
+	class student.gradingTable.DegreeGradingTable extends student.gradingTable.GradingTable {
+	}
+	class student.gradingTable.CourseGradingTable extends student.gradingTable.GradingTable {
+	}
+	class student.gradingTable.GeneralPurposeGradingTable extends student.gradingTable.GradingTable {
+	}
+	class student.gradingTable.DefaultGradingTable extends student.gradingTable.GradingTable {
+	}
+	
+class student.gradingTable.GradingTableSettings {
+	Integer minSampleSize;
+	Integer minPastYears;
+	Integer maxPastYears;
+}
+
+
+relation GradingTableBennu {
+	protected .org.fenixedu.bennu.core.domain.Bennu playsRole bennu {
+        multiplicity 1..1;
+    }
+    public student.gradingTable.GradingTable playsRole gradingTables {
+    	multiplicity *;
+    }
+}
+
+relation GradingTableExecutionYear {
+	.org.fenixedu.academic.domain.ExecutionYear playsRole executionYear {
+        multiplicity 0..1;
+    }
+    public student.gradingTable.GradingTable playsRole gradingTables {
+    	multiplicity *;
+    }
+}
+
+relation DegreeGradingTableDegree {
+	public .org.fenixedu.academic.domain.Degree playsRole degree{
+        multiplicity 1..1;
+    }
+	public student.gradingTable.DegreeGradingTable playsRole degreeGradingTables {
+    	multiplicity *;
+    }
+}
+
+relation DegreeGradingTableProgramConclusion {
+	public .org.fenixedu.academic.domain.degreeStructure.ProgramConclusion playsRole programConclusion {
+        multiplicity 1..1;
+    }
+    public student.gradingTable.DegreeGradingTable playsRole degreeGradingTables {
+    	multiplicity *;
+    }
+}
+
+relation DegreeGradingTableRegistration {
+	public .org.fenixedu.academic.domain.student.Registration playsRole registration {
+        multiplicity 0..1;
+    }
+    public student.gradingTable.DegreeGradingTable playsRole degreeGradingTables {
+    	multiplicity *;
+    }
+}
+
+relation CourseGradingTableCompetenceCourse {
+	public .org.fenixedu.academic.domain.CompetenceCourse playsRole competenceCourse {
+		multiplicity 1..1;
+	}
+	public student.gradingTable.CourseGradingTable playsRole courseGradingTables {
+    	multiplicity *;
+    }
+}
+
+relation CourseGradingTableCurriculumLine {
+	public .org.fenixedu.academic.domain.studentCurriculum.CurriculumLine playsRole curriculumLine {
+        multiplicity 0..1;
+    }
+	public student.gradingTable.CourseGradingTable playsRole courseGradingTable {
+    	multiplicity 0..1;
+    }
+}
+
+relation GradingTableSettingsBennu {
+	protected .org.fenixedu.bennu.core.domain.Bennu playsRole bennu {
+        multiplicity 1..1;
+    }
+    public student.gradingTable.GradingTableSettings playsRole gradingTableSettings {
+    	multiplicity 0..1;
+    }
+}
+
+relation GradingTableSettingsDegreeType {
+	public .org.fenixedu.academic.domain.degree.DegreeType playsRole applicableDegreeTypes {
+        multiplicity *;
+    }
+    public student.gradingTable.GradingTableSettings playsRole gradingTableSettings {
+    	multiplicity 0..1;
+    }
+}
+
+
+// ====================== = End Of ECTS Grading Table = ========================
+
+
+// ======================= BEGIN: RegistrationExtendedInformation =========================
+
+class student.RegistrationExtendedInformation {
+	BigDecimal ingressionGradeA;
+	BigDecimal ingressionGradeB;
+	BigDecimal ingressionGradeC;
+	BigDecimal ingressionGradeD;
+	
+	BigDecimal internshipGrade;
+	LocalDate internshipConclusionDate;
+	
+	boolean curriculumAccumulated;
+	boolean manuallyAssignedNumber;
+}
+
+relation BennuRegistrationExtendedInformation {
+	student.RegistrationExtendedInformation playsRole registrationExtendedInformations {
+		multiplicity *;
+	}
+	
+	protected .org.fenixedu.bennu.core.domain.Bennu playsRole bennu {
+        multiplicity 1..1;
+    }
+}
+
+relation RegistrationRegistrationExtendedInformation {
+    .org.fenixedu.academic.domain.student.Registration playsRole registration {
+    	multiplicity 1..1;
+    }
+    
+    student.RegistrationExtendedInformation playsRole extendedInformation;
+}
+
+// ======================= END: RegistrationExtendedInformation =========================
+
+
+// ======================= BEGIN: RegistrationDataByExecutionYearExtendedInformation =========================
+
+class student.RegistrationDataByExecutionYearExtendedInformation {
+	Integer curricularYear;
+}
+
+relation BennuRegistrationDataByExecutionYearExtendedInformation {
+	student.RegistrationDataByExecutionYearExtendedInformation playsRole registrationDataByExecutionYearExtendedInformations {
+		multiplicity *;
+	}
+	protected .org.fenixedu.bennu.core.domain.Bennu playsRole bennu {
+        multiplicity 1..1;
+    }
+}
+
+relation RegistrationDataByExecutionYearWithExtendedInformation {
+    .org.fenixedu.academic.domain.student.RegistrationDataByExecutionYear playsRole dataByExecutionYear {
+    	multiplicity 1..1;
+    }
+    
+    student.RegistrationDataByExecutionYearExtendedInformation playsRole extendedInformation;
+}
+
+// ======================= END: RegistrationDataByExecutionYearExtendedInformation =========================
+
+class student.ResearchArea {
+	String code;
+	LocalizedString name;
+}
+
+	relation ResearchAreaBennu {
+		.org.fenixedu.bennu.core.domain.Bennu playsRole bennu {
+			multiplicity 1..1;
+		}
+	
+		student.ResearchArea playsRole researchAreas {
+			multiplicity *;
+		}
+	}
+	
+	relation ResearchAreaStudentCurricularPlan {
+		.org.fenixedu.academic.domain.student.Registration playsRole registration {
+			multiplicity *;
+		}
+	
+		student.ResearchArea playsRole researchArea {
+			multiplicity 0..1;
+		}
+	}
+	
+// ==================== BEGIN: Credits Reason Type ====================
+
+class student.curriculum.CreditsReasonType {
+	LocalizedString reason (REQUIRED);
+	boolean active;
+	boolean averageEntry;
+	boolean infoHidden;
+	LocalizedString infoText (REQUIRED);
+	boolean infoExplained;
+	boolean infoExplainedWithCountry;
+	boolean infoExplainedWithInstitution;
+	boolean infoExplainedWithEcts;
+}
+
+relation CreditsReasonTypeDomainObject {
+	student.curriculum.CreditsReasonType playsRole creditsReasonTypes {
+		multiplicity *;
+	}
+	
+	.org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject {
+		multiplicity 1..1;
+	}
+}
+
+relation CreditsReasonTypeCredits {
+	student.curriculum.CreditsReasonType playsRole reason;
+	
+	.org.fenixedu.academic.domain.studentCurriculum.Credits playsRole credits {
+		multiplicity *;
+	}
+}
+
+// ==================== END: Credits Reason Type ====================
+	
+// ====================== = CurriculumLineExtendedInformation = ========================
+
+class student.curriculum.CurriculumLineExtendedInformation {
+	String remarks;
+	Integer curricularYear;
+	Boolean excludedFromAverage;
+	boolean excludedFromCurriculum;
+	BigDecimal ectsCredits;
+	BigDecimal weight;
+}
+
+relation BennuCurriculumLineExtendedInformation {
+	student.curriculum.CurriculumLineExtendedInformation playsRole curriculumLineExtendedInformations {
+		multiplicity *;
+	}
+	protected .org.fenixedu.bennu.core.domain.Bennu playsRole bennu {
+        multiplicity 1..1;
+    }
+}
+
+relation CurriculumLineCurriculumLineExtendedInformation {
+    .org.fenixedu.academic.domain.studentCurriculum.CurriculumLine playsRole curriculumLine {
+    	multiplicity 1..1;
+    }
+    
+    student.curriculum.CurriculumLineExtendedInformation playsRole extendedInformation;
+}
+	
+// ====================== = ExtendeDegreeInfo = ========================
+
+class degree.ExtendedDegreeInfo {
+	LocalizedString scientificAreas;
+	LocalizedString studyProgrammeDuration;
+	LocalizedString studyRegime;
+	LocalizedString studyProgrammeRequirements;
+	LocalizedString higherEducationAccess;
+	LocalizedString professionalStatus;
+	LocalizedString supplementExtraInformation;
+	LocalizedString supplementOtherSources;
+}
+
+relation BennuExtendedDegreeInfo {
+	degree.ExtendedDegreeInfo playsRole extendedDegreeInfo {
+		multiplicity *;
+	}
+	protected .org.fenixedu.bennu.core.domain.Bennu playsRole bennu {
+        multiplicity 1..1;
+    }
+}
+
+relation DegreeInfoExtendedDegreeInfo {
+    .org.fenixedu.academic.domain.DegreeInfo playsRole degreeInfo;
+    degree.ExtendedDegreeInfo playsRole extendedDegreeInfo;
+}
+	
+// ======================= Registration Observations =========================
+class student.RegistrationObservations{
+	String value;
+}
+
+relation RegistrationObservationRegistration{
+	protected .org.fenixedu.academic.domain.student.Registration playsRole registration {
+        multiplicity 1..1;
+    }
+    
+    student.RegistrationObservations playsRole registrationObservations{
+    	multiplicity *;
+    }
+}
+// ======================= Registration Observations end =========================
+
+
+/* Precedent Degrees */
+
+relation DegreePrecedentDegree {
+	.org.fenixedu.academic.domain.Degree playsRole precedentDegrees {
+		multiplicity *;
+	}
+	
+	.org.fenixedu.academic.domain.Degree playsRole subsequentDegrees {
+		multiplicity *;
+	}
+}
+
+// ======================= = Enrolment in Scool Classes begin = =========================
+
+
+
+relation SchoolClassPrecedence {
+    .org.fenixedu.academic.domain.SchoolClass playsRole nextSchoolClass;
+    .org.fenixedu.academic.domain.SchoolClass playsRole previousSchoolClasses {
+        multiplicity *;
+    }
+}
+
+
+// ======================= = Enrolment in Scool Classes end = =========================

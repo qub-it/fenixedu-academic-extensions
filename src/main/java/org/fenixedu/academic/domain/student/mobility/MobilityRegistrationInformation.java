@@ -12,12 +12,12 @@ import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.SchoolPeriodDuration;
 import org.fenixedu.academic.domain.degreeStructure.CourseGroup;
+import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.academic.domain.organizationalStructure.AccountabilityTypeEnum;
 import org.fenixedu.academic.domain.organizationalStructure.CountryUnit;
 import org.fenixedu.academic.domain.organizationalStructure.Party;
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
 import org.fenixedu.academic.domain.student.Registration;
-import org.fenixedu.academicextensions.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.commons.i18n.LocalizedString;
@@ -227,8 +227,7 @@ public class MobilityRegistrationInformation extends MobilityRegistrationInforma
         }
 
         if (getForeignInstitutionUnit() == null) {
-            throw new AcademicExtensionsDomainException(
-                    "error.MobilityRegistrationInformation.foreignInstitutionUnit.required");
+            throw new AcademicExtensionsDomainException("error.MobilityRegistrationInformation.foreignInstitutionUnit.required");
         }
 
     }
@@ -343,12 +342,10 @@ public class MobilityRegistrationInformation extends MobilityRegistrationInforma
 
     public LocalizedString getMobilityStudentTypeDescription() {
         if (isIncomingStudent()) {
-            return AcademicExtensionsUtil.bundleI18N(
-                    "label.org.fenixedu.ulisboa.specifications.dto.student.mobility.MobilityRegistrationInformationBean.incomingStudent");
+            return AcademicExtensionsUtil.bundleI18N("label.MobilityRegistrationInformationBean.incomingStudent");
         }
 
-        return AcademicExtensionsUtil.bundleI18N(
-                "label.org.fenixedu.ulisboa.specifications.dto.student.mobility.MobilityRegistrationInformationBean.outgoingStudent");
+        return AcademicExtensionsUtil.bundleI18N("label.MobilityRegistrationInformationBean.outgoingStudent");
     }
 
     public boolean isValid(final ExecutionYear executionYear) {

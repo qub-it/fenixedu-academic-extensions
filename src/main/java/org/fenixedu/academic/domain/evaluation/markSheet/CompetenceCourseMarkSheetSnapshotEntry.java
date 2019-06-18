@@ -2,8 +2,8 @@ package org.fenixedu.academic.domain.evaluation.markSheet;
 
 import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.Grade;
+import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.commons.i18n.LocalizedString;
-import org.fenixedu.academicextensions.domain.exceptions.AcademicExtensionsDomainException;
 
 import pt.ist.fenixframework.Atomic;
 

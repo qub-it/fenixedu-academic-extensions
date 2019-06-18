@@ -1,3 +1,5 @@
+- Refactor: refactored core entities
+
 2.9.0 (14-06-2019)
 - Improvement: Added support for execution interval in StatuteServices
 - Improvement: Added new configuration properties
