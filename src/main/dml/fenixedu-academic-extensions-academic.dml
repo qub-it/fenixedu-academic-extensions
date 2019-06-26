@@ -1595,3 +1595,20 @@ relation SchoolClassPrecedence {
 
 
 // ======================= = Enrolment in Scool Classes end = =========================
+
+class curriculum.grade.GradeScaleEntry {
+	GradeScaleAcademicExtensions gradeScale (REQUIRED);
+	String value (REQUIRED);
+	LocalizedString description (REQUIRED);
+	boolean allowsApproval; 
+}
+
+relation GradeScaleEntryBennu {
+	.org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject {
+		multiplicity 1..1;
+	}
+
+	curriculum.grade.GradeScaleEntry playsRole gradeScaleEntries {
+		multiplicity *;
+	}
+}
