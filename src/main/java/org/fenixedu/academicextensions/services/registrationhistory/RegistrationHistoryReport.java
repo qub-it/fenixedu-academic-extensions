@@ -947,6 +947,10 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         return getEnrolmentExecutionYears().size();
     }
 
+    public Integer getEnrolmentYearsIncludingPrecedentRegistrations() {
+        return getEnrolmentExecutionYearsIncludingPrecedentRegistrations().size();
+    }
+
     public boolean isPrescriptionConfigured() {
         final PrescriptionConfig config = PrescriptionConfig.findBy(getDegreeCurricularPlan());
         return config != null && !config.getPrescriptionEntriesSet().isEmpty();
@@ -961,7 +965,8 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 
         //TODO: move logic to PrescriptionConfig?
 
-        final Collection<ExecutionYear> executionYears = config.filterExecutionYears(registration, getEnrolmentExecutionYears());
+        final Collection<ExecutionYear> executionYears =
+                config.filterExecutionYears(registration, getEnrolmentExecutionYearsIncludingPrecedentRegistrations());
         BigDecimal result = new BigDecimal(executionYears.size());
         BigDecimal bonification = BigDecimal.ZERO;
         for (final ExecutionYear iter : executionYears) {
@@ -1008,6 +1013,11 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     private Set<ExecutionYear> getEnrolmentExecutionYears() {
         return RegistrationServices.getEnrolmentYears(registration).stream().filter(ey -> ey.isBeforeOrEquals(getExecutionYear()))
                 .collect(Collectors.toSet());
+    }
+
+    private Set<ExecutionYear> getEnrolmentExecutionYearsIncludingPrecedentRegistrations() {
+        return RegistrationServices.getEnrolmentYearsIncludingPrecedentRegistrations(registration).stream()
+                .filter(ey -> ey.isBeforeOrEquals(getExecutionYear())).collect(Collectors.toSet());
     }
 
     public String getOtherConcludedRegistrationYears() {
