@@ -1,3 +1,5 @@
+- Fix: disconnect execution degrees when deleting evaluation season periods
+
 3.1.1 (08-07-2019)
 - New Feature: added new method to calculate the Enrolment Years Including Precedent Registrations (#UL-FA-473)
 

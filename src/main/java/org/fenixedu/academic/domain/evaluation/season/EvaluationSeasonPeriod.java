@@ -188,6 +188,8 @@ public class EvaluationSeasonPeriod extends EvaluationSeasonPeriod_Base
     public void delete() {
         super.setExecutionSemester(null);
         super.setSeason(null);
+        
+        getExecutionDegreesSet().clear();
 
         final OccupationPeriod occupationPeriod = getOccupationPeriod();
         super.setOccupationPeriod(null);
