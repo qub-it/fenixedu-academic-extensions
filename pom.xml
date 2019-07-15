@@ -16,10 +16,6 @@
 
 	<name>FenixEdu Academic Extensions</name>
 
-	<properties>
-		<version.org.fenixedu.academic>21.2.3</version.org.fenixedu.academic>
-	</properties>
-
 	<build>
 		<plugins>
 
@@ -69,7 +65,7 @@
 		<dependency>
 			<groupId>com.qubit.solution.fenixedu</groupId>
 			<artifactId>fenixedu-academic-core</artifactId>
-			<version>${version.org.fenixedu.academic}</version>
+			<version>21.3.0</version>
 		</dependency>
         <dependency>
             <groupId>org.fenixedu</groupId>

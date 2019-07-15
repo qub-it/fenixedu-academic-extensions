@@ -8,7 +8,6 @@ import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
 import org.fenixedu.academic.domain.curricularRules.executors.ruleExecutors.StudentStatuteCurricularRuleExecutor;
 import org.fenixedu.academic.domain.curricularRules.executors.verifyExecutors.StudentStatuteCurricularRuleVerifier;
 import org.fenixedu.academic.domain.curricularRules.executors.verifyExecutors.VerifyRuleExecutor;
-import org.fenixedu.academic.domain.degreeStructure.Context;
 import org.fenixedu.academic.domain.degreeStructure.CourseGroup;
 import org.fenixedu.academic.domain.degreeStructure.DegreeModule;
 import org.fenixedu.academic.domain.enrolment.EnrolmentContext;
@@ -64,7 +63,6 @@ public class StudentStatuteCurricularRule extends StudentStatuteCurricularRule_B
     @Override
     protected void removeOwnParameters() {
         super.setStatuteType(null);
-        super.setCurricularPeriod(null);
     }
 
     @Override
@@ -86,11 +84,6 @@ public class StudentStatuteCurricularRule extends StudentStatuteCurricularRule_B
     @Override
     public boolean isVisible() {
         return false;
-    }
-
-    @Override
-    public boolean appliesToContext(final Context context) {
-        return super.appliesToContext(context) && CurricularRuleServices.appliesToPeriod(context, getCurricularPeriod());
     }
 
 }

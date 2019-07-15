@@ -1,3 +1,5 @@
+- Refactor: moved curricular rule to curricular period relation to academic-core
+
 3.1.2 (09-07-2019)
 - Fix: disconnect execution degrees when deleting evaluation season periods
 

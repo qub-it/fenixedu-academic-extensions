@@ -1020,15 +1020,6 @@ class curricularRules.StudentStatuteCurricularRule extends .org.fenixedu.academi
 		}
 	}
 	
-	relation StudentStatuteCurricularRuleCurricularPeriod {
-		curricularRules.StudentStatuteCurricularRule playsRole studentStatuteCurricularRules {
-			multiplicity *;
-		}
-		
-		.org.fenixedu.academic.domain.curricularPeriod.CurricularPeriod playsRole curricularPeriod {
-			multiplicity 0..1;
-		}
-	}
 	
 class curricularRules.StudentSchoolClassCurricularRule extends .org.fenixedu.academic.domain.curricularRules.Rule {
 	String schoolClassNames;
