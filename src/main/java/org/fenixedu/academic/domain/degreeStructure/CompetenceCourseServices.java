@@ -35,7 +35,7 @@ import org.fenixedu.academic.FenixEduAcademicExtensionsConfiguration;
 import org.fenixedu.academic.domain.CompetenceCourse;
 import org.fenixedu.academic.domain.CurricularCourse;
 import org.fenixedu.academic.domain.Enrolment;
-import org.fenixedu.academic.domain.ExecutionSemester;
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
 import org.fenixedu.academic.domain.student.Registration;
@@ -62,17 +62,17 @@ abstract public class CompetenceCourseServices {
             .maximumSize(CACHE_APPROVALS_MAX_SIZE).expireAfterWrite(CACHE_APPROVALS_EXPIRE_MIN, TimeUnit.MINUTES).build();
 
     static public boolean isCompetenceCourseApproved(final StudentCurricularPlan plan, final CurricularCourse course,
-            final ExecutionSemester semester) {
+            final ExecutionInterval Interval) {
 
         final Registration registration = plan.getRegistration();
         final CompetenceCourse competence = course.getCompetenceCourse();
 
         // optional curricular course
         if (competence == null) {
-            return plan.isApproved(course, semester);
+            return plan.isApproved(course, Interval);
         }
 
-        return getScpsToCheck(registration).stream().anyMatch(i -> isApproved(i, competence, semester));
+        return getScpsToCheck(registration).stream().anyMatch(i -> isApproved(i, competence, Interval));
     }
 
     static public int countEnrolmentsUntil(final StudentCurricularPlan plan, final CurricularCourse curricularCourse,
@@ -102,7 +102,8 @@ abstract public class CompetenceCourseServices {
     static private Set<StudentCurricularPlan> getScpsToCheck(final Registration registration) {
         final Set<StudentCurricularPlan> result = Sets.newHashSet();
 
-        if (FenixEduAcademicExtensionsConfiguration.getConfiguration().getCurricularRulesApprovalsAwareOfCompetenceCourseAtStudentScope()) {
+        if (FenixEduAcademicExtensionsConfiguration.getConfiguration()
+                .getCurricularRulesApprovalsAwareOfCompetenceCourseAtStudentScope()) {
             registration.getStudent().getRegistrationsSet().stream().flatMap(r -> r.getStudentCurricularPlansSet().stream())
                     .sequential().collect(Collectors.toCollection(() -> result));
 
@@ -115,10 +116,10 @@ abstract public class CompetenceCourseServices {
     }
 
     static private boolean isApproved(final StudentCurricularPlan plan, final CompetenceCourse competence,
-            final ExecutionSemester semester) {
+            final ExecutionInterval interval) {
 
         final String key = String.format("%s#%s#%s", plan.getExternalId(), competence.getExternalId(),
-                (semester == null ? "null" : semester.getExternalId()));
+                (interval == null ? "null" : interval.getExternalId()));
 
         try {
             return CACHE_APPROVALS.get(key, new Callable<Boolean>() {
@@ -128,7 +129,7 @@ abstract public class CompetenceCourseServices {
                     logger.debug(String.format("Miss on Approvals cache [%s %s]", new DateTime(), key));
                     final Set<CurricularCourse> curriculars = getExpandedCurricularCourses(competence.getCode());
                     return curriculars == null ? false : curriculars.stream()
-                            .anyMatch(curricular -> plan.isApproved(curricular, semester));
+                            .anyMatch(curricular -> plan.isApproved(curricular, interval));
                 }
             });
 

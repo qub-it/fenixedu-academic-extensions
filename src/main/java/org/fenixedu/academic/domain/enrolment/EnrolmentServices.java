@@ -13,6 +13,7 @@ import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.Enrolment.EnrolmentPredicate;
 import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.OptionalEnrolment;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
@@ -94,14 +95,14 @@ public class EnrolmentServices extends org.fenixedu.academic.domain.student.serv
         }
     }
 
-    static public Set<ExecutionCourse> getExecutionCourses(final Enrolment enrolment, final ExecutionSemester semester) {
+    static public Set<ExecutionCourse> getExecutionCourses(final Enrolment enrolment, final ExecutionInterval interval) {
         final Set<ExecutionCourse> result = new HashSet<>();
 
         if (enrolment != null) {
             final CurricularCourse curricular = enrolment.getCurricularCourse();
 
             if (curricular != null) {
-                result.addAll(curricular.getCompetenceCourse().getExecutionCoursesByExecutionPeriod(semester));
+                result.addAll(curricular.getCompetenceCourse().getExecutionCoursesByExecutionPeriod(interval));
             }
         }
 

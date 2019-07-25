@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.CurricularCourse;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.domain.Shift;
@@ -53,7 +54,7 @@ public class StudentSchoolClassCurricularRuleExecutor extends CurricularRuleExec
 
         if (sourceDegreeModuleToEvaluate.isEnroled() || !canApplyRule(enrolmentContext, curricularRule)
                 || !sourceDegreeModuleToEvaluate.isLeaf()
-                || sourceDegreeModuleToEvaluate.getExecutionPeriod() != enrolmentContext.getExecutionPeriod()) {
+                || sourceDegreeModuleToEvaluate.getExecutionInterval() != enrolmentContext.getExecutionPeriod()) {
             return RuleResult.createNA(sourceDegreeModuleToEvaluate.getDegreeModule());
         }
 
@@ -64,16 +65,16 @@ public class StudentSchoolClassCurricularRuleExecutor extends CurricularRuleExec
 
         final StudentSchoolClassCurricularRule schoolClassCurricularRule = (StudentSchoolClassCurricularRule) curricularRule;
         final Registration registration = enrolmentContext.getRegistration();
-        final ExecutionSemester executionSemester = sourceDegreeModuleToEvaluate.getExecutionPeriod();
+        final ExecutionInterval executionInterval = sourceDegreeModuleToEvaluate.getExecutionInterval();
         final CurricularCourse curricularCourse = (CurricularCourse) sourceDegreeModuleToEvaluate.getDegreeModule();
 
         if (schoolClassCurricularRule.getSchoolClassMustContainCourse()) {
 
             int curricularYear =
-                    RegistrationServices.getCurricularYear(registration, executionSemester.getExecutionYear()).getResult();
+                    RegistrationServices.getCurricularYear(registration, executionInterval.getExecutionYear()).getResult();
             if (sourceDegreeModuleToEvaluate.getContext().getCurricularYear().equals(curricularYear)) {
 
-                if (registration.getSchoolClassesSet().stream().filter(sc -> sc.getExecutionPeriod() == executionSemester)
+                if (registration.getSchoolClassesSet().stream().filter(sc -> sc.getExecutionPeriod() == executionInterval)
                         .flatMap(sc -> sc.getAssociatedShiftsSet().stream().map(s -> s.getExecutionCourse())
                                 .flatMap(ec -> ec.getAssociatedCurricularCoursesSet().stream()))
                         .noneMatch(cc -> cc == curricularCourse)) {
@@ -81,7 +82,7 @@ public class StudentSchoolClassCurricularRuleExecutor extends CurricularRuleExec
                     return RuleResult.createFalseWithLiteralMessage(sourceDegreeModuleToEvaluate.getDegreeModule(),
                             AcademicExtensionsUtil.bundle(
                                     "curricularRules.ruleExecutors.StudentSchoolClassCurricularRuleExecutor.error.schoolClassMustContainCourse",
-                                    executionSemester.getName(), curricularCourse.getCode(), curricularCourse.getName()));
+                                    executionInterval.getName(), curricularCourse.getCode(), curricularCourse.getName()));
                 }
             }
         }
@@ -89,7 +90,7 @@ public class StudentSchoolClassCurricularRuleExecutor extends CurricularRuleExec
         if (schoolClassCurricularRule.getCourseMustHaveFreeShifts()) {
 
             final Set<SchoolClass> registrationSchoolClasses = registration.getSchoolClassesSet().stream()
-                    .filter(sc -> sc.getExecutionPeriod() == executionSemester).collect(Collectors.toSet());
+                    .filter(sc -> sc.getExecutionPeriod() == executionInterval).collect(Collectors.toSet());
             if (!registrationSchoolClasses.isEmpty()) {
                 for (final SchoolClass schoolClass : registrationSchoolClasses) {
                     final DegreeCurricularPlan degreeCurricularPlan = schoolClass.getExecutionDegree().getDegreeCurricularPlan();
@@ -114,7 +115,7 @@ public class StudentSchoolClassCurricularRuleExecutor extends CurricularRuleExec
 
                 }
             } else {
-                final Set<Shift> allShifts = curricularCourse.getExecutionCoursesByExecutionPeriod(executionSemester).stream()
+                final Set<Shift> allShifts = curricularCourse.getExecutionCoursesByExecutionPeriod(executionInterval).stream()
                         .flatMap(ec -> ec.getAssociatedShifts().stream()).collect(Collectors.toSet());
                 final Set<ShiftType> allShiftsTypes =
                         allShifts.stream().flatMap(s -> s.getTypes().stream()).collect(Collectors.toSet());
@@ -131,7 +132,7 @@ public class StudentSchoolClassCurricularRuleExecutor extends CurricularRuleExec
         }
 
         if (StringUtils.isNotBlank(schoolClassCurricularRule.getSchoolClassNames()) && schoolClassCurricularRule
-                .getSchoolClasses(executionSemester).stream().noneMatch(sc -> sc.getRegistrationsSet().contains(registration))) {
+                .getSchoolClasses(executionInterval).stream().noneMatch(sc -> sc.getRegistrationsSet().contains(registration))) {
 
             return RuleResult.createFalseWithLiteralMessage(sourceDegreeModuleToEvaluate.getDegreeModule(),
                     AcademicExtensionsUtil.bundle(

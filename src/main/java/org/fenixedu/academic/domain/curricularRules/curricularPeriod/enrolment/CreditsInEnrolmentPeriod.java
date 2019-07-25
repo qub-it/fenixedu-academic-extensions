@@ -92,7 +92,7 @@ public class CreditsInEnrolmentPeriod extends CreditsInEnrolmentPeriod_Base {
     public RuleResult execute(final EnrolmentContext enrolmentContext) {
         if (getSemester() != null) {
 
-            if (getSemester().intValue() != enrolmentContext.getExecutionPeriod().getSemester().intValue()) {
+            if (getSemester().intValue() != enrolmentContext.getExecutionPeriod().getChildOrder().intValue()) {
                 return createNA();
             }
 
@@ -108,7 +108,7 @@ public class CreditsInEnrolmentPeriod extends CreditsInEnrolmentPeriod_Base {
         final Set<DegreeModule> processedDegreeModules = Sets.newHashSet();
 
         for (final IDegreeModuleToEvaluate degreeModuleToEvaluate : getEnroledAndEnroling(enrolmentContext,
-                i -> i.getExecutionPeriod().getExecutionYear() == enrolmentContext.getExecutionPeriod().getExecutionYear())) {
+                i -> i.getExecutionInterval().getExecutionYear() == enrolmentContext.getExecutionPeriod().getExecutionYear())) {
 
             processedDegreeModules.add(degreeModuleToEvaluate.getDegreeModule());
 
@@ -140,8 +140,8 @@ public class CreditsInEnrolmentPeriod extends CreditsInEnrolmentPeriod_Base {
         BigDecimal total = BigDecimal.ZERO;
 
         final Predicate<IDegreeModuleToEvaluate> filter = i -> i.isAnnualCurricularCourse(
-                enrolmentContext.getExecutionYear()) ? i.getExecutionPeriod().getExecutionYear() == enrolmentContext
-                        .getExecutionYear() : i.getExecutionPeriod() == enrolmentContext.getExecutionPeriod();
+                enrolmentContext.getExecutionYear()) ? i.getExecutionInterval().getExecutionYear() == enrolmentContext
+                        .getExecutionYear() : i.getExecutionInterval() == enrolmentContext.getExecutionPeriod();
 
         for (final IDegreeModuleToEvaluate degreeModuleToEvaluate : getEnroledAndEnroling(enrolmentContext, filter)) {
 

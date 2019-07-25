@@ -31,6 +31,7 @@ import java.util.function.Supplier;
 
 import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.Enrolment.EnrolmentPredicate;
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.accessControl.AcademicAuthorizationGroup;
 import org.fenixedu.academic.domain.accessControl.academicAdministration.AcademicOperationType;
@@ -74,13 +75,13 @@ abstract public class EnrolmentPredicateInitializer {
         @Override
         public boolean test(final Enrolment enrolment) {
 
-            if (enrolment.isEvaluatedInSeason(getEvaluationSeason(), getExecutionSemester())) {
+            if (enrolment.isEvaluatedInSeason(getEvaluationSeason(), getExecutionInterval())) {
                 throw new DomainException("error.EvaluationSeason.enrolment.evaluated.in.this.season",
                         enrolment.getPresentationName().getContent(), getEvaluationSeason().getName().getContent());
             }
 
             if (getContext() == EnrolmentEvaluationContext.MARK_SHEET_EVALUATION) {
-                if (enrolment.isEnroledInSeason(getEvaluationSeason(), getExecutionSemester())) {
+                if (enrolment.isEnroledInSeason(getEvaluationSeason(), getExecutionInterval())) {
                     throw new DomainException("error.EvaluationSeason.already.enroled.in.this.season",
                             enrolment.getPresentationName().getContent(), getEvaluationSeason().getName().getContent());
                 }
@@ -111,18 +112,18 @@ abstract public class EnrolmentPredicateInitializer {
 
         @Override
         public boolean test(final Enrolment enrolment) {
-            final ExecutionSemester improvementSemester = getExecutionSemester();
+            final ExecutionInterval improvementInterval = getExecutionInterval();
 
-            final ExecutionSemester enrolmentSemester = enrolment.getExecutionPeriod();
+            final ExecutionInterval enrolmentSemester = enrolment.getExecutionPeriod();
             final String name = enrolment.getPresentationName().getContent();
 
-            if (improvementSemester.isBefore(enrolmentSemester)) {
+            if (improvementInterval.isBefore(enrolmentSemester)) {
                 throw new DomainException("error.EnrolmentEvaluation.improvement.semester.must.be.after.or.equal.enrolment",
                         name);
             }
 
             // qubExtension
-            if (enrolment.isAnual() && !improvementSemester.isFirstOfYear()) {
+            if (enrolment.isAnual() && improvementInterval.getChildOrder().intValue() != 1) {
                 throw new DomainException(
                         "error.EnrolmentEvaluation.improvement.semester.must.be.first.of.year.for.anual.courses", name);
             }
@@ -133,16 +134,16 @@ abstract public class EnrolmentPredicateInitializer {
                         name);
             }
 
-            if (EnrolmentServices.getExecutionCourses(enrolment, improvementSemester).isEmpty()) {
+            if (EnrolmentServices.getExecutionCourses(enrolment, improvementInterval).isEmpty()) {
                 throw new DomainException("error.EnrolmentEvaluation.improvement.required.ExecutionCourse", name,
-                        improvementSemester.getQualifiedName());
+                        improvementInterval.getQualifiedName());
             }
 
             if (EXTRA_IMPROVEMENT_PREDICATES.stream().anyMatch(p -> !p.test(enrolment))) {
                 throw new DomainException("error.EvaluationSeason.extra.improvement.predicate.evaluation.failed");
             }
 
-            PREDICATE_SEASON.get().fill(getEvaluationSeason(), improvementSemester, getContext()).test(enrolment);
+            PREDICATE_SEASON.get().fill(getEvaluationSeason(), improvementInterval, getContext()).test(enrolment);
 
             return true;
         }
@@ -152,10 +153,10 @@ abstract public class EnrolmentPredicateInitializer {
 
         @Override
         public boolean test(final Enrolment enrolment) {
-            final ExecutionSemester specialSeasonSemester = getExecutionSemester();
+            final ExecutionInterval specialSeasonInterval = getExecutionInterval();
 
             final ExecutionSemester enrolmentSemester = enrolment.getExecutionPeriod();
-            if (specialSeasonSemester != enrolmentSemester) {
+            if (specialSeasonInterval != enrolmentSemester) {
                 throw new DomainException("error.EnrolmentEvaluation.special.season.semester.must.be",
                         enrolment.getPresentationName().getContent());
             }
@@ -170,7 +171,7 @@ abstract public class EnrolmentPredicateInitializer {
                 throw new DomainException("error.EvaluationSeason.extra.special.predicate.evaluation.failed");
             }
 
-            PREDICATE_SEASON.get().fill(getEvaluationSeason(), getExecutionSemester(), getContext()).test(enrolment);
+            PREDICATE_SEASON.get().fill(getEvaluationSeason(), getExecutionInterval(), getContext()).test(enrolment);
 
             final boolean isServices =
                     AcademicAuthorizationGroup.get(AcademicOperationType.STUDENT_ENROLMENTS).isMember(Authenticate.getUser());

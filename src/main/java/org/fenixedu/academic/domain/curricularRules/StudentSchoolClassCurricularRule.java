@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.ExecutionDegree;
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
@@ -92,8 +93,8 @@ public class StudentSchoolClassCurricularRule extends StudentSchoolClassCurricul
             if (label.length() > 0) {
                 label.append(", ");
             }
-            label.append(
-                    BundleUtil.getString(AcademicExtensionsUtil.BUNDLE, "label.StudentSchoolClassCurricularRule.enrolInShiftIfUnique"));
+            label.append(BundleUtil.getString(AcademicExtensionsUtil.BUNDLE,
+                    "label.StudentSchoolClassCurricularRule.enrolInShiftIfUnique"));
         }
         if (getAllAvailableShiftsMustBeEnrolled()) {
             if (label.length() > 0) {
@@ -106,8 +107,8 @@ public class StudentSchoolClassCurricularRule extends StudentSchoolClassCurricul
             if (label.length() > 0) {
                 label.append(", ");
             }
-            label.append(BundleUtil.getString(AcademicExtensionsUtil.BUNDLE, "label.StudentSchoolClassCurricularRule.schoolClassNames",
-                    getSchoolClassNames()));
+            label.append(BundleUtil.getString(AcademicExtensionsUtil.BUNDLE,
+                    "label.StudentSchoolClassCurricularRule.schoolClassNames", getSchoolClassNames()));
         }
 
         if (getContextCourseGroup() != null) {
@@ -120,12 +121,12 @@ public class StudentSchoolClassCurricularRule extends StudentSchoolClassCurricul
         return Lists.newArrayList(new GenericPair<Object, Boolean>(label, false));
     }
 
-    public Collection<SchoolClass> getSchoolClasses(final ExecutionSemester executionSemester) {
+    public Collection<SchoolClass> getSchoolClasses(final ExecutionInterval executionInterval) {
 
         if (StringUtils.isNotBlank(getSchoolClassNames())) {
 
             final ExecutionDegree executionDegree = getDegreeModuleToApplyRule().getParentDegreeCurricularPlan()
-                    .getExecutionDegreeByYear(executionSemester.getExecutionYear());
+                    .getExecutionDegreeByYear(executionInterval.getExecutionYear());
 
             if (executionDegree != null) {
                 final Collection<SchoolClass> result = new HashSet<>();
@@ -133,7 +134,7 @@ public class StudentSchoolClassCurricularRule extends StudentSchoolClassCurricul
                         getSchoolClassNames().trim().replace(';', '/').replace(',', '/').split("/");
                 for (final String schoolClassName : schoolClassNamesSplitted) {
                     result.addAll(executionDegree.getSchoolClassesSet().stream()
-                            .filter(sc -> sc.getExecutionPeriod() == executionSemester
+                            .filter(sc -> sc.getExecutionInterval() == executionInterval
                                     && schoolClassName.trim().equalsIgnoreCase((String) sc.getEditablePartOfName()))
                             .collect(Collectors.toSet()));
                 }

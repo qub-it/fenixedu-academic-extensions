@@ -2,6 +2,7 @@ package org.fenixedu.academic.domain.curricularRules.executors.ruleExecutors;
 
 import java.math.BigDecimal;
 
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.curricularRules.CreditsLimit;
 import org.fenixedu.academic.domain.curricularRules.CreditsLimitWithPreviousApprovals;
@@ -64,13 +65,13 @@ public class CreditsLimitWithPreviousApprovalsExecutor extends CurricularRuleExe
      */
     private Double calculateEctsCreditsFromToEnrolCurricularCourses(final EnrolmentContext enrolmentContext,
             final CurriculumModule parentCurriculumModule) {
-        final ExecutionSemester executionSemester = enrolmentContext.getExecutionPeriod();
+        final ExecutionInterval executionInterval = enrolmentContext.getExecutionPeriod();
 
         BigDecimal result = BigDecimal.ZERO;
         for (final IDegreeModuleToEvaluate degreeModuleToEvaluate : enrolmentContext.getDegreeModulesToEvaluate()) {
             if (degreeModuleToEvaluate.isEnroling()
                     && parentCurriculumModule.hasCurriculumModule(degreeModuleToEvaluate.getCurriculumGroup())) {
-                result = result.add(BigDecimal.valueOf(degreeModuleToEvaluate.getEctsCredits(executionSemester)));
+                result = result.add(BigDecimal.valueOf(degreeModuleToEvaluate.getEctsCredits(executionInterval)));
             }
         }
 

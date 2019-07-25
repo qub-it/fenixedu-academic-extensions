@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 
 import org.fenixedu.academic.FenixEduAcademicExtensionsConfiguration;
 import org.fenixedu.academic.domain.CurricularCourse;
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
 import org.fenixedu.academic.domain.curricularRules.CreditsLimitWithPreviousApprovals;
@@ -71,16 +72,16 @@ abstract public class CurricularRuleConfigurationInitializer {
 
                 @Override
                 public boolean isApproved(final EnrolmentContext enrolmentContext, final CurricularCourse curricularCourse,
-                        final ExecutionSemester executionSemester) {
+                        final ExecutionInterval executionInterval) {
 
                     final StudentCurricularPlan plan = enrolmentContext.getStudentCurricularPlan();
 
                     if (FenixEduAcademicExtensionsConfiguration.getConfiguration().getCurricularRulesApprovalsAwareOfCompetenceCourse()) {
 
-                        return CompetenceCourseServices.isCompetenceCourseApproved(plan, curricularCourse, executionSemester);
+                        return CompetenceCourseServices.isCompetenceCourseApproved(plan, curricularCourse, executionInterval);
 
                     } else {
-                        return plan.isApproved(curricularCourse, executionSemester);
+                        return plan.isApproved(curricularCourse, executionInterval);
                     }
                 }
             };
