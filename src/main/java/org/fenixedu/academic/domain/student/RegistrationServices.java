@@ -24,6 +24,7 @@ import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.EnrolmentEvaluation;
 import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionDegree;
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.IEnrolment;
@@ -339,8 +340,9 @@ public class RegistrationServices {
     }
 
     public static Optional<SchoolClass> getSchoolClassBy(final Registration registration,
-            final ExecutionSemester executionSemester) {
-        return registration.getSchoolClassesSet().stream().filter(sc -> sc.getExecutionPeriod() == executionSemester).findFirst();
+            final ExecutionInterval executionInterval) {
+        return registration.getSchoolClassesSet().stream().filter(sc -> sc.getExecutionInterval() == executionInterval)
+                .findFirst();
     }
 
     public static void replaceSchoolClass(final Registration registration, final SchoolClass schoolClass,

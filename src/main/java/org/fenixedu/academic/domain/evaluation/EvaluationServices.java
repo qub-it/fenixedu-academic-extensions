@@ -8,6 +8,7 @@ import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.Evaluation;
 import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.Shift;
 
@@ -57,7 +58,7 @@ abstract public class EvaluationServices {
     // EnrolmentCourseEvaluationFinder
 
     static public interface IEnrolmentCourseEvaluationFinder {
-        public Set<Evaluation> apply(final Enrolment enrolment, final EvaluationSeason season, final ExecutionSemester semester);
+        public Set<Evaluation> apply(final Enrolment enrolment, final EvaluationSeason season, final ExecutionInterval interval);
     }
 
     static private IEnrolmentCourseEvaluationFinder ENROLMENT_COURSE_EVALUATION_FINDER = null;
@@ -67,9 +68,9 @@ abstract public class EvaluationServices {
     }
 
     static public Set<Evaluation> findEnrolmentCourseEvaluations(final Enrolment enrolment, final EvaluationSeason season,
-            final ExecutionSemester semester) {
+            final ExecutionInterval interval) {
         return ENROLMENT_COURSE_EVALUATION_FINDER == null ? Sets.newHashSet() : ENROLMENT_COURSE_EVALUATION_FINDER
-                .apply(enrolment, season, semester);
+                .apply(enrolment, season, interval);
     }
 
     static public boolean isEnroledInAnyCourseEvaluation(final Enrolment enrolment, final EvaluationSeason season,

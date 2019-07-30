@@ -51,7 +51,7 @@ public class EnrolmentEvaluationServices extends org.fenixedu.academic.domain.ev
             if (result == null) {
                 result = EvaluationServices
                         .findEnrolmentCourseEvaluations(input.getEnrolment(), input.getEvaluationSeason(),
-                                input.getExecutionPeriod())
+                                input.getExecutionInterval())
                         .stream().filter(ev -> ev.getEvaluationDate() != null).map(ev -> new DateTime(ev.getEvaluationDate()))
                         .max((x, y) -> x.compareTo(y)).orElse(null);
             }

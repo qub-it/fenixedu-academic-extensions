@@ -155,8 +155,8 @@ abstract public class EnrolmentPredicateInitializer {
         public boolean test(final Enrolment enrolment) {
             final ExecutionInterval specialSeasonInterval = getExecutionInterval();
 
-            final ExecutionSemester enrolmentSemester = enrolment.getExecutionPeriod();
-            if (specialSeasonInterval != enrolmentSemester) {
+            final ExecutionInterval enrolmentInterval = enrolment.getExecutionInterval();
+            if (specialSeasonInterval != enrolmentInterval) {
                 throw new DomainException("error.EnrolmentEvaluation.special.season.semester.must.be",
                         enrolment.getPresentationName().getContent());
             }

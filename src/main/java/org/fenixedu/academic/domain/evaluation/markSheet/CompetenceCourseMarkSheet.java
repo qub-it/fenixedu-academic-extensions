@@ -995,7 +995,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
             final Degree degree = evaluation.getStudentCurricularPlan().getDegree();
             snapshot.addEntry(registration.getNumber(), registration.getName(), evaluation.getGrade(), degree.getCode(),
                     degree.getNameI18N(),
-                    EnrolmentServices.getShiftsDescription(evaluation.getEnrolment(), evaluation.getExecutionPeriod()));
+                    EnrolmentServices.getShiftsDescription(evaluation.getEnrolment(), evaluation.getExecutionInterval()));
         }
 
         snapshot.finalize();

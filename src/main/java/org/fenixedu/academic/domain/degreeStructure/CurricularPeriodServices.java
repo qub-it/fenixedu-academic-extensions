@@ -281,12 +281,12 @@ public class CurricularPeriodServices {
     static public int getCurricularSemester(final CurriculumLine curriculumLine) {
 
         if (curriculumLine.isEnrolment()) {
-            return curriculumLine.getExecutionPeriod().getSemester();
+            return curriculumLine.getExecutionInterval().getChildOrder();
         }
 
         final Collection<Context> contexts = CurriculumLineServices.getParentContexts(curriculumLine);
         return contexts.size() == 1 ? contexts.iterator().next().getCurricularPeriod().getChildOrder() : curriculumLine
-                .getExecutionPeriod().getSemester();
+                .getExecutionInterval().getChildOrder();
 
     }
 

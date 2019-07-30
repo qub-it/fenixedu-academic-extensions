@@ -1,7 +1,6 @@
 package org.fenixedu.academic.domain.student.services;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -19,46 +18,43 @@ public class StatuteServices {
             final ExecutionInterval executionInterval) {
 
         if (executionInterval instanceof ExecutionYear) {
-            return findStatuteTypes(registration, (ExecutionYear) executionInterval);
+            return findStatuteTypesByYear(registration, (ExecutionYear) executionInterval);
         }
 
-        if (executionInterval instanceof ExecutionSemester) {
-            return findStatuteTypes(registration, (ExecutionSemester) executionInterval);
-        }
-
-        return Collections.emptySet();
+        return findStatuteTypesByChildInterval(registration, (ExecutionSemester) executionInterval);
     }
 
-    static private Collection<StatuteType> findStatuteTypes(final Registration registration, final ExecutionYear executionYear) {
+    static private Collection<StatuteType> findStatuteTypesByYear(final Registration registration,
+            final ExecutionYear executionYear) {
 
         final Set<StatuteType> result = Sets.newHashSet();
         for (final ExecutionSemester executionSemester : executionYear.getExecutionPeriodsSet()) {
-            result.addAll(findStatuteTypes(registration, executionSemester));
+            result.addAll(findStatuteTypesByChildInterval(registration, executionSemester));
         }
 
         return result;
 
     }
 
-    static private Collection<StatuteType> findStatuteTypes(final Registration registration,
-            final ExecutionSemester executionSemester) {
+    static private Collection<StatuteType> findStatuteTypesByChildInterval(final Registration registration,
+            final ExecutionInterval executionInterval) {
 
         return registration.getStudent().getStudentStatutesSet().stream()
-                .filter(s -> s.isValidInExecutionPeriod(executionSemester)
+                .filter(s -> s.isValidInExecutionInterval(executionInterval)
                         && (s.getRegistration() == null || s.getRegistration() == registration))
                 .map(s -> s.getType()).collect(Collectors.toSet());
     }
 
     static public String getVisibleStatuteTypesDescription(final Registration registration,
-            final ExecutionSemester executionSemester) {
-        return findVisibleStatuteTypes(registration, executionSemester).stream().map(s -> s.getName().getContent()).distinct()
+            final ExecutionInterval executionInterval) {
+        return findVisibleStatuteTypes(registration, executionInterval).stream().map(s -> s.getName().getContent()).distinct()
                 .collect(Collectors.joining(", "));
 
     }
 
     static public Collection<StatuteType> findVisibleStatuteTypes(final Registration registration,
-            final ExecutionSemester executionSemester) {
-        return findStatuteTypes(registration, executionSemester).stream().filter(s -> s.getVisible()).collect(Collectors.toSet());
+            final ExecutionInterval executionInterval) {
+        return findStatuteTypes(registration, executionInterval).stream().filter(s -> s.getVisible()).collect(Collectors.toSet());
     }
 
 }

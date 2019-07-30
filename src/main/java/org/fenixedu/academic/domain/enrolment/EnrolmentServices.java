@@ -109,9 +109,9 @@ public class EnrolmentServices extends org.fenixedu.academic.domain.student.serv
         return result;
     }
 
-    static public ExecutionCourse getExecutionCourseUnique(final Enrolment enrolment, final ExecutionSemester semester) {
+    static public ExecutionCourse getExecutionCourseUnique(final Enrolment enrolment, final ExecutionInterval interval) {
         // first consider all executions
-        final Set<ExecutionCourse> all = getExecutionCourses(enrolment, semester);
+        final Set<ExecutionCourse> all = getExecutionCourses(enrolment, interval);
         if (all.size() == 1) {
             return all.iterator().next();
         }

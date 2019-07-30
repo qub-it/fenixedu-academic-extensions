@@ -17,7 +17,7 @@ import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.EnrolmentEvaluation;
 import org.fenixedu.academic.domain.ExecutionCourse;
-import org.fenixedu.academic.domain.ExecutionSemester;
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.Grade;
 import org.fenixedu.academic.domain.Person;
@@ -253,12 +253,12 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
             final String name = s.getType().getName().getContent();
 
             String dates = "";
-            final ExecutionSemester beginSem = s.getBeginExecutionPeriod();
-            if (beginSem != null) {
+            final ExecutionInterval beginInterval = s.getBeginExecutionInterval();
+            if (beginInterval != null) {
 
-                final ExecutionSemester endSem = s.getEndExecutionPeriod();
-                if (endSem == beginSem) {
-                    dates = "S" + beginSem.getSemester();
+                final ExecutionInterval endInterval = s.getEndExecutionInterval();
+                if (endInterval == beginInterval) {
+                    dates = "S" + beginInterval.getChildOrder();
                 }
 
             } else {

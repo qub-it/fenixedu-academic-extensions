@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 import org.fenixedu.academic.domain.Attends;
 import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.domain.Shift;
@@ -32,7 +33,7 @@ public class StudentScheduleListeners {
         @Override
         public void accept(DomainObjectEvent<Enrolment> event) {
             final Enrolment enrolment = event.getInstance();
-            final ExecutionSemester executionSemester = enrolment.getExecutionPeriod();
+            final ExecutionInterval executionSemester = enrolment.getExecutionInterval();
             final Attends attends = enrolment.getAttendsFor(executionSemester);
 
             if (attends == null) {

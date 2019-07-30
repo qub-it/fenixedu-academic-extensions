@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 import org.fenixedu.academic.domain.Enrolment;
-import org.fenixedu.academic.domain.ExecutionSemester;
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.Grade;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.curriculum.EnrollmentState;
@@ -27,17 +27,17 @@ public class EnrolmentServices {
         return finalGrade.isEmpty() ? EnrollmentState.ENROLLED : finalGrade.getEnrolmentState();
     }
 
-    static public Collection<Shift> getShiftsFor(final Enrolment enrolment, final ExecutionSemester executionSemester) {
-        return enrolment.getRegistration().getShiftsFor(enrolment.getExecutionCourseFor(executionSemester));
+    static public Collection<Shift> getShiftsFor(final Enrolment enrolment, final ExecutionInterval executionInterval) {
+        return enrolment.getRegistration().getShiftsFor(enrolment.getExecutionCourseFor(executionInterval));
     }
 
-    static public String getShiftsDescription(final Enrolment enrolment, final ExecutionSemester executionSemester) {
-        return getShiftsFor(enrolment, executionSemester).stream().map(s -> s.getNome()).collect(Collectors.joining(", "));
+    static public String getShiftsDescription(final Enrolment enrolment, final ExecutionInterval executionInterval) {
+        return getShiftsFor(enrolment, executionInterval).stream().map(s -> s.getNome()).collect(Collectors.joining(", "));
     }
 
-    static public boolean containsAnyShift(final Enrolment enrolment, final ExecutionSemester executionSemester,
+    static public boolean containsAnyShift(final Enrolment enrolment, final ExecutionInterval executionInterval,
             final Collection<Shift> shifts) {
-        return getShiftsFor(enrolment, executionSemester).stream().anyMatch(s -> shifts.contains(s));
+        return getShiftsFor(enrolment, executionInterval).stream().anyMatch(s -> shifts.contains(s));
     }
 
 }
