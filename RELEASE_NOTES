@@ -1,3 +1,5 @@
+- Refactor: Upgrade dependency of fenixedu-academic-core (changed domain relations from ExecutionSemester to ExecutionInterval)
+
 3.3.0 (29-07-2019)
 - Refactor: Upgrade dependency of fenixedu-academic-treasury and fenixedu-academic-core
 
