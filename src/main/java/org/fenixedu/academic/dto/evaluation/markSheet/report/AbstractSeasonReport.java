@@ -30,7 +30,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.fenixedu.academic.domain.EvaluationSeason;
-import org.fenixedu.academic.domain.ExecutionSemester;
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.Person;
 import org.joda.time.LocalDate;
 
@@ -85,11 +85,14 @@ public abstract class AbstractSeasonReport {
     abstract public Integer getEvaluatedStudents();
 
     abstract public Integer getMarksheetsTotal();
-    
+
     abstract public Integer getMarksheetsToConfirm();
 
     abstract public Collection<Person> getResponsibles();
 
-    abstract public ExecutionSemester getExecutionSemester();
+    @Deprecated
+    abstract public ExecutionInterval getExecutionSemester();
+
+    abstract public ExecutionInterval getExecutionInterval();
 
 }

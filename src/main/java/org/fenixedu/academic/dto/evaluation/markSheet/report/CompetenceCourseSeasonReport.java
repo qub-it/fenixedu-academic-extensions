@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 import org.fenixedu.academic.domain.CompetenceCourse;
 import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.academic.domain.ExecutionCourse;
-import org.fenixedu.academic.domain.ExecutionSemester;
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.Professorship;
 import org.joda.time.LocalDate;
@@ -44,7 +44,7 @@ public class CompetenceCourseSeasonReport extends AbstractSeasonReport {
 
     private CompetenceCourse competenceCourse;
 
-    private ExecutionSemester executionSemester;
+    private ExecutionInterval executionInterval;
 
     private Integer notEvaluatedStudents = 0;
 
@@ -55,10 +55,10 @@ public class CompetenceCourseSeasonReport extends AbstractSeasonReport {
     private Integer marksheetsToConfirm = 0;
 
     public CompetenceCourseSeasonReport(final CompetenceCourse competenceCourse, final EvaluationSeason season,
-            final ExecutionSemester executionSemester, final LocalDate evaluationDate) {
+            final ExecutionInterval executionInterval, final LocalDate evaluationDate) {
         super(season, evaluationDate);
         this.competenceCourse = competenceCourse;
-        this.executionSemester = executionSemester;
+        this.executionInterval = executionInterval;
     }
 
     public CompetenceCourse getCompetenceCourse() {
@@ -117,9 +117,15 @@ public class CompetenceCourseSeasonReport extends AbstractSeasonReport {
         this.marksheetsToConfirm = marksheetsToConfirm;
     }
 
+    @Deprecated
     @Override
-    public ExecutionSemester getExecutionSemester() {
-        return executionSemester;
+    public ExecutionInterval getExecutionSemester() {
+        return executionInterval;
+    }
+    
+    @Override
+    public ExecutionInterval getExecutionInterval() {
+        return executionInterval;
     }
 
     public String getExecutionCourses() {

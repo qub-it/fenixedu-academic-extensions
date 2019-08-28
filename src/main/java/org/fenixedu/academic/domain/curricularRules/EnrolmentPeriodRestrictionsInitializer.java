@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.curricularRules.executors.ruleExecutors.EnrolmentPeriodRestrictionsExecutorLogic;
@@ -60,7 +61,7 @@ public class EnrolmentPeriodRestrictionsInitializer {
 
         if (rules.isEmpty()) {
 
-            new EnrolmentPeriodRestrictions(root, getBeginExecutionSemester(input, root));
+            new EnrolmentPeriodRestrictions(root, getBeginExecutionInterval(input, root));
             logger.info("Created {} for DCP {}", EnrolmentPeriodRestrictions.class.getSimpleName(), input.getPresentationName());
 
         } else if (rules.size() > 1) {
@@ -71,11 +72,11 @@ public class EnrolmentPeriodRestrictionsInitializer {
         }
     }
 
-    static private ExecutionSemester getBeginExecutionSemester(final DegreeCurricularPlan dcp, final RootCourseGroup root) {
+    static private ExecutionInterval getBeginExecutionInterval(final DegreeCurricularPlan dcp, final RootCourseGroup root) {
         final Optional<Context> first = root.getChildContextsSet().stream()
                 .sorted((o1, o2) -> o1.getBeginExecutionPeriod().compareTo(o2.getBeginExecutionPeriod())).findFirst();
 
-        final ExecutionSemester result =
+        final ExecutionInterval result =
                 first.isPresent() ? first.get().getBeginExecutionPeriod() : ExecutionSemester.readFirstExecutionSemester();
         return result;
     }
