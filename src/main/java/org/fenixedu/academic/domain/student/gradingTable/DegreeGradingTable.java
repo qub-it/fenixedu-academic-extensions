@@ -27,7 +27,7 @@ import pt.ist.fenixframework.CallableWithoutException;
 
 public class DegreeGradingTable extends DegreeGradingTable_Base {
 
-    //TODO: Remove this workaround.
+    // TODO: Remove this workaround.
     // When generating tables with more than one curricular plan of the same
     // degree, it will generate more than one table for the same degree.
     public static class DataTuple {
@@ -194,6 +194,7 @@ public class DegreeGradingTable extends DegreeGradingTable_Base {
         }
     }
 
+    // TODO fix logic like CourseGradingTable
     private List<BigDecimal> harvestSample() {
         List<BigDecimal> sample = new ArrayList<>();
         int coveredYears = 0;

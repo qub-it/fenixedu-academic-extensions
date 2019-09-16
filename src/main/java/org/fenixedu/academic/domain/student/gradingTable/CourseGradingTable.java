@@ -1,14 +1,20 @@
 package org.fenixedu.academic.domain.student.gradingTable;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.io.FileUtils;
 import org.fenixedu.academic.domain.CompetenceCourse;
 import org.fenixedu.academic.domain.CurricularCourse;
 import org.fenixedu.academic.domain.Enrolment;
@@ -106,6 +112,7 @@ public class CourseGradingTable extends CourseGradingTable_Base {
             if (cc.hasActiveScopesInExecutionYear(executionYear)) {
                 CourseGradingTable table = CourseGradingTable.find(executionYear, cc);
                 if (table == null) {
+
                     CallableWithoutException<CourseGradingTable> workerLogic =
                             new CallableWithoutException<CourseGradingTable>() {
                                 @Override
@@ -114,6 +121,7 @@ public class CourseGradingTable extends CourseGradingTable_Base {
                                     table.setExecutionYear(executionYear);
                                     table.setCompetenceCourse(cc);
                                     table.compileData();
+
                                     return table;
                                 }
                             };
@@ -137,14 +145,30 @@ public class CourseGradingTable extends CourseGradingTable_Base {
     public void compileData() {
         GradingTableData tableData = new GradingTableData();
         setData(tableData);
-        List<BigDecimal> sample = harvestSample();
-        if (sample != null) {
-            GradingTableGenerator.generateTableData(this, sample);
-        } else {
-            GradingTableGenerator.defaultData(this);
-            setCopied(true);
+        List<Enrolment> harvestEnrolmentsUsedInSample = harvestEnrolmentsUsedInSample();
+
+        // harvestEnrolmentsUsedInSample will be the empty list if requirements weren't met.
+        List<BigDecimal> sample = harvestEnrolmentsUsedInSample.stream().map(e -> e.getGrade()).filter(e -> isNumeric(e))
+                .map(e -> e.getNumericValue().setScale(0, RoundingMode.HALF_UP)).collect(Collectors.toList());
+
+        final String harvestEnrolmentsUsedInSampleData = harvestEnrolmentsUsedInSample.stream().map(e -> enrolmentStringData(e))
+                .reduce((a, c) -> a + "\n" + c).orElseGet(() -> "");
+        setStudentSampleData(harvestEnrolmentsUsedInSampleData);
+
+        // TODO remove before commit
+        try {
+            FileUtils.write(new File(String.format("/home/developer/shared_folder/harvestEnrolmentsUsedInSample-%s.csv",
+                    getCompetenceCourse().getCode())), harvestEnrolmentsUsedInSampleData, "UTF-8", false);
+        } catch (IOException e1) {
+            throw new RuntimeException(e1);
         }
 
+        if (sample.isEmpty()) { // Using the default table
+            GradingTableGenerator.defaultData(this);
+            setCopied(true);
+        } else {
+            GradingTableGenerator.generateTableDataImprovement(this, sample);
+        }
         checkUniquenessOfTable();
     }
 
@@ -155,48 +179,6 @@ public class CourseGradingTable extends CourseGradingTable_Base {
                     getExecutionYear().getQualifiedName(),
                     getCompetenceCourse().getCode() + " - " + getCompetenceCourse().getName());
         }
-    }
-
-    private List<BigDecimal> harvestSample() {
-        List<BigDecimal> sample = new ArrayList<>();
-        int coveredYears = 0;
-        boolean sampleOK = false;
-        for (ExecutionYear year = getExecutionYear().getPreviousExecutionYear(); year != null; year =
-                year.getPreviousExecutionYear()) {
-            for (final CurricularCourse curricularCourse : getCompetenceCourse().getAssociatedCurricularCoursesSet()) {
-                if (!GradingTableSettings.getApplicableDegreeTypes().contains(curricularCourse.getDegreeType())) {
-                    continue;
-                }
-                List<Enrolment> enrolmentsByExecutionYear = curricularCourse.getEnrolmentsByExecutionYear(year);
-                for (Enrolment enrolment : enrolmentsByExecutionYear) {
-                    if (!enrolment.isApproved()) {
-                        continue;
-                    }
-
-                    if (!GradeScale.TYPE20.equals(enrolment.getGrade().getGradeScale())) {
-                        continue;
-                    }
-
-                    Integer finalGrade = isNumeric(enrolment.getGrade()) ? enrolment.getGrade().getNumericValue()
-                            .setScale(0, RoundingMode.HALF_UP).intValue() : 0;
-                    if (finalGrade == 0) {
-                        continue;
-                    }
-                    sample.add(new BigDecimal(finalGrade));
-                }
-            }
-
-            if (++coveredYears >= GradingTableSettings.getMinimumPastYears()
-                    && sample.size() >= GradingTableSettings.getMinimumSampleSize()) {
-                sampleOK = true;
-                break;
-            }
-
-            if (coveredYears == GradingTableSettings.getMaximumPastYears()) {
-                break;
-            }
-        }
-        return sampleOK ? sample : null;
     }
 
     private boolean isNumeric(final Grade grade) {
@@ -213,4 +195,61 @@ public class CourseGradingTable extends CourseGradingTable_Base {
             return false;
         }
     }
+
+    private String enrolmentStringData(Enrolment e) {
+        Integer studentNumber = e.getStudent().getNumber();
+        String studentName = e.getStudent().getName();
+        String competenceCourseCode = e.getCurricularCourse().getCompetenceCourse().getCode();
+        String executionYearName = e.getExecutionYear().getQualifiedName();
+        Integer finalGrade =
+                isNumeric(e.getGrade()) ? e.getGrade().getNumericValue().setScale(0, RoundingMode.HALF_UP).intValue() : 0;
+
+        return String.format("%s\t%s\t%s\t%s\t%s", studentNumber, studentName, competenceCourseCode, executionYearName,
+                finalGrade);
+    }
+
+    private List<Enrolment> harvestEnrolmentsUsedInSample() {
+        List<Enrolment> sample = new ArrayList<>();
+        int coveredYears = 0;
+        boolean sampleReady = false;
+        ExecutionYear samplingYear = getExecutionYear()
+                .getPrevious() instanceof ExecutionYear ? ((ExecutionYear) getExecutionYear().getPrevious()) : null;
+
+        while (samplingYear != null) {
+            for (final CurricularCourse curricularCourse : getCompetenceCourse().getAssociatedCurricularCoursesSet()) {
+                if (!GradingTableSettings.getApplicableDegreeTypes().contains(curricularCourse.getDegreeType())) {
+                    continue;
+                }
+                List<Enrolment> enrolmentsByExecutionYear = curricularCourse.getEnrolmentsByExecutionYear(samplingYear);
+                for (Enrolment enrolment : enrolmentsByExecutionYear) {
+
+                    if (!enrolment.isApproved()) {
+                        continue;
+                    }
+
+                    if (!GradeScale.TYPE20.equals(enrolment.getGrade().getGradeScale())) {
+                        continue;
+                    }
+                    sample.add(enrolment);
+                }
+            }
+            coveredYears++; // A full year has been covered
+
+            // A sample is OK if we covered:
+            // 1. More than the minimum number of years
+            // 2. Got enough entries
+            // 3. Didn't exceed the maximum years (3-5)
+            sampleReady = coveredYears >= GradingTableSettings.getMinimumPastYears()
+                    && sample.size() >= GradingTableSettings.getMinimumSampleSize()
+                    && coveredYears <= GradingTableSettings.getMaximumPastYears();
+
+            // Updates the year for the next iteration
+            // If the maximum number of years has been met or the sample is ready, sets the year to null and stops the cycle.
+            samplingYear = !(coveredYears >= GradingTableSettings.getMaximumPastYears()) && !sampleReady
+                    && samplingYear.getPrevious() instanceof ExecutionYear ? ((ExecutionYear) samplingYear.getPrevious()) : null;
+        }
+        // This now returns an empty list when unable to collect a sample.
+        return sampleReady ? sample : Collections.emptyList();
+    }
+
 }
