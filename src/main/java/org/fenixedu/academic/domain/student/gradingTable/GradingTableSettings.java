@@ -3,6 +3,7 @@ package org.fenixedu.academic.domain.student.gradingTable;
 import java.util.Set;
 
 import org.fenixedu.academic.domain.degree.DegreeType;
+import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.bennu.core.domain.Bennu;
 
 import pt.ist.fenixframework.Atomic;
@@ -23,6 +24,24 @@ public class GradingTableSettings extends GradingTableSettings_Base {
         setMinSampleSize(minSampleSize);
         setMinPastYears(minPastYears);
         setMaxPastYears(maxPastYears);
+
+        checkRules();
+    }
+
+    private void checkRules() {
+
+        if (getMinSampleSize() == null) {
+            throw new AcademicExtensionsDomainException("error.GradingTableSettings.minSampleSize.required");
+        }
+
+        if (getMinPastYears() == null) {
+            throw new AcademicExtensionsDomainException("error.GradingTableSettings.minPastYears.required");
+        }
+
+        if (getMaxPastYears() == null) {
+            throw new AcademicExtensionsDomainException("error.GradingTableSettings.maxPastYears.required");
+        }
+
     }
 
     @Atomic
@@ -35,15 +54,15 @@ public class GradingTableSettings extends GradingTableSettings_Base {
     }
 
     public static int getMinimumSampleSize() {
-        return getInstance().getMinSampleSize() != null ? getInstance().getMinSampleSize() : MIN_SAMPLE_SIZE;
+        return getInstance().getMinSampleSize();
     }
 
     public static int getMinimumPastYears() {
-        return getInstance().getMinPastYears() != null ? getInstance().getMinPastYears() : MIN_PAST_YEARS;
+        return getInstance().getMinPastYears();
     }
 
     public static int getMaximumPastYears() {
-        return getInstance().getMaxPastYears() != null ? getInstance().getMaxPastYears() : MAX_PAST_YEARS;
+        return getInstance().getMaxPastYears();
     }
 
     public static Set<DegreeType> getApplicableDegreeTypes() {
