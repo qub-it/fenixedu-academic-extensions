@@ -710,7 +710,7 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         return getRegistration().getSchoolClassesSet().stream()
                 .filter(sc -> sc.getExecutionPeriod().getExecutionYear() == getExecutionYear())
                 .sorted(Comparator.comparing(SchoolClass::getExecutionPeriod))
-                .map(sc -> String.format("%s (S%d)", sc.getName(), sc.getExecutionPeriod().getSemester()))
+                .map(sc -> String.format("%s (S%d)", sc.getName(), sc.getExecutionPeriod().getChildOrder()))
                 .collect(Collectors.joining("; "));
     }
 

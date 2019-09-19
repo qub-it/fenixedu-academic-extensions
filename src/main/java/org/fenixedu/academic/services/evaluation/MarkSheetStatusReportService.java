@@ -99,26 +99,26 @@ abstract public class MarkSheetStatusReportService {
         return result;
     }
 
-    static private List<CompetenceCourseSeasonReport> iterateCompetenceCourses(final ExecutionSemester semester,
+    static private List<CompetenceCourseSeasonReport> iterateCompetenceCourses(final ExecutionInterval interval,
             final Set<CompetenceCourse> toProcess, final Set<EvaluationSeason> seasons) {
 
         final List<CompetenceCourseSeasonReport> result = Lists.newArrayList();
 
         for (final CompetenceCourse iter : toProcess) {
-            result.addAll(getReportsForCompetenceCourse(semester, iter, seasons));
+            result.addAll(getReportsForCompetenceCourse(interval, iter, seasons));
         }
 
         return result;
     }
 
-    static public List<CompetenceCourseSeasonReport> getReportsForCompetenceCourse(final ExecutionSemester semester,
+    static public List<CompetenceCourseSeasonReport> getReportsForCompetenceCourse(final ExecutionInterval interval,
             final CompetenceCourse toProcess, final Set<EvaluationSeason> seasons) {
 
         final List<CompetenceCourseSeasonReport> result = Lists.newArrayList();
 
         for (final EvaluationSeason season : seasons) {
 
-            addNonEmptyReport(result, generateReport(semester, toProcess, season, (LocalDate) null));
+            addNonEmptyReport(result, generateReport(interval, toProcess, season, (LocalDate) null));
         }
 
         return result;
@@ -132,25 +132,25 @@ abstract public class MarkSheetStatusReportService {
         }
     }
 
-    static private CompetenceCourseSeasonReport generateReport(final ExecutionSemester semester, final CompetenceCourse toProcess,
+    static private CompetenceCourseSeasonReport generateReport(final ExecutionInterval interval, final CompetenceCourse toProcess,
             final EvaluationSeason season, final LocalDate evaluationDate) {
 
-        final CompetenceCourseSeasonReport result = new CompetenceCourseSeasonReport(toProcess, season, semester, evaluationDate);
+        final CompetenceCourseSeasonReport result = new CompetenceCourseSeasonReport(toProcess, season, interval, evaluationDate);
 
         // setNotEvaluatedStudents
         final AtomicInteger notEvaluatedStudents = new AtomicInteger(0);
-        toProcess.getExecutionCoursesByExecutionPeriod(semester).stream()
+        toProcess.getExecutionCoursesByExecutionPeriod(interval).stream()
                 .forEach(i -> notEvaluatedStudents
-                        .addAndGet(CompetenceCourseMarkSheet.getExecutionCourseEnrolmentsNotInAnyMarkSheet(semester, toProcess, i,
+                        .addAndGet(CompetenceCourseMarkSheet.getExecutionCourseEnrolmentsNotInAnyMarkSheet(interval, toProcess, i,
                                 season, (LocalDate) null, Sets.newHashSet()).size()));
         result.setNotEvaluatedStudents(notEvaluatedStudents.get());
 
         final Set<Enrolment> enrolments = Sets.newHashSet();
         toProcess.getAssociatedCurricularCoursesSet().stream()
-                .forEach(i -> enrolments.addAll(i.getEnrolmentsByAcademicInterval(semester.getAcademicInterval())));
+                .forEach(i -> enrolments.addAll(i.getEnrolmentsByAcademicInterval(interval.getAcademicInterval())));
 
         // improvement of evaluations approved in previous years
-        for (final EnrolmentEvaluation evaluation : semester.getEnrolmentEvaluationsSet()) {
+        for (final EnrolmentEvaluation evaluation : interval.getEnrolmentEvaluationsSet()) {
             if (evaluation.getEvaluationSeason() == season
                     && evaluation.getEnrolment().getCurricularCourse().getCompetenceCourse() == toProcess) {
                 enrolments.add(evaluation.getEnrolment());
@@ -161,7 +161,7 @@ abstract public class MarkSheetStatusReportService {
         int evaluatedStudents = 0;
         for (final Enrolment enrolment : enrolments) {
 
-            final Optional<EnrolmentEvaluation> evaluation = enrolment.getEnrolmentEvaluation(season, semester, (Boolean) null);
+            final Optional<EnrolmentEvaluation> evaluation = enrolment.getEnrolmentEvaluation(season, interval, (Boolean) null);
             if (evaluation.isPresent() && evaluation.get().getCompetenceCourseMarkSheet() != null) {
                 evaluatedStudents = evaluatedStudents + 1;
             }
@@ -169,7 +169,7 @@ abstract public class MarkSheetStatusReportService {
         result.setEvaluatedStudents(evaluatedStudents);
 
         // setMarksheetsTotal
-        final Supplier<Stream<CompetenceCourseMarkSheet>> supplier = () -> CompetenceCourseMarkSheet.findBy(semester, toProcess,
+        final Supplier<Stream<CompetenceCourseMarkSheet>> supplier = () -> CompetenceCourseMarkSheet.findBy(interval, toProcess,
                 (ExecutionCourse) null, season, (DateTime) null, (Set<Shift>) null, (CompetenceCourseMarkSheetStateEnum) null,
                 (CompetenceCourseMarkSheetChangeRequestStateEnum) null);
         final long markSheetsTotal = supplier.get().count();

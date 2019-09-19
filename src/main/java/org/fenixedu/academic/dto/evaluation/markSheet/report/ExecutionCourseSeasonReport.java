@@ -32,7 +32,7 @@ import java.util.List;
 
 import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.academic.domain.ExecutionCourse;
-import org.fenixedu.academic.domain.ExecutionSemester;
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.Professorship;
 import org.joda.time.LocalDate;
@@ -107,9 +107,15 @@ public class ExecutionCourseSeasonReport extends AbstractSeasonReport {
         return result;
     }
 
+    @Deprecated
     @Override
-    public ExecutionSemester getExecutionSemester() {
+    public ExecutionInterval getExecutionSemester() {
         return getExecutionCourse().getExecutionPeriod();
+    }
+
+    @Override
+    public ExecutionInterval getExecutionInterval() {
+        return getExecutionCourse().getExecutionInterval();
     }
 
     public ExecutionCourse getExecutionCourse() {

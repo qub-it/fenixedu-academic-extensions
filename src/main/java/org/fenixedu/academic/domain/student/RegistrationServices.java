@@ -346,14 +346,14 @@ public class RegistrationServices {
     }
 
     public static void replaceSchoolClass(final Registration registration, final SchoolClass schoolClass,
-            final ExecutionSemester executionSemester) {
-        replaceSchoolClass(registration, schoolClass, executionSemester, true);
+            final ExecutionInterval executionInterval) {
+        replaceSchoolClass(registration, schoolClass, executionInterval, true);
     }
 
     public static void replaceSchoolClass(final Registration registration, final SchoolClass schoolClass,
-            final ExecutionSemester executionSemester, final boolean enrolInOnlyOneShift) {
+            final ExecutionInterval executionInterval, final boolean enrolInOnlyOneShift) {
 
-        final Optional<SchoolClass> currentSchoolClass = getSchoolClassBy(registration, executionSemester);
+        final Optional<SchoolClass> currentSchoolClass = getSchoolClassBy(registration, executionInterval);
         if (currentSchoolClass.isPresent()) {
             currentSchoolClass.get().getAssociatedShiftsSet().forEach(s -> s.removeStudents(registration));
             registration.getSchoolClassesSet().remove(currentSchoolClass.get());
@@ -361,7 +361,7 @@ public class RegistrationServices {
 
         if (schoolClass != null) {
             final List<ExecutionCourse> attendingExecutionCourses =
-                    registration.getAttendingExecutionCoursesFor(executionSemester);
+                    registration.getAttendingExecutionCoursesFor(executionInterval);
             enrolInSchoolClassExecutionCoursesShifts(registration, schoolClass, attendingExecutionCourses, enrolInOnlyOneShift);
             registration.getSchoolClassesSet().add(schoolClass);
         }

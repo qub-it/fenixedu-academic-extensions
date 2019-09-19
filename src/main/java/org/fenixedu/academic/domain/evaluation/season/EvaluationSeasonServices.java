@@ -37,6 +37,7 @@ import java.util.stream.Stream;
 import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.EnrolmentEvaluation;
 import org.fenixedu.academic.domain.EvaluationSeason;
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.Grade;
 import org.fenixedu.academic.domain.Person;
@@ -246,7 +247,7 @@ abstract public class EvaluationSeasonServices {
     }
 
     static public boolean isBlockingTreasuryEventInDebt(final EvaluationSeason season, final Enrolment enrolment,
-            final ExecutionSemester semester) {
+            final ExecutionInterval interval) {
 
         if (enrolment != null && !EvaluationSeasonRule.find(season, BlockingTreasuryEventInDebt.class).isEmpty()) {
 
@@ -260,11 +261,11 @@ abstract public class EvaluationSeasonServices {
 
             if (season.isImprovement()) {
                 final EnrolmentEvaluation evaluation =
-                        enrolment.getEnrolmentEvaluation(season, semester, (Boolean) null).orElse(null);
+                        enrolment.getEnrolmentEvaluation(season, interval, (Boolean) null).orElse(null);
 
                 if (evaluation != null) {
                     final IImprovementTreasuryEvent event = TreasuryBridgeAPIFactory.implementation()
-                            .getImprovementTaxTreasuryEvent(registration, semester.getExecutionYear());
+                            .getImprovementTaxTreasuryEvent(registration, interval.getExecutionYear());
 
                     if (event != null && event.isInDebt(evaluation)) {
                         return true;
@@ -277,7 +278,7 @@ abstract public class EvaluationSeasonServices {
     }
 
     static public boolean hasStudentStatuteBlocking(final EvaluationSeason season, final Enrolment enrolment,
-            final ExecutionSemester semester) {
+            final ExecutionInterval interval) {
 
         if (enrolment != null) {
 
