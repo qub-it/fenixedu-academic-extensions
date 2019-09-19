@@ -133,7 +133,7 @@ public class CurriculumModuleServices {
             return BigDecimal.ZERO;
         }
 
-        if (!toInspect.isEnroled() && !toInspect.isNotEvaluated() && !toInspect.isFlunked()) {
+        if (!toInspect.isEnroled() && !toInspect.isFlunked()) {
             return BigDecimal.ZERO;
         }
 

@@ -239,7 +239,7 @@ public class CurricularPeriodServices {
 
             final DegreeModule degreeModule = iter.getDegreeModule();
             if (applyToOptionals != null) {
-                final boolean isOptionalByGroup = iter.getCurriculumGroup().getDegreeModule().isOptionalCourseGroup();
+                final boolean isOptionalByGroup = iter.getCurriculumGroup().getDegreeModule().getIsOptional();
                 if ((applyToOptionals && !isOptionalByGroup) || (!applyToOptionals && isOptionalByGroup)) {
                     continue;
                 }

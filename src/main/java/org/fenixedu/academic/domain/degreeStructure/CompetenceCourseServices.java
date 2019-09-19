@@ -81,7 +81,7 @@ abstract public class CompetenceCourseServices {
         final Registration registration = plan.getRegistration();
         final CompetenceCourse competence = curricularCourse.getCompetenceCourse();
 
-        final Predicate<Enrolment> validEnrolment = (e) -> e.isActive() && e.getExecutionYear().isBeforeOrEquals(executionYear);
+        final Predicate<Enrolment> validEnrolment = (e) -> !e.isAnnulled() && e.getExecutionYear().isBeforeOrEquals(executionYear);
 
         // optional curricular course
         if (competence == null) {

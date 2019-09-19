@@ -20,7 +20,6 @@ import org.fenixedu.academic.domain.degreeStructure.CourseGroup;
 import org.fenixedu.academic.domain.studentCurriculum.Credits;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumGroup;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumLine;
-import org.fenixedu.academic.domain.studentCurriculum.CycleCurriculumGroup;
 import org.fenixedu.academic.domain.studentCurriculum.Dismissal;
 import org.fenixedu.academic.domain.studentCurriculum.Equivalence;
 import org.fenixedu.academic.domain.studentCurriculum.Substitution;
@@ -55,7 +54,7 @@ abstract public class CurriculumLineServices {
     static public boolean isOptionalByGroup(final CurriculumLine line) {
         final CurriculumGroup group = line == null ? null : line.getCurriculumGroup();
         final CourseGroup groupModule = group == null ? null : group.getDegreeModule();
-        return groupModule == null ? false : groupModule.isOptionalCourseGroup();
+        return groupModule == null ? false : groupModule.getIsOptional();
     }
 
     static public void setRemarks(final CurriculumLine curriculumLine, final String remarks) {
@@ -300,11 +299,12 @@ abstract public class CurriculumLineServices {
         return studentCurricularPlan.getCreditsSet().stream().anyMatch(c -> c.getIEnrolments().contains(entry));
     }
 
-    //TODO: move method to trunk
+    /**
+     * @deprecated use CurriculumLine.isAffinity
+     */
+    @Deprecated
     static public boolean isAffinity(final CurriculumLine line) {
-        final CycleCurriculumGroup cycleCurriculumGroup = line.getParentCycleCurriculumGroup();
-
-        return cycleCurriculumGroup != null && cycleCurriculumGroup.isExternal();
+        return line.isAffinity();
     }
 
     static public boolean isEvaluated(final CurriculumLine line) {
@@ -322,10 +322,12 @@ abstract public class CurriculumLineServices {
         return false;
     }
 
+    /**
+     * @deprecated use CurriculumLine.isNormal
+     */
+    @Deprecated
     static public boolean isNormal(final CurriculumLine line) {
-        return (line.getCurriculumGroup().isInternalCreditsSourceGroup()
-                || !line.getCurriculumGroup().isNoCourseGroupCurriculumGroup()) && !isAffinity(line);
-
+        return line.isNormal();
     }
 
 }

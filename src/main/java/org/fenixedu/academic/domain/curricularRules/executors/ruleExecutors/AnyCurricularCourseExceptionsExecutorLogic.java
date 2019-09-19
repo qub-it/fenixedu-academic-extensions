@@ -123,7 +123,7 @@ public class AnyCurricularCourseExceptionsExecutorLogic extends AbstractCurricul
 
     static private boolean hasOneOptionalParentCourseGroup(final CurricularCourse curricularCourseToEnrol) {
         for (final Context context : curricularCourseToEnrol.getParentContextsSet()) {
-            if (context.getParentCourseGroup().isOptionalCourseGroup()) {
+            if (context.getParentCourseGroup().getIsOptional()) {
                 return true;
             }
         }

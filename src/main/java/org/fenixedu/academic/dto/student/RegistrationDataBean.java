@@ -153,6 +153,7 @@ public class RegistrationDataBean implements Serializable {
         return this.enrolmentsCount;
     }
 
+    @Deprecated
     public Double getCreditsConcluded() {
         if (this.creditsConcluded == null) {
 
