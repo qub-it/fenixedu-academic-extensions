@@ -155,14 +155,6 @@ public class CourseGradingTable extends CourseGradingTable_Base {
                 .reduce((a, c) -> a + "\n" + c).orElseGet(() -> "");
         setStudentSampleData(harvestEnrolmentsUsedInSampleData);
 
-        // TODO remove before commit
-        try {
-            FileUtils.write(new File(String.format("/home/developer/shared_folder/harvestEnrolmentsUsedInSample-%s.csv",
-                    getCompetenceCourse().getCode())), harvestEnrolmentsUsedInSampleData, "UTF-8", false);
-        } catch (IOException e1) {
-            throw new RuntimeException(e1);
-        }
-
         if (sample.isEmpty()) { // Using the default table
             GradingTableGenerator.defaultData(this);
             setCopied(true);

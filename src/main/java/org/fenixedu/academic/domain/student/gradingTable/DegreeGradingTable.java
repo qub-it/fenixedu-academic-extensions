@@ -1,8 +1,11 @@
 package org.fenixedu.academic.domain.student.gradingTable;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -11,6 +14,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.io.FileUtils;
 import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.ExecutionYear;
@@ -174,9 +178,20 @@ public class DegreeGradingTable extends DegreeGradingTable_Base {
     public void compileData() {
         GradingTableData tableData = new GradingTableData();
         setData(tableData);
-        List<BigDecimal> sample = harvestSample();
-        if (sample != null) {
-            GradingTableGenerator.generateTableData(this, sample);
+        List<RegistrationConclusionBean> harvestRegistrationConclusionBeansUsedInSample = harvestRegistrationConclusionBeansUsedInSample();
+        
+        List<BigDecimal> sample = harvestRegistrationConclusionBeansUsedInSample.stream().map(r -> r.getFinalGrade())
+                .filter(e -> isNumeric(e))
+                .map(e -> e.getNumericValue().setScale(0, RoundingMode.HALF_UP))
+                .collect(Collectors.toList());
+
+        final String harvestRegistrationConclusionBeansUsedInSampleData = harvestRegistrationConclusionBeansUsedInSample.stream()
+                .map(r -> conclusionBeanStringData(r))
+                .reduce((a, c) -> a + "\n" + c).orElseGet(() -> "");
+        setStudentSampleData(harvestRegistrationConclusionBeansUsedInSampleData);
+
+        if (!sample.isEmpty()) {
+            GradingTableGenerator.generateTableDataImprovement(this, sample);
         } else {
             InstitutionGradingTable.copyData(this);
             setCopied(true);
@@ -185,6 +200,39 @@ public class DegreeGradingTable extends DegreeGradingTable_Base {
         checkUniquenessOfTable();
     }
 
+    private String conclusionBeanStringData(RegistrationConclusionBean bean) {
+        Integer studentNumber = bean.getRegistration().getNumber();
+        String studentName = bean.getRegistration().getStudent().getName();
+        String degreeCode = bean.getRegistration().getDegree().getCode();
+        String programConclusionCode = bean.getProgramConclusion().getCode();
+        String executionYearName = bean.getConclusionYear().getQualifiedName();
+        Integer finalGrade =
+                isNumeric(bean.getFinalGrade()) ? bean.getFinalGrade().getNumericValue().setScale(0, RoundingMode.HALF_UP).intValue() : 0;
+
+        return String.format("%s\t%s\t%s\t%s\t%s\t%s", studentNumber, studentName, degreeCode, 
+                programConclusionCode, executionYearName, finalGrade);
+    }
+    
+    private boolean isNumeric(final Grade grade) {
+        if (grade == null) {
+            return false;
+        }
+        
+        if(!grade.isNumeric()) {
+            return false;
+        }
+        
+        try {
+            Double.parseDouble(grade.getValue());
+            if (grade.getNumericValue() != null) {
+                return true;
+            }
+            return false;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+    
     private void checkUniquenessOfTable() {
         if (DegreeGradingTable.find(getExecutionYear()).stream()
                 .anyMatch(t -> t != this && t.getDegree() == getDegree() && t.getProgramConclusion() == getProgramConclusion())) {
@@ -194,9 +242,10 @@ public class DegreeGradingTable extends DegreeGradingTable_Base {
         }
     }
 
-    // TODO fix logic like CourseGradingTable
-    private List<BigDecimal> harvestSample() {
-        List<BigDecimal> sample = new ArrayList<>();
+    private List<RegistrationConclusionBean> harvestRegistrationConclusionBeansUsedInSample() {
+        final List<RegistrationConclusionBean> sample = new ArrayList<>();
+        
+        
         int coveredYears = 0;
         boolean sampleOK = false;
         final Map<ExecutionYear, Set<RegistrationConclusionBean>> conclusionsMap = collectConclusions();
@@ -211,7 +260,7 @@ public class DegreeGradingTable extends DegreeGradingTable_Base {
                     if (finalAverage == 0) {
                         continue;
                     }
-                    sample.add(new BigDecimal(finalAverage));
+                    sample.add(bean);
                 }
             }
 
@@ -225,9 +274,10 @@ public class DegreeGradingTable extends DegreeGradingTable_Base {
                 break;
             }
         }
-        return sampleOK ? sample : null;
-    }
 
+        return sampleOK ? sample : Collections.emptyList();
+    }
+    
     private Map<ExecutionYear, Set<RegistrationConclusionBean>> collectConclusions() {
         final Map<ExecutionYear, Set<RegistrationConclusionBean>> conclusionsMap = new LinkedHashMap<>();
 
