@@ -1,3 +1,4 @@
+3.7.0 (27-09-2019)
 - Bug Fix: Rewrite of ECTS Comparability Table scale conversion algorithm
 - Refactor: Improved DynamicFields API 
 
