@@ -812,7 +812,7 @@ class dml.DynamicField {
 } 
 
     relation DynamicFieldsDescriptors {
-        dml.DynamicField playsRole instance { multiplicity *; }
+        dml.DynamicField playsRole fields { multiplicity *; }
         dml.DynamicFieldDescriptor playsRole descriptor { multiplicity 1..1; }
     }    
 	

@@ -1,4 +1,5 @@
 - Bug Fix: Rewrite of ECTS Comparability Table scale conversion algorithm
+- Refactor: Improved DynamicFields API 
 
 3.6.0 (20-09-2019)
 - Refactor: Upgrade dependency of fenixedu-academic-core (changed domain relations from ExecutionSemester to ExecutionInterval)

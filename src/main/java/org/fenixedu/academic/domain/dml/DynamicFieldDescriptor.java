@@ -66,7 +66,7 @@ public class DynamicFieldDescriptor extends DynamicFieldDescriptor_Base {
             throw new IllegalArgumentException("error.DynamicFieldDescriptor.fieldValueClass.unsupported");
         }
 
-        if (getRequired() && getInstanceSet().stream().anyMatch(i -> Strings.isNullOrEmpty(i.getValue()))) {
+        if (getRequired() && getFieldsSet().stream().anyMatch(i -> Strings.isNullOrEmpty(i.getValue()))) {
             throw new IllegalArgumentException("error.DynamicFieldDescriptor.value.inconsistent");
         }
     }
@@ -181,7 +181,7 @@ public class DynamicFieldDescriptor extends DynamicFieldDescriptor_Base {
     }
 
     protected void setField(final DomainObject domainObject, final DynamicField field) {
-        if (isFor(domainObject) && getInstanceSet().contains(field)) {
+        if (isFor(domainObject) && getFieldsSet().contains(field)) {
 
             try {
                 final Method method = domainObject.getClass().getMethod(DOMAIN_OBJECT_METHOD_NAME_ADD, DynamicField.class);
@@ -205,7 +205,7 @@ public class DynamicFieldDescriptor extends DynamicFieldDescriptor_Base {
     }
 
     public void delete() {
-        if (!getInstanceSet().isEmpty()) {
+        if (!getFieldsSet().isEmpty()) {
             throw new IllegalArgumentException("error.DynamicFieldDescriptor.cannot.delete.with.field.instances");
         }
 
