@@ -1,5 +1,6 @@
 - Refactor: changed MobilityRegistrationInformation domain relations from ExecutionSemester to ExecutionInterval
 - Refactor: changed EvaluationSeasonPeriod domain relations from ExecutionSemester to ExecutionInterval
+- Refactor: changed CompetenceCourseMarkSheet domain relations from ExecutionSemester to ExecutionInterval
 
 3.7.0 (27-09-2019)
 - Bug Fix: Rewrite of ECTS Comparability Table scale conversion algorithm

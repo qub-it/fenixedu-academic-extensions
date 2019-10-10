@@ -74,8 +74,8 @@ abstract public class EvaluationServices {
     }
 
     static public boolean isEnroledInAnyCourseEvaluation(final Enrolment enrolment, final EvaluationSeason season,
-            final ExecutionSemester semester) {
-        return !findEnrolmentCourseEvaluations(enrolment, season, semester).isEmpty();
+            final ExecutionInterval interval) {
+        return !findEnrolmentCourseEvaluations(enrolment, season, interval).isEmpty();
     }
 
     static public boolean isEnroledInCourseEvaluation(final Enrolment enrolment, final EvaluationSeason season,
