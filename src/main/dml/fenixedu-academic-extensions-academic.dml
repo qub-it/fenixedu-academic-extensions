@@ -525,22 +525,22 @@ class student.mobility.MobilityRegistrationInformation {
 		}
 	}
 	
-	relation MobilityRegistrationInformationBeginExecutionSemester {
+	relation MobilityRegistrationInformationBeginExecutionInterval {
 		
 		student.mobility.MobilityRegistrationInformation playsRole {
 			multiplicity *;
 		}
 		
-		.org.fenixedu.academic.domain.ExecutionSemester playsRole begin;
+		.org.fenixedu.academic.domain.ExecutionInterval playsRole begin;
 	}
 	
-	relation MobilityRegistrationInformationEndExecutionSemester {
+	relation MobilityRegistrationInformationEndExecutionInterval {
 		
 		student.mobility.MobilityRegistrationInformation playsRole mobilityRegistrationInformations {
 			multiplicity *;
 		}
 	
-		.org.fenixedu.academic.domain.ExecutionSemester playsRole end;
+		.org.fenixedu.academic.domain.ExecutionInterval playsRole end;
 	}
 	
 	relation MobilityRegistrationInformationForeignInstitutionUnit {

@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import org.fenixedu.academic.domain.Country;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.DomainObjectUtil;
-import org.fenixedu.academic.domain.ExecutionSemester;
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.SchoolPeriodDuration;
 import org.fenixedu.academic.domain.degreeStructure.CourseGroup;
@@ -65,7 +65,7 @@ public class MobilityRegistrationInformation extends MobilityRegistrationInforma
     }
 
     public static MobilityRegistrationInformation createOutgoing(final Registration registration, boolean national,
-            SchoolPeriodDuration programDuration, ExecutionSemester begin, ExecutionSemester end, LocalDate beginDate,
+            SchoolPeriodDuration programDuration, ExecutionInterval begin, ExecutionInterval end, LocalDate beginDate,
             LocalDate endDate, MobilityActivityType mobilityActivityType, MobilityProgramType mobilityProgramType,
             CountryUnit countryUnit, Unit foreignInstitutionUnit, String remarks) {
 
@@ -77,7 +77,7 @@ public class MobilityRegistrationInformation extends MobilityRegistrationInforma
     }
 
     public static MobilityRegistrationInformation createIncoming(final Registration registration, boolean national,
-            SchoolPeriodDuration programDuration, ExecutionSemester begin, ExecutionSemester end, LocalDate beginDate,
+            SchoolPeriodDuration programDuration, ExecutionInterval begin, ExecutionInterval end, LocalDate beginDate,
             LocalDate endDate, MobilityActivityType mobilityActivityType, MobilityProgramType mobilityProgramType,
             CountryUnit countryUnit, Unit foreignInstitutionUnit, String remarks,
             MobilityProgrammeLevel originMobilityProgrammeLevel, String otherOriginMobilityProgrammeLevel, boolean degreeBased,
@@ -94,8 +94,8 @@ public class MobilityRegistrationInformation extends MobilityRegistrationInforma
         return result;
     }
 
-    public void editOutgoing(boolean national, SchoolPeriodDuration programDuration, ExecutionSemester begin,
-            ExecutionSemester end, LocalDate beginDate, LocalDate endDate, MobilityActivityType mobilityActivityType,
+    public void editOutgoing(boolean national, SchoolPeriodDuration programDuration, ExecutionInterval begin,
+            ExecutionInterval end, LocalDate beginDate, LocalDate endDate, MobilityActivityType mobilityActivityType,
             MobilityProgramType mobilityProgramType, CountryUnit countryUnit, Unit foreignInstitutionUnit, String remarks) {
 
         setIncoming(false);
@@ -115,8 +115,8 @@ public class MobilityRegistrationInformation extends MobilityRegistrationInforma
         checkRulesForOutgoing();
     }
 
-    public void editIncoming(boolean national, SchoolPeriodDuration programDuration, ExecutionSemester begin,
-            ExecutionSemester end, LocalDate beginDate, LocalDate endDate, MobilityActivityType mobilityActivityType,
+    public void editIncoming(boolean national, SchoolPeriodDuration programDuration, ExecutionInterval begin,
+            ExecutionInterval end, LocalDate beginDate, LocalDate endDate, MobilityActivityType mobilityActivityType,
             MobilityProgramType mobilityProgramType, CountryUnit countryUnit, Unit foreignInstitutionUnit, String remarks,
             MobilityProgrammeLevel originMobilityProgrammeLevel, String otherOriginMobilityProgrammeLevel, boolean degreeBased,
             DegreeCurricularPlan degreeCurricularPlan, CourseGroup branchCourseGroup,
