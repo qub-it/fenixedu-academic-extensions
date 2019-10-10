@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.academic.domain.ExecutionDegree;
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.OccupationPeriod;
@@ -131,7 +132,7 @@ public class EvaluationSeasonPeriod extends EvaluationSeasonPeriod_Base
      * only be duplicated if the EvaluationSeason is different
      */
     private void checkDuplicates() {
-        for (final EvaluationSeasonPeriod iter : findBy(getExecutionSemester(), getPeriodType())) {
+        for (final EvaluationSeasonPeriod iter : findBy(getExecutionInterval(), getPeriodType())) {
             if (iter != this && iter.getSeason() == getSeason()) {
 
                 if (iter.getOccupationPeriod().isEqualTo(getOccupationPeriod())) {
@@ -188,7 +189,7 @@ public class EvaluationSeasonPeriod extends EvaluationSeasonPeriod_Base
     public void delete() {
         super.setExecutionSemester(null);
         super.setSeason(null);
-        
+
         getExecutionDegreesSet().clear();
 
         final OccupationPeriod occupationPeriod = getOccupationPeriod();
@@ -213,13 +214,13 @@ public class EvaluationSeasonPeriod extends EvaluationSeasonPeriod_Base
         return result;
     }
 
-    static public Set<EvaluationSeasonPeriod> findBy(final ExecutionSemester semester,
+    static public Set<EvaluationSeasonPeriod> findBy(final ExecutionInterval interval,
             final EvaluationSeasonPeriodType periodType) {
 
         final Set<EvaluationSeasonPeriod> result = Sets.<EvaluationSeasonPeriod> newHashSet();
-        if (semester != null && periodType != null) {
+        if (interval != null && periodType != null) {
 
-            for (final EvaluationSeasonPeriod period : semester.getEvaluationSeasonPeriodSet()) {
+            for (final EvaluationSeasonPeriod period : interval.getEvaluationSeasonPeriodSet()) {
 
                 if (period.getPeriodType() == periodType) {
                     result.add(period);
@@ -240,7 +241,17 @@ public class EvaluationSeasonPeriod extends EvaluationSeasonPeriod_Base
     }
 
     private ExecutionYear getExecutionYear() {
-        return getExecutionSemester().getExecutionYear();
+        return getExecutionInterval().getExecutionYear();
+    }
+
+    @Deprecated
+    @Override
+    public ExecutionInterval getExecutionSemester() {
+        return super.getExecutionSemester();
+    }
+
+    public ExecutionInterval getExecutionInterval() {
+        return super.getExecutionSemester();
     }
 
     static public String getIntervalsDescription(final Set<EvaluationSeasonPeriod> input) {

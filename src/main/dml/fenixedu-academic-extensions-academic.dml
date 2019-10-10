@@ -83,12 +83,12 @@ relation EvaluationSeasonOccupationPeriod {
     }
 }
 
-relation EvaluationSeasonPeriodExecutionSemester {
+relation EvaluationSeasonPeriodExecutionInterval {
     evaluation.season.EvaluationSeasonPeriod playsRole evaluationSeasonPeriod {
         multiplicity *;
     }
 
-    .org.fenixedu.academic.domain.ExecutionSemester playsRole executionSemester {
+    .org.fenixedu.academic.domain.ExecutionInterval playsRole executionSemester {
         multiplicity 1;
     }
 }

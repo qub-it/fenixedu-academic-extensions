@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import org.fenixedu.academic.domain.CurricularYearList;
 import org.fenixedu.academic.domain.ExecutionDegree;
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.OccupationPeriod;
@@ -58,7 +59,7 @@ abstract public class OccupationPeriodServices {
 
         public OccupationPeriod getOccupationPeriod();
 
-        public ExecutionSemester getExecutionSemester();
+        public ExecutionInterval getExecutionSemester();
 
         public Function<OccupationPeriod, OccupationPeriod> setOccupationPeriod();
 
@@ -118,7 +119,7 @@ abstract public class OccupationPeriodServices {
         OccupationPeriodReference result = null;
 
         if (degree != null && periodType != null) {
-            final int semester = partner.getExecutionSemester().getSemester();
+            final int semester = partner.getExecutionSemester().getChildOrder();
 
             result = new OccupationPeriodReference(partner.getOccupationPeriod(), degree, periodType, semester,
                     ALL_CURRICULAR_YEARS);
