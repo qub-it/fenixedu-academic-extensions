@@ -864,6 +864,12 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         final Person person = getPerson();
         return person == null ? null : person.getDefaultMobilePhoneNumber();
     }
+    
+    public String getEmergencyContact() {
+        final Person person = getPerson();
+        return Optional.ofNullable(person).map(p -> p.getProfile()).map(up -> up.getEmergencyContact()).map(ec -> ec.getContact())
+                .orElse(null);
+    }    
 
     public boolean hasDefaultPhysicalAddress() {
         final Person person = getPerson();
