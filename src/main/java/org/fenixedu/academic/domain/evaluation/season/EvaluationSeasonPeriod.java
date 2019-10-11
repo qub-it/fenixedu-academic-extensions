@@ -52,12 +52,12 @@ public class EvaluationSeasonPeriod extends EvaluationSeasonPeriod_Base
     }
 
     @Atomic
-    static public EvaluationSeasonPeriod create(final ExecutionSemester executionSemester,
+    static public EvaluationSeasonPeriod create(final ExecutionInterval executionInterval,
             final EvaluationSeasonPeriodType periodType, final EvaluationSeason evaluationSeason,
             final Set<DegreeType> degreeTypes, final LocalDate start, final LocalDate end) {
 
         final EvaluationSeasonPeriod result = new EvaluationSeasonPeriod();
-        result.setExecutionSemester(executionSemester);
+        result.setExecutionSemester(executionInterval);
         result.setSeason(evaluationSeason);
         result.setPeriodType(periodType);
         result.addInterval(start, end);
