@@ -5,12 +5,11 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.EnrolmentType;
-import org.fenixedu.academic.domain.ExecutionSemester;
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
 import org.fenixedu.academic.domain.candidacy.IngressionType;
@@ -40,7 +39,7 @@ public class AcademicEnrolmentPeriod extends AcademicEnrolmentPeriod_Base {
             final Integer minStudentNumber, final Integer maxStudentNumber, final Integer curricularYear,
             final Boolean schoolClassSelectionMandatory, final AcademicEnrolmentPeriodType enrolmentPeriodType,
             final Boolean allowEnrolWithDebts, final AutomaticEnrolment automaticEnrolment,
-            final ExecutionSemester executionSemester) {
+            final ExecutionInterval executionInterval) {
         this();
         setStartDate(startDate);
         setEndDate(endDate);
@@ -54,7 +53,7 @@ public class AcademicEnrolmentPeriod extends AcademicEnrolmentPeriod_Base {
         setEnrolmentPeriodType(enrolmentPeriodType);
         setAllowEnrolWithDebts(allowEnrolWithDebts);
         setAutomaticEnrolment(automaticEnrolment);
-        setExecutionSemester(executionSemester);
+        setExecutionSemester(executionInterval);
 
         checkRules();
     }
@@ -73,7 +72,7 @@ public class AcademicEnrolmentPeriod extends AcademicEnrolmentPeriod_Base {
             throw new AcademicExtensionsDomainException("error.AcademicEnrolmentPeriod.enrolmentPeriodType.required");
         }
 
-        if (getExecutionSemester() == null) {
+        if (getExecutionInterval() == null) {
             throw new AcademicExtensionsDomainException("error.AcademicEnrolmentPeriod.executionSemester.required");
         }
 
@@ -93,7 +92,7 @@ public class AcademicEnrolmentPeriod extends AcademicEnrolmentPeriod_Base {
             final Integer minStudentNumber, final Integer maxStudentNumber, final Integer curricularYear,
             final Boolean schoolClassSelectionMandatory, final AcademicEnrolmentPeriodType enrolmentPeriodType,
             final AutomaticEnrolment automaticEnrolment, final Boolean allowEnrolWithDebts,
-            final ExecutionSemester executionSemester) {
+            final ExecutionInterval executionInterval) {
         setStartDate(startDate);
         setEndDate(endDate);
         setFirstTimeRegistration(firstTimeRegistration);
@@ -106,7 +105,7 @@ public class AcademicEnrolmentPeriod extends AcademicEnrolmentPeriod_Base {
         setEnrolmentPeriodType(enrolmentPeriodType);
         setAutomaticEnrolment(automaticEnrolment);
         setAllowEnrolWithDebts(allowEnrolWithDebts);
-        setExecutionSemester(executionSemester);
+        setExecutionSemester(executionInterval);
 
         checkRules();
     }
@@ -117,7 +116,7 @@ public class AcademicEnrolmentPeriod extends AcademicEnrolmentPeriod_Base {
     }
 
     @Atomic
-    public void delete() {       
+    public void delete() {
         AcademicExtensionsDomainException.throwWhenDeleteBlocked(getDeletionBlockers());
 
         setBennu(null);
@@ -144,10 +143,10 @@ public class AcademicEnrolmentPeriod extends AcademicEnrolmentPeriod_Base {
             final Boolean restrictToSelectedIngressionTypes, final Integer minStudentNumber, final Integer maxStudentNumber,
             final Integer curricularYear, final Boolean schoolClassSelectionMandatory,
             final AcademicEnrolmentPeriodType enrolmentPeriodType, final Boolean allowEnrolWithDebts,
-            final AutomaticEnrolment automaticEnrolment, final ExecutionSemester executionSemester) {
+            final AutomaticEnrolment automaticEnrolment, final ExecutionInterval executionInterval) {
         AcademicEnrolmentPeriod period = new AcademicEnrolmentPeriod(startDate, endDate, firstTimeRegistration,
                 restrictToSelectedStatutes, restrictToSelectedIngressionTypes, minStudentNumber, maxStudentNumber, curricularYear,
-                schoolClassSelectionMandatory, enrolmentPeriodType, allowEnrolWithDebts, automaticEnrolment, executionSemester);
+                schoolClassSelectionMandatory, enrolmentPeriodType, allowEnrolWithDebts, automaticEnrolment, executionInterval);
 
         return period;
     }
@@ -157,8 +156,18 @@ public class AcademicEnrolmentPeriod extends AcademicEnrolmentPeriod_Base {
         return super.getSchoolClassSelectionMandatory() != null && super.getSchoolClassSelectionMandatory();
     }
 
+    @Deprecated
+    @Override
+    public ExecutionInterval getExecutionSemester() {
+        return super.getExecutionSemester();
+    }
+
+    public ExecutionInterval getExecutionInterval() {
+        return super.getExecutionSemester();
+    }
+
     public ExecutionYear getExecutionYear() {
-        return getExecutionSemester().getExecutionYear();
+        return getExecutionInterval().getExecutionYear();
     }
 
     public boolean isForCurricularCourses() {
@@ -194,7 +203,7 @@ public class AcademicEnrolmentPeriod extends AcademicEnrolmentPeriod_Base {
     }
 
     private boolean isValidRegistration(final Registration input, final boolean skipRegistrationState) {
-        return skipRegistrationState || input.hasActiveLastState(getExecutionSemester());
+        return skipRegistrationState || input.hasActiveLastState(getExecutionInterval());
     }
 
     private boolean isValidStudentNumber(final Registration input) {
@@ -311,7 +320,7 @@ public class AcademicEnrolmentPeriod extends AcademicEnrolmentPeriod_Base {
             return false;
         }
 
-        final Set<StatuteType> studentStatutes = Sets.newHashSet(StatuteServices.findStatuteTypes(input, getExecutionSemester()));
+        final Set<StatuteType> studentStatutes = Sets.newHashSet(StatuteServices.findStatuteTypes(input, getExecutionInterval()));
         if (!isValidStatuteTypes(studentStatutes)) {
             return false;
         }

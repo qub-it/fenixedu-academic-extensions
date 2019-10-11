@@ -304,34 +304,34 @@ public class RegistrationServices {
 
     public static final String FULL_SCHOOL_CLASS_EXCEPTION_MSG = "label.schoolClassStudentEnrollment.fullSchoolClass";
 
-    private static BiFunction<Registration, ExecutionSemester, Collection<SchoolClass>> initialSchoolClassesService =
+    private static BiFunction<Registration, ExecutionInterval, Collection<SchoolClass>> initialSchoolClassesService =
             defaultInitialSchoolClassesService();
 
     public static Set<SchoolClass> getSchoolClassesToEnrolBy(final Registration registration,
-            final DegreeCurricularPlan degreeCurricularPlan, final ExecutionSemester executionSemester) {
+            final DegreeCurricularPlan degreeCurricularPlan, final ExecutionInterval executionInterval) {
 
         return registration.getAssociatedAttendsSet().stream()
-                .filter(attends -> attends.getExecutionPeriod() == executionSemester)
+                .filter(attends -> attends.getExecutionInterval() == executionInterval)
                 .flatMap(attends -> attends.getExecutionCourse().getSchoolClassesBy(degreeCurricularPlan).stream())
                 .collect(Collectors.toSet());
     }
 
     public static void registerInitialSchoolClassesService(
-            final BiFunction<Registration, ExecutionSemester, Collection<SchoolClass>> service) {
+            final BiFunction<Registration, ExecutionInterval, Collection<SchoolClass>> service) {
         initialSchoolClassesService = service;
     }
 
     public static Collection<SchoolClass> getInitialSchoolClassesToEnrolBy(final Registration registration,
-            final ExecutionSemester executionSemester) {
-        return initialSchoolClassesService.apply(registration, executionSemester);
+            final ExecutionInterval executionInterval) {
+        return initialSchoolClassesService.apply(registration, executionInterval);
     }
 
-    private static BiFunction<Registration, ExecutionSemester, Collection<SchoolClass>> defaultInitialSchoolClassesService() {
-        return (r, es) -> {
+    private static BiFunction<Registration, ExecutionInterval, Collection<SchoolClass>> defaultInitialSchoolClassesService() {
+        return (r, ei) -> {
             final ExecutionDegree executionDegree =
-                    r.getActiveDegreeCurricularPlan().getExecutionDegreeByYear(es.getExecutionYear());
+                    r.getActiveDegreeCurricularPlan().getExecutionDegreeByYear(ei.getExecutionYear());
             if (executionDegree != null) {
-                int curricularYear = getCurricularYear(r, es.getExecutionYear()).getResult();
+                int curricularYear = getCurricularYear(r, ei.getExecutionYear()).getResult();
                 return executionDegree.getSchoolClassesSet().stream().filter(sc -> sc.getCurricularYear().equals(curricularYear))
                         .collect(Collectors.toSet());
             }

@@ -1206,12 +1206,12 @@ relation AcademicEnrolmentPeriodBennu {
     }
 }
 
-relation AcademicEnrolmentPeriodExecutionSemester {
+relation AcademicEnrolmentPeriodExecutionInterval {
     public enrolment.period.AcademicEnrolmentPeriod playsRole academicEnrolmentPeriods {
         multiplicity *;
     }
 
-    public .org.fenixedu.academic.domain.ExecutionSemester playsRole executionSemester {
+    public .org.fenixedu.academic.domain.ExecutionInterval playsRole executionSemester {
         multiplicity 1..1;
     }    
 }
