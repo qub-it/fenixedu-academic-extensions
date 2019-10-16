@@ -10,17 +10,18 @@ import pt.ist.fenixframework.Atomic;
 
 public class GradingTableSettings extends GradingTableSettings_Base {
 
-    private static Integer MIN_SAMPLE_SIZE = 30;
-    private static Integer MIN_PAST_YEARS = 3;
-    private static Integer MAX_PAST_YEARS = 5;
+    private static final Integer DEFAULT_MIN_SAMPLE_SIZE = 30;
+    private static final Integer DEFAULT_MIN_PAST_YEARS = 3;
+    private static final Integer DEFAULT_MAX_PAST_YEARS = 5;
 
     private GradingTableSettings() {
         super();
         setBennu(Bennu.getInstance());
     }
 
-    private GradingTableSettings(Integer minSampleSize, int minPastYears, int maxPastYears) {
+    private GradingTableSettings(Integer minSampleSize, Integer minPastYears, Integer maxPastYears) {
         this();
+
         setMinSampleSize(minSampleSize);
         setMinPastYears(minPastYears);
         setMaxPastYears(maxPastYears);
@@ -42,27 +43,30 @@ public class GradingTableSettings extends GradingTableSettings_Base {
             throw new AcademicExtensionsDomainException("error.GradingTableSettings.maxPastYears.required");
         }
 
+        if (getMaxPastYears().compareTo(getMinPastYears()) < 0) {
+            throw new AcademicExtensionsDomainException("error.GradingTableSettings.maxPastYears.invalid");
+        }
     }
 
     @Atomic
     public static GradingTableSettings getInstance() {
         GradingTableSettings settings = Bennu.getInstance().getGradingTableSettings();
         if (settings == null) {
-            settings = new GradingTableSettings(MIN_SAMPLE_SIZE, MIN_PAST_YEARS, MAX_PAST_YEARS);
+            settings = new GradingTableSettings(DEFAULT_MIN_SAMPLE_SIZE, DEFAULT_MIN_PAST_YEARS, DEFAULT_MAX_PAST_YEARS);
         }
         return settings;
     }
 
     public static int getMinimumSampleSize() {
-        return getInstance().getMinSampleSize();
+        return getInstance().getMinSampleSize() == null ? DEFAULT_MIN_SAMPLE_SIZE : getInstance().getMinSampleSize();
     }
 
     public static int getMinimumPastYears() {
-        return getInstance().getMinPastYears();
+        return getInstance().getMinPastYears() == null ? DEFAULT_MIN_PAST_YEARS : getInstance().getMinPastYears();
     }
 
     public static int getMaximumPastYears() {
-        return getInstance().getMaxPastYears();
+        return getInstance().getMaxPastYears() == null ? DEFAULT_MAX_PAST_YEARS : getInstance().getMaxPastYears();
     }
 
     public static Set<DegreeType> getApplicableDegreeTypes() {
