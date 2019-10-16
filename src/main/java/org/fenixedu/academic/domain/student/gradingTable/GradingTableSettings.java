@@ -42,6 +42,10 @@ public class GradingTableSettings extends GradingTableSettings_Base {
         if (getMaxPastYears() == null) {
             throw new AcademicExtensionsDomainException("error.GradingTableSettings.maxPastYears.required");
         }
+
+        if (getMaxPastYears().compareTo(getMinPastYears()) < 0) {
+            throw new AcademicExtensionsDomainException("error.GradingTableSettings.maxPastYears.invalid");
+        }
     }
 
     @Atomic
