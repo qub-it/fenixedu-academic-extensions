@@ -43,6 +43,10 @@ public class GradingTableSettings extends GradingTableSettings_Base {
             throw new AcademicExtensionsDomainException("error.GradingTableSettings.maxPastYears.required");
         }
 
+        if (getMinSampleSize().compareTo(DEFAULT_MIN_SAMPLE_SIZE) < 0) {
+            throw new AcademicExtensionsDomainException("error.GradingTableSettings.minSampleSize.invalid");
+        }
+
         if (getMaxPastYears().compareTo(getMinPastYears()) < 0) {
             throw new AcademicExtensionsDomainException("error.GradingTableSettings.maxPastYears.invalid");
         }
@@ -67,6 +71,13 @@ public class GradingTableSettings extends GradingTableSettings_Base {
 
     public static int getMaximumPastYears() {
         return getInstance().getMaxPastYears() == null ? DEFAULT_MAX_PAST_YEARS : getInstance().getMaxPastYears();
+    }
+
+    public void edit(Integer minSampleSize, Integer minPastYears, Integer maxPastYears) {
+        setMinSampleSize(minSampleSize);
+        setMinPastYears(minPastYears);
+        setMaxPastYears(maxPastYears);
+        checkRules();
     }
 
     public static Set<DegreeType> getApplicableDegreeTypes() {
