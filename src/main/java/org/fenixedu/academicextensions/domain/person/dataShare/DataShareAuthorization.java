@@ -103,7 +103,7 @@ public class DataShareAuthorization extends DataShareAuthorization_Base {
             // Parent authorization may not exist if the user has not yet answered the parent authorization
             // but only childs
             if (!anyChildStillAllowed.isPresent() && parentAuthorization != null) {
-                parentAuthorization.superSetAllow(false);
+                parentAuthorization.superSetAllow(Boolean.FALSE);
             }
         }
         for (DataShareAuthorizationType childType : getType().getDataShareAuthorizationTypeChildrenSet()) {

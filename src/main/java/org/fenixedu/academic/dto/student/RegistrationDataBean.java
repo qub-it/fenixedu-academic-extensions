@@ -81,7 +81,7 @@ public class RegistrationDataBean implements Serializable {
     }
 
     public boolean isReingression() {
-        return getData() == null ? null : getData().getReingression();
+        return getData() == null ? false : getData().getReingression();
     }
 
     public StudentCurricularPlan getStudentCurricularPlan() {
