@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.academic.domain.student.gradingTable.GradingTableData.GradeConversion;
+import org.fenixedu.bennu.core.domain.Bennu;
 
 import pt.ist.fenixframework.CallableWithoutException;
 import pt.ist.fenixframework.FenixFramework;

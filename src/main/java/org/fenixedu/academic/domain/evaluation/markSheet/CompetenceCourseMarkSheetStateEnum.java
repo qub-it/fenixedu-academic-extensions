@@ -27,8 +27,8 @@
 
 package org.fenixedu.academic.domain.evaluation.markSheet;
 
-import org.fenixedu.commons.i18n.LocalizedString;
 import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
+import org.fenixedu.commons.i18n.LocalizedString;
 
 public enum CompetenceCourseMarkSheetStateEnum {
 

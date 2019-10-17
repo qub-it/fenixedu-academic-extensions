@@ -13,10 +13,10 @@ import org.fenixedu.academic.domain.StudentCurricularPlan;
 import org.fenixedu.academic.domain.degreeStructure.ProgramConclusion;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.RegistrationServices;
+import org.fenixedu.academic.domain.student.curriculum.CurriculumModuleServices;
 import org.fenixedu.academic.domain.student.curriculum.ProgramConclusionProcess;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumGroup;
 import org.fenixedu.academic.dto.student.RegistrationConclusionBean;
-import org.fenixedu.academic.domain.student.curriculum.CurriculumModuleServices;
 import org.joda.time.YearMonthDay;
 
 import com.google.common.collect.ArrayListMultimap;

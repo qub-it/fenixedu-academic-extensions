@@ -5,11 +5,11 @@ import java.util.function.Predicate;
 
 import org.fenixedu.academic.domain.curricularRules.curricularPeriod.CurricularPeriodConfiguration;
 import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
+import org.fenixedu.academic.domain.degreeStructure.CurricularPeriodServices;
 import org.fenixedu.academic.domain.student.curriculum.Curriculum;
 import org.fenixedu.academic.domain.student.curriculum.ICurriculumEntry;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumLine;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
-import org.fenixedu.academic.domain.degreeStructure.CurricularPeriodServices;
 
 import pt.ist.fenixframework.Atomic;
 

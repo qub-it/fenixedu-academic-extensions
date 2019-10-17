@@ -28,8 +28,8 @@
 package org.fenixedu.academic.domain.evaluation.season.rule;
 
 import org.fenixedu.academic.domain.EvaluationSeason;
-import org.fenixedu.commons.i18n.LocalizedString;
 import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
+import org.fenixedu.commons.i18n.LocalizedString;
 
 import pt.ist.fenixframework.Atomic;
 

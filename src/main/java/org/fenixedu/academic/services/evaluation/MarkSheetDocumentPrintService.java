@@ -4,6 +4,11 @@ import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.fenixedu.academic.domain.evaluation.config.CompetenceCourseMarkSheetTemplateFile;
+import org.fenixedu.academic.domain.evaluation.config.MarkSheetSettings;
+import org.fenixedu.academic.domain.evaluation.markSheet.CompetenceCourseMarkSheet;
+import org.fenixedu.academic.domain.evaluation.markSheet.CompetenceCourseMarkSheetSnapshot;
+import org.fenixedu.academic.domain.evaluation.markSheet.CompetenceCourseMarkSheetSnapshotEntry;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.qubdocs.util.reports.helpers.DateHelper;
 import org.fenixedu.qubdocs.util.reports.helpers.EnumerationHelper;
@@ -11,11 +16,6 @@ import org.fenixedu.qubdocs.util.reports.helpers.LanguageHelper;
 import org.fenixedu.qubdocs.util.reports.helpers.MoneyHelper;
 import org.fenixedu.qubdocs.util.reports.helpers.NumbersHelper;
 import org.fenixedu.qubdocs.util.reports.helpers.StringsHelper;
-import org.fenixedu.academic.domain.evaluation.config.CompetenceCourseMarkSheetTemplateFile;
-import org.fenixedu.academic.domain.evaluation.config.MarkSheetSettings;
-import org.fenixedu.academic.domain.evaluation.markSheet.CompetenceCourseMarkSheet;
-import org.fenixedu.academic.domain.evaluation.markSheet.CompetenceCourseMarkSheetSnapshot;
-import org.fenixedu.academic.domain.evaluation.markSheet.CompetenceCourseMarkSheetSnapshotEntry;
 import org.joda.time.DateTime;
 
 import com.qubit.terra.docs.core.DocumentGenerator;

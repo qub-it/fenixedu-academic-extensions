@@ -6,7 +6,6 @@ import org.fenixedu.academic.domain.CurricularCourse;
 import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.studentCurriculum.Dismissal;
 import org.fenixedu.academic.domain.studentCurriculum.EctsAndWeightProviderRegistry;
-import org.fenixedu.academic.domain.student.curriculum.CurriculumLineServices;
 
 public class EctsAndWeightProviders {
 
