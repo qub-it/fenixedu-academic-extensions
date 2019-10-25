@@ -40,19 +40,19 @@ public class DynamicFieldValueConverter {
 
     }
 
-    static public Set<Class> getSupportedTypes() {
+    public static Set<Class> getSupportedTypes() {
         return SERIALIZERS.keySet();
     }
 
-    static public boolean isSupported(final Class input) {
+    public static boolean isSupported(final Class input) {
         return getSupportedTypes().contains(input);
     }
 
-    static public String serialize(Class type, Object value) {
+    public static String serialize(Class type, Object value) {
         return SERIALIZERS.get(type).apply(value);
     }
 
-    static public <T> Object deserialize(Class<T> type, String value) {
+    public static <T> Object deserialize(Class<T> type, String value) {
         return DESERIALIZERS.get(type).apply(value);
     }
 

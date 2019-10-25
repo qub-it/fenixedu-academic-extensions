@@ -1,3 +1,6 @@
+- Improvement: added methods to change order in DynamicFieldDescriptor
+- Bug Fix: added missing messages
+
 4.0.2 (17-10-2019)
 - Refactor: improving the EECC table settings
 
