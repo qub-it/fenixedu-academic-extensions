@@ -1,3 +1,4 @@
+4.1.0 (25-10-2019)
 - Improvement: added methods to change order in DynamicFieldDescriptor
 - Bug Fix: added missing messages
 
