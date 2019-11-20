@@ -38,9 +38,9 @@ import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.EnrolmentEvaluation;
 import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.academic.domain.Grade;
-import org.fenixedu.academic.domain.GradeScaleEnum;
 import org.fenixedu.academic.domain.accessControl.AcademicAuthorizationGroup;
 import org.fenixedu.academic.domain.accessControl.academicAdministration.AcademicOperationType;
+import org.fenixedu.academic.domain.curriculum.grade.GradeScale;
 import org.fenixedu.academic.domain.evaluation.markSheet.CompetenceCourseMarkSheet;
 import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.academic.domain.student.Registration;
@@ -282,7 +282,7 @@ public class MarkBean implements IBean, Comparable<MarkBean> {
 
             if (!getMarkSheet().isGradeValueAccepted(getGradeValue())) {
                 setErrorMessage(AcademicExtensionsUtil.bundle("error.MarkBean.gradeValue.does.not.belong.to.scale",
-                        getGradeScale().getDescription()));
+                        getGradeScale().getName().getContent()));
 
             } else {
 
@@ -293,7 +293,7 @@ public class MarkBean implements IBean, Comparable<MarkBean> {
                     final CompetenceCourseMarkSheet evaluationMarkSheet = evaluation.getCompetenceCourseMarkSheet();
                     if (evaluationMarkSheet != null && evaluationMarkSheet != getMarkSheet()) {
                         setErrorMessage(AcademicExtensionsUtil.bundle("error.MarkBean.evaluation.already.edited",
-                                getGradeScale().getDescription()));
+                                getGradeScale().getName().getContent()));
                     }
                 }
             }
@@ -304,7 +304,7 @@ public class MarkBean implements IBean, Comparable<MarkBean> {
         return !StringUtils.isBlank(getGradeValue());
     }
 
-    private GradeScaleEnum getGradeScale() {
+    private GradeScale getGradeScale() {
         return getMarkSheet().getGradeScale();
     }
 

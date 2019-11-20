@@ -56,7 +56,7 @@ import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.Grade;
-import org.fenixedu.academic.domain.GradeScaleEnum;
+import org.fenixedu.academic.domain.curriculum.grade.GradeScale;
 import org.fenixedu.academic.domain.Holiday;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.Professorship;
@@ -119,7 +119,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
 
     protected void init(final ExecutionInterval executionInterval, final CompetenceCourse competenceCourse,
             final ExecutionCourse executionCourse, final EvaluationSeason evaluationSeason, final Evaluation courseEvaluation,
-            final LocalDate evaluationDate, GradeScaleEnum gradeScale, final Person certifier, final Set<Shift> shifts,
+            final LocalDate evaluationDate, GradeScale gradeScale, final Person certifier, final Set<Shift> shifts,
             final LocalDate expireDate) {
 
         setExecutionSemester(executionInterval);
@@ -259,7 +259,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
     }
 
     @Atomic
-    public void edit(final LocalDate evaluationDate, final GradeScaleEnum gradeScale, final Person certifier,
+    public void edit(final LocalDate evaluationDate, final GradeScale gradeScale, final Person certifier,
             final LocalDate expireDate) {
 
         if (!isEdition()) {
@@ -304,6 +304,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
         setCertifier(null);
         getShiftSet().clear();
         removeEnrolmentEvaluationData();
+        setGradeScale(null);
 
         final Iterator<CompetenceCourseMarkSheetStateChange> stateIterator = getStateChangeSet().iterator();
         while (stateIterator.hasNext()) {
@@ -367,7 +368,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
             final LocalDate evaluationDate, final Person certifier, final Set<Shift> shifts, final boolean byTeacher) {
 
         final CompetenceCourseMarkSheet result = new CompetenceCourseMarkSheet();
-        final GradeScaleEnum gradeScale = competence.getGradeScale();
+        final GradeScale gradeScale = competence.getGradeScale();
         result.init(interval, competence, execution, season, courseEvaluation, evaluationDate, gradeScale, certifier, shifts,
                 null);
 
@@ -830,7 +831,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
 
     public String getGradeScaleDescription() {
         final GradeScaleValidator validator = getGradeScaleValidator();
-        return validator == null ? getGradeScale().getDescription() : validator.getRuleDescription().getContent();
+        return validator == null ? getGradeScale().getName().getContent() : validator.getRuleDescription().getContent();
     }
 
     public GradeScaleValidator getGradeScaleValidator() {
@@ -928,7 +929,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
     }
 
     static public void setEnrolmentEvaluationData(final CompetenceCourseMarkSheet markSheet, final EnrolmentEvaluation evaluation,
-            final String gradeValue, final GradeScaleEnum gradeScale) {
+            final String gradeValue, final GradeScale gradeScale) {
 
         // avoid concurrent mark sheet editions
         if (evaluation.getCompetenceCourseMarkSheet() != null && evaluation.getCompetenceCourseMarkSheet() != markSheet) {

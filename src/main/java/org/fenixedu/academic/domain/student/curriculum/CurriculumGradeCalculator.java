@@ -6,8 +6,8 @@ import java.util.Set;
 
 import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.Grade;
-import org.fenixedu.academic.domain.GradeScaleEnum;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
+import org.fenixedu.academic.domain.curriculum.grade.GradeScale;
 
 public class CurriculumGradeCalculator
         implements org.fenixedu.academic.domain.student.curriculum.Curriculum.CurriculumGradeCalculator {
@@ -31,7 +31,7 @@ public class CurriculumGradeCalculator
     private Grade finalGrade;
 
     private void doCalculus(final Curriculum curriculum) {
-        GradeScaleEnum gradeScale = curriculum.getStudentCurricularPlan().getDegree().getGradeScale();
+        GradeScale gradeScale = curriculum.getStudentCurricularPlan().getDegree().getNumericGradeScale();
         
         this.curriculum = curriculum;
         this.sumPiCi = BigDecimal.ZERO;
