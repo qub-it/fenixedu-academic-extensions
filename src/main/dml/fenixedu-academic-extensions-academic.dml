@@ -136,14 +136,14 @@ class evaluation.season.rule.EvaluationSeasonRule {
 	}
 
     class evaluation.season.rule.GradeScaleValidator extends evaluation.season.rule.EvaluationSeasonRule {
-        GradeScaleEnum gradeScale;
+        GradeScaleEnum gradeScaleEnum;
         String gradeValues;
         LocalizedString ruleDescription;
         boolean appliesToCurriculumAggregatorEntry;
     }
     	
     	relation GradeScaleValidatorGradeScale {
-			curriculum.grade.GradeScale playsRole gradeScaleInstance {
+			curriculum.grade.GradeScale playsRole gradeScale {
 				multiplicity 0..1;
 			}
 
@@ -192,12 +192,12 @@ relation GradeScaleValidatorDegreeTypes {
 class evaluation.markSheet.CompetenceCourseMarkSheet {
     LocalDate evaluationDate;
     boolean printed;
-    GradeScaleEnumAcademicExtensions gradeScale;
+    GradeScaleEnumAcademicExtensions gradeScaleEnum;
     LocalDate expireDate;
 }
 
 	relation CompetenceCourseMarkSheetGradeScale {
-		curriculum.grade.GradeScale playsRole gradeScaleInstance {
+		curriculum.grade.GradeScale playsRole gradeScale {
 			multiplicity 0..1;
 		}
 		

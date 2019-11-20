@@ -95,7 +95,7 @@ abstract public class EvaluationSeasonRule extends EvaluationSeasonRule_Base {
         final Builder builder = AcademicExtensionsUtil.bundleI18N(clazz.getSimpleName()).builder();
         builder.append(grade.getExtendedValue(), ": ");
         builder.append(grade.getValue(), " [");
-        builder.append(grade.getGradeScale().getDescription(), ", ");
+        builder.append(grade.getGradeScale().getName().getContent(), ", ");
         builder.append("]");
         return builder.build();
     }

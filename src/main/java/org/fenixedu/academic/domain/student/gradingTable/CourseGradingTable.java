@@ -21,7 +21,7 @@ import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.EnrolmentEvaluation;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.Grade;
-import org.fenixedu.academic.domain.GradeScaleEnum;
+import org.fenixedu.academic.domain.curriculum.grade.GradeScale;
 import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.student.curriculum.ICurriculumEntry;
@@ -208,7 +208,7 @@ public class CourseGradingTable extends CourseGradingTable_Base {
         ExecutionYear samplingYear = getExecutionYear()
                 .getPrevious() instanceof ExecutionYear ? ((ExecutionYear) getExecutionYear().getPrevious()) : null;
 
-        GradeScaleEnum gradeScale = null;
+        GradeScale gradeScale = null;
         while (samplingYear != null) {
             for (final CurricularCourse curricularCourse : getCompetenceCourse().getAssociatedCurricularCoursesSet()) {
                 if (!GradingTableSettings.getApplicableDegreeTypes().contains(curricularCourse.getDegreeType())) {
