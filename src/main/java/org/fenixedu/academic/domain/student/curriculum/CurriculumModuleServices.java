@@ -141,7 +141,7 @@ public class CurriculumModuleServices {
             return BigDecimal.ZERO;
         }
 
-        if (toInspect.isAnual() && !semester.isFirstOfYear()) {
+        if (toInspect.isAnual() && !semester.getChildOrder().equals(1)) {
             return BigDecimal.ZERO;
         }
 
