@@ -7,6 +7,7 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -17,7 +18,6 @@ import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionYear;
-import org.fenixedu.academic.domain.StudentCurricularPlan;
 import org.fenixedu.academic.domain.candidacy.IngressionType;
 import org.fenixedu.academic.domain.degree.DegreeType;
 import org.fenixedu.academic.domain.degreeStructure.CurricularPeriodServices;
@@ -41,9 +41,7 @@ import org.fenixedu.academic.dto.student.RegistrationStateBean;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.joda.time.LocalDate;
 
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 public class RegistrationHistoryReportService {
@@ -270,7 +268,7 @@ public class RegistrationHistoryReportService {
         }
 
         final Predicate<RegistrationHistoryReport> firstTimeFilter =
-                r -> (this.firstTimeOnly && r.isFirstTime()) || (!this.firstTimeOnly && !r.isFirstTime());
+                r -> this.firstTimeOnly && r.isFirstTime() || !this.firstTimeOnly && !r.isFirstTime();
         if (this.firstTimeOnly != null) {
             result = result.and(firstTimeFilter);
         }
@@ -609,34 +607,14 @@ public class RegistrationHistoryReportService {
                 RoundingMode.DOWN);
     }
 
-    //TODO: refactor to use RegistrationConclusionServices.inferConclusion => refactor method to allow return non conclued 
     static protected void addConclusion(final RegistrationHistoryReport report) {
-
-        final Multimap<ProgramConclusion, RegistrationConclusionBean> conclusions = ArrayListMultimap.create();
-        for (final StudentCurricularPlan studentCurricularPlan : report.getRegistration().getStudentCurricularPlansSet()) {
-            for (final ProgramConclusion programConclusion : ProgramConclusion.conclusionsFor(studentCurricularPlan)
-                    .collect(Collectors.toSet())) {
-                conclusions.put(programConclusion, new RegistrationConclusionBean(studentCurricularPlan, programConclusion));
-            }
-        }
-
+        final Map<ProgramConclusion, RegistrationConclusionBean> conclusions =
+                RegistrationConclusionServices.getConclusions(report.getRegistration());
         for (final ProgramConclusion iter : report.getProgramConclusionsToReport()) {
-
             if (!conclusions.containsKey(iter)) {
                 report.addEmptyConclusion(iter);
-
             } else {
-
-                final Collection<RegistrationConclusionBean> conclusionsByProgramConclusion = conclusions.get(iter);
-                if (conclusionsByProgramConclusion.size() == 1) {
-                    report.addConclusion(iter, conclusionsByProgramConclusion.iterator().next());
-
-                } else {
-                    report.addConclusion(iter,
-                            conclusionsByProgramConclusion.stream()
-                                    .sorted(RegistrationConclusionServices.CONCLUSION_BEAN_COMPARATOR_BY_OLDEST_PROCESSED)
-                                    .findFirst().get());
-                }
+                report.addConclusion(iter, conclusions.get(iter));
             }
         }
     }
