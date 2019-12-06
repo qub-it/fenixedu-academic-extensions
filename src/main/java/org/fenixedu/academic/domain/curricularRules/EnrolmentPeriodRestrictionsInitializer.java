@@ -25,12 +25,12 @@
  */
 package org.fenixedu.academic.domain.curricularRules;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.ExecutionInterval;
-import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.curricularRules.executors.ruleExecutors.EnrolmentPeriodRestrictionsExecutorLogic;
 import org.fenixedu.academic.domain.degreeStructure.Context;
@@ -76,8 +76,8 @@ public class EnrolmentPeriodRestrictionsInitializer {
         final Optional<Context> first = root.getChildContextsSet().stream()
                 .sorted((o1, o2) -> o1.getBeginExecutionPeriod().compareTo(o2.getBeginExecutionPeriod())).findFirst();
 
-        final ExecutionInterval result =
-                first.isPresent() ? first.get().getBeginExecutionPeriod() : ExecutionSemester.readFirstExecutionSemester();
+        final ExecutionInterval result = first.isPresent() ? first.get().getBeginExecutionPeriod() : ExecutionInterval
+                .findAllChilds().stream().min(Comparator.naturalOrder()).orElse(null);
         return result;
     }
 

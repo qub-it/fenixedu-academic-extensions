@@ -2,7 +2,7 @@ package org.fenixedu.academic.domain.curricularRules;
 
 import java.util.List;
 
-import org.fenixedu.academic.domain.ExecutionSemester;
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.curricularPeriod.CurricularPeriod;
 import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
 import org.fenixedu.academic.domain.curricularRules.executors.ruleExecutors.StudentStatuteCurricularRuleExecutor;
@@ -28,7 +28,7 @@ public class StudentStatuteCurricularRule extends StudentStatuteCurricularRule_B
     }
 
     public StudentStatuteCurricularRule(final DegreeModule toApplyRule, final CourseGroup contextCourseGroup,
-            final ExecutionSemester begin, final ExecutionSemester end, final StatuteType statuteType,
+            final ExecutionInterval begin, final ExecutionInterval end, final StatuteType statuteType,
             final CurricularPeriod curricularPeriod) {
 
         this();

@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.fenixedu.academic.domain.ExecutionSemester;
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
 import org.fenixedu.academic.domain.curricularRules.executors.ruleExecutors.AnyCurricularCourseRestrictionsExecutor;
 import org.fenixedu.academic.domain.curricularRules.executors.verifyExecutors.VerifyRuleExecutor;
@@ -26,7 +26,7 @@ public class AnyCurricularCourseRestrictions extends AnyCurricularCourseRestrict
     }
 
     public AnyCurricularCourseRestrictions(final DegreeModule toApplyRule, final CourseGroup contextCourseGroup,
-            final ExecutionSemester begin, final ExecutionSemester end, final Set<CourseGroup> courseGroups) {
+            final ExecutionInterval begin, final ExecutionInterval end, final Set<CourseGroup> courseGroups) {
 
         this();
         init(toApplyRule, contextCourseGroup, begin, end, CurricularRuleType.CUSTOM);

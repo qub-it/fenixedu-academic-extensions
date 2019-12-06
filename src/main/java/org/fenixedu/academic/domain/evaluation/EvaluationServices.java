@@ -9,7 +9,6 @@ import org.fenixedu.academic.domain.Evaluation;
 import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionInterval;
-import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.Shift;
 
 import com.google.common.collect.Sets;
@@ -79,8 +78,8 @@ abstract public class EvaluationServices {
     }
 
     static public boolean isEnroledInCourseEvaluation(final Enrolment enrolment, final EvaluationSeason season,
-            final ExecutionSemester semester, final Evaluation evaluation) {
-        return findEnrolmentCourseEvaluations(enrolment, season, semester).contains(evaluation);
+            final ExecutionInterval interval, final Evaluation evaluation) {
+        return findEnrolmentCourseEvaluations(enrolment, season, interval).contains(evaluation);
     }
 
 }

@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Set;
 
-import org.fenixedu.academic.domain.ExecutionSemester;
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.curricularPeriod.CurricularPeriod;
 import org.fenixedu.academic.domain.curricularRules.curricularPeriod.CurricularPeriodConfiguration;
@@ -122,10 +122,10 @@ public class CreditsInCurricularPeriod extends CreditsInCurricularPeriod_Base {
         BigDecimal result = BigDecimal.ZERO;
 
         final ExecutionYear executionYear = enrolmentContext.getExecutionPeriod().getExecutionYear();
-        final ExecutionSemester semester = getSemester() == null ? null : executionYear.getExecutionSemesterFor(getSemester());
+        final ExecutionInterval interval = getSemester() == null ? null : executionYear.getExecutionSemesterFor(getSemester());
 
         final Map<CurricularPeriod, BigDecimal> curricularPeriodCredits =
-                CurricularPeriodServices.mapYearCredits(enrolmentContext, getApplyToOptionals(), semester);
+                CurricularPeriodServices.mapYearCredits(enrolmentContext, getApplyToOptionals(), interval);
         final Set<CurricularPeriod> toInspect = configured;
 
         for (final CurricularPeriod iter : toInspect) {

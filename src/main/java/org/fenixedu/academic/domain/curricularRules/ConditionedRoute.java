@@ -2,7 +2,7 @@ package org.fenixedu.academic.domain.curricularRules;
 
 import java.util.List;
 
-import org.fenixedu.academic.domain.ExecutionSemester;
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
 import org.fenixedu.academic.domain.curricularRules.executors.ruleExecutors.ConditionedRouteExecutor;
 import org.fenixedu.academic.domain.curricularRules.executors.verifyExecutors.VerifyRuleExecutor;
@@ -22,8 +22,8 @@ public class ConditionedRoute extends ConditionedRoute_Base {
         super();
     }
 
-    public ConditionedRoute(final DegreeModule toApplyRule, final CourseGroup contextCourseGroup, final ExecutionSemester begin,
-            final ExecutionSemester end) {
+    public ConditionedRoute(final DegreeModule toApplyRule, final CourseGroup contextCourseGroup, final ExecutionInterval begin,
+            final ExecutionInterval end) {
 
         this();
         init(toApplyRule, contextCourseGroup, begin, end, CurricularRuleType.CUSTOM);
@@ -46,7 +46,7 @@ public class ConditionedRoute extends ConditionedRoute_Base {
     @Override
     protected void removeOwnParameters() {
     }
-    
+
     @Override
     @SuppressWarnings("unchecked")
     public List<GenericPair<Object, Boolean>> getLabel() {

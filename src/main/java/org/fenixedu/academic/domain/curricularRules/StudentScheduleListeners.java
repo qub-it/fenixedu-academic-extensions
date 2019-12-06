@@ -12,11 +12,9 @@ import org.fenixedu.academic.domain.Attends;
 import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionInterval;
-import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.ShiftType;
-import org.fenixedu.academic.domain.curricularRules.StudentSchoolClassCurricularRule;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.RegistrationServices;
@@ -33,15 +31,15 @@ public class StudentScheduleListeners {
         @Override
         public void accept(DomainObjectEvent<Enrolment> event) {
             final Enrolment enrolment = event.getInstance();
-            final ExecutionInterval executionSemester = enrolment.getExecutionInterval();
-            final Attends attends = enrolment.getAttendsFor(executionSemester);
+            final ExecutionInterval executionInterval = enrolment.getExecutionInterval();
+            final Attends attends = enrolment.getAttendsFor(executionInterval);
 
             if (attends == null) {
                 return;
             }
 
             boolean enrolInShiftIfUnique = !enrolment.getCurriculumGroup().isNoCourseGroupCurriculumGroup() && enrolment
-                    .getCurricularRules(executionSemester).stream().filter(cr -> cr instanceof StudentSchoolClassCurricularRule)
+                    .getCurricularRules(executionInterval).stream().filter(cr -> cr instanceof StudentSchoolClassCurricularRule)
                     .map(cr -> (StudentSchoolClassCurricularRule) cr).anyMatch(ssccr -> ssccr.getEnrolInShiftIfUnique());
             if (enrolInShiftIfUnique) {
 
@@ -49,7 +47,7 @@ public class StudentScheduleListeners {
                 final ExecutionCourse executionCourse = attends.getExecutionCourse();
 
                 final Optional<SchoolClass> schoolClassOpt =
-                        RegistrationServices.getSchoolClassBy(registration, executionSemester);
+                        RegistrationServices.getSchoolClassBy(registration, executionInterval);
 
                 if (schoolClassOpt.isPresent()) {
                     try {

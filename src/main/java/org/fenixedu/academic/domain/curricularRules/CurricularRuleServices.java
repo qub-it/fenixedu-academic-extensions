@@ -5,11 +5,9 @@ import java.util.stream.Collectors;
 
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.ExecutionInterval;
-import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
 import org.fenixedu.academic.domain.curricularPeriod.CurricularPeriod;
-import org.fenixedu.academic.domain.curricularRules.ICurricularRule;
 import org.fenixedu.academic.domain.degreeStructure.Context;
 import org.fenixedu.academic.domain.degreeStructure.CourseGroup;
 import org.fenixedu.academic.domain.degreeStructure.DegreeModule;
@@ -52,8 +50,7 @@ abstract public class CurricularRuleServices {
      *      ExecutionSemester)}
      */
     static private boolean isCurricularRuleValid(final ICurricularRule rule, final ExecutionInterval interval) {
-        return interval == null || (interval instanceof ExecutionSemester ? rule.isValid((ExecutionSemester) interval) : rule
-                .isValid((ExecutionYear) interval));
+        return interval instanceof ExecutionYear ? rule.isValid((ExecutionYear) interval) : rule.isValid(interval);
     }
 
     static protected boolean appliesToPeriod(final Context context, final CurricularPeriod period) {

@@ -14,7 +14,6 @@ import org.fenixedu.academic.domain.Enrolment.EnrolmentPredicate;
 import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionInterval;
-import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.OptionalEnrolment;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
 import org.fenixedu.academic.domain.curriculum.EnrolmentEvaluationContext;
@@ -128,7 +127,7 @@ public class EnrolmentServices extends org.fenixedu.academic.domain.student.serv
     }
 
     static public List<Enrolment> getEnrolmentsToEnrol(final StudentCurricularPlan studentCurricularPlan,
-            final ExecutionSemester executionSemester, final EvaluationSeason evaluationSeason,
+            final ExecutionInterval executionInterval, final EvaluationSeason evaluationSeason,
             final EnrolmentPredicate predicate) {
         final List<Enrolment> result = new ArrayList<Enrolment>();
         //Refresh curriculum groups set
@@ -137,7 +136,7 @@ public class EnrolmentServices extends org.fenixedu.academic.domain.student.serv
         List<Enrolment> allEnrolments = new ArrayList<Enrolment>();
         getEnrolmentsToEnrol(studentCurricularPlan.getRoot(), allEnrolments);
         for (Enrolment enrolment : allEnrolments) {
-            if (predicate.fill(evaluationSeason, executionSemester, EnrolmentEvaluationContext.MARK_SHEET_EVALUATION)
+            if (predicate.fill(evaluationSeason, executionInterval, EnrolmentEvaluationContext.MARK_SHEET_EVALUATION)
                     .testExceptionless(enrolment)) {
                 result.add(enrolment);
             }

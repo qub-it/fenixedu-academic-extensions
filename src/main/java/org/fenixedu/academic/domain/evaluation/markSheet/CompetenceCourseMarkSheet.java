@@ -54,7 +54,6 @@ import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.ExecutionInterval;
-import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.Grade;
 import org.fenixedu.academic.domain.GradeScale;
@@ -123,7 +122,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
             final LocalDate evaluationDate, GradeScale gradeScale, final Person certifier, final Set<Shift> shifts,
             final LocalDate expireDate) {
 
-        setExecutionSemester(executionInterval != null ? executionInterval.convert(ExecutionSemester.class) : null);
+        setExecutionSemester(executionInterval);
         setCompetenceCourse(competenceCourse);
         setExecutionCourse(executionCourse);
         setEvaluationSeason(evaluationSeason);
@@ -405,7 +404,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
 
         final Set<CompetenceCourseMarkSheet> result = Sets.newHashSet();
         if (executionInterval != null) {
-            result.addAll(executionInterval.convert(ExecutionSemester.class).getCompetenceCourseMarkSheetSet());
+            result.addAll(executionInterval.getCompetenceCourseMarkSheetSet());
         }
 
         return result.stream()

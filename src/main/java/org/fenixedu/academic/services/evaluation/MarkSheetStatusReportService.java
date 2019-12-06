@@ -16,7 +16,6 @@ import org.fenixedu.academic.domain.EnrolmentEvaluation;
 import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionInterval;
-import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.evaluation.markSheet.CompetenceCourseMarkSheet;
 import org.fenixedu.academic.domain.evaluation.markSheet.CompetenceCourseMarkSheetChangeRequestStateEnum;
@@ -74,25 +73,23 @@ abstract public class MarkSheetStatusReportService {
 
         final List<CompetenceCourseSeasonReport> result = Lists.newArrayList();
 
-        final ExecutionSemester semester =
-                ExecutionInterval.assertExecutionIntervalType(ExecutionSemester.class, executionInterval);
-        final Set<CompetenceCourse> toProcess = collectCompetenceCourses(semester);
+        final Set<CompetenceCourse> toProcess = collectCompetenceCourses(executionInterval);
 
-        result.addAll(iterateCompetenceCourses(semester, toProcess, seasons));
+        result.addAll(iterateCompetenceCourses(executionInterval, toProcess, seasons));
 
         return result;
     }
 
-    static private Set<CompetenceCourse> collectCompetenceCourses(final ExecutionSemester semester) {
+    static private Set<CompetenceCourse> collectCompetenceCourses(final ExecutionInterval interval) {
 
         final Set<CompetenceCourse> result = Sets.newHashSet();
 
-        for (final ExecutionCourse executionCourse : semester.getAssociatedExecutionCoursesSet()) {
+        for (final ExecutionCourse executionCourse : interval.getAssociatedExecutionCoursesSet()) {
             result.addAll(executionCourse.getCompetenceCourses());
         }
 
         // improvement of evaluations approved in previous years
-        for (final EnrolmentEvaluation evaluation : semester.getEnrolmentEvaluationsSet()) {
+        for (final EnrolmentEvaluation evaluation : interval.getEnrolmentEvaluationsSet()) {
             result.add(evaluation.getEnrolment().getCurricularCourse().getCompetenceCourse());
         }
 
