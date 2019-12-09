@@ -38,7 +38,7 @@ abstract public class CurriculumLineServices {
 
         @Override
         public void beforeRemove(final Dismissal dismissal, final Credits credits) {
-            // avoid internal invocation with null 
+            // avoid internal invocation with null
             if (dismissal == null || credits == null) {
                 return;
             }
@@ -111,8 +111,8 @@ abstract public class CurriculumLineServices {
     }
 
     static public LocalizedString getCurriculumEntryDescription(final ICurriculumEntry entry,
-            final StudentCurricularPlan studentCurricularPlan, final boolean overrideHidden,
-            final boolean overrideInfoExplained) {
+            final StudentCurricularPlan studentCurricularPlan, final boolean includeDismissalInfoForReasonWithInfoHidden,
+            final boolean hideCreditsReasonDetails) {
 
         final Builder result = new LocalizedString().builder();
         final Set<CurriculumLine> lines = entry.getCurriculumLinesForCurriculum(studentCurricularPlan);
@@ -131,12 +131,13 @@ abstract public class CurriculumLineServices {
                     final Dismissal dismissal = (Dismissal) line;
                     final Credits credits = dismissal.getCredits();
                     final CreditsReasonType reason = credits == null ? null : credits.getReason();
-                    final LocalizedString info = reason == null ? null : reason.getInfo(entry, dismissal, overrideInfoExplained);
+                    final LocalizedString info =
+                            reason == null ? null : reason.getInfo(entry, dismissal, hideCreditsReasonDetails);
 
                     if (info != null && !info.isEmpty()) {
                         add(result, info);
 
-                    } else if (reason == null || overrideHidden) {
+                    } else if (reason == null || includeDismissalInfoForReasonWithInfoHidden) {
 
                         if (Substitution.class.isAssignableFrom(credits.getClass())) {
                             add(result, "label.approvalType.Substitution");
