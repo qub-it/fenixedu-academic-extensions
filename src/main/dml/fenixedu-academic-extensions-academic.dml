@@ -1,6 +1,6 @@
 package org.fenixedu.academic.domain;
 
-enum org.fenixedu.academic.domain.GradeScale as GradeScaleAcademicExtensions;
+enum org.fenixedu.academic.domain.GradeScaleEnum as GradeScaleEnumAcademicExtensions;
 enum org.fenixedu.academic.domain.evaluation.markSheet.CompetenceCourseMarkSheetStateEnum as CompetenceCourseMarkSheetStateEnum;
 enum org.fenixedu.academic.domain.evaluation.markSheet.CompetenceCourseMarkSheetChangeRequestStateEnum as CompetenceCourseMarkSheetChangeRequestStateEnum;
 enum org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonPeriodType as EvaluationSeasonPeriodType;
@@ -136,11 +136,21 @@ class evaluation.season.rule.EvaluationSeasonRule {
 	}
 
     class evaluation.season.rule.GradeScaleValidator extends evaluation.season.rule.EvaluationSeasonRule {
-        GradeScale gradeScale;
+        GradeScaleEnum gradeScale;
         String gradeValues;
         LocalizedString ruleDescription;
         boolean appliesToCurriculumAggregatorEntry;
     }
+    	
+    	relation GradeScaleValidatorGradeScale {
+			curriculum.grade.GradeScale playsRole gradeScaleInstance {
+				multiplicity 0..1;
+			}
+
+			evaluation.season.rule.GradeScaleValidator playsRole {
+				multiplicity *;
+			}    		
+    	}
 
     class evaluation.season.rule.EvaluationSeasonShiftType extends evaluation.season.rule.EvaluationSeasonRule {
         ShiftTypes shiftTypes (REQUIRED);
@@ -182,9 +192,19 @@ relation GradeScaleValidatorDegreeTypes {
 class evaluation.markSheet.CompetenceCourseMarkSheet {
     LocalDate evaluationDate;
     boolean printed;
-    GradeScaleAcademicExtensions gradeScale;
+    GradeScaleEnumAcademicExtensions gradeScale;
     LocalDate expireDate;
 }
+
+	relation CompetenceCourseMarkSheetGradeScale {
+		curriculum.grade.GradeScale playsRole gradeScaleInstance {
+			multiplicity 0..1;
+		}
+		
+		evaluation.markSheet.CompetenceCourseMarkSheet playsRole {
+			multiplicity *;
+		}
+	}
 
 class evaluation.markSheet.CompetenceCourseMarkSheetStateChange {
     CompetenceCourseMarkSheetStateEnum state;
@@ -1585,22 +1605,3 @@ relation SchoolClassPrecedence {
     }
 }
 
-
-// ======================= = Enrolment in Scool Classes end = =========================
-
-class curriculum.grade.GradeScaleEntry {
-	GradeScaleAcademicExtensions gradeScale (REQUIRED);
-	String value (REQUIRED);
-	LocalizedString description (REQUIRED);
-	boolean allowsApproval; 
-}
-
-relation GradeScaleEntryBennu {
-	.org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject {
-		multiplicity 1..1;
-	}
-
-	curriculum.grade.GradeScaleEntry playsRole gradeScaleEntries {
-		multiplicity *;
-	}
-}

@@ -6,9 +6,10 @@ import java.util.List;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.fenixedu.academic.domain.Grade;
-import org.fenixedu.academic.domain.GradeScale.GradeScaleLogic;
+import org.fenixedu.academic.domain.GradeScaleEnum.GradeScaleLogic;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 
+@Deprecated
 public class StandardType20GradeScaleLogic implements GradeScaleLogic {
 
     protected static final List<String> APPROVED_TEXTUAL_GRADES = Arrays.asList("AP");

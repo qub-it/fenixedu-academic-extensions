@@ -8,7 +8,7 @@ import java.util.function.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.BigDecimalValidator;
 import org.fenixedu.academic.domain.EvaluationSeason;
-import org.fenixedu.academic.domain.GradeScale;
+import org.fenixedu.academic.domain.GradeScaleEnum;
 import org.fenixedu.academic.domain.degree.DegreeType;
 import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
@@ -27,7 +27,7 @@ public class GradeScaleValidator extends GradeScaleValidator_Base {
     }
 
     @Atomic
-    static public EvaluationSeasonRule create(final EvaluationSeason season, final GradeScale gradeScale,
+    static public EvaluationSeasonRule create(final EvaluationSeason season, final GradeScaleEnum gradeScale,
             final String gradeValues, final LocalizedString description, final boolean appliesToCurriculumAggregatorEntry,
             final Set<DegreeType> degreeTypes) {
 
@@ -36,7 +36,7 @@ public class GradeScaleValidator extends GradeScaleValidator_Base {
         return result;
     }
 
-    private void init(final EvaluationSeason season, final GradeScale gradeScale, final String gradeValues,
+    private void init(final EvaluationSeason season, final GradeScaleEnum gradeScale, final String gradeValues,
             final LocalizedString description, final boolean appliesToCurriculumAggregatorEntry,
             final Set<DegreeType> degreeTypes) {
 
@@ -85,7 +85,7 @@ public class GradeScaleValidator extends GradeScaleValidator_Base {
     }
 
     @Atomic
-    public void edit(final GradeScale gradeScale, final String gradeValues, final LocalizedString description,
+    public void edit(final GradeScaleEnum gradeScale, final String gradeValues, final LocalizedString description,
             final boolean appliesToCurriculumAggregatorEntry, final Set<DegreeType> degreeTypes) {
 
         init(getSeason(), gradeScale, gradeValues, description, appliesToCurriculumAggregatorEntry, degreeTypes);
