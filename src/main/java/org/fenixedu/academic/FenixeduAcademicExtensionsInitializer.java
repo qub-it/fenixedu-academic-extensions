@@ -1,5 +1,6 @@
 package org.fenixedu.academic;
 
+
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
@@ -8,7 +9,6 @@ import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.Attends;
 import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.EvaluationConfiguration;
-import org.fenixedu.academic.domain.GradeScale;
 import org.fenixedu.academic.domain.Qualification;
 import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.domain.curricularPeriod.CurricularPeriod;
@@ -16,8 +16,6 @@ import org.fenixedu.academic.domain.curricularRules.AnyCurricularCourseException
 import org.fenixedu.academic.domain.curricularRules.EnrolmentPeriodRestrictionsInitializer;
 import org.fenixedu.academic.domain.curricularRules.StudentScheduleListeners;
 import org.fenixedu.academic.domain.curricularRules.executors.ruleExecutors.CurricularRuleConfigurationInitializer;
-import org.fenixedu.academic.domain.curriculum.grade.StandardType20AbsoluteGradeScaleLogic;
-import org.fenixedu.academic.domain.curriculum.grade.StandardType20GradeScaleLogic;
 import org.fenixedu.academic.domain.degree.ExtendedDegreeInfo;
 import org.fenixedu.academic.domain.degreeStructure.DegreeModule;
 import org.fenixedu.academic.domain.degreeStructure.OptionalCurricularCourse;
@@ -90,8 +88,6 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
 
         MarkSheetSettings.init();
 
-        configureType20GradeScaleLogic();
-
         EnrolmentPeriodRestrictionsInitializer.init();
 
         EvaluationSeasonServices.initialize();
@@ -112,11 +108,6 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
 
         registerDeletionListenerOnUnit();
 
-    }
-
-    static private void configureType20GradeScaleLogic() {
-        GradeScale.TYPE20_ABSOLUTE.setLogic(new StandardType20AbsoluteGradeScaleLogic());
-        GradeScale.TYPE20.setLogic(new StandardType20GradeScaleLogic());
     }
 
     private void setupListenersForStudentSchedule() {

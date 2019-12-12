@@ -21,8 +21,9 @@ import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.EnrolmentEvaluation;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.Grade;
-import org.fenixedu.academic.domain.GradeScale;
+import org.fenixedu.academic.domain.GradeScaleEnum;
 import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
+import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.student.curriculum.ICurriculumEntry;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumLine;
 import org.fenixedu.academic.domain.studentCurriculum.ExternalEnrolment;
@@ -207,6 +208,7 @@ public class CourseGradingTable extends CourseGradingTable_Base {
         ExecutionYear samplingYear = getExecutionYear()
                 .getPrevious() instanceof ExecutionYear ? ((ExecutionYear) getExecutionYear().getPrevious()) : null;
 
+        GradeScaleEnum gradeScale = null;
         while (samplingYear != null) {
             for (final CurricularCourse curricularCourse : getCompetenceCourse().getAssociatedCurricularCoursesSet()) {
                 if (!GradingTableSettings.getApplicableDegreeTypes().contains(curricularCourse.getDegreeType())) {
@@ -219,9 +221,18 @@ public class CourseGradingTable extends CourseGradingTable_Base {
                         continue;
                     }
 
-                    if (!GradeScale.TYPE20.equals(enrolment.getGrade().getGradeScale())) {
+                    if (!enrolment.getGrade().isNumeric()) {
                         continue;
                     }
+                    
+                    if(gradeScale != null) {
+                        if(enrolment.getGrade().getGradeScale() != gradeScale) {
+                            throw new DomainException("error.CourseGradingTable.harvestEnrolmentsUsedInSample.gradeScale.mismatch");
+                        }
+                    } else {
+                        gradeScale = enrolment.getGrade().getGradeScale();
+                    }
+                    
                     sample.add(enrolment);
                 }
             }

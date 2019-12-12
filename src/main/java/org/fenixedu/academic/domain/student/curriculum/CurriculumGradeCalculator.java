@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.Grade;
-import org.fenixedu.academic.domain.GradeScale;
+import org.fenixedu.academic.domain.GradeScaleEnum;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
 
 public class CurriculumGradeCalculator
@@ -31,6 +31,8 @@ public class CurriculumGradeCalculator
     private Grade finalGrade;
 
     private void doCalculus(final Curriculum curriculum) {
+        GradeScaleEnum gradeScale = curriculum.getStudentCurricularPlan().getDegree().getGradeScale();
+        
         this.curriculum = curriculum;
         this.sumPiCi = BigDecimal.ZERO;
         this.sumPi = BigDecimal.ZERO;
@@ -42,8 +44,8 @@ public class CurriculumGradeCalculator
         final BigDecimal rawAvg = avg.setScale(RAW_SCALE,
                 curriculum.getStudentCurricularPlan() == null ? ROUNDING_DEFAULT : getRawGradeRoundingMode(
                         curriculum.getStudentCurricularPlan().getDegree()));
-        this.rawGrade = Grade.createGrade(rawAvg.toString(), GradeScale.TYPE20);
-        this.finalGrade = Grade.createGrade(rawAvg.setScale(0, ROUNDING_DEFAULT).toString(), GradeScale.TYPE20);
+        this.rawGrade = Grade.createGrade(rawAvg.toString(), gradeScale);
+        this.finalGrade = Grade.createGrade(rawAvg.setScale(0, ROUNDING_DEFAULT).toString(), gradeScale);
     }
 
     protected RoundingMode getRawGradeRoundingMode(final Degree degree) {

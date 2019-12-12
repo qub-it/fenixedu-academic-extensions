@@ -1,0 +1,179 @@
+2019-11-12 16:59:26,839 INFO   - Platform        [i:28] .....................Detected network interface:  02-42-AC-11-00-02 
+2019-11-12 16:59:26,842 INFO   - Platform        [i:28] .....................Detected network interface:  02-42-AC-12-00-03 
+2019-11-12 16:59:27,133 INFO   - Platform        [LicenseManager:51] ........Looking for your HardwareConfig.info but you don't find it? It should be in your homedir. If you still don't find it, you can use the following string as well: ophcxDk8DCfGe6NijCcbOFhCu4oAXqjs1Nef74vb/l3O13y6mYOmrI7VEA7Rx2wVtMDU6y49XRgGP+WQb3EyAlboCZsVL8rTwxehTyv8kNkqOUCxXZNM54TaGkNBn8D3rUm20Jlo9LduVtr4gz7WmGHqh+QOchmscOorGNegJZs= 
+2019-11-12 16:59:27,136 INFO   - Platform        [LicenseManager:107] .......Will be looking for licenses in directory : /home/developer/.qub/licenses 
+2019-11-12 16:59:27,474 INFO   - Security        [OmnisAccount:84] ..........Loaded omnis account for user: anil.mamede@qub-it.com 
+2019-11-12 16:59:29,165 INFO   - Platform        [ArtifactLicense:42] .......Renewing subscription for artifact qub-fileRepository 
+2019-11-12 16:59:29,175 INFO   - Platform        [Runtime:109] ..............Subscription OK: fenixedu-application-probe-1.4.4 
+2019-11-12 16:59:29,180 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-foundation-4.3.3 
+2019-11-12 16:59:29,583 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-db-migration-1.0.0 
+2019-11-12 16:59:29,585 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-fenix-framework-bridging-shared-2.1.0 
+2019-11-12 16:59:29,594 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-management-specifications-1.10.0 
+2019-11-12 16:59:29,599 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-support-communication-api-1.1.0 
+2019-11-12 16:59:29,602 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-sync-engine-1.1.0 
+2019-11-12 16:59:29,617 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-uilayer-2.0.8 
+2019-11-12 16:59:30,032 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-fenix-framework-bridging-2.1.0 
+2019-11-12 16:59:30,036 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-store-client-1.2.0 
+2019-11-12 16:59:30,085 WARN   - Rabbit          [RabbitConnectionConfiguration:88] Unable to connect to rabbitMQ
+java.net.ConnectException: Connection refused (Connection refused)
+	at java.net.PlainSocketImpl.socketConnect(Native Method)
+	at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:350)
+	at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:206)
+	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:188)
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)
+	at java.net.Socket.connect(Socket.java:589)
+	at com.rabbitmq.client.impl.FrameHandlerFactory.create(FrameHandlerFactory.java:32)
+	at com.rabbitmq.client.ConnectionFactory.newConnection(ConnectionFactory.java:714)
+	at com.rabbitmq.client.ConnectionFactory.newConnection(ConnectionFactory.java:760)
+	at com.qubit.terra.connector.rabbit.domain.RabbitConnectionConfiguration.createConnection(RabbitConnectionConfiguration.java:85)
+	at com.qubit.terra.connector.rabbit.domain.RabbitConnectionConfiguration.getRabbitConnection(RabbitConnectionConfiguration.java:64)
+	at com.qubit.terra.connector.rabbit.services.publishSubscribe.RabbitPublishSubscribeHandler.lambda$createConnection$1(RabbitPublishSubscribeHandler.java:75)
+	at pt.ist.fenixframework.backend.jvstmojb.JvstmOJBTransactionManager.handleReadCommand(JvstmOJBTransactionManager.java:159)
+	at pt.ist.fenixframework.backend.jvstmojb.JvstmOJBTransactionManager.withTransaction(JvstmOJBTransactionManager.java:144)
+	at com.qubit.terra.fenixframework.service.transaction.FenixFrameworkTransactionalManager.executeInReadContext(FenixFrameworkTransactionalManager.java:120)
+	at com.qubit.terra.connector.rabbit.services.publishSubscribe.RabbitPublishSubscribeHandler.createConnection(RabbitPublishSubscribeHandler.java:75)
+	at com.qubit.terra.connector.rabbit.services.publishSubscribe.RabbitPublishSubscribeHandler.internalSubscribe(RabbitPublishSubscribeHandler.java:125)
+	at com.qubit.terra.connector.rabbit.services.publishSubscribe.AbstractPublishSubscribeHandler.subscribe(AbstractPublishSubscribeHandler.java:33)
+	at com.qubit.socius.storeClient.StoreClientArtifactHandler.initialize(StoreClientArtifactHandler.java:37)
+	at com.qubit.terra.framework.services.runtime.Runtime.initialize(Runtime.java:121)
+	at com.qubit.terra.framework.services.runtime.Runtime.initialize(Runtime.java:144)
+	at com.qubit.bennu.presentation.servlets.UiLayerConfigurationServlet.init(UiLayerConfigurationServlet.java:22)
+	at javax.servlet.GenericServlet.init(GenericServlet.java:158)
+	at org.apache.catalina.core.StandardWrapper.initServlet(StandardWrapper.java:1230)
+	at org.apache.catalina.core.StandardWrapper.loadServlet(StandardWrapper.java:1174)
+	at org.apache.catalina.core.StandardWrapper.load(StandardWrapper.java:1066)
+	at org.apache.catalina.core.StandardContext.loadOnStartup(StandardContext.java:5409)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5707)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:145)
+	at org.apache.catalina.core.ContainerBase.addChildInternal(ContainerBase.java:1017)
+	at org.apache.catalina.core.ContainerBase.addChild(ContainerBase.java:993)
+	at org.apache.catalina.core.StandardHost.addChild(StandardHost.java:652)
+	at org.apache.catalina.startup.HostConfig.deployDirectory(HostConfig.java:1296)
+	at org.apache.catalina.startup.HostConfig$DeployDirectory.run(HostConfig.java:2039)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+ 
+2019-11-12 16:59:30,089 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-rabbitmq-integration-1.4.4 
+2019-11-12 16:59:30,100 INFO   - Rabbit          [RabbitArtifactHandler:45] .Unable to find any rabbitmq.properties files we'll not be bootstrapping connections from files 
+2019-11-12 16:59:30,102 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-support-client-1.2.2 
+2019-11-12 16:59:30,119 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-docs-editor-1.2.0 
+2019-11-12 16:59:30,144 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-fenix-framework-sync-manager-generator-1.0.3 
+2019-11-12 16:59:30,147 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-fileRepository-1.9.0 
+2019-11-12 16:59:30,189 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-foundation-fenix-framework-services-1.27.1 
+2019-11-12 16:59:30,334 INFO   - GDPR            [FenixFrameworkFoundationServicesHandler:101] Server is starting. 
+2019-11-12 16:59:30,391 WARN   - Presentation    [UIComponentHotReloader:77] Overwritting default component implementation for component: com.qubit.terra.framework.ui.component.AccessControlGroupComponent 
+2019-11-12 16:59:30,400 WARN   - Platform        [FenixFrameworkFoundationServicesHandler:261] Unable to find a RuntimeTaskScheduler registered, not starting scheduler 
+2019-11-12 16:59:30,439 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-management-probes-1.4.1 
+2019-11-12 16:59:30,441 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-uilayer-sampler-0.9.0 
+2019-11-12 16:59:30,500 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-versioning-1.4.0 
+2019-11-12 16:59:30,737 INFO   - Platform        [Runtime:109] ..............Subscription OK: bennu-qub.module.ciencias-api-utils-1.0.14 
+2019-11-12 16:59:30,740 INFO   - Platform        [Runtime:109] ..............Subscription OK: bennu-qub.module.qubEdu-adapter-2.9.1 
+2019-11-12 16:59:30,754 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-access-control-management-1.4.0 
+2019-11-12 16:59:30,791 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-communication-1.12.1 
+2019-11-12 16:59:30,821 WARN   - Platform        [DynamicPropertyLoader:65] .Found anottated dynamic property in method: com.qubit.terra.communication.presentation.screens.message.inboxAsMailBox.InboxAsMailBoxUI.senderNameMaxSize but method is not static, not initializing property 
+2019-11-12 16:59:30,821 WARN   - Platform        [DynamicPropertyLoader:65] .Found anottated dynamic property in method: com.qubit.terra.communication.presentation.screens.message.inboxAsMailBox.InboxAsMailBoxUI.defaultMessagesPageSize but method is not static, not initializing property 
+2019-11-12 16:59:30,857 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-documentation-connector-1.4.1 
+2019-11-12 16:59:30,876 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-fenix-framework-sync-manager-1.5.2 
+2019-11-12 16:59:30,925 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-metaModel-1.8.0 
+2019-11-12 16:59:30,957 INFO   - Platform        [Runtime:109] ..............Subscription OK: bennu-qub.module.commons-2.1.0 
+2019-11-12 16:59:30,975 INFO   - Platform        [Runtime:109] ..............Subscription OK: bennu-qub.module.moodle-integration-1.1.0 
+2019-11-12 16:59:31,107 INFO   - Platform        [Runtime:109] ..............Subscription OK: modus_qub-support-client-fenixedu-bridging-2.1.0 
+2019-11-12 16:59:31,186 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-domain-serializer-1.1.0 
+2019-11-12 16:59:31,197 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-fenixedu-access-control-1.2.2 
+2019-11-12 16:59:31,249 ERROR  - Platform        [Runtime:123] ..............Problems while initializing artifact: qub-fenixedu-access-control
+pt.ist.fenixframework.backend.jvstmojb.dml.runtime.RequiredSlotException: Object com.qubit.terra.qubAccessControl.domain.AccessControlProfile:570874168082433 is inconsistent according to the consistency predicate: com.qubit.terra.qubAccessControl.domain.AccessControlProfile_Base.checkRequiredSlots
+	at pt.ist.fenixframework.backend.jvstmojb.dml.runtime.ConsistencyChecks.checkRequired(ConsistencyChecks.java:6)
+	at com.qubit.terra.qubAccessControl.domain.AccessControlProfile_Base.checkRequiredSlots(AccessControlProfile_Base.java:840)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at pt.ist.fenixframework.backend.jvstmojb.pstm.TopLevelTransaction.checkPredicateForOneObject(TopLevelTransaction.java:610)
+	at pt.ist.fenixframework.backend.jvstmojb.pstm.TopLevelTransaction.checkConsistencyPredicates(TopLevelTransaction.java:500)
+	at pt.ist.fenixframework.backend.jvstmojb.pstm.TopLevelTransaction.checkConsistencyPredicates(TopLevelTransaction.java:431)
+	at jvstm.cps.ConsistentTopLevelTransaction.tryCommit(ConsistentTopLevelTransaction.java:72)
+	at jvstm.ReadWriteTransaction.doCommit(ReadWriteTransaction.java:73)
+	at pt.ist.fenixframework.backend.jvstmojb.pstm.TopLevelTransaction.doCommit(TopLevelTransaction.java:225)
+	at jvstm.Transaction.commitTx(Transaction.java:248)
+	at jvstm.Transaction.commit(Transaction.java:178)
+	at pt.ist.fenixframework.backend.jvstmojb.JvstmOJBTransaction.backendCommit(JvstmOJBTransaction.java:58)
+	at pt.ist.fenixframework.core.AbstractTransaction.commit(AbstractTransaction.java:62)
+	at pt.ist.fenixframework.backend.jvstmojb.JvstmOJBTransactionManager.backendCommit(JvstmOJBTransactionManager.java:66)
+	at pt.ist.fenixframework.core.AbstractTransactionManager.commit(AbstractTransactionManager.java:55)
+	at pt.ist.fenixframework.backend.jvstmojb.JvstmOJBTransactionManager.handleWriteCommand(JvstmOJBTransactionManager.java:217)
+	at pt.ist.fenixframework.backend.jvstmojb.JvstmOJBTransactionManager.withTransaction(JvstmOJBTransactionManager.java:146)
+	at com.qubit.terra.fenixframework.tools.extension.advice.QubAtomicContext.perform(QubAtomicContext.java:39)
+	at com.qubit.solution.fenixedu.qubFenixeduAccessControl.ArtifactHandler.addExpressionToGroup(ArtifactHandler.java)
+	at com.qubit.solution.fenixedu.qubFenixeduAccessControl.ArtifactHandler.initialize(ArtifactHandler.java:50)
+	at com.qubit.terra.framework.services.runtime.Runtime.initialize(Runtime.java:121)
+	at com.qubit.terra.framework.services.runtime.Runtime.initialize(Runtime.java:144)
+	at com.qubit.bennu.presentation.servlets.UiLayerConfigurationServlet.init(UiLayerConfigurationServlet.java:22)
+	at javax.servlet.GenericServlet.init(GenericServlet.java:158)
+	at org.apache.catalina.core.StandardWrapper.initServlet(StandardWrapper.java:1230)
+	at org.apache.catalina.core.StandardWrapper.loadServlet(StandardWrapper.java:1174)
+	at org.apache.catalina.core.StandardWrapper.load(StandardWrapper.java:1066)
+	at org.apache.catalina.core.StandardContext.loadOnStartup(StandardContext.java:5409)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5707)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:145)
+	at org.apache.catalina.core.ContainerBase.addChildInternal(ContainerBase.java:1017)
+	at org.apache.catalina.core.ContainerBase.addChild(ContainerBase.java:993)
+	at org.apache.catalina.core.StandardHost.addChild(StandardHost.java:652)
+	at org.apache.catalina.startup.HostConfig.deployDirectory(HostConfig.java:1296)
+	at org.apache.catalina.startup.HostConfig$DeployDirectory.run(HostConfig.java:2039)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+ 
+2019-11-12 16:59:31,250 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-fenixedu-spaces-mobile-integration-1.1.1 
+2019-11-12 16:59:31,253 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-restApiBuilder-1.1.0 
+2019-11-12 16:59:31,261 WARN   - Presentation    [UIComponentHotReloader:77] Overwritting default component implementation for component: com.qubit.terra.designer.ui.component.DesignerComponent 
+2019-11-12 16:59:31,263 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-reporting-3.10.1 
+2019-11-12 16:59:31,334 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-surveys-2.11.2 
+2019-11-12 16:59:31,401 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-workflow-6.1.2 
+2019-11-12 16:59:31,563 INFO   - Platform        [Runtime:109] ..............Subscription OK: bennu-qub.module.base-3.4.1 
+2019-11-12 16:59:31,779 INFO   - Platform        [Runtime:109] ..............Subscription OK: bennu-uiLayer-core-0.1.0-SNAPSHOT 
+2019-11-12 16:59:31,781 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-bennu-core-mobile-integration-0.0.2 
+2019-11-12 16:59:31,783 INFO   - Platform        [Runtime:109] ..............Subscription OK: qubEdu-treasury-ui-1.1.0 
+2019-11-12 16:59:31,953 WARN   - Presentation    [VaadinUIFactory:249] ......Overwritting default component for type: org.fenixedu.commons.i18n.LocalizedString 
+2019-11-12 16:59:31,953 WARN   - Presentation    [UIComponentHotReloader:77] Overwritting default component implementation for component: com.qubit.solution.qubEdu.framework.extensions.ui.uiLayer.LocalizedStringComponent 
+2019-11-12 16:59:31,986 INFO   - Platform        [Runtime:109] ..............Subscription OK: qubEdu-academic-treasury-ui-1.1.0 
+2019-11-12 16:59:32,106 WARN   - Presentation    [VaadinUIFactory:249] ......Overwritting default component for type: org.fenixedu.commons.i18n.LocalizedString 
+2019-11-12 16:59:32,106 WARN   - Presentation    [UIComponentHotReloader:77] Overwritting default component implementation for component: com.qubit.solution.qubEdu.framework.extensions.ui.uiLayer.LocalizedStringComponent 
+2019-11-12 16:59:32,128 INFO   - Platform        [Runtime:109] ..............Subscription OK: bennu-qub.module.candidacies-3.6.1 
+2019-11-12 16:59:32,228 INFO   - Platform        [Runtime:109] ..............Subscription OK: bennu-qub.module.communication-4.5.3 
+2019-11-12 16:59:32,236 INFO   - Platform        [Runtime:109] ..............Subscription OK: bennu-qub.module.curricular-management-4.18.0 
+2019-11-12 16:59:32,376 INFO   - Platform        [Runtime:109] ..............Subscription OK: bennu-qub.module.evaluations-4.11.1 
+2019-11-12 16:59:32,603 INFO   - Platform        [Runtime:109] ..............Subscription OK: bennu-qub.module.academic-planning-2.18.2 
+2019-11-12 16:59:32,759 INFO   - Platform        [Runtime:109] ..............Subscription OK: bennu-qub.module.academic.work-4.4.1 
+2019-11-12 16:59:32,863 INFO   - Platform        [Runtime:109] ..............Subscription OK: bennu-qub.module.administrative-office-1.11.0 
+2019-11-12 16:59:32,974 INFO   - Platform        [Runtime:109] ..............Subscription OK: bennu-qub.module.candidacies-extensions-3.3.1 
+2019-11-12 16:59:33,000 INFO   - Platform        [Runtime:109] ..............Subscription OK: bennu-qub.module.curricular-transitions-2.5.1 
+2019-11-12 16:59:33,041 INFO   - Platform        [Runtime:109] ..............Subscription OK: bennu-qub.module.customers-ulisboa-sc-1.1.13 
+2019-11-12 16:59:33,343 WARN   - LOG             [BootstrapRotationFMService:80] ------------------------------------------------ 
+2019-11-12 16:59:33,343 WARN   - LOG             [BootstrapRotationFMService:81] FM: not this instance, skipping rotations bootstrap. 
+2019-11-12 16:59:33,344 WARN   - LOG             [BootstrapRotationFMService:82] ------------------------------------------------ 
+2019-11-12 16:59:33,346 INFO   - Platform        [Runtime:109] ..............Subscription OK: bennu-qub.module.surveys-4.8.1 
+2019-11-12 16:59:33,364 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-fenixedu-academic-mobile-integration-1.3.3 
+2019-11-12 16:59:33,369 INFO   - Platform        [Runtime:109] ..............Subscription OK: bennu-qub.module.elearning-2.2.1 
+2019-11-12 16:59:33,407 INFO   - Platform        [Runtime:109] ..............Subscription OK: bennu-qub.module.importdata-3.8.2 
+2019-11-12 16:59:33,531 INFO   - Platform        [Runtime:109] ..............Subscription OK: bennu-qub.module.customers-base-2.5.2 
+2019-11-12 16:59:33,539 INFO   - Platform        [Runtime:109] ..............Subscription OK: qub-fenixedu-attendances-1.6.1 
+2019-11-12 16:59:33,661 INFO   - Platform        [Runtime:109] ..............Subscription OK: bennu-qub.module.customers-ulisboa-5.8.2 
+2019-11-12 16:59:33,809 WARN   - LOG             [BennuCustomersULisboaArtifactHandler:444] --------------------------------------- 
+2019-11-12 16:59:33,809 WARN   - LOG             [BennuCustomersULisboaArtifactHandler:445] ISA : register subsequent tuition extension service. 
+2019-11-12 16:59:33,809 WARN   - LOG             [BennuCustomersULisboaArtifactHandler:446] --------------------------------------- 
+2019-11-12 16:59:34,463 INFO   - Platform        [Runtime:109] ..............Subscription OK: bennu-qub.module.eidas-3.2.1 
+2019-11-12 16:59:34,533 INFO   - Platform        [Runtime:109] ..............Subscription OK: bennu-qub.content-import-export-2.0.0 
+2019-11-12 16:59:34,536 INFO   - Platform        [Runtime:109] ..............Subscription OK: bennu-qub.module.customers-fd-2.9.1 
+2019-11-12 16:59:34,623 WARN   - LOG             [CustomersFdArtifactHandler:99] ------------------------------------------------ 
+2019-11-12 16:59:34,623 WARN   - LOG             [CustomersFdArtifactHandler:100] FDUL: not this instance, skipping configuration. 
+2019-11-12 16:59:34,623 WARN   - LOG             [CustomersFdArtifactHandler:101] ------------------------------------------------ 
+2019-11-12 16:59:34,628 INFO   - Platform        [Runtime:133] ..............qubRuntime initialized... 
+2019-11-12 16:59:40,033 INFO   - Tasks           [ScreenReferencesCollector:50] Create Screen References - Initialize 
+2019-11-12 16:59:46,594 ERROR  - Integration     [ReferenceCollector:54] ....Class (byte[]) not found when visiting classes. 
+2019-11-12 16:59:50,163 INFO   - Tasks           [ScreenReferencesCollector:83] Create Screen References - Finish 

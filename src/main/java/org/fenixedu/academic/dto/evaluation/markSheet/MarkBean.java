@@ -38,7 +38,7 @@ import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.EnrolmentEvaluation;
 import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.academic.domain.Grade;
-import org.fenixedu.academic.domain.GradeScale;
+import org.fenixedu.academic.domain.GradeScaleEnum;
 import org.fenixedu.academic.domain.accessControl.AcademicAuthorizationGroup;
 import org.fenixedu.academic.domain.accessControl.academicAdministration.AcademicOperationType;
 import org.fenixedu.academic.domain.evaluation.markSheet.CompetenceCourseMarkSheet;
@@ -304,7 +304,7 @@ public class MarkBean implements IBean, Comparable<MarkBean> {
         return !StringUtils.isBlank(getGradeValue());
     }
 
-    private GradeScale getGradeScale() {
+    private GradeScaleEnum getGradeScale() {
         return getMarkSheet().getGradeScale();
     }
 
