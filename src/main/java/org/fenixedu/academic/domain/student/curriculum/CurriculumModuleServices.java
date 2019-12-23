@@ -88,7 +88,7 @@ public class CurriculumModuleServices {
             return ((ExecutionYear) interval).getExecutionPeriodsSet().stream()
                     .map(i -> getEnroledAndNotApprovedEctsCreditsFor(toInspect, i)).reduce(BigDecimal.ZERO, BigDecimal::add);
         } else {
-            return getEnroledAndNotApprovedEctsCreditsFor(toInspect, interval);
+            return getEnroledAndNotApprovedEctsCreditsForCurriculumGroup(toInspect, interval);
         }
     }
 
