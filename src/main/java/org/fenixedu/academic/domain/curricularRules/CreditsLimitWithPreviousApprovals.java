@@ -3,7 +3,7 @@ package org.fenixedu.academic.domain.curricularRules;
 import java.util.List;
 import java.util.Set;
 
-import org.fenixedu.academic.domain.ExecutionSemester;
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
 import org.fenixedu.academic.domain.curricularRules.executors.ruleExecutors.CreditsLimitWithPreviousApprovalsExecutor;
 import org.fenixedu.academic.domain.curricularRules.executors.verifyExecutors.VerifyRuleExecutor;
@@ -26,7 +26,7 @@ public class CreditsLimitWithPreviousApprovals extends CreditsLimitWithPreviousA
     }
 
     public CreditsLimitWithPreviousApprovals(final DegreeModule toApplyRule, final CourseGroup contextCourseGroup,
-            final ExecutionSemester begin, final ExecutionSemester end, final Set<CourseGroup> previousGroups) {
+            final ExecutionInterval begin, final ExecutionInterval end, final Set<CourseGroup> previousGroups) {
 
         this();
         init(toApplyRule, contextCourseGroup, begin, end, CurricularRuleType.CUSTOM);

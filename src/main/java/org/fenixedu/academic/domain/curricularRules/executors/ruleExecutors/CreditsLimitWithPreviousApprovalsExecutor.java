@@ -3,7 +3,6 @@ package org.fenixedu.academic.domain.curricularRules.executors.ruleExecutors;
 import java.math.BigDecimal;
 
 import org.fenixedu.academic.domain.ExecutionInterval;
-import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.curricularRules.CreditsLimit;
 import org.fenixedu.academic.domain.curricularRules.CreditsLimitWithPreviousApprovals;
 import org.fenixedu.academic.domain.curricularRules.CurricularRuleServices;

@@ -5,7 +5,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.fenixedu.academic.domain.ExecutionInterval;
-import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.StatuteType;
@@ -21,15 +20,15 @@ public class StatuteServices {
             return findStatuteTypesByYear(registration, (ExecutionYear) executionInterval);
         }
 
-        return findStatuteTypesByChildInterval(registration, (ExecutionSemester) executionInterval);
+        return findStatuteTypesByChildInterval(registration, executionInterval);
     }
 
     static private Collection<StatuteType> findStatuteTypesByYear(final Registration registration,
             final ExecutionYear executionYear) {
 
         final Set<StatuteType> result = Sets.newHashSet();
-        for (final ExecutionSemester executionSemester : executionYear.getExecutionPeriodsSet()) {
-            result.addAll(findStatuteTypesByChildInterval(registration, executionSemester));
+        for (final ExecutionInterval executionInterval : executionYear.getExecutionPeriodsSet()) {
+            result.addAll(findStatuteTypesByChildInterval(registration, executionInterval));
         }
 
         return result;

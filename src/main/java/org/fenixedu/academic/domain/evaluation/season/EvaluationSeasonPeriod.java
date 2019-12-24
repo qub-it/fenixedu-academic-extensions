@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.ExecutionInterval;
-import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.OccupationPeriod;
 import org.fenixedu.academic.domain.OccupationPeriodReference;
@@ -206,8 +205,8 @@ public class EvaluationSeasonPeriod extends EvaluationSeasonPeriod_Base
         final Set<EvaluationSeasonPeriod> result = Sets.<EvaluationSeasonPeriod> newHashSet();
         if (executionYear != null && periodType != null) {
 
-            for (final ExecutionSemester semester : executionYear.getExecutionPeriodsSet()) {
-                result.addAll(findBy(semester, periodType));
+            for (final ExecutionInterval interval : executionYear.getExecutionPeriodsSet()) {
+                result.addAll(findBy(interval, periodType));
             }
         }
 

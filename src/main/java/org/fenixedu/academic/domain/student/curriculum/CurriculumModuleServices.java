@@ -6,7 +6,6 @@ import java.util.TreeSet;
 
 import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.ExecutionInterval;
-import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.curricularRules.CreditsLimit;
 import org.fenixedu.academic.domain.curricularRules.CurricularRuleType;
@@ -25,16 +24,16 @@ public class CurriculumModuleServices {
     static final public Logger logger = LoggerFactory.getLogger(CurriculumModuleServices.class);
 
     static public BigDecimal getCreditsConcluded(final CurriculumGroup toInspect, final ExecutionInterval interval) {
-        if (interval instanceof ExecutionSemester) {
-            return getCreditsConcluded(toInspect,
-                    ExecutionInterval.assertExecutionIntervalType(ExecutionSemester.class, interval));
-        } else {
+        if (interval instanceof ExecutionYear) {
             return BigDecimal.valueOf(
                     toInspect.getCreditsConcluded(ExecutionInterval.assertExecutionIntervalType(ExecutionYear.class, interval)));
+        } else {
+            return getCreditsConcludedChildInterval(toInspect, interval);
         }
     }
 
-    static private BigDecimal getCreditsConcluded(final CurriculumGroup toInspect, final ExecutionSemester semester) {
+    static private BigDecimal getCreditsConcludedChildInterval(final CurriculumGroup toInspect,
+            final ExecutionInterval interval) {
 
         BigDecimal result = BigDecimal.ZERO;
 
@@ -43,11 +42,11 @@ public class CurriculumModuleServices {
         }
 
         for (final CurriculumModule iter : toInspect.getCurriculumModulesSet()) {
-            result = result.add(getCreditsConcluded(iter, semester));
+            result = result.add(getCreditsConcluded(iter, interval));
         }
 
         final CreditsLimit rule =
-                (CreditsLimit) toInspect.getMostRecentActiveCurricularRule(CurricularRuleType.CREDITS_LIMIT, semester);
+                (CreditsLimit) toInspect.getMostRecentActiveCurricularRule(CurricularRuleType.CREDITS_LIMIT, interval);
         if (rule == null) {
             return result;
         } else {
@@ -55,73 +54,71 @@ public class CurriculumModuleServices {
         }
     }
 
-    static private BigDecimal getCreditsConcluded(final CurriculumModule toInspect, final ExecutionSemester semester) {
+    static private BigDecimal getCreditsConcluded(final CurriculumModule toInspect, final ExecutionInterval interval) {
 
         BigDecimal result = BigDecimal.ZERO;
 
         if (CurriculumGroup.class.isAssignableFrom(toInspect.getClass())) {
-            result = getCreditsConcluded((CurriculumGroup) toInspect, semester);
+            result = getCreditsConcludedChildInterval((CurriculumGroup) toInspect, interval);
 
         } else if (Enrolment.class.isAssignableFrom(toInspect.getClass())) {
-            result = getCreditsConcluded((Enrolment) toInspect, semester);
+            result = getCreditsConcluded((Enrolment) toInspect, interval);
 
         } else if (Dismissal.class.isAssignableFrom(toInspect.getClass())) {
-            result = getCreditsConcluded((Dismissal) toInspect, semester);
+            result = getCreditsConcluded((Dismissal) toInspect, interval);
         }
 
         return result;
     }
 
-    static private BigDecimal getCreditsConcluded(final Enrolment toInspect, final ExecutionSemester semester) {
-        return semester == null || toInspect.getExecutionPeriod().isBeforeOrEquals(semester) ? BigDecimal
+    static private BigDecimal getCreditsConcluded(final Enrolment toInspect, final ExecutionInterval interval) {
+        return interval == null || toInspect.getExecutionPeriod().isBeforeOrEquals(interval) ? BigDecimal
                 .valueOf(toInspect.getAprovedEctsCredits()) : BigDecimal.ZERO;
     }
 
-    static private BigDecimal getCreditsConcluded(final Dismissal toInspect, final ExecutionSemester semester) {
-        return semester == null || toInspect.getExecutionPeriod() == null
-                || toInspect.getExecutionPeriod().isBeforeOrEquals(semester) && !toInspect.getCredits().isTemporary() ? BigDecimal
+    static private BigDecimal getCreditsConcluded(final Dismissal toInspect, final ExecutionInterval interval) {
+        return interval == null || toInspect.getExecutionPeriod() == null
+                || toInspect.getExecutionPeriod().isBeforeOrEquals(interval) && !toInspect.getCredits().isTemporary() ? BigDecimal
                         .valueOf(toInspect.getEctsCredits()) : BigDecimal.ZERO;
     }
 
     static public BigDecimal getEnroledAndNotApprovedEctsCreditsFor(final CurriculumGroup toInspect,
             final ExecutionInterval interval) {
-        if (interval instanceof ExecutionSemester) {
-            return getEnroledAndNotApprovedEctsCreditsFor(toInspect,
-                    ExecutionInterval.assertExecutionIntervalType(ExecutionSemester.class, interval));
+        if (interval instanceof ExecutionYear) {
+            return ((ExecutionYear) interval).getExecutionPeriodsSet().stream()
+                    .map(i -> getEnroledAndNotApprovedEctsCreditsFor(toInspect, i)).reduce(BigDecimal.ZERO, BigDecimal::add);
         } else {
-            final ExecutionYear year = ExecutionInterval.assertExecutionIntervalType(ExecutionYear.class, interval);
-            return year.getExecutionPeriodsSet().stream().map(i -> getEnroledAndNotApprovedEctsCreditsFor(toInspect, i))
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            return getEnroledAndNotApprovedEctsCreditsForCurriculumGroup(toInspect, interval);
         }
     }
 
-    static private BigDecimal getEnroledAndNotApprovedEctsCreditsFor(final CurriculumGroup toInspect,
-            final ExecutionSemester semester) {
+    static private BigDecimal getEnroledAndNotApprovedEctsCreditsForCurriculumGroup(final CurriculumGroup toInspect,
+            final ExecutionInterval interval) {
 
         BigDecimal result = BigDecimal.ZERO;
         for (final CurriculumModule iter : toInspect.getCurriculumModulesSet()) {
-            result = result.add(getEnroledAndNotApprovedEctsCreditsFor(iter, semester));
+            result = result.add(getEnroledAndNotApprovedEctsCreditsForCurriculumModule(iter, interval));
         }
         return result;
     }
 
-    static private BigDecimal getEnroledAndNotApprovedEctsCreditsFor(final CurriculumModule toInspect,
-            final ExecutionSemester semester) {
+    static private BigDecimal getEnroledAndNotApprovedEctsCreditsForCurriculumModule(final CurriculumModule toInspect,
+            final ExecutionInterval interval) {
 
         BigDecimal result = BigDecimal.ZERO;
 
         if (CurriculumGroup.class.isAssignableFrom(toInspect.getClass())) {
-            result = getEnroledAndNotApprovedEctsCreditsFor((CurriculumGroup) toInspect, semester);
+            result = getEnroledAndNotApprovedEctsCreditsForCurriculumGroup((CurriculumGroup) toInspect, interval);
 
         } else if (Enrolment.class.isAssignableFrom(toInspect.getClass())) {
-            result = getEnroledAndNotApprovedEctsCreditsFor((Enrolment) toInspect, semester);
+            result = getEnroledAndNotApprovedEctsCreditsForEnrolment((Enrolment) toInspect, interval);
         }
 
         return result;
     }
 
-    static private BigDecimal getEnroledAndNotApprovedEctsCreditsFor(final Enrolment toInspect,
-            final ExecutionSemester semester) {
+    static private BigDecimal getEnroledAndNotApprovedEctsCreditsForEnrolment(final Enrolment toInspect,
+            final ExecutionInterval interval) {
 
         // several if conditions to help debugging
 
@@ -137,16 +134,16 @@ public class CurriculumModuleServices {
             return BigDecimal.ZERO;
         }
 
-        if (!toInspect.isValid(semester)) {
+        if (!toInspect.isValid(interval)) {
             return BigDecimal.ZERO;
         }
 
-        if (toInspect.isAnual() && !semester.getChildOrder().equals(1)) {
+        if (toInspect.isAnual() && !interval.getChildOrder().equals(1)) {
             return BigDecimal.ZERO;
         }
 
         final BigDecimal result = toInspect.getEctsCreditsForCurriculum();
-        logger.debug("{}#UC {}#{} ECTS", toInspect.getCode(), semester.getQualifiedName(), result.toPlainString());
+        logger.debug("{}#UC {}#{} ECTS", toInspect.getCode(), interval.getQualifiedName(), result.toPlainString());
         return result;
     }
 

@@ -3,7 +3,7 @@ package org.fenixedu.academic.dto.student;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-import org.fenixedu.academic.domain.ExecutionSemester;
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
@@ -99,10 +99,10 @@ public class RegistrationDataBean implements Serializable {
     private SchoolClass getSchoolClass() {
         if (this.schoolClass == null) {
             final Registration registration = getRegistration();
-            final ExecutionSemester executionSemester = getExecutionYear().isCurrent() ? ExecutionSemester
-                    .findCurrent(registration.getDegree().getCalendar()) : getExecutionYear().getFirstExecutionPeriod();
+            final ExecutionInterval executionInterval = getExecutionYear().isCurrent() ? ExecutionInterval
+                    .findFirstCurrentChild(registration.getDegree().getCalendar()) : getExecutionYear().getFirstExecutionPeriod();
 
-            this.schoolClass = RegistrationServices.getSchoolClassBy(registration, executionSemester).orElse(null);
+            this.schoolClass = RegistrationServices.getSchoolClassBy(registration, executionInterval).orElse(null);
         }
 
         return this.schoolClass;

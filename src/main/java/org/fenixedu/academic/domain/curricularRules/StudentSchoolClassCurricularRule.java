@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.ExecutionInterval;
-import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
 import org.fenixedu.academic.domain.curricularRules.executors.ruleExecutors.StudentSchoolClassCurricularRuleExecutor;
@@ -31,7 +30,7 @@ public class StudentSchoolClassCurricularRule extends StudentSchoolClassCurricul
     }
 
     public StudentSchoolClassCurricularRule(final DegreeModule toApplyRule, final CourseGroup contextCourseGroup,
-            final ExecutionSemester begin, final ExecutionSemester end, final Boolean schoolClassMustContainCourse,
+            final ExecutionInterval begin, final ExecutionInterval end, final Boolean schoolClassMustContainCourse,
             final Boolean courseMustHaveFreeShifts, final Boolean enrolInShiftIfUnique,
             final Boolean allAvailableShiftsMustBeEnrolled, final String schoolClassNames) {
 

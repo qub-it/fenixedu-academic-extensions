@@ -30,7 +30,6 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
-import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.curricularPeriod.CurricularPeriod;
 import org.fenixedu.academic.domain.curricularRules.curricularPeriod.CurricularPeriodConfiguration;
 import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
@@ -117,7 +116,7 @@ public class CreditsNotEnroled extends CreditsNotEnroled_Base {
         BigDecimal result = BigDecimal.ZERO;
 
         final Map<CurricularPeriod, BigDecimal> curricularPeriodCredits =
-                CurricularPeriodServices.mapYearCredits(enrolmentContext, getApplyToOptionals(), (ExecutionSemester) null);
+                CurricularPeriodServices.mapYearCredits(enrolmentContext, getApplyToOptionals(), null);
         final BigDecimal credits = curricularPeriodCredits.get(curricularPeriod);
         if (credits != null) {
             result = result.add(credits);

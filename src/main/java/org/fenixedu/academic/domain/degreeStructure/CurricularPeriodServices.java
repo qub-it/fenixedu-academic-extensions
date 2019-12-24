@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
-import org.fenixedu.academic.domain.ExecutionSemester;
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.OptionalEnrolment;
 import org.fenixedu.academic.domain.curricularPeriod.CurricularPeriod;
@@ -229,7 +229,7 @@ public class CurricularPeriodServices {
     }
 
     static public Map<CurricularPeriod, BigDecimal> mapYearCredits(final EnrolmentContext enrolmentContext,
-            final Boolean applyToOptionals, final ExecutionSemester semester) {
+            final Boolean applyToOptionals, final ExecutionInterval interval) {
 
         final Map<CurricularPeriod, BigDecimal> result = Maps.newHashMap();
 
@@ -247,12 +247,12 @@ public class CurricularPeriodServices {
 
             final int year = getCurricularYear(iter);
             final CurricularPeriod curricularPeriod =
-                    getCurricularPeriod(dcp, year, semester == null ? null : semester.getSemester());
+                    getCurricularPeriod(dcp, year, interval == null ? null : interval.getChildOrder());
 
             if (curricularPeriod != null) {
 
                 final BigDecimal credits =
-                        BigDecimal.valueOf(semester != null ? iter.getAccumulatedEctsCredits(semester) : iter.getEctsCredits());
+                        BigDecimal.valueOf(interval != null ? iter.getAccumulatedEctsCredits(interval) : iter.getEctsCredits());
 
                 final String code = degreeModule == null ? "Opt" : degreeModule.getCode();
                 addYearCredits(result, curricularPeriod, credits, code);

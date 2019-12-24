@@ -25,7 +25,6 @@ import org.fenixedu.academic.domain.EnrolmentEvaluation;
 import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.ExecutionInterval;
-import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.IEnrolment;
 import org.fenixedu.academic.domain.SchoolClass;
@@ -470,8 +469,8 @@ public class RegistrationServices {
 
         final Collection<EnrolmentEvaluation> result = Sets.newHashSet();
 
-        for (final ExecutionSemester executionSemester : executionYear.getExecutionPeriodsSet()) {
-            for (final EnrolmentEvaluation evaluation : executionSemester.getEnrolmentEvaluationsSet()) {
+        for (final ExecutionInterval executionInterval : executionYear.getExecutionPeriodsSet()) {
+            for (final EnrolmentEvaluation evaluation : executionInterval.getEnrolmentEvaluationsSet()) {
 
                 if (evaluation.getEvaluationSeason().isImprovement() && evaluation.getRegistration() == registration
                         && (predicate == null || predicate.test(evaluation))) {
@@ -486,8 +485,8 @@ public class RegistrationServices {
     public static boolean hasImprovementEvaluations(final Registration registration, final ExecutionYear executionYear,
             final Predicate<EnrolmentEvaluation> predicate) {
 
-        for (final ExecutionSemester executionSemester : executionYear.getExecutionPeriodsSet()) {
-            for (final EnrolmentEvaluation evaluation : executionSemester.getEnrolmentEvaluationsSet()) {
+        for (final ExecutionInterval executionInterval : executionYear.getExecutionPeriodsSet()) {
+            for (final EnrolmentEvaluation evaluation : executionInterval.getEnrolmentEvaluationsSet()) {
 
                 if (evaluation.getEvaluationSeason().isImprovement() && evaluation.getRegistration() == registration
                         && (predicate == null || predicate.test(evaluation))) {
