@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.Country;
+import org.fenixedu.academic.domain.OptionalEnrolment;
 import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.academic.domain.organizationalStructure.AccountabilityTypeEnum;
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
@@ -21,7 +23,6 @@ import org.fenixedu.bennu.core.util.CoreConfiguration;
 import org.fenixedu.commons.i18n.LocalizedString;
 import org.fenixedu.commons.i18n.LocalizedString.Builder;
 
-import com.github.dandelion.core.utils.StringUtils;
 import com.google.common.collect.Lists;
 
 import pt.ist.fenixframework.Atomic;
@@ -185,10 +186,13 @@ public class CreditsReasonType extends CreditsReasonType_Base {
             credits.getIEnrolments().stream().sorted(ICurriculumEntry.COMPARATOR_BY_EXECUTION_PERIOD_AND_NAME_AND_ID)
                     .forEach(i -> {
 
-                        if (!(i instanceof ExternalEnrolment)) {
-                            result.append(i.getName(), ", ");
-                        } else {
+                        if (i instanceof ExternalEnrolment) {
                             addExternalEnrolmentInformation(result, (ExternalEnrolment) i, true);
+                        }
+                        if (i instanceof OptionalEnrolment) {
+                            addOptionalEnrolmentInformation(result, (OptionalEnrolment) i);
+                        } else {
+                            result.append(i.getName(), ", ");
                         }
 
                         addECTS(result, i);
@@ -196,6 +200,15 @@ public class CreditsReasonType extends CreditsReasonType_Base {
         }
 
         return result.build();
+    }
+
+    private void addOptionalEnrolmentInformation(Builder result, OptionalEnrolment i) {
+        result.append(i.getName(), ", ");
+        final String code =
+                !StringUtils.isEmpty(i.getCurricularCourse().getCode()) ? i.getCurricularCourse().getCode() + " - " : "";
+        LocalizedString optionalName = i.getCurricularCourse().getNameI18N(i.getExecutionInterval());
+
+        result.append(" (").append(code).append(optionalName).append(") ");
     }
 
     private void addExternalEnrolmentInformation(final Builder result, final ExternalEnrolment external,

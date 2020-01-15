@@ -1,3 +1,5 @@
+- Fix bug: Add curricular course name when building reason text for dismissal and it is a optional enrolment
+
 4.3.0 (24-12-2019)
 - Refactor: Upgraded dependency of fenixedu-academic-core and replaced ExecutionSemester references to ExecutionInterval
 
