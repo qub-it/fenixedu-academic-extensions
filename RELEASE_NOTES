@@ -1,3 +1,5 @@
+- Refactor: Upgraded dependency of fenixedu-academic-core and fenixedu-academic-treasury
+
 4.3.1 (15-01-2020)
 - Fix bug: Add curricular course name when building reason text for dismissal and it is a optional enrolment
 
