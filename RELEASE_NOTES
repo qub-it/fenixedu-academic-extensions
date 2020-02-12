@@ -1,3 +1,5 @@
+- Bug fix: Fixed NPE when getting null snapshot
+
 4.3.3 (31-01-2020)
 - Refactor: Upgraded dependency of fenixedu-academic-treasury
 

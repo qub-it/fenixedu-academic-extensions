@@ -1060,8 +1060,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
     public Optional<CompetenceCourseMarkSheetSnapshot> getLastSnapshot() {
         final Optional<CompetenceCourseMarkSheetStateChange> lastStateChange =
                 getLastStateBy(CompetenceCourseMarkSheetStateEnum.findSubmited());
-
-        return Optional.of(lastStateChange.isPresent() ? lastStateChange.get().getSnapshot() : null);
+        return Optional.ofNullable(lastStateChange.isPresent() ? lastStateChange.get().getSnapshot() : null);
     }
 
     public List<CompetenceCourseMarkSheetSnapshot> getSnapshots() {
