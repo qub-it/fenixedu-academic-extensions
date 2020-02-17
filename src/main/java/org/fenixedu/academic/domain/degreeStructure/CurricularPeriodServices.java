@@ -118,7 +118,7 @@ public class CurricularPeriodServices {
             // migrated overriden value must only be used as a last resort
             final Integer overridenCurricularYear = CurriculumLineServices.getCurricularYear(input);
             if (overridenCurricularYear == null) {
-                logger.warn("Unable to guess curricular year for [{}], returning 1", report.toString().replace("\n", ""));
+                logger.debug("Unable to guess curricular year for [{}], returning 1", report.toString().replace("\n", ""));
                 return 1;
 
             } else {
