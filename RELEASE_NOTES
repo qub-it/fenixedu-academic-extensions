@@ -1,4 +1,6 @@
 - Improvement: Changed log level in "unable to guess curricular year" log in CurricularPeriodServices from warn to debug. 
+- Refactor: Rename enum type GradeScale to GradeScaleEnum
+- Refactor: Remove references to GradeScaleEnum values
 
 4.3.4 (13-02-2020)
 - Bug fix: Fixed NPE when getting null snapshot
