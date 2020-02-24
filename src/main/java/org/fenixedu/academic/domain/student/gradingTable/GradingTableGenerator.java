@@ -83,46 +83,6 @@ public class GradingTableGenerator {
         }
     }
 
-    public static void generateTableData(GradingTable table, List<BigDecimal> sample) {
-        Map<BigDecimal, Integer> gradeDistro = new LinkedHashMap<BigDecimal, Integer>();
-        Map<BigDecimal, BigDecimal> heapedGradeDistro = new LinkedHashMap<BigDecimal, BigDecimal>();
-        BigDecimal sampleSize = new BigDecimal(sample.size());
-        gradeDistro.put(new BigDecimal("10.0"), 0);
-        gradeDistro.put(new BigDecimal("11.0"), 0);
-        gradeDistro.put(new BigDecimal("12.0"), 0);
-        gradeDistro.put(new BigDecimal("13.0"), 0);
-        gradeDistro.put(new BigDecimal("14.0"), 0);
-        gradeDistro.put(new BigDecimal("15.0"), 0);
-        gradeDistro.put(new BigDecimal("16.0"), 0);
-        gradeDistro.put(new BigDecimal("17.0"), 0);
-        gradeDistro.put(new BigDecimal("18.0"), 0);
-        gradeDistro.put(new BigDecimal("19.0"), 0);
-        gradeDistro.put(new BigDecimal("20.0"), 0);
-
-        // 1. Grades distributions
-        for (BigDecimal grade : sample) {
-            grade = grade.setScale(1); // This adds the .0 to the value.
-            gradeDistro.put(grade, (gradeDistro.get(grade) + 1));
-        }
-
-        // 2. Heaped grades distribution
-        BigDecimal heap = BigDecimal.ZERO;
-        for (Entry<BigDecimal, Integer> step : gradeDistro.entrySet()) {
-            BigDecimal grade = step.getKey();
-            BigDecimal count = new BigDecimal(step.getValue());
-            BigDecimal share = count.divide(sampleSize, 5, BigDecimal.ROUND_HALF_EVEN);
-            heap = heap.add(share);
-            heapedGradeDistro.put(grade, heap.setScale(3, BigDecimal.ROUND_HALF_EVEN));
-        }
-
-        // 3. Apply algorithm and return table
-        final GradeDistributionConverter carla = new GradeDistributionConverter();
-        final Map<BigDecimal, String> tableMap = carla.process(heapedGradeDistro);
-        for (BigDecimal mark : tableMap.keySet()) {
-            table.addMark(mark, tableMap.get(mark));
-        }
-    }
-
     private static class GradeDistributionConverter {
 
         private Map<String, BigDecimal> distro = new LinkedHashMap<String, BigDecimal>();

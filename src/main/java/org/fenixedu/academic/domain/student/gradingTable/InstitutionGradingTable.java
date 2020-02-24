@@ -10,8 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.academic.domain.student.Registration;
@@ -65,15 +67,34 @@ public class InstitutionGradingTable extends InstitutionGradingTable_Base {
     public void compileData() {
         GradingTableData tableData = new GradingTableData();
         setData(tableData);
-        List<BigDecimal> sample = harvestSample();
+        Set<RegistrationConclusionBean> harvestSample = harvestSample();
+        List<BigDecimal> sample = harvestSample.stream()
+                .map(s -> new BigDecimal(s.getFinalGrade().getNumericValue().setScale(0, RoundingMode.HALF_UP).intValue()))
+                .collect(Collectors.toList());
+
+        final String harvestConclusionUsedInSampleData = harvestSample.stream().map(e -> registrationConclusionBeanStringData(e))
+                .reduce((a, c) -> a + "\n" + c).orElseGet(() -> "");
+        setStudentSampleData(harvestConclusionUsedInSampleData);
+
         if (sample != null) {
-            GradingTableGenerator.generateTableData(this, sample);
+            GradingTableGenerator.generateTableDataImprovement(this, sample);
         } else {
             GradingTableGenerator.defaultData(this);
             setCopied(true);
         }
-        
+
         checkUniquenessOfTable();
+    }
+
+    private String registrationConclusionBeanStringData(RegistrationConclusionBean e) {
+        Integer studentNumber = e.getRegistration().getNumber();
+        String studentName = e.getRegistration().getStudent().getName();
+        String degreeCode = e.getRegistration().getDegree().getCode();
+        String conclusionExecutionYearName = e.getConclusionYear().getQualifiedName();
+        Integer finalGrade = e.getFinalGrade().getNumericValue().setScale(0, RoundingMode.HALF_UP).intValue();
+
+        return String.format("%s\t%s\t%s\t%s\t%s", studentNumber, studentName, degreeCode, conclusionExecutionYearName,
+                finalGrade);
     }
 
     private void checkUniquenessOfTable() {
@@ -84,8 +105,9 @@ public class InstitutionGradingTable extends InstitutionGradingTable_Base {
         }
     }
 
-    private List<BigDecimal> harvestSample() {
-        List<BigDecimal> sample = new ArrayList<BigDecimal>();
+    private Set<RegistrationConclusionBean> harvestSample() {
+        final Set<RegistrationConclusionBean> sampleData = new HashSet<>();
+
         int coveredYears = 0;
         boolean sampleOK = false;
         final Map<ExecutionYear, Set<RegistrationConclusionBean>> conclusionsMap = collectConclusions();
@@ -94,17 +116,22 @@ public class InstitutionGradingTable extends InstitutionGradingTable_Base {
 
             if (conclusionsMap.get(year) != null) {
                 for (RegistrationConclusionBean bean : conclusionsMap.get(year)) {
+                    if (!bean.getFinalGrade().isNumeric()) {
+                        continue;
+                    }
+
                     Integer finalAverage = bean.getFinalGrade().getNumericValue() != null ? bean.getFinalGrade().getNumericValue()
                             .setScale(0, RoundingMode.HALF_UP).intValue() : 0;
                     if (finalAverage == 0) {
                         continue;
                     }
-                    sample.add(new BigDecimal(finalAverage));
+
+                    sampleData.add(bean);
                 }
             }
 
             if (++coveredYears >= GradingTableSettings.getMinimumPastYears()
-                    && sample.size() >= GradingTableSettings.getMinimumSampleSize()) {
+                    && sampleData.size() >= GradingTableSettings.getMinimumSampleSize()) {
                 sampleOK = true;
                 break;
             }
@@ -113,7 +140,7 @@ public class InstitutionGradingTable extends InstitutionGradingTable_Base {
                 break;
             }
         }
-        return sampleOK ? sample : null;
+        return sampleOK ? sampleData : null;
     }
 
     private Map<ExecutionYear, Set<RegistrationConclusionBean>> collectConclusions() {

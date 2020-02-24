@@ -25,7 +25,7 @@ public class GeneralPurposeGradingTable extends GeneralPurposeGradingTable_Base 
         GradingTableData tableData = new GradingTableData();
         setData(tableData);
         if (sample != null) {
-            GradingTableGenerator.generateTableData(this, sample);
+            GradingTableGenerator.generateTableDataImprovement(this, sample);
         } else {
             GradingTableGenerator.defaultData(this);
             setCopied(true);
