@@ -176,7 +176,7 @@ public class CurricularPeriodServices {
             if (degreeModule == null || context.getChildDegreeModule() == degreeModule) {
                 curricularYears.add(curricularYear);
 
-                if (context.isValid(executionYear)) {
+                if (context.isValidForExecutionAggregation(executionYear)) {
                     curricularYearsValids.add(curricularYear);
                 }
             }
