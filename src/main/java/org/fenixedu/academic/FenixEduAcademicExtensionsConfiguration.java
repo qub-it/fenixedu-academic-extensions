@@ -41,6 +41,10 @@ public class FenixEduAcademicExtensionsConfiguration {
                 defaultValue = "org.fenixedu.ulisboa.specifications.domain.student.curriculum.CurriculumGradeCalculator")
         public String getCurriculumGradeCalculator();
 
+        @ConfigurationProperty(key = "domain.academic.dismissals.restrict.equivalences.to.curricular.courses",
+                defaultValue = "true")
+        public Boolean getRestrictEquivalencesToCurricularCourses();
+
     }
 
     public static ConfigurationProperties getConfiguration() {

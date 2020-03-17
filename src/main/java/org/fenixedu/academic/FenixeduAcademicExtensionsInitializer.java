@@ -1,6 +1,5 @@
 package org.fenixedu.academic;
 
-
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
@@ -152,7 +151,8 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
             @Override
             public void beforeAdd(final Dismissal dismissal, final Credits credits) {
                 if (credits != null && dismissal != null && (dismissal.isCreditsDismissal() || dismissal.isOptional())
-                        && credits.isEquivalence()) {
+                        && credits.isEquivalence() && FenixEduAcademicExtensionsConfiguration.getConfiguration()
+                                .getRestrictEquivalencesToCurricularCourses()) {
                     throw new DomainException("error.Equivalence.can.only.be.applied.to.curricular.courses");
 
                 }
