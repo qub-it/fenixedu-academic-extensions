@@ -1,3 +1,5 @@
+- Improvement: added method to calculate line curricular period
+
 4.4.3 (17-03-2020)
 - Improvment: Added a new configuration to be used on migrations - domain.academic.dismissals.restrict.equivalences.to.curricular.courses
 

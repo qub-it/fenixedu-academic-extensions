@@ -42,7 +42,12 @@ public class CurricularPeriodServices {
 
     static private final Logger logger = LoggerFactory.getLogger(CurricularPeriodServices.class);
 
-    static public CurricularPeriod getCurricularPeriod(final DegreeCurricularPlan dcp, final int year, final Integer semester) {
+    /**
+     * @deprecated
+     *             use {@link DegreeCurricularPlan#getCurricularPeriodFor(int, int, AcademicPeriod)}
+     */
+    @Deprecated
+    public static CurricularPeriod getCurricularPeriod(final DegreeCurricularPlan dcp, final int year, final Integer semester) {
         final CurricularPeriod result;
 
         if (semester == null) {
@@ -52,14 +57,14 @@ public class CurricularPeriodServices {
             result = dcp.getCurricularPeriodFor(year, semester);
 
             if (result == null) {
-                logger.info("Unsupported Curricular Period [Y{},S{}], DCP [{}] ", year, semester, dcp.getPresentationName());
+                logger.debug("Unsupported Curricular Period [Y{},S{}], DCP [{}] ", year, semester, dcp.getPresentationName());
             }
         }
 
         return result;
     }
 
-    static public CurricularPeriod getCurricularPeriod(final DegreeCurricularPlan dcp, final int year) {
+    public static CurricularPeriod getCurricularPeriod(final DegreeCurricularPlan dcp, final int year) {
         CurricularPeriod result = null;
 
         final CurricularPeriodInfoDTO dto = new CurricularPeriodInfoDTO(year, AcademicPeriod.YEAR);
@@ -77,14 +82,14 @@ public class CurricularPeriodServices {
         }
 
         if (result == null) {
-            logger.info("Unsupported Curricular Period [{},{}], DCP [{}]", dto.getPeriodType().getName(), dto.getOrder(),
+            logger.debug("Unsupported Curricular Period [{},{}], DCP [{}]", dto.getPeriodType().getName(), dto.getOrder(),
                     dcp.getPresentationName());
         }
 
         return result;
     }
 
-    static public CurricularPeriodConfiguration getCurricularPeriodConfiguration(final DegreeCurricularPlan dcp, final int year) {
+    public static CurricularPeriodConfiguration getCurricularPeriodConfiguration(final DegreeCurricularPlan dcp, final int year) {
         final CurricularPeriod curricularPeriod = getCurricularPeriod(dcp, year);
         return curricularPeriod == null ? null : curricularPeriod.getConfiguration();
     }
@@ -95,7 +100,7 @@ public class CurricularPeriodServices {
     }
 
     //TODO: move to CurriculumLineServices
-    static public int getCurricularYear(final CurriculumLine input) {
+    public static int getCurricularYear(final CurriculumLine input) {
 
         // no course group placeholder takes precedence over everything else
         final String report = input.print(StringUtils.EMPTY).toString();
@@ -127,13 +132,13 @@ public class CurricularPeriodServices {
         }
     }
 
-    static final private Cache<String, Integer> CACHE_DEGREE_MODULE_CURRICULAR_YEAR =
+    private static final Cache<String, Integer> CACHE_DEGREE_MODULE_CURRICULAR_YEAR =
             CacheBuilder.newBuilder().concurrencyLevel(8).maximumSize(3000).expireAfterWrite(1, TimeUnit.DAYS).build();
 
     /**
      * Assume lowest curricular year of the degree module's contexts on the parent group
      */
-    static private Integer getCurricularYearCalculated(final String report, final DegreeModule degreeModule,
+    private static Integer getCurricularYearCalculated(final String report, final DegreeModule degreeModule,
             final ExecutionYear executionYear, final Set<Context> contexts) {
 
         final String key = String.format("%s#%s#%s", degreeModule == null ? "null" : degreeModule.getExternalId(),
@@ -156,7 +161,7 @@ public class CurricularPeriodServices {
         }
     }
 
-    static private Optional<Integer> loadCurricularYearCalculated(final String report, final DegreeModule degreeModule,
+    private static Optional<Integer> loadCurricularYearCalculated(final String report, final DegreeModule degreeModule,
             final ExecutionYear executionYear, final Set<Context> contexts) {
 
         // best scenario, we want to assert execution year on context
@@ -193,11 +198,11 @@ public class CurricularPeriodServices {
         }
     }
 
-    static public Map<CurricularPeriod, BigDecimal> mapYearCredits(final ICurriculum curriculum) {
+    public static Map<CurricularPeriod, BigDecimal> mapYearCredits(final ICurriculum curriculum) {
         return mapYearCredits(curriculum, (Boolean) null);
     }
 
-    static public Map<CurricularPeriod, BigDecimal> mapYearCredits(final ICurriculum curriculum, final Boolean applyToOptionals) {
+    public static Map<CurricularPeriod, BigDecimal> mapYearCredits(final ICurriculum curriculum, final Boolean applyToOptionals) {
 
         final Map<CurricularPeriod, BigDecimal> result = Maps.newHashMap();
 
@@ -228,7 +233,7 @@ public class CurricularPeriodServices {
         return result;
     }
 
-    static public Map<CurricularPeriod, BigDecimal> mapYearCredits(final EnrolmentContext enrolmentContext,
+    public static Map<CurricularPeriod, BigDecimal> mapYearCredits(final EnrolmentContext enrolmentContext,
             final Boolean applyToOptionals, final ExecutionInterval interval) {
 
         final Map<CurricularPeriod, BigDecimal> result = Maps.newHashMap();
@@ -263,13 +268,13 @@ public class CurricularPeriodServices {
         return result;
     }
 
-    static public void mapYearCreditsLogger(final Map<CurricularPeriod, BigDecimal> input) {
+    public static void mapYearCreditsLogger(final Map<CurricularPeriod, BigDecimal> input) {
         for (final Map.Entry<CurricularPeriod, BigDecimal> entry : input.entrySet()) {
             CurricularPeriodRule.logger.debug("{}#{} ECTS", entry.getKey().getFullLabel(), entry.getValue().toPlainString());
         }
     }
 
-    static public void addYearCredits(final Map<CurricularPeriod, BigDecimal> result, final CurricularPeriod curricularPeriod,
+    public static void addYearCredits(final Map<CurricularPeriod, BigDecimal> result, final CurricularPeriod curricularPeriod,
             final BigDecimal credits, final String code) {
 
         final BigDecimal creditsYear = result.get(curricularPeriod);
@@ -278,16 +283,32 @@ public class CurricularPeriodServices {
     }
 
     //TODO: move to CurriculumLineServices
-    static public int getCurricularSemester(final CurriculumLine curriculumLine) {
+    /**
+     * @deprecated use {@link #getCurricularPeriod(CurriculumLine)}
+     */
+    @Deprecated
+    public static int getCurricularSemester(final CurriculumLine curriculumLine) {
+        return getCurricularPeriodChildOrder(curriculumLine);
+    }
 
-        if (curriculumLine.isEnrolment()) {
-            return curriculumLine.getExecutionInterval().getChildOrder();
+    //TODO: move to CurriculumLineServices 
+    public static CurricularPeriod getCurricularPeriod(final CurriculumLine line) {
+        final DegreeCurricularPlan degreeCurricularPlan =
+                line.getCurriculumGroup().isNoCourseGroupCurriculumGroup() || line.getDegreeModule() == null ? line
+                        .getDegreeCurricularPlanOfStudent() : line.getDegreeCurricularPlanOfDegreeModule();
+        return degreeCurricularPlan.getCurricularPeriodFor(getCurricularYear(line), getCurricularPeriodChildOrder(line),
+                line.getExecutionInterval().getAcademicPeriod());
+    }
+
+    private static int getCurricularPeriodChildOrder(final CurriculumLine line) {
+        if (line.isEnrolment()) {
+            return line.getExecutionInterval().getChildOrder();
         }
 
-        final Collection<Context> contexts = CurriculumLineServices.getParentContexts(curriculumLine);
-        return contexts.size() == 1 ? contexts.iterator().next().getCurricularPeriod().getChildOrder() : curriculumLine
+        final Collection<Context> contexts = CurriculumLineServices.getParentContexts(line);
+        //dismissals special case created on first execution interval but curricular period is on second
+        return contexts.size() == 1 ? contexts.iterator().next().getCurricularPeriod().getChildOrder() : line
                 .getExecutionInterval().getChildOrder();
-
     }
 
 }
