@@ -347,7 +347,7 @@ public class RegistrationHistoryReportService {
 
         final ExecutionInterval executionInterval = b.getExecutionInterval();
         if (executionInterval != null) {
-            return executionInterval.convert(ExecutionYear.class) == r.getExecutionYear();
+            return executionInterval.getExecutionYear() == r.getExecutionYear();
         }
         return ExecutionYear.readByDateTime(b.getStateDate().toLocalDate().toDateTimeAtStartOfDay()) == r.getExecutionYear();
     }
