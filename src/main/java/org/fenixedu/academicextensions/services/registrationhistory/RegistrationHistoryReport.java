@@ -727,43 +727,49 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
                 .collect(Collectors.joining(" \n --------------\n "));
     }
 
-    private PrecedentDegreeInformation getPrecedentInformation() {
+    private PrecedentDegreeInformation getCompletedPrecedentInformation() {
         final Registration registration = getRegistration();
         final StudentCandidacy candidacy = registration == null ? null : registration.getStudentCandidacy();
-        return candidacy == null ? null : candidacy.getPrecedentDegreeInformation();
+        return candidacy == null ? null : candidacy.getCompletedDegreeInformation();
+    }
+
+    private PrecedentDegreeInformation getPreviousPrecedentInformation() {
+        final Registration registration = getRegistration();
+        final StudentCandidacy candidacy = registration == null ? null : registration.getStudentCandidacy();
+        return candidacy == null ? null : candidacy.getPreviousDegreeInformation();
     }
 
     public String getQualificationInstitutionName() {
-        final PrecedentDegreeInformation info = getPrecedentInformation();
+        final PrecedentDegreeInformation info = getCompletedPrecedentInformation();
         return info == null ? null : info.getInstitutionName();
     }
 
     public String getQualificationSchoolLevel() {
-        final PrecedentDegreeInformation info = getPrecedentInformation();
+        final PrecedentDegreeInformation info = getCompletedPrecedentInformation();
         final SchoolLevelType schoolLevel = info.getSchoolLevel();
         return schoolLevel == null ? null : schoolLevel.getLocalizedName();
     }
 
     public String getQualificationDegreeDesignation() {
-        final PrecedentDegreeInformation info = getPrecedentInformation();
+        final PrecedentDegreeInformation info = getCompletedPrecedentInformation();
         return info == null ? null : info.getDegreeDesignation();
     }
 
     public String getOriginInstitutionName() {
-        final PrecedentDegreeInformation info = getPrecedentInformation();
-        final Unit precedentInstitution = info.getPrecedentInstitution();
+        final PrecedentDegreeInformation info = getPreviousPrecedentInformation();
+        final Unit precedentInstitution = info.getInstitution();
         return precedentInstitution == null ? null : precedentInstitution.getName();
     }
 
     public String getOriginSchoolLevel() {
-        final PrecedentDegreeInformation info = getPrecedentInformation();
-        final SchoolLevelType schoolLevel = info.getPrecedentSchoolLevel();
+        final PrecedentDegreeInformation info = getPreviousPrecedentInformation();
+        final SchoolLevelType schoolLevel = info.getSchoolLevel();
         return schoolLevel == null ? null : schoolLevel.getLocalizedName();
     }
 
     public String getOriginDegreeDesignation() {
-        final PrecedentDegreeInformation info = getPrecedentInformation();
-        return info == null ? null : info.getPrecedentDegreeDesignation();
+        final PrecedentDegreeInformation info = getPreviousPrecedentInformation();
+        return info == null ? null : info.getDegreeDesignation();
     }
 
     public String getUsername() {

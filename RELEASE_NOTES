@@ -1,3 +1,5 @@
+- Refactor: Upgraded dependency of fenixedu-academic-core (PrecedentDegreeInformation split into 'completed' and 'previous')
+
 4.5.0 (18-03-2020)
 - Improvement: added method to calculate line curricular period
 
