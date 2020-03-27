@@ -135,9 +135,10 @@ public class GradingTableGenerator {
                         if (leftHandSide.compareTo(rightHandSide) <= 0) {
                             lowerBound.put(ectsGrades[gradeIndex], currentGrade.intValue());
                         } else {
-                            if (gradeIndex < 3 && currentGrade.equals(TWENTY)) { // D does not care about the 20 check
+                            if (canLetterBeSkipped(gradeIndex) && currentGrade.equals(TWENTY)) {
+                                // Since m_Grade > M_Grade, this letter will not be given out 
                                 lowerBound.put(ectsGrades[gradeIndex], 21);
-                                upperBound.put(ectsGrades[gradeIndex], 21);
+                                upperBound.put(ectsGrades[gradeIndex], 20);
                             } else {
                                 lowerBound.put(ectsGrades[gradeIndex], currentGrade.intValue() + 1);
                             }
@@ -160,6 +161,18 @@ public class GradingTableGenerator {
                 }
             }
             return tableMap;
+        }
+
+        /**
+         * According to the document, the first three classifications (A,B,C) will not be given out
+         * if the value that surpasses the threshold is equal to 20 (or the equivalent max grade).
+         * D and E skip this check, as the D classification must be given out.
+         * E classification may also not appear if its upper bound is under 10.
+         * 
+         * 27 March 2020 Diogo Sousa
+         */
+        private boolean canLetterBeSkipped(int index) {
+            return index < 3;
         }
 
         /**
