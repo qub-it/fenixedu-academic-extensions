@@ -26,6 +26,7 @@ import org.fenixedu.bennu.core.domain.Bennu;
 import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.FenixFramework;
 
+@Deprecated
 public class InstitutionGradingTable extends InstitutionGradingTable_Base {
 
     private InstitutionGradingTable() {
@@ -46,21 +47,12 @@ public class InstitutionGradingTable extends InstitutionGradingTable_Base {
         if (find(executionYear) != null) {
             return null;
         }
-        InstitutionGradingTable table = new InstitutionGradingTable();
-        table.setExecutionYear(executionYear);
-        table.compileData();
-        return table;
-    }
-
-    public static void copyData(GradingTable table) {
-        InstitutionGradingTable institutionTable = find(table.getExecutionYear());
-        if (institutionTable != null) {
-            for (GradeConversion gc : institutionTable.getData().getTable()) {
-                table.addMark(gc.getMark(), gc.getEctsGrade());
-            }
-        } else {
-            GradingTableGenerator.defaultData(table);
-        }
+        
+        throw new RuntimeException("deprecated");
+//        InstitutionGradingTable table = new InstitutionGradingTable();
+//        table.setExecutionYear(executionYear);
+//        table.compileData();
+//        return table;
     }
 
     @Override

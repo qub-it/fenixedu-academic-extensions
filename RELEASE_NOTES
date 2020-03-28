@@ -1,3 +1,6 @@
+- Bug Fix: Avoid mixing of program conclusions of different types in generating degree ECTS grading table
+- Improvement: Deprecate ECTS Institution grading table. In lack of sample use default grading table for courses 
+
 4.5.1 (19-03-2020)
 - Refactor: Upgraded dependency of fenixedu-academic-core (PrecedentDegreeInformation split into 'completed' and 'previous')
 

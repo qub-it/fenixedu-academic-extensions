@@ -193,7 +193,7 @@ public class DegreeGradingTable extends DegreeGradingTable_Base {
         if (!sample.isEmpty()) {
             GradingTableGenerator.generateTableDataImprovement(this, sample);
         } else {
-            InstitutionGradingTable.copyData(this);
+            GradingTableGenerator.defaultData(this);
             setCopied(true);
         }
 
@@ -289,6 +289,11 @@ public class DegreeGradingTable extends DegreeGradingTable_Base {
                 if (info.getCurriculumGroup() == null || !info.isConcluded()) {
                     continue;
                 }
+                
+                if(info.getProgramConclusion() != getProgramConclusion()) {
+                    continue;
+                }
+                
                 final ExecutionYear conclusionYear = info.getRegistrationConclusionBean().getConclusionYear();
                 if (!conclusionsMap.containsKey(conclusionYear)) {
                     conclusionsMap.put(conclusionYear, new HashSet<RegistrationConclusionBean>());
