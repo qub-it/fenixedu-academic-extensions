@@ -1,3 +1,4 @@
+4.5.2 (28-03-2020)
 - Bug Fix: Avoid mixing of program conclusions of different types in generating degree ECTS grading table
 - Improvement: Deprecate ECTS Institution grading table. In lack of sample use default grading table for courses 
 
