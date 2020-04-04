@@ -1,3 +1,4 @@
+4.6.0 (04-04-2020)
 - Refactor: Change MobilityRegistrationInformation relation with CountryUnit to its superclass Unit
 
 4.5.2 (28-03-2020)
