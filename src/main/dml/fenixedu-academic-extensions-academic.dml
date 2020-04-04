@@ -634,12 +634,12 @@ class student.mobility.MobilityRegistrationInformation {
 	}
 	
 	relation MobilityRegistrationInformationCountryUnit {
-		student.mobility.MobilityRegistrationInformation playsRole mobilityRegistrationInformations {
+		student.mobility.MobilityRegistrationInformation playsRole mobilityRegistrationInformationsCountries {
 			multiplicity *;
 		}
 	
 	
-		.org.fenixedu.academic.domain.organizationalStructure.CountryUnit playsRole countryUnit {
+		.org.fenixedu.academic.domain.organizationalStructure.Unit playsRole countryUnit {
 			multiplicity 0..1;
 		}
 	}

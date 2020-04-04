@@ -13,9 +13,6 @@ import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.SchoolPeriodDuration;
 import org.fenixedu.academic.domain.degreeStructure.CourseGroup;
 import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
-import org.fenixedu.academic.domain.organizationalStructure.AccountabilityTypeEnum;
-import org.fenixedu.academic.domain.organizationalStructure.CountryUnit;
-import org.fenixedu.academic.domain.organizationalStructure.Party;
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
@@ -67,7 +64,7 @@ public class MobilityRegistrationInformation extends MobilityRegistrationInforma
     public static MobilityRegistrationInformation createOutgoing(final Registration registration, boolean national,
             SchoolPeriodDuration programDuration, ExecutionInterval begin, ExecutionInterval end, LocalDate beginDate,
             LocalDate endDate, MobilityActivityType mobilityActivityType, MobilityProgramType mobilityProgramType,
-            CountryUnit countryUnit, Unit foreignInstitutionUnit, String remarks) {
+            Unit countryUnit, Unit foreignInstitutionUnit, String remarks) {
 
         final MobilityRegistrationInformation result = new MobilityRegistrationInformation();
         result.setRegistration(registration);
@@ -79,11 +76,10 @@ public class MobilityRegistrationInformation extends MobilityRegistrationInforma
     public static MobilityRegistrationInformation createIncoming(final Registration registration, boolean national,
             SchoolPeriodDuration programDuration, ExecutionInterval begin, ExecutionInterval end, LocalDate beginDate,
             LocalDate endDate, MobilityActivityType mobilityActivityType, MobilityProgramType mobilityProgramType,
-            CountryUnit countryUnit, Unit foreignInstitutionUnit, String remarks,
-            MobilityProgrammeLevel originMobilityProgrammeLevel, String otherOriginMobilityProgrammeLevel, boolean degreeBased,
-            DegreeCurricularPlan degreeCurricularPlan, CourseGroup branchCourseGroup,
-            MobilityScientificArea mobilityScientificArea, MobilityProgrammeLevel incomingMobilityProgrammeLevel,
-            String otherIncomingMobilityProgrammeLevel) {
+            Unit countryUnit, Unit foreignInstitutionUnit, String remarks, MobilityProgrammeLevel originMobilityProgrammeLevel,
+            String otherOriginMobilityProgrammeLevel, boolean degreeBased, DegreeCurricularPlan degreeCurricularPlan,
+            CourseGroup branchCourseGroup, MobilityScientificArea mobilityScientificArea,
+            MobilityProgrammeLevel incomingMobilityProgrammeLevel, String otherIncomingMobilityProgrammeLevel) {
 
         final MobilityRegistrationInformation result = new MobilityRegistrationInformation();
         result.setRegistration(registration);
@@ -96,7 +92,7 @@ public class MobilityRegistrationInformation extends MobilityRegistrationInforma
 
     public void editOutgoing(boolean national, SchoolPeriodDuration programDuration, ExecutionInterval begin,
             ExecutionInterval end, LocalDate beginDate, LocalDate endDate, MobilityActivityType mobilityActivityType,
-            MobilityProgramType mobilityProgramType, CountryUnit countryUnit, Unit foreignInstitutionUnit, String remarks) {
+            MobilityProgramType mobilityProgramType, Unit countryUnit, Unit foreignInstitutionUnit, String remarks) {
 
         setIncoming(false);
         setNational(national);
@@ -117,7 +113,7 @@ public class MobilityRegistrationInformation extends MobilityRegistrationInforma
 
     public void editIncoming(boolean national, SchoolPeriodDuration programDuration, ExecutionInterval begin,
             ExecutionInterval end, LocalDate beginDate, LocalDate endDate, MobilityActivityType mobilityActivityType,
-            MobilityProgramType mobilityProgramType, CountryUnit countryUnit, Unit foreignInstitutionUnit, String remarks,
+            MobilityProgramType mobilityProgramType, Unit countryUnit, Unit foreignInstitutionUnit, String remarks,
             MobilityProgrammeLevel originMobilityProgrammeLevel, String otherOriginMobilityProgrammeLevel, boolean degreeBased,
             DegreeCurricularPlan degreeCurricularPlan, CourseGroup branchCourseGroup,
             MobilityScientificArea mobilityScientificArea, MobilityProgrammeLevel incomingMobilityProgrammeLevel,
@@ -313,19 +309,20 @@ public class MobilityRegistrationInformation extends MobilityRegistrationInforma
             return null;
         }
 
-        Collection<? extends Party> parentParties =
-                getForeignInstitutionUnit().getParentParties(AccountabilityTypeEnum.GEOGRAPHIC, CountryUnit.class);
+        final Set<Unit> countries =
+                getForeignInstitutionUnit().getParentUnits().stream().filter(u -> u.isCountryUnit()).collect(Collectors.toSet());
 
-        if (parentParties.size() > 1) {
+        if (countries.size() > 1) {
             throw new AcademicExtensionsDomainException(
                     "error.MobilityRegistrationInformation.found.more.than.one.parent.country.of.foreign.unit");
         }
 
-        if (parentParties.size() == 1) {
-            if (((CountryUnit) parentParties.iterator().next()).getCountry() != null) {
-                return ((CountryUnit) parentParties.iterator().next()).getCountry();
-            } else if (!Strings.isNullOrEmpty(((CountryUnit) parentParties.iterator().next()).getAcronym())) {
-                return Country.readByTwoLetterCode(((CountryUnit) parentParties.iterator().next()).getAcronym());
+        if (countries.size() == 1) {
+            Unit countryUnit = countries.iterator().next();
+            if ((countryUnit).getCountry() != null) {
+                return (countryUnit).getCountry();
+            } else if (!Strings.isNullOrEmpty((countryUnit).getAcronym())) {
+                return Country.readByTwoLetterCode((countryUnit).getAcronym());
             }
         }
 
