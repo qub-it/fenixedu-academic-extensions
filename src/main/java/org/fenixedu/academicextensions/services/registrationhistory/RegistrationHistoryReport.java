@@ -38,6 +38,7 @@ import org.fenixedu.academic.domain.person.IDDocumentType;
 import org.fenixedu.academic.domain.student.PrecedentDegreeInformation;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.RegistrationDataByExecutionYear;
+import org.fenixedu.academic.domain.student.RegistrationObservations;
 import org.fenixedu.academic.domain.student.RegistrationProtocol;
 import org.fenixedu.academic.domain.student.RegistrationRegimeType;
 import org.fenixedu.academic.domain.student.RegistrationServices;
@@ -55,7 +56,6 @@ import org.fenixedu.academic.domain.treasury.TreasuryBridgeAPIFactory;
 import org.fenixedu.academic.dto.student.RegistrationConclusionBean;
 import org.fenixedu.academic.dto.student.RegistrationStateBean;
 import org.fenixedu.academictreasury.domain.customer.PersonCustomer;
-import org.fenixedu.treasury.services.integration.FenixEDUTreasuryPlatformDependentServices;
 import org.joda.time.LocalDate;
 import org.joda.time.YearMonthDay;
 import org.joda.time.format.DateTimeFormat;
@@ -723,7 +723,7 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     public String getRegistrationObservations() {
         final Registration registration = getRegistration();
         return registration == null ? null : registration.getRegistrationObservationsSet().stream()
-                .map(o -> FenixEDUTreasuryPlatformDependentServices.readVersioningUpdatorUsername(o) + ":" + o.getValue())
+                .map(o -> RegistrationObservations.readVersioningUpdatorUsername(o) + ":" + o.getValue())
                 .collect(Collectors.joining(" \n --------------\n "));
     }
 

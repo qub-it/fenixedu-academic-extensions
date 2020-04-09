@@ -74,8 +74,8 @@
         </dependency>
 		<dependency>
 			<groupId>org.fenixedu</groupId>
-			<artifactId>fenixedu-academic-treasury</artifactId>
-			<version>4.5.0</version>
+			<artifactId>fenixedu-academic-treasury-base</artifactId>
+			<version>5.0.0</version>
 		</dependency>        
 		
 	</dependencies>

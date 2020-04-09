@@ -4,9 +4,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.fenixedu.academic.domain.student.Registration;
-import org.fenixedu.treasury.services.integration.FenixEDUTreasuryPlatformDependentServices;
 import org.joda.time.DateTime;
 
 import pt.ist.fenixframework.FenixFramework;
@@ -60,8 +60,8 @@ public class RegistrationObservations extends RegistrationObservations_Base {
     }
 
     static Comparator<Object> compareByModifiedDate = (x, y) -> {
-        DateTime xUpdateDate = FenixEDUTreasuryPlatformDependentServices.readVersioningUpdateDate(x);
-        DateTime yUpdateDate = FenixEDUTreasuryPlatformDependentServices.readVersioningUpdateDate(y);
+        DateTime xUpdateDate = readVersioningUpdateDate(x);
+        DateTime yUpdateDate = readVersioningUpdateDate(y);
         
         if (xUpdateDate == null || yUpdateDate == null) {
             return 0;
@@ -88,4 +88,35 @@ public class RegistrationObservations extends RegistrationObservations_Base {
         }
         return i;
     }
+    
+    public static <T> String readVersioningUpdatorUsername(T obj) {
+        try {
+            Object versioningUpdatedBy = PropertyUtils.getProperty(obj, "versioningUpdatedBy");
+
+            if (versioningUpdatedBy == null) {
+                return null;
+            }
+
+            return (String) PropertyUtils.getProperty(versioningUpdatedBy, "username");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static <T> DateTime readVersioningUpdateDate(T obj) {
+        try {
+            Object versioningUpdateDate = PropertyUtils.getProperty(obj, "versioningUpdateDate");
+
+            if (versioningUpdateDate == null) {
+                return null;
+            }
+
+            return (DateTime) PropertyUtils.getProperty(versioningUpdateDate, "date");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    
 }
