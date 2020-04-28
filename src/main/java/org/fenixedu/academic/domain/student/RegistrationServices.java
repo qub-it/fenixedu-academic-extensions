@@ -13,7 +13,6 @@ import java.util.SortedSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -338,6 +337,7 @@ public class RegistrationServices {
         };
     }
 
+    @Deprecated
     public static Optional<SchoolClass> getSchoolClassBy(final Registration registration,
             final ExecutionInterval executionInterval) {
         return registration.getSchoolClassesSet().stream().filter(sc -> sc.getExecutionInterval() == executionInterval)
@@ -346,60 +346,44 @@ public class RegistrationServices {
 
     public static void replaceSchoolClass(final Registration registration, final SchoolClass schoolClass,
             final ExecutionInterval executionInterval) {
-        replaceSchoolClass(registration, schoolClass, executionInterval, true);
-    }
-
-    public static void replaceSchoolClass(final Registration registration, final SchoolClass schoolClass,
-            final ExecutionInterval executionInterval, final boolean enrolInOnlyOneShift) {
 
         final Optional<SchoolClass> currentSchoolClass = getSchoolClassBy(registration, executionInterval);
         if (currentSchoolClass.isPresent()) {
-            currentSchoolClass.get().getAssociatedShiftsSet().forEach(s -> s.removeStudents(registration));
+            currentSchoolClass.get().getAssociatedShiftsSet().forEach(s -> s.unenrol(registration));
             registration.getSchoolClassesSet().remove(currentSchoolClass.get());
         }
 
         if (schoolClass != null) {
             final List<ExecutionCourse> attendingExecutionCourses =
                     registration.getAttendingExecutionCoursesFor(executionInterval);
-            enrolInSchoolClassExecutionCoursesShifts(registration, schoolClass, attendingExecutionCourses, enrolInOnlyOneShift);
-            registration.getSchoolClassesSet().add(schoolClass);
+            registration.getSchoolClassesSet().add(schoolClass); // should add first in order to correct evaluation of shift capacities based on school classes
+            enrolInSchoolClassExecutionCoursesShifts(registration, schoolClass, attendingExecutionCourses);
         }
     }
 
     public static void enrolInSchoolClassExecutionCoursesShifts(final Registration registration, final SchoolClass schoolClass,
             final List<ExecutionCourse> attendingExecutionCourses) {
-        enrolInSchoolClassExecutionCoursesShifts(registration, schoolClass, attendingExecutionCourses, true);
-    }
-
-    public static void enrolInSchoolClassExecutionCoursesShifts(final Registration registration, final SchoolClass schoolClass,
-            final List<ExecutionCourse> attendingExecutionCourses, final boolean enrolInOnlyOneShift) {
         if (!isSchoolClassFree(schoolClass, registration)) {
             throw new DomainException(FULL_SCHOOL_CLASS_EXCEPTION_MSG);
         }
 
-        final Function<Shift, Integer> vacanciesCalculator = s -> s.getLotacao() - s.getStudentsSet().size();
-        final Comparator<Shift> vacanciesComparator =
-                (s1, s2) -> vacanciesCalculator.apply(s1).compareTo(vacanciesCalculator.apply(s2));
+        final Comparator<Shift> vacanciesComparator = Comparator.comparing(Shift::getVacancies);
 
         final Set<Shift> schoolClassesShifts = schoolClass.getAssociatedShiftsSet().stream()
-                .filter(s -> attendingExecutionCourses.contains(s.getExecutionCourse()) && vacanciesCalculator.apply(s) > 0)
+                .filter(s -> attendingExecutionCourses.contains(s.getExecutionCourse()) && s.getVacancies() > 0)
                 .collect(Collectors.toSet());
 
         final Multimap<ExecutionCourse, Shift> shiftsByExecutionCourse = ArrayListMultimap.create();
         schoolClassesShifts.forEach(s -> shiftsByExecutionCourse.put(s.getExecutionCourse(), s));
         for (final ExecutionCourse executionCourse : shiftsByExecutionCourse.keySet()) {
-            final Multimap<ShiftType, Shift> shiftsTypesByShift = ArrayListMultimap.create();
-            shiftsByExecutionCourse.get(executionCourse).forEach(s -> s.getTypes().forEach(st -> shiftsTypesByShift.put(st, s)));
+            final Multimap<ShiftType, Shift> shiftsByShiftTypes = ArrayListMultimap.create();
+            shiftsByExecutionCourse.get(executionCourse).forEach(s -> s.getTypes().forEach(st -> shiftsByShiftTypes.put(st, s)));
 
-            for (final ShiftType shiftType : shiftsTypesByShift.keySet()) {
+            for (final ShiftType shiftType : shiftsByShiftTypes.keySet()) {
                 if (registration.getShiftFor(executionCourse, shiftType) == null) {
-                    final List<Shift> shiftsOrderedByVacancies = new ArrayList<>(shiftsTypesByShift.get(shiftType));
+                    final List<Shift> shiftsOrderedByVacancies = new ArrayList<>(shiftsByShiftTypes.get(shiftType));
                     shiftsOrderedByVacancies.sort(vacanciesComparator);
-                    if (enrolInOnlyOneShift) {
-                        enrolInOneShift(shiftsOrderedByVacancies, registration);
-                    } else {
-                        enrolInAllAvailableShifts(shiftsOrderedByVacancies, registration);
-                    }
+                    enrolInOneShift(shiftsOrderedByVacancies, registration);
                 }
             }
         }
@@ -415,7 +399,7 @@ public class RegistrationServices {
             shiftTypes = shift.getShiftTypesPrettyPrint();
             executionCourseName = shift.getExecutionCourse().getName();
 
-            if (shift.getStudentsSet().contains(registration) || shift.reserveForStudent(registration)) {
+            if (shift.getStudentsSet().contains(registration) || shift.enrol(registration)) {
                 return;
             }
         }
@@ -423,31 +407,24 @@ public class RegistrationServices {
         throw new DomainException("error.registration.replaceSchoolClass.shiftFull", shiftName, shiftTypes, executionCourseName);
     }
 
-    private static void enrolInAllAvailableShifts(Collection<Shift> shiftsOrderedByVacancies, Registration registration) {
-        for (final Shift shift : shiftsOrderedByVacancies) {
-            if (!shift.reserveForStudent(registration)) {
-                return;
-            }
-        }
-    }
-
     public static boolean isSchoolClassFree(final SchoolClass schoolClass, final Registration registration) {
         if (schoolClass != null) {
-//            return !attendingShifts.stream().anyMatch(s -> s.getLotacao().intValue() <= s.getStudentsSet().size());
 
-            final List<Shift> attendingShifts = getAttendingShifts(schoolClass, registration);
+            final List<Shift> attendingShiftsFromSchoolClass = getAttendingShifts(schoolClass, registration);
 
             final Multimap<ExecutionCourse, Shift> shiftsByExecutionCourse = ArrayListMultimap.create();
-            attendingShifts.forEach(s -> shiftsByExecutionCourse.put(s.getExecutionCourse(), s));
+            attendingShiftsFromSchoolClass.forEach(s -> shiftsByExecutionCourse.put(s.getExecutionCourse(), s));
             for (final ExecutionCourse executionCourse : shiftsByExecutionCourse.keySet()) {
-                final Multimap<ShiftType, Shift> shiftsTypesByShift = ArrayListMultimap.create();
+                final Multimap<ShiftType, Shift> shiftsByShiftType = ArrayListMultimap.create();
                 shiftsByExecutionCourse.get(executionCourse)
-                        .forEach(s -> s.getTypes().forEach(st -> shiftsTypesByShift.put(st, s)));
+                        .forEach(s -> s.getTypes().forEach(st -> shiftsByShiftType.put(st, s)));
 
-                for (final ShiftType shiftType : shiftsTypesByShift.keySet()) {
-                    if (registration.getShiftFor(executionCourse, shiftType) == null && shiftsTypesByShift.get(shiftType).stream()
-                            .allMatch(s -> s.getLotacao().intValue() <= s.getStudentsSet().size())) {
-                        return false;
+                for (final ShiftType shiftType : shiftsByShiftType.keySet()) {
+                    final Shift shift = registration.getShiftFor(executionCourse, shiftType);
+                    if (shift == null || !attendingShiftsFromSchoolClass.contains(shift)) {
+                        if (shiftsByShiftType.get(shiftType).stream().allMatch(s -> s.getVacancies() <= 0)) {
+                            return false;
+                        }
                     }
                 }
             }

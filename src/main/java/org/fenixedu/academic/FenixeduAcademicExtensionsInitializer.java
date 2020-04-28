@@ -128,7 +128,7 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
             public void beforeRemove(final Enrolment enrolment, final Attends attends) {
                 final Registration registration = attends.getRegistration();
                 if (registration != null) {
-                    attends.getExecutionCourse().getAssociatedShifts().forEach(s -> s.removeStudents(registration));
+                    attends.getExecutionCourse().getAssociatedShifts().forEach(s -> s.unenrol(registration));
                 }
             }
         });

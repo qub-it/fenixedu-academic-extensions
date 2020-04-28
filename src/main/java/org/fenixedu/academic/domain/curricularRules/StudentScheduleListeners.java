@@ -46,8 +46,7 @@ public class StudentScheduleListeners {
                 final Registration registration = enrolment.getRegistration();
                 final ExecutionCourse executionCourse = attends.getExecutionCourse();
 
-                final Optional<SchoolClass> schoolClassOpt =
-                        RegistrationServices.getSchoolClassBy(registration, executionInterval);
+                final Optional<SchoolClass> schoolClassOpt = registration.findSchoolClass(executionInterval);
 
                 if (schoolClassOpt.isPresent()) {
                     try {
@@ -65,9 +64,7 @@ public class StudentScheduleListeners {
                     final SortedSet<Shift> shiftsByType = executionCourse.getShiftsByTypeOrderedByShiftName(shiftType);
                     if (shiftsByType.size() == 1) {
                         final Shift shift = shiftsByType.iterator().next();
-                        if (!shift.getStudentsSet().contains(registration)) {
-                            shift.reserveForStudent(registration);
-                        }
+                        shift.enrol(registration);
                     }
                 }
 

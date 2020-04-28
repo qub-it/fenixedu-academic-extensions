@@ -144,7 +144,7 @@ public class StudentSchoolClassCurricularRuleExecutor extends CurricularRuleExec
     }
 
     private static boolean isFree(final Shift shift) {
-        return (shift.getLotacao() - shift.getStudentsSet().size()) > 0;
+        return shift.getVacancies() > 0;
     }
 
 }

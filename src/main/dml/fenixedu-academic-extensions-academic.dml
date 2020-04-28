@@ -859,18 +859,6 @@ class dml.DynamicField {
 // ==================== END: DynamicField ====================
 
 
-
-relation RegistrationSchoolClass {
-    .org.fenixedu.academic.domain.SchoolClass playsRole schoolClasses {
-        multiplicity *;
-    }
-    .org.fenixedu.academic.domain.student.Registration playsRole registrations {
-        multiplicity *;
-    }
-}
-
-
-
 valueType org.fenixedu.academic.domain.student.gradingTable.GradingTableData as GradingTableData {
     externalizeWith {
         String toJson();
