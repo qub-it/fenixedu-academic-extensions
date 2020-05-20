@@ -1,3 +1,5 @@
+- Improvement: Added enrolment prefilter rule level to conditioned route rule
+ 
 4.7.0 (28-04-2020)
 - Refactor: Upgraded dependency of fenixedu-academic-core (Shifts capacity by type)
 
