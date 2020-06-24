@@ -1,3 +1,5 @@
+- Improvement: Added CurricularPeriodRule method to return rule name 
+
 4.7.1 (20-05-2020)
 - Improvement: Added enrolment prefilter rule level to conditioned route rule
  

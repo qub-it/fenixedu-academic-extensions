@@ -59,6 +59,10 @@ abstract public class CurricularPeriodRule extends CurricularPeriodRule_Base {
         setHideMessagePrefix(false);
     }
 
+    public String getRuleName() {
+        return BundleUtil.getString(MODULE_BUNDLE, getClass().getName());
+    }
+
     public void messagePrefixDisabled() {
         setHideMessagePrefix(true);
     }
@@ -87,18 +91,12 @@ abstract public class CurricularPeriodRule extends CurricularPeriodRule_Base {
         deleteDomainObject();
     }
 
-    abstract protected CurricularPeriodConfiguration getConfiguration();
-
     /**
      * If true, an executive rule overrides all other (possibly false) rules
      */
     public boolean isExecutive() {
         return false;
     }
-
-    abstract protected DegreeCurricularPlan getDegreeCurricularPlan();
-
-    public abstract String getLabel();
 
     protected DegreeModule getDegreeModule() {
         return getDegreeCurricularPlan().getRoot();
@@ -210,5 +208,11 @@ abstract public class CurricularPeriodRule extends CurricularPeriodRule_Base {
         }
 
     }
+
+    protected abstract CurricularPeriodConfiguration getConfiguration();
+
+    protected abstract DegreeCurricularPlan getDegreeCurricularPlan();
+
+    public abstract String getLabel();
 
 }
