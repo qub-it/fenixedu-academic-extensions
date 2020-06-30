@@ -32,7 +32,7 @@ public class BlockEnrolmentByPreviousEnrolmentConditionsExecutor extends Curricu
 
         final BlockEnrolmentByPreviousEnrolmentConditions rule = (BlockEnrolmentByPreviousEnrolmentConditions) curricularRule;
         if (rule.hasPreviousEnrolmentMatchingConditions(enrolmentContext.getRegistration(),
-                getCurricularCoursesToCheck(degreeModuleToEvaluate), degreeModuleToEvaluate.getExecutionInterval())) {
+                getCurricularCoursesToCheck(rule, degreeModuleToEvaluate), degreeModuleToEvaluate.getExecutionInterval())) {
             final String message = AcademicExtensionsUtil.bundle(
                     "curricularRules.ruleExecutors.BlockEnrolmentByPreviousEnrolmentConditionsExecutor.error.found.previous.enrolments.matching.conditions",
                     degreeModuleToEvaluate.getName(), rule.getPreviousEnrolmentState().getDescription());
