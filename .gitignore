@@ -4,3 +4,4 @@
 .settings/
 /.tern-project
 /src/main/java/test
+/pom.xml.versionsBackup
