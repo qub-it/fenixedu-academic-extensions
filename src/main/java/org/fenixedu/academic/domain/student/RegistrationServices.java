@@ -407,6 +407,10 @@ public class RegistrationServices {
         throw new DomainException("error.registration.replaceSchoolClass.shiftFull", shiftName, shiftTypes, executionCourseName);
     }
 
+    /**
+     * @deprecated use {@link SchoolClass#isFreeFor(Registration)}
+     */
+    @Deprecated
     public static boolean isSchoolClassFree(final SchoolClass schoolClass, final Registration registration) {
         if (schoolClass != null) {
 
