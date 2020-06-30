@@ -26,7 +26,6 @@
 package org.fenixedu.academic.domain.enrolment;
 
 import org.fenixedu.academic.domain.curricularRules.executors.ruleExecutors.CurricularRuleLevel;
-import org.fenixedu.academic.domain.enrolment.period.AcademicEnrolmentPeriod;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 
 public class StudentCurricularPlanEnrolmentManager
@@ -91,11 +90,6 @@ public class StudentCurricularPlanEnrolmentManager
             throw new DomainException("error.StudentCurricularPlan.invalid.curricular.rule.level");
         }
 
-        if (AcademicEnrolmentPeriod.getEnrolmentPeriodsOpenOrUpcoming(getStudent()).stream()
-                .noneMatch(i -> i.getDegreeCurricularPlansSet().contains(getStudentCurricularPlan().getDegreeCurricularPlan())
-                        && i.getExecutionSemester() == getExecutionSemester())) {
-            throw new DomainException("message.out.curricular.course.enrolment.period.default");
-        }
     }
 
 }
