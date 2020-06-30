@@ -1061,6 +1061,11 @@ class curricularRules.AnyCurricularCourseRestrictions extends .org.fenixedu.acad
             multiplicity *;
         }
     }
+    
+class curricularRules.BlockEnrolmentByPreviousEnrolmentConditions extends .org.fenixedu.academic.domain.curricularRules.Rule {
+	EnrollmentState previousEnrolmentState;
+}
+
 	
 // ==================== END: CurricularRule ====================
 
