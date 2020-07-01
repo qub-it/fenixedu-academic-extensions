@@ -1,3 +1,4 @@
+4.8.0 (01-07-2020)
 - New Feature: Added curricular rule to block enrolment based on previous enrolment conditions
 - Improvement: Added CurricularPeriodRule method to return rule name
 - Fix: Don't check for legacy enrolment periods
