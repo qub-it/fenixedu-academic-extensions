@@ -27,6 +27,7 @@ package org.fenixedu.academic.domain.degreeStructure;
 
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -61,6 +62,9 @@ abstract public class CompetenceCourseServices {
     static final private Cache<String, Boolean> CACHE_APPROVALS = CacheBuilder.newBuilder().concurrencyLevel(4)
             .maximumSize(CACHE_APPROVALS_MAX_SIZE).expireAfterWrite(CACHE_APPROVALS_EXPIRE_MIN, TimeUnit.MINUTES).build();
 
+    static final private Cache<String, Set<StudentCurricularPlan>> CACHE_SCPS = CacheBuilder.newBuilder().concurrencyLevel(4)
+            .maximumSize(CACHE_APPROVALS_MAX_SIZE).expireAfterWrite(CACHE_APPROVALS_EXPIRE_MIN, TimeUnit.MINUTES).build();
+
     static public boolean isCompetenceCourseApproved(final StudentCurricularPlan plan, final CurricularCourse course,
             final ExecutionInterval Interval) {
 
@@ -72,7 +76,15 @@ abstract public class CompetenceCourseServices {
             return plan.isApproved(course, Interval);
         }
 
-        return getScpsToCheck(registration).stream().anyMatch(i -> isApproved(i, competence, Interval));
+        Set<StudentCurricularPlan> set;
+        String key = registration.getExternalId();
+        try {
+            set = CACHE_SCPS.get(key, () -> getScpsToCheck(registration));
+            return set.stream().anyMatch(i -> isApproved(i, competence, Interval));
+        } catch (ExecutionException e) {
+            logger.error(String.format("Unable to get Approvals [%s %s %s]", new DateTime(), key, e.getLocalizedMessage()));
+            return false;
+        }
     }
 
     static public int countEnrolmentsUntil(final StudentCurricularPlan plan, final CurricularCourse curricularCourse,
