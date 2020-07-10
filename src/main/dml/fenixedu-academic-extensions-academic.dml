@@ -1066,6 +1066,10 @@ class curricularRules.BlockEnrolmentByPreviousEnrolmentConditions extends .org.f
 	EnrollmentState previousEnrolmentState;
 }
 
+class curricularRules.BlockEnrolmentInAdvancedCurricularCourses extends .org.fenixedu.academic.domain.curricularRules.Rule {
+	
+}
+
 	
 // ==================== END: CurricularRule ====================
 
