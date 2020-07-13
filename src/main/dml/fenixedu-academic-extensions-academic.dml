@@ -1070,6 +1070,10 @@ class curricularRules.BlockEnrolmentInAdvancedCurricularCourses extends .org.fen
 	
 }
 
+class curricularRules.UnavailableForEnrolmentRule extends .org.fenixedu.academic.domain.curricularRules.Rule {
+	
+}
+
 	
 // ==================== END: CurricularRule ====================
 
