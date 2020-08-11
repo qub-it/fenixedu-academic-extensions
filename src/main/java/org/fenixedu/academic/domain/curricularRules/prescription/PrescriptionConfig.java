@@ -67,7 +67,8 @@ public class PrescriptionConfig extends PrescriptionConfig_Base {
         }
 
         if (PrescriptionConfig.findAll().stream().anyMatch(pc -> pc != this && pc.getName().equals(getName()))) {
-            throw new AcademicExtensionsDomainException("error.PrescriptionConfig.already.exists.other.configuration.with.same.name");
+            throw new AcademicExtensionsDomainException(
+                    "error.PrescriptionConfig.already.exists.other.configuration.with.same.name");
         }
 
         if (PrescriptionConfig.findAll().stream()
@@ -80,8 +81,8 @@ public class PrescriptionConfig extends PrescriptionConfig_Base {
 
     public Collection<ExecutionYear> filterExecutionYears(Registration registration, Collection<ExecutionYear> executionYears) {
 
-        final ExecutionYear lastReingressionYear =
-                getReingressionRestartsYearCount() ? RegistrationServices.getLastReingressionYear(registration) : null;
+        final ExecutionYear lastReingressionYear = getReingressionRestartsYearCount() ? RegistrationServices
+                .getLastReingressionYearIncludingPrecedentRegistrations(registration) : null;
         final ExecutionYear minExecutionYear = getBeginExecutionYear();
 
         return executionYears.stream()

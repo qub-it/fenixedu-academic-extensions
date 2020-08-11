@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.fenixedu.academic.domain.Country;
 import org.fenixedu.academic.domain.Degree;
@@ -206,6 +207,12 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 
     public boolean hasPreviousReingression() {
         return registration.getReingressions().stream().filter(ri -> ri.getExecutionYear().isBefore(getExecutionYear()))
+                .count() > 0;
+    }
+
+    public boolean hasPreviousReingressionIncludingPrecedentRegistrations() {
+        return Stream.concat(Stream.of(registration), RegistrationServices.getPrecedentDegreeRegistrations(registration).stream())
+                .flatMap(r -> r.getReingressions().stream()).filter(ri -> ri.getExecutionYear().isBefore(getExecutionYear()))
                 .count() > 0;
     }
 

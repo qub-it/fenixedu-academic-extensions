@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.fenixedu.academic.FenixEduAcademicExtensionsConfiguration;
 import org.fenixedu.academic.domain.Degree;
@@ -593,6 +594,12 @@ public class RegistrationServices {
 
     public static ExecutionYear getLastReingressionYear(final Registration registration) {
         return registration.getReingressions().stream().map(ri -> ri.getExecutionYear())
+                .sorted(ExecutionYear.COMPARATOR_BY_BEGIN_DATE.reversed()).findFirst().orElse(null);
+    }
+
+    public static ExecutionYear getLastReingressionYearIncludingPrecedentRegistrations(final Registration registration) {
+        return Stream.concat(Stream.of(registration), getPrecedentDegreeRegistrations(registration).stream())
+                .flatMap(r -> r.getReingressions().stream()).map(ri -> ri.getExecutionYear())
                 .sorted(ExecutionYear.COMPARATOR_BY_BEGIN_DATE.reversed()).findFirst().orElse(null);
     }
 
