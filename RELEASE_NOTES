@@ -1,3 +1,4 @@
+4.9.1 (11-08-2020)
 - Fix: Prescription status should take into account precedent registrations for reingression validation
 - Refactor: Removed ulisboa-tools module dependency 
 
