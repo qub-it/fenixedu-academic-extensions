@@ -1074,6 +1074,9 @@ class curricularRules.UnavailableForEnrolmentRule extends .org.fenixedu.academic
 	
 }
 
+class curricularRules.RecommendedRoute extends .org.fenixedu.academic.domain.curricularRules.Rule {
+}
+
 	
 // ==================== END: CurricularRule ====================
 

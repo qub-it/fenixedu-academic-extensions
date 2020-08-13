@@ -1,3 +1,5 @@
+- New Feature: Added curricular rule to mark recommended route entries
+
 4.9.1 (11-08-2020)
 - Fix: Prescription status should take into account precedent registrations for reingression validation
 - Refactor: Removed ulisboa-tools module dependency 
