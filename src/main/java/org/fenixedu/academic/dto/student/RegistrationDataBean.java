@@ -10,11 +10,8 @@ import org.fenixedu.academic.domain.StudentCurricularPlan;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.RegistrationDataByExecutionYear;
 import org.fenixedu.academic.domain.student.RegistrationServices;
-import org.fenixedu.academic.domain.student.curriculum.Curriculum;
 import org.fenixedu.academic.domain.student.curriculum.CurriculumConfigurationInitializer.CurricularYearResult;
 import org.fenixedu.academic.domain.student.curriculum.CurriculumModuleServices;
-import org.fenixedu.academic.domain.student.curriculum.ICurriculum;
-import org.fenixedu.academic.domain.student.curriculum.ICurriculumEntry;
 import org.fenixedu.academic.domain.student.registrationStates.RegistrationStateType;
 import org.fenixedu.academic.domain.studentCurriculum.RootCurriculumGroup;
 import org.joda.time.LocalDate;
@@ -152,39 +149,19 @@ public class RegistrationDataBean implements Serializable {
         return this.enrolmentsCount;
     }
 
-    @Deprecated
+    /**
+     * @deprecated This method is misleading, it should be named getApprovedEnrolmentsCredits
+     */
+    @Deprecated(forRemoval = true)
     public Double getCreditsConcluded() {
         if (this.creditsConcluded == null) {
-
-            // this method is quite ugly and unfortunate, but don't forget:
-
-            // 1) Only Curriculum deals correctly with accumulated registrations and is cached
-            final ICurriculum next =
-                    RegistrationServices.getCurriculum(getRegistration(), getExecutionYear().getNextExecutionYear());
-            final ICurriculum current = RegistrationServices.getCurriculum(getRegistration(), getExecutionYear());
-
-            // 2) Curriculum reports ECTS at the beginning of the year => result = next year value - current year value
-            final double nextCreditsConcluded = next.getSumEctsCredits().doubleValue();
-            final double currentCreditsConcluded = current.getSumEctsCredits().doubleValue();
-
-            // 2) Dismissals are accounted for at the beginning of the year => 
-            //      2a) adding dismissals ECTS to current year value
-            final double currentDismissalCredits = getDismissalCredits(current);
-
-            //      2b) removing dismissals ECTS from next year value
-            final double nextDismissalCredits = getDismissalCredits(next);
-
-            this.creditsConcluded = Math.max(0,
-                    (nextCreditsConcluded - nextDismissalCredits) - currentCreditsConcluded + currentDismissalCredits);
+            final BigDecimal approvedEnrolments = getStudentCurricularPlan().getEnrolmentsByExecutionYear(getExecutionYear())
+                    .stream().filter(e -> e.isApproved()).map(e -> e.getEctsCreditsForCurriculum())
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            this.creditsConcluded = approvedEnrolments.doubleValue();
         }
 
         return this.creditsConcluded;
-    }
-
-    static private double getDismissalCredits(final ICurriculum input) {
-        final Curriculum curriculum = (Curriculum) input;
-        return curriculum.getDismissalRelatedEntries().stream().filter(i -> i.getExecutionYear() == curriculum.getExecutionYear())
-                .map(ICurriculumEntry::getEctsCreditsForCurriculum).reduce(BigDecimal.ZERO, BigDecimal::add).doubleValue();
     }
 
     public BigDecimal getEnroledEcts() {

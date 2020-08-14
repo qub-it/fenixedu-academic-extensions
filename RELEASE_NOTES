@@ -1,3 +1,5 @@
+- Fix: On registration details, aproved/enroled/flunked credits should only use enrolments data ( #UL-FM-1751 )
+
 4.10.0 (13-08-2020)
 - New Feature: Added curricular rule to mark recommended route entries
 
