@@ -24,6 +24,7 @@ import org.fenixedu.academic.domain.candidacy.IngressionType;
 import org.fenixedu.academic.domain.degree.DegreeType;
 import org.fenixedu.academic.domain.degreeStructure.CurricularPeriodServices;
 import org.fenixedu.academic.domain.degreeStructure.ProgramConclusion;
+import org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonServices;
 import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.RegistrationProtocol;
@@ -250,6 +251,7 @@ public class RegistrationHistoryReportService {
 
     public Collection<EnrolmentEvaluationReport> generateEvaluationsReport() {
         return generateEnrolmentsReport().stream().flatMap(r -> r.getEnrolment().getEvaluationsSet().stream())
+                .filter(ev -> ev.isFinal() || EvaluationSeasonServices.isRequiredEnrolmentEvaluation(ev.getEvaluationSeason()))
                 .filter(ev -> this.enrolmentExecutionYears.contains(ev.getExecutionInterval().getExecutionYear()))
                 .map(ev -> new EnrolmentEvaluationReport(ev)).collect(Collectors.toSet());
     }
@@ -260,8 +262,8 @@ public class RegistrationHistoryReportService {
                         .distinct().collect(Collectors.toList());
 
         final Collection<CurriculumEntryReport> result = Sets.newHashSet();
-        curriculums.stream().forEach(c -> result.addAll(c.getCurriculumEntries().stream()
-                .map(ce -> new CurriculumEntryReport(c, ce)).collect(Collectors.toSet())));
+        curriculums.stream().forEach(c -> result.addAll(
+                c.getCurriculumEntries().stream().map(ce -> new CurriculumEntryReport(c, ce)).collect(Collectors.toSet())));
 
         return result;
     }
@@ -448,7 +450,7 @@ public class RegistrationHistoryReportService {
     }
 
     private boolean hasAllAnnuledEnrolments(final RegistrationHistoryReport report) {
-        return registrationsWithAnnulledOnlyEnrolmentsCache.containsEntry(report.getExecutionYear(),report.getRegistration());
+        return registrationsWithAnnulledOnlyEnrolmentsCache.containsEntry(report.getExecutionYear(), report.getRegistration());
     }
 
     private boolean hasNoEnrolments(final RegistrationHistoryReport report) {

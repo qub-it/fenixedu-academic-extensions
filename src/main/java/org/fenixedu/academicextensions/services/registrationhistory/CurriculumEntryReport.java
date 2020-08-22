@@ -143,7 +143,8 @@ public class CurriculumEntryReport {
                 curriculumEntry.getCurriculumLinesForCurriculum(curriculum.getStudentCurricularPlan());
         return targetLines.isEmpty() ? AcademicExtensionsUtil.bundle(curriculumEntry.getClass().getName()) : targetLines.stream()
                 .filter(l -> l instanceof Dismissal).map(Dismissal.class::cast)
-                .map(d -> AcademicExtensionsUtil.bundle(d.getCredits().getClass().getName())).collect(Collectors.joining(", "));
+                .map(d -> AcademicExtensionsUtil.bundle(d.getCredits().getClass().getName())).distinct().sorted()
+                .collect(Collectors.joining(", "));
     }
 
     public Collection<CreditsReasonType> getCreditsReasonTypes() {

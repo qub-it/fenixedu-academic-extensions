@@ -618,12 +618,12 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         return this.executionYearConclusionDate;
     }
 
-    public String getCurrentAverage() {
+    public BigDecimal getCurrentAverage() {
         if (currentAverage == null) {
             currentAverage = RegistrationHistoryReportService.calculateAverage(getRegistration());
         }
 
-        return currentAverage.toPlainString();
+        return currentAverage;
     }
 
     protected RegistrationRegimeType getRegimeType() {
