@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.Attends;
 import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.EvaluationConfiguration;
+import org.fenixedu.academic.domain.Job;
 import org.fenixedu.academic.domain.Qualification;
 import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.domain.curricularPeriod.CurricularPeriod;
@@ -105,6 +106,7 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
         registerDeletionListenerOnDegreeModuleForCurriculumLineLogs();
 
         registerDeletionListenerOnQualification();
+        registerDeletionListenerOnJob();
 
         registerDeletionListenerOnUnit();
 
@@ -196,6 +198,10 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
             q.setInstitutionUnit(null);
             q.setLevel(null);
         });
+    }
+    
+    private void registerDeletionListenerOnJob() {
+        FenixFramework.getDomainModel().registerDeletionListener(Job.class, j -> j.setType(null));
     }
 
     private void registerDeletionListenerOnUnit() {
