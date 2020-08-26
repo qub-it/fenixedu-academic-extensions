@@ -20,12 +20,12 @@ import org.fenixedu.academic.domain.curricularPeriod.CurricularPeriod;
 import org.fenixedu.academic.domain.degreeStructure.CompetenceCourseServices;
 import org.fenixedu.academic.domain.degreeStructure.CurricularPeriodServices;
 import org.fenixedu.academic.domain.enrolment.EnrolmentServices;
-import org.fenixedu.academic.domain.evaluation.EnrolmentEvaluationServices;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.RegistrationServices;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumGroup;
 import org.fenixedu.academic.domain.time.calendarStructure.AcademicPeriod;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 public class EnrolmentReport {
 
@@ -146,8 +146,9 @@ public class EnrolmentReport {
         return enrolment.getCreationDateDateTime();
     }
 
-    public DateTime getEvaluationDate() {
-        return Optional.ofNullable(this.finalEvaluation).map(ev -> EnrolmentEvaluationServices.getExamDateTime(ev)).orElse(null);
+    public LocalDate getEvaluationDate() {
+        return Optional.ofNullable(this.finalEvaluation).map(ev -> finalEvaluation.getExamDateYearMonthDay().toLocalDate())
+                .orElse(null);
     }
 
     public CurriculumGroup getCurriculumGroup() {

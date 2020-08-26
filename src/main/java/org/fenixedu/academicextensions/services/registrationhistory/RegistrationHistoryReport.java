@@ -216,11 +216,6 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
                 .count() > 0;
     }
 
-    public String getStudentPersonalDataAuthorizationChoice() {
-        // TODO legidio
-        return null;
-    }
-
     public LocalDate getEnrolmentDate() {
 
         final Optional<RegistrationDataByExecutionYear> dataByYear = registration.getRegistrationDataByExecutionYearSet().stream()
@@ -319,6 +314,10 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     public String getLastRegistrationStateType() {
         final RegistrationStateBean state = getLastRegistrationState();
         return state == null ? null : state.getStateType().getDescription();
+    }
+
+    public String getLastRegistrationStateRemarks() {
+        return Optional.ofNullable(getLastRegistrationState()).map(r -> r.getRemarks()).orElse(null);
     }
 
     public LocalDate getLastRegistrationStateDate() {
@@ -816,9 +815,14 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         return gender == null ? null : gender.getLocalizedName();
     }
 
+    @Deprecated(forRemoval = true)
     public YearMonthDay getDateOfBirthYearMonthDay() {
         final Person person = getPerson();
         return person == null ? null : person.getDateOfBirthYearMonthDay();
+    }
+
+    public LocalDate getDateOfBirth() {
+        return Optional.ofNullable(getPerson()).map(p -> p.getDateOfBirthYearMonthDay()).map(dt -> dt.toLocalDate()).orElse(null);
     }
 
     public String getNameOfFather() {

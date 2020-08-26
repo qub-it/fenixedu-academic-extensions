@@ -24,8 +24,6 @@ import org.fenixedu.academic.domain.candidacy.IngressionType;
 import org.fenixedu.academic.domain.degree.DegreeType;
 import org.fenixedu.academic.domain.degreeStructure.CurricularPeriodServices;
 import org.fenixedu.academic.domain.degreeStructure.ProgramConclusion;
-import org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonServices;
-import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.RegistrationProtocol;
 import org.fenixedu.academic.domain.student.RegistrationRegimeType;
@@ -251,7 +249,6 @@ public class RegistrationHistoryReportService {
 
     public Collection<EnrolmentEvaluationReport> generateEvaluationsReport() {
         return generateEnrolmentsReport().stream().flatMap(r -> r.getEnrolment().getEvaluationsSet().stream())
-                .filter(ev -> ev.isFinal() || EvaluationSeasonServices.isRequiredEnrolmentEvaluation(ev.getEvaluationSeason()))
                 .filter(ev -> this.enrolmentExecutionYears.contains(ev.getExecutionInterval().getExecutionYear()))
                 .map(ev -> new EnrolmentEvaluationReport(ev)).collect(Collectors.toSet());
     }
@@ -539,13 +536,8 @@ public class RegistrationHistoryReportService {
         }
 
         if (this.registrationStateTypes != null && !this.registrationStateTypes.isEmpty()) {
-
             result.addAll(Bennu.getInstance().getRegistrationsSet().stream()
                     .filter(studentNumberFilter.and(registrationCompetenceCourseFilter)).collect(Collectors.toSet()));
-        }
-
-        if (result.isEmpty()) {
-            throw new AcademicExtensionsDomainException("error.RegistrationHistoryReportService.insufficient.search.parameters");
         }
 
         return result;

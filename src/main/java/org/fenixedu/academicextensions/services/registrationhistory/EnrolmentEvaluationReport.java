@@ -11,47 +11,51 @@ import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.Grade;
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.domain.evaluation.EnrolmentEvaluationServices;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.time.calendarStructure.AcademicPeriod;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 public class EnrolmentEvaluationReport {
 
-    private EnrolmentEvaluation evaluation;
+    private EnrolmentEvaluation enrolmentEvaluation;
 
     public EnrolmentEvaluationReport(final EnrolmentEvaluation evaluation) {
-        this.evaluation = Objects.requireNonNull(evaluation);
+        this.enrolmentEvaluation = Objects.requireNonNull(evaluation);
+    }
+
+    public EnrolmentEvaluation getEnrolmentEvaluation() {
+        return this.enrolmentEvaluation;
     }
 
     public ExecutionInterval getExecutionInterval() {
-        return evaluation.getExecutionInterval();
+        return enrolmentEvaluation.getExecutionInterval();
     }
 
-    public DateTime getEvaluationDate() {
-        return EnrolmentEvaluationServices.getExamDateTime(evaluation);
+    public LocalDate getEvaluationDate() {
+        return Optional.ofNullable(enrolmentEvaluation.getExamDateYearMonthDay()).map(v -> v.toLocalDate()).orElse(null);
     }
 
     public Grade getGrade() {
-        return evaluation.getGrade();
+        return enrolmentEvaluation.getGrade();
     }
 
     public Boolean getImprovedPreviousGrade() {
-        if (!evaluation.getEvaluationSeason().isImprovement()) {
+        if (!enrolmentEvaluation.getEvaluationSeason().isImprovement()) {
             return null;
         }
 
         //find final evaluation excluding improvement (for conclusion)
-        return EvaluationConfiguration.getInstance().getEnrolmentEvaluationForConclusionDate(evaluation.getEnrolment())
-                .filter(ev -> ev.isApproved()).map(ev -> evaluation.getGrade().compareTo(ev.getGrade()) > 0).orElse(false);
+        return EvaluationConfiguration.getInstance().getEnrolmentEvaluationForConclusionDate(enrolmentEvaluation.getEnrolment())
+                .filter(ev -> ev.isApproved()).map(ev -> enrolmentEvaluation.getGrade().compareTo(ev.getGrade()) > 0)
+                .orElse(false);
     }
 
     public EvaluationSeason getEvaluationSeason() {
-        return this.evaluation.getEvaluationSeason();
+        return this.enrolmentEvaluation.getEvaluationSeason();
     }
 
     public Registration getRegistration() {
-        return evaluation.getRegistration();
+        return enrolmentEvaluation.getRegistration();
     }
 
     public Person getPerson() {
@@ -59,7 +63,7 @@ public class EnrolmentEvaluationReport {
     }
 
     public Enrolment getEnrolment() {
-        return evaluation.getEnrolment();
+        return enrolmentEvaluation.getEnrolment();
     }
 
     public AcademicPeriod getAcademicPeriod() {
