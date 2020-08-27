@@ -206,6 +206,7 @@ public class RegistrationServices {
                 result = new RegistrationStateBean(state.getStateType());
                 result.setRegistration(registration);
                 result.setStateDateTime(state.getStateDate());
+                result.setRemarks(state.getRemarks());
             }
         }
 
@@ -251,6 +252,7 @@ public class RegistrationServices {
             bean.setStateDateTime(s.getStateDate());
             bean.setRegistration(registration);
             bean.setExecutionInterval(s.getExecutionInterval());
+            bean.setRemarks(s.getRemarks());
 
             return bean;
         }).collect(Collectors.toSet()));

@@ -56,7 +56,9 @@ import org.fenixedu.academic.domain.treasury.ITuitionTreasuryEvent;
 import org.fenixedu.academic.domain.treasury.TreasuryBridgeAPIFactory;
 import org.fenixedu.academic.dto.student.RegistrationConclusionBean;
 import org.fenixedu.academic.dto.student.RegistrationStateBean;
+import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.academictreasury.domain.customer.PersonCustomer;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.joda.time.LocalDate;
 import org.joda.time.YearMonthDay;
 import org.joda.time.format.DateTimeFormat;
@@ -205,20 +207,15 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         return registration.hasReingression(getExecutionYear());
     }
 
-    public boolean hasPreviousReingression() {
+    public boolean getHasPreviousReingression() {
         return registration.getReingressions().stream().filter(ri -> ri.getExecutionYear().isBefore(getExecutionYear()))
                 .count() > 0;
     }
 
-    public boolean hasPreviousReingressionIncludingPrecedentRegistrations() {
+    public boolean getHasPreviousReingressionIncludingPrecedentRegistrations() {
         return Stream.concat(Stream.of(registration), RegistrationServices.getPrecedentDegreeRegistrations(registration).stream())
                 .flatMap(r -> r.getReingressions().stream()).filter(ri -> ri.getExecutionYear().isBefore(getExecutionYear()))
                 .count() > 0;
-    }
-
-    public String getStudentPersonalDataAuthorizationChoice() {
-        // TODO legidio
-        return null;
     }
 
     public LocalDate getEnrolmentDate() {
@@ -265,7 +262,8 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 
                 final ExecutionInterval endInterval = s.getEndExecutionInterval();
                 if (endInterval == beginInterval) {
-                    dates = "S" + beginInterval.getChildOrder();
+                    dates = BundleUtil.getString(Bundle.ENUMERATION, beginInterval.getAcademicPeriod().getAbbreviatedName()) + " "
+                            + beginInterval.getChildOrder();
                 }
 
             } else {
@@ -286,7 +284,7 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         }).collect(Collectors.joining(", "));
     }
 
-    public boolean hasEnrolmentsWithoutShifts() {
+    public boolean getHasEnrolmentsWithoutShifts() {
 
         for (final ExecutionCourse executionCourse : getRegistration().getAttendingExecutionCoursesFor(getExecutionYear())) {
             if (!executionCourse.getAssociatedShifts().isEmpty() && registration.getShiftsFor(executionCourse).isEmpty()) {
@@ -321,12 +319,16 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         return state == null ? null : state.getStateType().getDescription();
     }
 
+    public String getLastRegistrationStateRemarks() {
+        return Optional.ofNullable(getLastRegistrationState()).map(r -> r.getRemarks()).orElse(null);
+    }
+
     public LocalDate getLastRegistrationStateDate() {
         final RegistrationStateBean state = getLastRegistrationState();
         return state == null ? null : state.getStateDate().toLocalDate();
     }
 
-    public boolean hasAnyInactiveRegistrationStateForYear() {
+    public boolean getHasAnyInactiveRegistrationStateForYear() {
         return getRegistration().getRegistrationStatesTypes(getExecutionYear()).stream().anyMatch(s -> !s.isActive());
     }
 
@@ -363,6 +365,16 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 
     protected void setProgramConclusionsToReport(final Set<ProgramConclusion> input) {
         this.programConclusionsToReport = input;
+    }
+
+    public ConclusionReport getPartialConclusion() {
+        return getConclusionReports().values().stream().filter(cr -> cr != null && !cr.getProgramConclusion().isTerminal())
+                .findFirst().map(b -> new ConclusionReport(b)).orElse(ConclusionReport.empty());
+    }
+
+    public ConclusionReport getFinalConclusion() {
+        return getConclusionReports().values().stream().filter(cr -> cr != null && cr.getProgramConclusion().isTerminal())
+                .findFirst().map(b -> new ConclusionReport(b)).orElse(ConclusionReport.empty());
     }
 
     private ICurriculum getCurriculum() {
@@ -416,7 +428,7 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         return rawGrade == null ? null : rawGrade.getValue();
     }
 
-    public boolean hasDismissals() {
+    public boolean getHasDismissals() {
         return getStudentCurricularPlan().getCreditsSet().stream()
                 .anyMatch(c -> c.getExecutionPeriod().getExecutionYear() == getExecutionYear());
     }
@@ -425,11 +437,11 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         return RegistrationServices.getImprovementEvaluations(getRegistration(), getExecutionYear(), ev -> !ev.isAnnuled());
     }
 
-    public boolean hasImprovementEvaluations() {
+    public boolean getHasImprovementEvaluations() {
         return RegistrationServices.hasImprovementEvaluations(getRegistration(), getExecutionYear(), ev -> !ev.isAnnuled());
     }
 
-    public boolean hasAnnulledEnrolments() {
+    public boolean getHasAnnulledEnrolments() {
         return getStudentCurricularPlan().getEnrolmentsSet().stream().filter(e -> e.getExecutionYear() == getExecutionYear())
                 .anyMatch(e -> e.isAnnulled());
     }
@@ -608,12 +620,12 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         return this.executionYearConclusionDate;
     }
 
-    public String getCurrentAverage() {
+    public BigDecimal getCurrentAverage() {
         if (currentAverage == null) {
             currentAverage = RegistrationHistoryReportService.calculateAverage(getRegistration());
         }
 
-        return currentAverage.toPlainString();
+        return currentAverage;
     }
 
     protected RegistrationRegimeType getRegimeType() {
@@ -631,14 +643,14 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         return registration == null ? false : registration.getRegistrationYear() == getExecutionYear();
     }
 
-    public String getStudentNumber() {
+    public Integer getStudentNumber() {
         final Student student = getStudent();
-        return student == null ? null : student.getNumber().toString();
+        return student == null ? null : student.getNumber();
     }
 
-    public String getRegistrationNumber() {
+    public Integer getRegistrationNumber() {
         final Registration registration = getRegistration();
-        return registration == null ? null : registration.getNumber().toString();
+        return registration == null ? null : registration.getNumber();
     }
 
     public String getOtherRegistrationNumbers() {
@@ -806,9 +818,14 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         return gender == null ? null : gender.getLocalizedName();
     }
 
+    @Deprecated(forRemoval = true)
     public YearMonthDay getDateOfBirthYearMonthDay() {
         final Person person = getPerson();
         return person == null ? null : person.getDateOfBirthYearMonthDay();
+    }
+
+    public LocalDate getDateOfBirth() {
+        return Optional.ofNullable(getPerson()).map(p -> p.getDateOfBirthYearMonthDay()).map(dt -> dt.toLocalDate()).orElse(null);
     }
 
     public String getNameOfFather() {
@@ -976,10 +993,9 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     }
 
     public BigDecimal getEnrolmentYearsForPrescription() {
-
         final PrescriptionConfig config = PrescriptionConfig.findBy(getDegreeCurricularPlan());
         if (config == null) {
-            throw new AcademicExtensionsDomainException("error.RegistrationHistoryReport.prescriptionConfig.is.missing");
+            return null;
         }
 
         //TODO: move logic to PrescriptionConfig?
@@ -996,17 +1012,16 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         return BigDecimal.ZERO.max(result.subtract(bonification));
     }
 
-    public boolean canPrescribe() {
+    public Boolean getCanPrescribe() {
+        final PrescriptionConfig config = PrescriptionConfig.findBy(getDegreeCurricularPlan());
+        if (config == null) {
+            return null;
+        }
 
         final BigDecimal studentEcts =
                 RegistrationServices.getCurriculum(registration, executionYear.getNextExecutionYear()).getSumEctsCredits();
 
         final int enrolmentYearsForPrescription = getEnrolmentYearsForPrescription().intValue();
-
-        final PrescriptionConfig config = PrescriptionConfig.findBy(getDegreeCurricularPlan());
-        if (config == null) {
-            throw new AcademicExtensionsDomainException("error.RegistrationHistoryReport.prescriptionConfig.is.missing");
-        }
 
         Comparator<? super PrescriptionEntry> comparator = (x, y) -> x.getEnrolmentYears().compareTo(y.getEnrolmentYears());
 

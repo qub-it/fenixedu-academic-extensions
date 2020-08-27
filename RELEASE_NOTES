@@ -1,3 +1,5 @@
+- Refactor: Registration history report service API cleanup
+
 4.10.1 (24-08-2020)
 - Fix: On registration details, aproved/enroled/flunked credits should only use enrolments data ( #UL-FM-1751 )
 - Fix: Add missing job deletion listener
