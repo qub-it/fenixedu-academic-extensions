@@ -95,7 +95,7 @@ public class CurriculumEntryReport {
 
     public String getCurricularPeriodsAsString() {
         return getCurricularPeriods().stream().map(cp -> CurricularPeriodLabelFormatter.getFullLabel(cp, true))
-                .collect(Collectors.joining(";"));
+                .collect(Collectors.joining("; "));
     }
 
     public Collection<CurriculumGroup> getCurriculumGroups() {

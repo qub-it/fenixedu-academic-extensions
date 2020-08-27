@@ -56,7 +56,9 @@ import org.fenixedu.academic.domain.treasury.ITuitionTreasuryEvent;
 import org.fenixedu.academic.domain.treasury.TreasuryBridgeAPIFactory;
 import org.fenixedu.academic.dto.student.RegistrationConclusionBean;
 import org.fenixedu.academic.dto.student.RegistrationStateBean;
+import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.academictreasury.domain.customer.PersonCustomer;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.joda.time.LocalDate;
 import org.joda.time.YearMonthDay;
 import org.joda.time.format.DateTimeFormat;
@@ -260,7 +262,8 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 
                 final ExecutionInterval endInterval = s.getEndExecutionInterval();
                 if (endInterval == beginInterval) {
-                    dates = "S" + beginInterval.getChildOrder();
+                    dates = BundleUtil.getString(Bundle.ENUMERATION, beginInterval.getAcademicPeriod().getAbbreviatedName()) + " "
+                            + beginInterval.getChildOrder();
                 }
 
             } else {
