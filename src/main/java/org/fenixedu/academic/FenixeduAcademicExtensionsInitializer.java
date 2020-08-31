@@ -6,6 +6,7 @@ import javax.servlet.annotation.WebListener;
 
 import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.Attends;
+import org.fenixedu.academic.domain.DegreeInfo;
 import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.EvaluationConfiguration;
 import org.fenixedu.academic.domain.Job;
@@ -18,6 +19,7 @@ import org.fenixedu.academic.domain.curricularRules.StudentScheduleListeners;
 import org.fenixedu.academic.domain.curricularRules.UnavailableForEnrolmentRule;
 import org.fenixedu.academic.domain.curricularRules.executors.ruleExecutors.CurricularRuleConfigurationInitializer;
 import org.fenixedu.academic.domain.degree.ExtendedDegreeInfo;
+import org.fenixedu.academic.domain.degreeStructure.CompetenceCourseInformation;
 import org.fenixedu.academic.domain.degreeStructure.DegreeModule;
 import org.fenixedu.academic.domain.degreeStructure.OptionalCurricularCourse;
 import org.fenixedu.academic.domain.enrolment.EnrolmentManagerFactoryInitializer;
@@ -27,6 +29,7 @@ import org.fenixedu.academic.domain.evaluation.EvaluationComparator;
 import org.fenixedu.academic.domain.evaluation.config.MarkSheetSettings;
 import org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonServices;
 import org.fenixedu.academic.domain.exceptions.DomainException;
+import org.fenixedu.academic.domain.organizationalStructure.Party;
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.RegistrationDataByExecutionYearExtendedInformation;
@@ -109,6 +112,8 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
         registerDeletionListenerOnJob();
 
         registerDeletionListenerOnUnit();
+
+        registerDeletionListenersForDynamicFields();
 
         UnavailableForEnrolmentRule.initializeDomainListenersAndExtensions();
 
@@ -199,7 +204,7 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
             q.setLevel(null);
         });
     }
-    
+
     private void registerDeletionListenerOnJob() {
         FenixFramework.getDomainModel().registerDeletionListener(Job.class, j -> j.setType(null));
     }
@@ -208,6 +213,26 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
         FenixFramework.getDomainModel().registerDeletionListener(Unit.class, u -> {
             u.getAcademicAreasSet().clear();
         });
+    }
+
+    private void registerDeletionListenersForDynamicFields() {
+
+        FenixFramework.getDomainModel().registerDeletionListener(CompetenceCourseInformation.class,
+                cci -> cci.getDynamicFieldSet().forEach(df -> {
+                    df.setCompetenceCourseInformation(null);
+                    df.delete();
+                }));
+
+        FenixFramework.getDomainModel().registerDeletionListener(DegreeInfo.class, di -> di.getDynamicFieldSet().forEach(df -> {
+            df.setDegreeInfo(null);
+            df.delete();
+        }));
+
+        FenixFramework.getDomainModel().registerDeletionListener(Party.class, p -> p.getDynamicFieldSet().forEach(df -> {
+            df.setParty(null);
+            df.delete();
+        }));
+
     }
 
     @SuppressWarnings("unchecked")
