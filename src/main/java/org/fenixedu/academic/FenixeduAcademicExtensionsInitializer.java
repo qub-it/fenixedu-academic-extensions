@@ -109,7 +109,6 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
         registerDeletionListenerOnDegreeModuleForCurriculumLineLogs();
 
         registerDeletionListenerOnQualification();
-        registerDeletionListenerOnJob();
 
         registerDeletionListenerOnUnit();
 
@@ -203,10 +202,6 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
             q.setInstitutionUnit(null);
             q.setLevel(null);
         });
-    }
-
-    private void registerDeletionListenerOnJob() {
-        FenixFramework.getDomainModel().registerDeletionListener(Job.class, j -> j.setType(null));
     }
 
     private void registerDeletionListenerOnUnit() {

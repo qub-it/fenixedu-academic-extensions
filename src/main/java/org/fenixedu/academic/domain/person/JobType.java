@@ -3,11 +3,14 @@ package org.fenixedu.academic.domain.person;
 import java.util.Collection;
 import java.util.Optional;
 
+import org.fenixedu.academic.domain.Job;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 
 import com.google.common.base.Strings;
+
+import pt.ist.fenixframework.FenixFramework;
 
 /**
  * 
@@ -15,6 +18,10 @@ import com.google.common.base.Strings;
  *
  */
 public class JobType extends JobType_Base {
+
+    static {
+        FenixFramework.getDomainModel().registerDeletionListener(Job.class, j -> j.setType(null));
+    }
 
     public JobType() {
         super();

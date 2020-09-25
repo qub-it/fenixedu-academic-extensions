@@ -1,3 +1,5 @@
+- Refactor: Moved Job<->JobType deletion listener from the ServletContextListener to the DomainClass
+
 4.11.1 (31-08-2020)
 - Fix: Added missing DynamicField deletion listeners for CompetenceCourseInformation, DegreeInfo and Party
 
