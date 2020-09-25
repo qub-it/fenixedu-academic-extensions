@@ -1,3 +1,4 @@
+4.11.2 (25-09-2020)
 - Refactor: Moved Job<->JobType deletion listener from the ServletContextListener to the DomainClass
 
 4.11.1 (31-08-2020)
