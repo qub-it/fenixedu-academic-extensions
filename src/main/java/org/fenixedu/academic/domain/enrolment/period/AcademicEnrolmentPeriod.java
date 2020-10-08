@@ -228,7 +228,7 @@ public class AcademicEnrolmentPeriod extends AcademicEnrolmentPeriod_Base {
 
         } else {
             // blocking
-            return input.isEmpty() || !Sets.difference(input, configured).isEmpty();
+            return input.isEmpty() || Sets.intersection(input, configured).isEmpty();
         }
     }
 
