@@ -1,4 +1,5 @@
-- Fix: On academic enrolment period, block by student statute should check for empty intersection instead of difference between configured and assigned to registration  ( #UL-FM-1928 )
+- Fix: On academic enrolment period, block by student statute should check for empty intersection instead of difference between configured and assigned to registration
+- Refactor: Upgrade dependency of fenixedu-academic-core (cleanup deprecated shift types)
  
 4.11.2 (25-09-2020)
 - Refactor: Moved Job<->JobType deletion listener from the ServletContextListener to the DomainClass
@@ -10,7 +11,7 @@
 - Refactor: Registration history report service API cleanup
 
 4.10.1 (24-08-2020)
-- Fix: On registration details, aproved/enroled/flunked credits should only use enrolments data ( #UL-FM-1751 )
+- Fix: On registration details, aproved/enroled/flunked credits should only use enrolments data
 - Fix: Add missing job deletion listener
 
 4.10.0 (13-08-2020)

@@ -59,12 +59,11 @@ public class EnrolmentReport {
     }
 
     public Collection<Shift> getShifts() {
-        return EnrolmentServices.getShiftsFor(this.enrolment, this.executionInterval).stream()
-                .filter(s -> s.getTypes().stream().anyMatch(st -> !isShiftTypeToBeIgnored(st))).collect(Collectors.toSet());
+        return EnrolmentServices.getShiftsFor(this.enrolment, this.executionInterval);
     }
 
     public String getShiftsAsString() {
-        return getShifts().stream().map(s -> s.getNome()).collect(Collectors.joining(", "));
+        return getShifts().stream().map(s -> s.getName()).collect(Collectors.joining(", "));
     }
 
     public Shift getTheoreticalShift() {
@@ -101,11 +100,6 @@ public class EnrolmentReport {
 
     private Shift getShiftByType(final ShiftType shiftType) {
         return getShifts().stream().filter(s -> s.getTypes().contains(shiftType)).findFirst().orElse(null);
-    }
-
-    private boolean isShiftTypeToBeIgnored(ShiftType shiftType) {
-        return shiftType.equals(ShiftType.PRATICA) || shiftType.equals(ShiftType.TEORICO_PRATICA)
-                || shiftType.equals(ShiftType.RESERVA);
     }
 
     public Collection<SchoolClass> getSchoolClasses() {
