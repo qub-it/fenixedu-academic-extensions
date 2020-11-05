@@ -1,3 +1,4 @@
+4.11.3 (05-11-2020)
 - Fix: On academic enrolment period, block by student statute should check for empty intersection instead of difference between configured and assigned to registration
 - Refactor: Upgrade dependency of fenixedu-academic-core (cleanup deprecated shift types)
  
