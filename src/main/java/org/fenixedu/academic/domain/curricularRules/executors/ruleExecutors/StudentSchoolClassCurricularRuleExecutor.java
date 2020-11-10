@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.CurricularCourse;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
+import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.domain.Shift;
@@ -94,7 +95,7 @@ public class StudentSchoolClassCurricularRuleExecutor extends CurricularRuleExec
                 for (final SchoolClass schoolClass : registrationSchoolClasses) {
                     final DegreeCurricularPlan degreeCurricularPlan = schoolClass.getExecutionDegree().getDegreeCurricularPlan();
                     final Set<Shift> shifts = schoolClass.getAssociatedShiftsSet().stream()
-                            .filter(s -> s.getExecutionCourse().getCurricularCourseFor(degreeCurricularPlan) == curricularCourse)
+                            .filter(s -> getCurricularCourseFor(s.getExecutionCourse(), degreeCurricularPlan) == curricularCourse)
                             .collect(Collectors.toSet());
 
                     final Multimap<ShiftType, Shift> shiftsTypesByShift = ArrayListMultimap.create();
@@ -141,6 +142,12 @@ public class StudentSchoolClassCurricularRuleExecutor extends CurricularRuleExec
 
         return RuleResult.createTrue(sourceDegreeModuleToEvaluate.getDegreeModule());
 
+    }
+
+    private static CurricularCourse getCurricularCourseFor(ExecutionCourse executionCourse,
+            final DegreeCurricularPlan degreeCurricularPlan) {
+        return executionCourse.getAssociatedCurricularCoursesSet().stream()
+                .filter(cc -> cc.getDegreeCurricularPlan() == degreeCurricularPlan).findAny().orElse(null);
     }
 
     private static boolean isFree(final Shift shift) {
