@@ -148,9 +148,6 @@ abstract public class CurriculumConfigurationInitializer {
             if (calculateCycleType(curriculum) != null) {
                 return;
             }
-            if (!curriculum.getStudentCurricularPlan().getDegreeCurricularPlan().isBolonhaDegree()) {
-                return;
-            }
             //this is to prevent some oddly behavior spotted (e.g. student 57276)
             if (curriculum.getStudentCurricularPlan().getCycleCurriculumGroups().isEmpty()) {
                 return;
@@ -239,7 +236,7 @@ abstract public class CurriculumConfigurationInitializer {
     }
 
     static private CycleType calculateCycleType(final Curriculum curriculum) {
-        if (!curriculum.hasCurriculumModule() || !curriculum.isBolonha()) {
+        if (!curriculum.hasCurriculumModule()) {
             return null;
         }
 

@@ -181,8 +181,7 @@ abstract public class EnrolmentPredicateInitializer {
         }
 
         private boolean considerThisEnrolmentNormalEnrolments(Enrolment enrolment) {
-            if (enrolment.isBolonhaDegree() && !enrolment.isExtraCurricular() && !enrolment.isPropaedeutic()
-                    && !enrolment.isStandalone()) {
+            if (!enrolment.isExtraCurricular() && !enrolment.isPropaedeutic() && !enrolment.isStandalone()) {
                 if (enrolment.getParentCycleCurriculumGroup().isConclusionProcessed()) {
                     return false;
                 }
