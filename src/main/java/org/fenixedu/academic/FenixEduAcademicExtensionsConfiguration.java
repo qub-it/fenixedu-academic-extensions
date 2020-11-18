@@ -36,9 +36,8 @@ public class FenixEduAcademicExtensionsConfiguration {
         @ConfigurationProperty(key = "domain.academic.curricularYearCalculator.cached", defaultValue = "true")
         public Boolean getCurricularYearCalculatorCached();
 
-        //TODO: change default value to org.fenixedu.academic.domain.student.curriculum.CurriculumGradeCalculator after setting all configuration.properties in all instances 
         @ConfigurationProperty(key = "domain.academic.curriculumGradeCalculator.override",
-                defaultValue = "org.fenixedu.ulisboa.specifications.domain.student.curriculum.CurriculumGradeCalculator")
+                defaultValue = "org.fenixedu.academic.domain.student.curriculum.CurriculumGradeCalculator")
         public String getCurriculumGradeCalculator();
 
         @ConfigurationProperty(key = "domain.academic.dismissals.restrict.equivalences.to.curricular.courses",
