@@ -1,3 +1,4 @@
+4.12.0 (30-01-2021)
 - New Feature: Added curricular period rule to restrict enrolment credits based on statute
 - Improvement: Changed Approved Courses curricular period rule to allow restriction of min and max year
 
