@@ -24,20 +24,10 @@ public class ApprovedCourses extends ApprovedCourses_Base {
     }
 
     @Atomic
-    static public ApprovedCourses create(final CurricularPeriodConfiguration configuration, final BigDecimal approvals) {
+    static public ApprovedCourses create(final CurricularPeriodConfiguration configuration, final BigDecimal approvals,
+            Integer yearMin, Integer yearMax) {
         final ApprovedCourses result = new ApprovedCourses();
-        result.init(configuration, approvals, null /*yearMin*/, null /*yearMax*/);
-
-        return result;
-    }
-
-    @Atomic
-    static public ApprovedCourses createForSemester(final CurricularPeriodConfiguration configuration, final BigDecimal approvals,
-            final Integer semester) {
-
-        final ApprovedCourses result = new ApprovedCourses();
-        result.init(configuration, approvals, null /*yearMin*/, null /*yearMax*/);
-        result.setSemester(semester);
+        result.init(configuration, approvals, yearMin, yearMax);
 
         return result;
     }
@@ -61,8 +51,12 @@ public class ApprovedCourses extends ApprovedCourses_Base {
     public RuleResult execute(final Curriculum input) {
         final Curriculum curriculum = prepareCurriculum(input);
 
-        final Predicate<ICurriculumEntry> previousYears = i -> CurricularPeriodServices
-                .getCurricularYear((CurriculumLine) i) < getConfiguration().getCurricularPeriod().getChildOrder().intValue();
+        final Predicate<ICurriculumEntry> previousYears = i -> {
+            final int curricularYear = CurricularPeriodServices.getCurricularYear((CurriculumLine) i);
+            return curricularYear < getConfiguration().getCurricularPeriod().getChildOrder().intValue()
+                    && (getYearMin() == null || curricularYear >= getYearMin().intValue())
+                    && (getYearMax() == null || curricularYear <= getYearMax().intValue());
+        };
 
         final BigDecimal total = BigDecimal.valueOf(curriculum.getCurricularYearEntries().stream().filter(previousYears).count());
 

@@ -1,3 +1,6 @@
+- New Feature: Added curricular period rule to restrict enrolment credits based on statute
+- Improvement: Changed Approved Courses curricular period rule to allow restriction of min and max year
+
 4.11.6 (19-11-2020)
 - Refactor: Changed default CurriculumGradeCalculator value
 

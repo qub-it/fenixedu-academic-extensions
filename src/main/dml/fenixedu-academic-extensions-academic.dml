@@ -920,6 +920,9 @@ class curricularRules.curricularPeriod.CurricularPeriodRule {
 			
 			class curricularRules.curricularPeriod.enrolment.CreditsInEnrolmentPeriodForPartialRegime extends curricularRules.curricularPeriod.enrolment.CreditsInEnrolmentPeriod {
 			}
+			
+			class curricularRules.curricularPeriod.enrolment.CreditsInEnrolmentPeriodForStatutes extends curricularRules.curricularPeriod.enrolment.CreditsInEnrolmentPeriod {
+			}
 		
 		class curricularRules.curricularPeriod.enrolment.CreditsInCurricularPeriod extends curricularRules.curricularPeriod.RuleEnrolment {
 		}
