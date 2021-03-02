@@ -6,7 +6,7 @@ import org.fenixedu.academic.domain.curricularRules.ICurricularRule;
 import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
 import org.fenixedu.academic.domain.enrolment.EnrolmentContext;
 import org.fenixedu.academic.domain.enrolment.IDegreeModuleToEvaluate;
-import org.fenixedu.academic.domain.groups.PermissionService;
+import org.fenixedu.academic.service.AcademicPermissionService;
 import org.fenixedu.academic.util.CurricularRuleLabelFormatter;
 import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 
@@ -80,9 +80,8 @@ public class ConditionedRouteExecutor extends CurricularRuleExecutor {
     private boolean isPersonAuthorized(EnrolmentContext enrolmentContext) {
         return AcademicAccessRule.isProgramAccessibleToFunction(AcademicOperationType.STUDENT_ENROLMENTS,
                 enrolmentContext.getStudentCurricularPlan().getDegree(), enrolmentContext.getResponsiblePerson().getUser())
-                || PermissionService.hasAccess("ACADEMIC_OFFICE_ENROLMENTS",
-                        enrolmentContext.getStudentCurricularPlan().getDegree(),
-                        enrolmentContext.getResponsiblePerson().getUser());
+                || AcademicPermissionService.hasAccess("ACADEMIC_OFFICE_ENROLMENTS",
+                        enrolmentContext.getStudentCurricularPlan().getDegree());
     }
 
 }
