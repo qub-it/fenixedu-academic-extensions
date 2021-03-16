@@ -1101,4 +1101,8 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         return getPerson().getIban();
     }
 
+    public String getHealthCardNumber() {
+        return getPerson().getHealthCardNumber();
+    }
+
 }

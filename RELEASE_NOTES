@@ -1,4 +1,5 @@
-- Improvements: Improved permission verification
+- Improvement: Added health card number to registration history report
+- Improvement: Improved permission verification
 
 4.12.0 (30-01-2021)
 - New Feature: Added curricular period rule to restrict enrolment credits based on statute
