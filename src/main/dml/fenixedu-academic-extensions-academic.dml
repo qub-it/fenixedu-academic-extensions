@@ -933,6 +933,9 @@ class curricularRules.curricularPeriod.CurricularPeriodRule {
 		class curricularRules.curricularPeriod.enrolment.CreditsEnroledAsFirstTime extends curricularRules.curricularPeriod.RuleEnrolment {
 		}
 		
+		class curricularRules.curricularPeriod.enrolment.EnrolmentPrecedenceInCurricularYear extends curricularRules.curricularPeriod.RuleEnrolment {
+		}
+		
 	class curricularRules.curricularPeriod.RuleTransition extends curricularRules.curricularPeriod.CurricularPeriodRule {
 		boolean allowToCollectAllCurricularPlans;
 		String codesCSV;
