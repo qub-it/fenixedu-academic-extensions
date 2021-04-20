@@ -15,7 +15,7 @@ public class CreditsInEnrolmentPeriodForPartialRegime extends CreditsInEnrolment
     }
 
     @Atomic
-    static public CreditsInEnrolmentPeriodForPartialRegime create(final CurricularPeriodConfiguration configuration,
+    public static CreditsInEnrolmentPeriodForPartialRegime create(final CurricularPeriodConfiguration configuration,
             final BigDecimal credits, final Integer semester, final Integer year) {
 
         final CreditsInEnrolmentPeriodForPartialRegime result = new CreditsInEnrolmentPeriodForPartialRegime();
