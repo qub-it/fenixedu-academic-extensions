@@ -45,8 +45,6 @@ public class StudentCurricularPlanEnrolmentManager
             return;
         }
 
-        checkDebts();
-
         if (isResponsiblePersonAllowedToEnrolStudents() || isResponsibleInternationalRelationOffice()) {
             assertAcademicAdminOfficePreConditions();
 

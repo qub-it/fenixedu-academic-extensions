@@ -1,3 +1,5 @@
+- Improvement: Remove checkDebts condition from domain, this should be an enrolment process configuration
+
 4.12.1 (16-03-2021)
 - Improvement: Added health card number to registration history report
 - Improvement: Improved permission verification
