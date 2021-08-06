@@ -166,55 +166,62 @@ public class DegreeGradingTable extends DegreeGradingTable_Base {
 
     public static Set<DegreeGradingTable> generate(final ExecutionYear executionYear) {
         Set<DegreeGradingTable> allTables = new HashSet<>();
-        Set<DataTuple> allTablesMetaData = new HashSet<>();
-        final Set<DegreeCurricularPlan> dcps = executionYear.getExecutionDegreesSet().stream()
-                .map(ed -> ed.getDegreeCurricularPlan()).collect(Collectors.toSet());
+
+        Set<DataTuple> tableGenerationRequest = new HashSet<>();
+
+        Set<DegreeCurricularPlan> dcps = executionYear.getExecutionDegreesSet().stream().map(ed -> ed.getDegreeCurricularPlan())
+                .collect(Collectors.toSet());
+
+        // A Degree can have multiple curricular plans
         for (DegreeCurricularPlan dcp : dcps) {
             Degree degree = dcp.getDegree();
 
             if (!GradingTableSettings.getApplicableDegreeTypes().contains(degree.getDegreeType())) {
+                // Degree type is not marked for table calculations.
                 continue;
             }
 
-            programConclusionLoop: for (ProgramConclusion programConclusion : ProgramConclusion.conclusionsFor(dcp)
-                    .collect(Collectors.toSet())) {
+            for (ProgramConclusion programConclusion : ProgramConclusion.conclusionsFor(dcp).collect(Collectors.toSet())) {
+
                 DegreeGradingTable table = find(executionYear, programConclusion, degree);
+
                 if (table == null) {
-                    for (DataTuple dataTuple : allTablesMetaData) {
-                        if (dataTuple.getExecutionYear() == executionYear && dataTuple.getProgramConclusion() == programConclusion
-                                && dataTuple.getDegree() == degree) {
-                            //This table will be created by a new thread at the end of this atomic transaction
-                            continue programConclusionLoop;
-                        }
-                    }
-                }
-                if (table == null) {
-                    allTablesMetaData.add(new DataTuple(degree, executionYear, programConclusion));
-                    CallableWithoutException<DegreeGradingTable> workerLogic =
-                            new CallableWithoutException<DegreeGradingTable>() {
-                                @Override
-                                public DegreeGradingTable call() {
-                                    DegreeGradingTable table = new DegreeGradingTable();
-                                    table.setExecutionYear(executionYear);
-                                    table.setProgramConclusion(programConclusion);
-                                    table.setDegree(degree);
-                                    table.compileData();
-                                    return table;
-                                }
-                            };
-                    GeneratorWorker<DegreeGradingTable> worker = new GeneratorWorker<>(workerLogic);
-                    worker.start();
-                    try {
-                        worker.join();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    allTables.add(worker.getTable());
+                    // Set garantees that only one instance of this tuple of objects will be present
+                    tableGenerationRequest.add(new DataTuple(degree, executionYear, programConclusion));
                 } else {
                     allTables.add(table);
                 }
             }
         }
+
+        // Process the table requests
+        for (DataTuple t : tableGenerationRequest) {
+            // Creates a new thread that is going to hook into a write transaction
+            CallableWithoutException<DegreeGradingTable> workerLogic = new CallableWithoutException<DegreeGradingTable>() {
+
+                @Override
+                public DegreeGradingTable call() {
+                    DegreeGradingTable table = new DegreeGradingTable();
+                    table.setExecutionYear(t.getExecutionYear());
+                    table.setProgramConclusion(t.getProgramConclusion());
+                    table.setDegree(t.getDegree());
+                    table.compileData();
+                    return table;
+                }
+            };
+
+            GeneratorWorker<DegreeGradingTable> worker = new GeneratorWorker<>(workerLogic);
+            worker.start();
+
+            try {
+                worker.join();
+            } catch (InterruptedException e) {
+                LOG.error("Table generator failed: " + e.getMessage());
+            }
+
+            allTables.add(worker.getTable());
+        }
+
         return allTables;
     }
 
