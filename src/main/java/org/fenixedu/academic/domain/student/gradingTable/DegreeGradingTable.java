@@ -69,6 +69,48 @@ public class DegreeGradingTable extends DegreeGradingTable_Base {
             this.programConclusion = programConclusion;
         }
 
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((degree == null) ? 0 : degree.hashCode());
+            result = prime * result + ((executionYear == null) ? 0 : executionYear.hashCode());
+            result = prime * result + ((programConclusion == null) ? 0 : programConclusion.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (!(obj instanceof DataTuple)) {
+                return false;
+            }
+            DataTuple other = (DataTuple) obj;
+            if (degree == null) {
+                if (other.degree != null) {
+                    return false;
+                }
+            } else if (!degree.equals(other.degree)) {
+                return false;
+            }
+            if (executionYear == null) {
+                if (other.executionYear != null) {
+                    return false;
+                }
+            } else if (!executionYear.equals(other.executionYear)) {
+                return false;
+            }
+            if (programConclusion == null) {
+                if (other.programConclusion != null) {
+                    return false;
+                }
+            } else if (!programConclusion.equals(other.programConclusion)) {
+                return false;
+            }
+            return true;
+        }
     }
 
     public DegreeGradingTable() {
