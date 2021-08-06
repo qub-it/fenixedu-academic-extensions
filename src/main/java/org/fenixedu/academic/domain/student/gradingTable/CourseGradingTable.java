@@ -1,7 +1,5 @@
 package org.fenixedu.academic.domain.student.gradingTable;
 
-import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -9,12 +7,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.io.FileUtils;
 import org.fenixedu.academic.domain.CompetenceCourse;
 import org.fenixedu.academic.domain.CurricularCourse;
 import org.fenixedu.academic.domain.Enrolment;
@@ -28,10 +23,15 @@ import org.fenixedu.academic.domain.student.curriculum.ICurriculumEntry;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumLine;
 import org.fenixedu.academic.domain.studentCurriculum.ExternalEnrolment;
 import org.fenixedu.bennu.core.domain.Bennu;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import pt.ist.dap.util.Log;
 import pt.ist.fenixframework.CallableWithoutException;
 
 public class CourseGradingTable extends CourseGradingTable_Base {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CourseGradingTable.class);
 
     public CourseGradingTable() {
         super();
@@ -100,7 +100,7 @@ public class CourseGradingTable extends CourseGradingTable_Base {
                 }
             }
         }
-        return ectsGrade != null ? ectsGrade : "-";
+        return (ectsGrade != null) ? ectsGrade : "-";
     }
 
     public static boolean isApplicable(final CurriculumLine line) {
@@ -116,6 +116,7 @@ public class CourseGradingTable extends CourseGradingTable_Base {
 
                     CallableWithoutException<CourseGradingTable> workerLogic =
                             new CallableWithoutException<CourseGradingTable>() {
+
                                 @Override
                                 public CourseGradingTable call() {
                                     CourseGradingTable table = new CourseGradingTable();
@@ -133,12 +134,14 @@ public class CourseGradingTable extends CourseGradingTable_Base {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+
                     allTables.add(worker.getTable());
                 } else {
                     allTables.add(table);
                 }
             }
         }
+
         return allTables;
     }
 
@@ -157,9 +160,11 @@ public class CourseGradingTable extends CourseGradingTable_Base {
         setStudentSampleData(harvestEnrolmentsUsedInSampleData);
 
         if (sample.isEmpty()) { // Using the default table
+            LOG.info("Using default EECC table for course " + getCompetenceCourse().getName());
             GradingTableGenerator.defaultData(this);
             setCopied(true);
         } else {
+            LOG.info("Sample size for " + getCompetenceCourse().getName() + " = " + sample.size());
             GradingTableGenerator.generateTableDataImprovement(this, sample);
         }
         checkUniquenessOfTable();
@@ -190,15 +195,20 @@ public class CourseGradingTable extends CourseGradingTable_Base {
     }
 
     private String enrolmentStringData(Enrolment e) {
-        Integer studentNumber = e.getStudent().getNumber();
-        String studentName = e.getStudent().getName();
-        String competenceCourseCode = e.getCurricularCourse().getCompetenceCourse().getCode();
-        String executionYearName = e.getExecutionYear().getQualifiedName();
-        Integer finalGrade =
-                isNumeric(e.getGrade()) ? e.getGrade().getNumericValue().setScale(0, RoundingMode.HALF_UP).intValue() : 0;
+        try {
+            Integer studentNumber = e.getStudent().getNumber();
+            String studentName = e.getStudent().getName();
+            String competenceCourseCode = e.getCurricularCourse().getCompetenceCourse().getCode();
+            String executionYearName = e.getExecutionYear().getQualifiedName();
+            Integer finalGrade =
+                    isNumeric(e.getGrade()) ? e.getGrade().getNumericValue().setScale(0, RoundingMode.HALF_UP).intValue() : 0;
 
-        return String.format("%s\t%s\t%s\t%s\t%s", studentNumber, studentName, competenceCourseCode, executionYearName,
-                finalGrade);
+            return String.format("%s\t%s\t%s\t%s\t%s", studentNumber, studentName, competenceCourseCode, executionYearName,
+                    finalGrade);
+        } catch (Throwable t) {
+            Log.error("Error while retrieving data for enrolment with id " + e.getExternalId());
+            return "-\t-\t-\t-\t-";
+        }
     }
 
     private List<Enrolment> harvestEnrolmentsUsedInSample() {
@@ -224,15 +234,16 @@ public class CourseGradingTable extends CourseGradingTable_Base {
                     if (!enrolment.getGrade().isNumeric()) {
                         continue;
                     }
-                    
-                    if(gradeScale != null) {
-                        if(enrolment.getGrade().getGradeScale() != gradeScale) {
-                            throw new DomainException("error.CourseGradingTable.harvestEnrolmentsUsedInSample.gradeScale.mismatch");
+
+                    if (gradeScale != null) {
+                        if (enrolment.getGrade().getGradeScale() != gradeScale) {
+                            throw new DomainException(
+                                    "error.CourseGradingTable.harvestEnrolmentsUsedInSample.gradeScale.mismatch");
                         }
                     } else {
                         gradeScale = enrolment.getGrade().getGradeScale();
                     }
-                    
+
                     sample.add(enrolment);
                 }
             }
