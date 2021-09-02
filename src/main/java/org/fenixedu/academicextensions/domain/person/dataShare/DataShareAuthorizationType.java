@@ -123,6 +123,12 @@ public class DataShareAuthorizationType extends DataShareAuthorizationType_Base 
         return found.size() == 1 ? found.iterator().next() : null;
     }
 
+    @Override
+    public void setActive(boolean active) {
+        super.setActive(active);
+        getDataShareAuthorizationTypeChildrenSet().forEach(c -> c.setActive(active));
+    }
+
     public boolean isActive() {
         return super.getActive();
     }
