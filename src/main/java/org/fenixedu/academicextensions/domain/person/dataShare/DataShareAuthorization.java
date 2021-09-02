@@ -120,9 +120,13 @@ public class DataShareAuthorization extends DataShareAuthorization_Base {
     }
 
     static public Set<DataShareAuthorizationType> findActiveAuthorizationTypes(final Person person) {
-        return Bennu.getInstance().getDataShareAuthorizationTypeSet().stream()
-                .filter(type -> type.isActive() && Group.parse(type.getGroupExpression()).isMember(person.getUser()))
-                .collect(Collectors.toSet());
+        return Bennu.getInstance().getDataShareAuthorizationTypeSet().stream().filter(type -> {
+            DataShareAuthorizationType authorizationTypeParent = type.getDataShareAuthorizationTypeParent();
+            if (authorizationTypeParent != null && !authorizationTypeParent.isActive()) {
+                return false;
+            }
+            return type.isActive() && Group.parse(type.getGroupExpression()).isMember(person.getUser());
+        }).collect(Collectors.toSet());
     }
 
     static public Set<DataShareAuthorizationType> findActiveAuthorizationTypesNotAnswered(final Person person) {
