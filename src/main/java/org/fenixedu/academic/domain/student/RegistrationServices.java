@@ -366,7 +366,7 @@ public class RegistrationServices {
 
     public static void enrolInSchoolClassExecutionCoursesShifts(final Registration registration, final SchoolClass schoolClass,
             final List<ExecutionCourse> attendingExecutionCourses) {
-        if (!isSchoolClassFree(schoolClass, registration)) {
+        if (!schoolClass.isFreeFor(registration)) {
             throw new DomainException(FULL_SCHOOL_CLASS_EXCEPTION_MSG);
         }
 

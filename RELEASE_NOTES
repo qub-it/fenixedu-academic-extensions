@@ -1,5 +1,7 @@
+- Refactor: Verify availability of enrolling school classes using method that checks each shift capacities
+
 4.12.3 (02-09-2021)
-- Bug fix: Only trigger authorizations redirector for child authorization if root authorization is active #UL-ISEG-1954
+- Bug fix: Only trigger authorizations redirector for child authorization if root authorization is active
 
 4.12.2 (16-07-2021)
 - Improvement: Remove checkDebts condition from domain, this should be an enrolment process configuration
