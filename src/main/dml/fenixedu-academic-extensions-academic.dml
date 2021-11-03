@@ -39,6 +39,7 @@ class evaluation.config.MarkSheetSettings {
 	int requiredNumberOfShifts;
 	boolean limitCertifierToResponsibleTeacher;
 	boolean limitCreationToResponsibleTeacher;
+	String markSheetTemplateCode;
 }
 
 relation MarkSheetSettingsBennuRoot {

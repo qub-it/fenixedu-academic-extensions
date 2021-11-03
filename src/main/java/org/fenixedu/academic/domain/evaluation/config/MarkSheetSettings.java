@@ -1,5 +1,6 @@
 package org.fenixedu.academic.domain.evaluation.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.bennu.core.domain.Bennu;
 
@@ -67,16 +68,20 @@ public class MarkSheetSettings extends MarkSheetSettings_Base {
         return true;
     }
 
-    static public boolean isUnspecifiedNumberOfShifts() {
+    public static boolean isUnspecifiedNumberOfShifts() {
         return getInstance().getRequiredNumberOfShifts() < 0;
     }
 
-    static public boolean isNotAllowedShifts() {
+    public static boolean isNotAllowedShifts() {
         return getInstance().getRequiredNumberOfShifts() == 0;
     }
 
-    static public boolean isRequiredAtLeastOneShift() {
+    public static boolean isRequiredAtLeastOneShift() {
         return getInstance().getRequiredNumberOfShifts() >= 10;
+    }
+
+    public static boolean isMarkSheetTemplateCodeDefined() {
+        return StringUtils.isNotBlank(getInstance().getMarkSheetTemplateCode());
     }
 
 }
