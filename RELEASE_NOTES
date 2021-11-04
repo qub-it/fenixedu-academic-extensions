@@ -1,3 +1,4 @@
+4.12.5 (04-11-2021)
 - Improvement: Add support for marksheet document generation using custom strategy
 - Refactor: Update academic-core dependency
 
