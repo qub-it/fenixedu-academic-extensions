@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.bennu.core.domain.Bennu;
+import org.fenixedu.bennu.core.domain.exceptions.BennuCoreDomainException;
 import org.fenixedu.bennu.core.groups.Group;
 import org.joda.time.DateTime;
 
@@ -125,7 +126,16 @@ public class DataShareAuthorization extends DataShareAuthorization_Base {
             if (authorizationTypeParent != null && !authorizationTypeParent.isActive()) {
                 return false;
             }
-            return type.isActive() && Group.parse(type.getGroupExpression()).isMember(person.getUser());
+
+            if (type.isActive()) {
+                try {
+                    final Group group = Group.parse(type.getGroupExpression());
+                    return group.isMember(person.getUser());
+                } catch (Error | BennuCoreDomainException e) { // prevent invalid expressions of preventing logins in system
+                }
+            }
+
+            return false;
         }).collect(Collectors.toSet());
     }
 
