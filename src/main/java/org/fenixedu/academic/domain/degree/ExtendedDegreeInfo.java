@@ -2,9 +2,11 @@ package org.fenixedu.academic.domain.degree;
 
 import java.util.Objects;
 
+import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.DegreeInfo;
 import org.fenixedu.academic.domain.ExecutionYear;
+import org.fenixedu.academic.domain.dml.DynamicField;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.signals.DomainObjectEvent;
 import org.fenixedu.bennu.core.signals.Signal;
@@ -92,6 +94,13 @@ public class ExtendedDegreeInfo extends ExtendedDegreeInfo_Base {
         if (di == null) {
             DegreeInfo mrdi = degree.getMostRecentDegreeInfo(executionYear);
             di = mrdi != null ? new DegreeInfo(mrdi, executionYear) : new DegreeInfo(degree, executionYear);
+
+            if (mrdi != null) {
+                final DegreeInfo finalDegreeInfo = di;
+                mrdi.getDynamicFieldSet().stream().filter(df -> StringUtils.isNotBlank(df.getValue()))
+                        .map(df -> df.getDescriptor().getCode()).forEach(code -> DynamicField.setFieldValue(finalDegreeInfo, code,
+                                DynamicField.getFieldValue(mrdi, code)));
+            }
         }
         if (di.getExtendedDegreeInfo() == null) {
             final ExtendedDegreeInfo mostRecent = findMostRecent(executionYear, degree);

@@ -1,3 +1,5 @@
+- Improvement: On degree info duplication, copy existing dynamic fields
+
 4.12.7 (02-04-2022)
 - Improvement: Add parameter to filter period/semester on CreditsEnroledAsFirstTime rule
 
