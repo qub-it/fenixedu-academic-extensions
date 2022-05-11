@@ -1,3 +1,5 @@
+- Fix: Dynamic field code should be unique by domain class
+
 4.12.8 (05-05-2022)
 - Improvement: On degree info duplication, copy existing dynamic fields
 
