@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.collections.comparators.ComparatorChain;
 import org.fenixedu.academic.domain.CurricularCourse;
@@ -28,7 +29,9 @@ import org.fenixedu.commons.i18n.LocalizedString;
 import org.fenixedu.commons.i18n.LocalizedString.Builder;
 import org.joda.time.YearMonthDay;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 
 import pt.ist.fenixframework.dml.runtime.RelationAdapter;
 
@@ -150,11 +153,12 @@ abstract public class CurriculumLineServices {
             });
         }
 
-        final LocalizedString built = result.build();
+        final LocalizedString built = CreditsReasonType.removeDuplicateItemDescriptions(result.build());
         // null forces hidden; empty forces fallback
         return built.isEmpty() ? null : built;
     }
 
+   
     static private void add(final Builder builder, final String key) {
         add(builder, AcademicExtensionsUtil.bundleI18N(key));
     }
