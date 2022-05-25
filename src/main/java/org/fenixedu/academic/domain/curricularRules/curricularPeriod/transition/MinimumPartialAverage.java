@@ -30,8 +30,7 @@ public class MinimumPartialAverage extends MinimumPartialAverage_Base {
         boolean result = true;
         for (final ProgramConclusion programConclusion : programConclusions) {
 
-            final RegistrationConclusionBean bean =
-                    new RegistrationConclusionBean(studentCurricularPlan.getRegistration(), programConclusion);
+            final RegistrationConclusionBean bean = new RegistrationConclusionBean(studentCurricularPlan, programConclusion);
 
             if (!bean.getFinalGrade().isNumeric()) {
                 continue;

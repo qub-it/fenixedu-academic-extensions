@@ -1,3 +1,5 @@
+- Fix: Use RegistrationConclusionBean correct constructor
+
 4.12.9 (11-05-2022)
 - Fix: Dynamic field code should be unique by domain class
 
