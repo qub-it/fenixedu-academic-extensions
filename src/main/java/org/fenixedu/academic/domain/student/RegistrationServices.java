@@ -181,10 +181,12 @@ public class RegistrationServices {
             YearMonthDay conclusionDate = null;
             try {
 
-                final ProgramConclusion conclusion =
-                        ProgramConclusion.conclusionsFor(registration).filter(i -> i.isTerminal()).findFirst().get();
+                final StudentCurricularPlan lastCurricularPlan = registration.getLastStudentCurricularPlan();
 
-                final RegistrationConclusionBean bean = new RegistrationConclusionBean(registration, conclusion);
+                final ProgramConclusion conclusion =
+                        ProgramConclusion.conclusionsFor(lastCurricularPlan).filter(i -> i.isTerminal()).findFirst().get();
+
+                final RegistrationConclusionBean bean = new RegistrationConclusionBean(lastCurricularPlan, conclusion);
                 conclusionYear = bean.getConclusionYear();
                 conclusionDate = bean.getConclusionDate();
             } catch (final Throwable t) {
@@ -227,10 +229,12 @@ public class RegistrationServices {
                 YearMonthDay conclusionDate = null;
                 try {
 
-                    final ProgramConclusion conclusion =
-                            ProgramConclusion.conclusionsFor(registration).filter(i -> i.isTerminal()).findFirst().get();
+                    final StudentCurricularPlan lastCurricularPlan = registration.getLastStudentCurricularPlan();
 
-                    final RegistrationConclusionBean bean = new RegistrationConclusionBean(registration, conclusion);
+                    final ProgramConclusion conclusion =
+                            ProgramConclusion.conclusionsFor(lastCurricularPlan).filter(i -> i.isTerminal()).findFirst().get();
+
+                    final RegistrationConclusionBean bean = new RegistrationConclusionBean(lastCurricularPlan, conclusion);
                     conclusionYear = bean.getConclusionYear();
                     conclusionDate = bean.getConclusionDate();
                 } catch (final Throwable t) {
@@ -262,10 +266,12 @@ public class RegistrationServices {
 
     static public ExecutionYear getConclusionExecutionYear(final Registration registration) {
         try {
-            final ProgramConclusion conclusion =
-                    ProgramConclusion.conclusionsFor(registration).filter(i -> i.isTerminal()).findFirst().get();
+            final StudentCurricularPlan lastCurricularPlan = registration.getLastStudentCurricularPlan();
 
-            final RegistrationConclusionBean bean = new RegistrationConclusionBean(registration, conclusion);
+            final ProgramConclusion conclusion =
+                    ProgramConclusion.conclusionsFor(lastCurricularPlan).filter(i -> i.isTerminal()).findFirst().get();
+
+            final RegistrationConclusionBean bean = new RegistrationConclusionBean(lastCurricularPlan, conclusion);
             return bean.getConclusionYear();
         } catch (final Throwable t) {
             logger.error("Error trying to determine ConclusionYear: {}", t.getMessage());
