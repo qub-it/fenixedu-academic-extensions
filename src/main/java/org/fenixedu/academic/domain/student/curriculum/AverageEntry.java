@@ -28,7 +28,6 @@ package org.fenixedu.academic.domain.student.curriculum;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -41,9 +40,8 @@ import org.fenixedu.academic.domain.degreeStructure.CurricularPeriodServices;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumLine;
 import org.fenixedu.academic.domain.studentCurriculum.Dismissal;
 import org.fenixedu.academic.util.Bundle;
+import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
-import org.fenixedu.bennu.core.util.CoreConfiguration;
-import org.fenixedu.commons.i18n.LocalizedString;
 import org.joda.time.YearMonthDay;
 
 import com.google.common.collect.Lists;
@@ -170,18 +168,15 @@ public class AverageEntry implements Comparable<AverageEntry> {
 
     static private String getApprovalTypeDescription(final ICurriculumEntry entry,
             final StudentCurricularPlan studentCurricularPlan) {
-        LocalizedString result = CurriculumLineServices.getCurriculumEntryDescription(entry, studentCurricularPlan, true, true);
 
-        // here we want some info, even if we were given null
-        if (result == null || result.isEmpty()) {
-            result = new LocalizedString();
-
-            for (final Locale locale : CoreConfiguration.supportedLocales()) {
-                result = result.with(locale, ENTRY_INFO_EMPTY);
-            }
+        if (entry instanceof Dismissal) {
+            return ((Dismissal) entry).getCredits().getDescription();
         }
 
-        return result.getContent();
+        return entry.getCurriculumLinesForCurriculum(studentCurricularPlan).stream().filter(l -> l.isDismissal())
+                .map(Dismissal.class::cast).map(d -> d.getCredits()).filter(c -> c.isSubstitution()).map(c -> c.getDescription())
+                .distinct().findFirst().orElse(AcademicExtensionsUtil.bundleI18N("label.approvalType.Enrolment").getContent());
+
     }
 
     static private Integer getCurricularYear(final ICurriculumEntry entry) {

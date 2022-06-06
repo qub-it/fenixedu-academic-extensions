@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.comparators.ComparatorChain;
@@ -21,11 +20,6 @@ import org.fenixedu.academic.domain.studentCurriculum.Credits;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumGroup;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumLine;
 import org.fenixedu.academic.domain.studentCurriculum.Dismissal;
-import org.fenixedu.academic.domain.studentCurriculum.Equivalence;
-import org.fenixedu.academic.domain.studentCurriculum.Substitution;
-import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
-import org.fenixedu.commons.i18n.LocalizedString;
-import org.fenixedu.commons.i18n.LocalizedString.Builder;
 import org.joda.time.YearMonthDay;
 
 import com.google.common.collect.Lists;
@@ -108,61 +102,6 @@ abstract public class CurriculumLineServices {
 
     static public BigDecimal getWeight(CurriculumLine curriculumLine) {
         return curriculumLine.getExtendedInformation() == null ? null : curriculumLine.getExtendedInformation().getWeight();
-    }
-
-    static public LocalizedString getCurriculumEntryDescription(final ICurriculumEntry entry,
-            final StudentCurricularPlan studentCurricularPlan, final boolean includeDismissalInfoForReasonWithInfoHidden,
-            final boolean hideCreditsReasonDetails) {
-
-        final Builder result = new LocalizedString().builder();
-        final Set<CurriculumLine> lines = entry.getCurriculumLinesForCurriculum(studentCurricularPlan);
-
-        if (lines.isEmpty()) {
-            if (Enrolment.class.isAssignableFrom(entry.getClass())) {
-                add(result, "label.approvalType.Enrolment");
-            }
-
-        } else {
-
-            // TODO legidio, will probably be asked to group Dismissals by CreditsReasonType, to avoid lines to long
-            lines.stream().sorted(COMPARATOR).forEach(line -> {
-
-                if (line.isDismissal()) {
-                    final Dismissal dismissal = (Dismissal) line;
-                    final Credits credits = dismissal.getCredits();
-                    final CreditsReasonType reason = credits == null ? null : credits.getReason();
-                    final LocalizedString info =
-                            reason == null ? null : reason.getInfo(entry, dismissal, hideCreditsReasonDetails);
-
-                    if (info != null && !info.isEmpty()) {
-                        add(result, info);
-
-                    } else if (reason == null || includeDismissalInfoForReasonWithInfoHidden) {
-
-                        if (Substitution.class.isAssignableFrom(credits.getClass())) {
-                            add(result, "label.approvalType.Substitution");
-
-                        } else if (Equivalence.class.isAssignableFrom(credits.getClass())) {
-                            add(result, "label.approvalType.Equivalence");
-                        }
-                    }
-                }
-            });
-        }
-
-        final LocalizedString built = result.build();
-        // null forces hidden; empty forces fallback
-        return built.isEmpty() ? null : built;
-    }
-
-    static private void add(final Builder builder, final String key) {
-        add(builder, AcademicExtensionsUtil.bundleI18N(key));
-    }
-
-    static private void add(final Builder builder, final LocalizedString localizedString) {
-        if (!builder.build().anyMatch(i -> i.contains(localizedString.getContent()))) {
-            builder.append(localizedString, CreditsReasonType.SEPARATOR);
-        }
     }
 
     static private Comparator<CurriculumLine> COMPARATOR_CONTEXT = (o1, o2) -> {
