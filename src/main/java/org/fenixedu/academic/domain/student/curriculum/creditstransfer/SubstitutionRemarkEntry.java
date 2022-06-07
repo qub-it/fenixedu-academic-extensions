@@ -74,9 +74,10 @@ class SubstitutionRemarkEntry extends CreditsTransferRemarkEntry {
             final String prefix =
                     AcademicExtensionsUtil.bundleI18N("info.CreditsReasonType.explained.Substitution").getContent(locale);
             result.append(" - ").append(prefix).append(": ");
-            result.append(dismissals.stream().sorted(CurriculumLineServices.COMPARATOR)
-                    .map(d -> d.getName().getContent(locale) + " " + getFormattedEcts(d, locale))
-                    .collect(Collectors.joining(", ")));
+            result.append(dismissals.stream().sorted(CurriculumLineServices.COMPARATOR).map(d -> {
+                final String formattedEcts = getFormattedEcts(d, locale);
+                return d.getName().getContent(locale) + (StringUtils.isNotBlank(formattedEcts) ? " " + formattedEcts : "");
+            }).collect(Collectors.joining(", ")));
         }
 
         return result.toString();
@@ -92,8 +93,8 @@ class SubstitutionRemarkEntry extends CreditsTransferRemarkEntry {
             final Set<IEnrolment> otherSources = otherEntry.getDismissals().stream()
                     .flatMap(d -> d.getCredits().getIEnrolments().stream()).collect(Collectors.toSet());
 
-            return Objects.equals(getReasonType(), otherEntry.getReasonType())
-                    && Objects.equals(getUnit(), otherEntry.getUnit()) && sources.equals(otherSources);
+            return Objects.equals(getReasonType(), otherEntry.getReasonType()) && Objects.equals(getUnit(), otherEntry.getUnit())
+                    && sources.equals(otherSources);
         }
 
         return toLocalizedString().compareTo(entry.toLocalizedString()) == 0;

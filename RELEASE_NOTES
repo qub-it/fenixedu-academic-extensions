@@ -1,3 +1,5 @@
+- Bug Fix: Remove unnecessary space on credits transfer remarks
+
 4.13.0 (06-06-2022)
 - Refactor: Redesign of algorithm to calculate credits transfer remarks
 

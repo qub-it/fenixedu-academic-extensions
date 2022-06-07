@@ -94,9 +94,11 @@ class EquivalenceRemarkEntry extends CreditsTransferRemarkEntry {
                             getReasonType().getInfoExplainedWithInstitution())).append(": ");
                 }
 
-                sourcesBlock.append(sourcesByUnitMap.get(k).stream()
-                        .map(d -> getFormattedName(d).getContent(locale) + " " + getFormattedEcts(d, locale))
-                        .collect(Collectors.joining(", ")));
+                sourcesBlock.append(sourcesByUnitMap.get(k).stream().map(d -> {
+                    final String formattedEcts = getFormattedEcts(d, locale);
+                    return getFormattedName(d).getContent(locale)
+                            + (StringUtils.isNotBlank(formattedEcts) ? " " + formattedEcts : "");
+                }).collect(Collectors.joining(", ")));
 
                 return sourcesBlock.toString();
             }).collect(Collectors.joining("; "));
