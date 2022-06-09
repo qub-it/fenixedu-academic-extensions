@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.ExecutionInterval;
@@ -86,11 +87,13 @@ public class CurriculumEntryReport {
                 curriculumEntry.getCurriculumLinesForCurriculum(curriculum.getStudentCurricularPlan());
 
         if (!targetLines.isEmpty()) {
-            return targetLines.stream().map(l -> CurricularPeriodServices.getCurricularPeriod(l)).collect(Collectors.toSet());
+            return targetLines.stream().map(l -> CurricularPeriodServices.getCurricularPeriod(l)).filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
         }
 
-        return curriculumEntry instanceof CurriculumLine ? Collections.singleton(
-                CurricularPeriodServices.getCurricularPeriod((CurriculumLine) curriculumEntry)) : Collections.emptySet();
+        return curriculumEntry instanceof CurriculumLine ? Stream
+                .of(CurricularPeriodServices.getCurricularPeriod((CurriculumLine) curriculumEntry)).filter(Objects::nonNull)
+                .collect(Collectors.toSet()) : Collections.emptySet();
     }
 
     public String getCurricularPeriodsAsString() {
