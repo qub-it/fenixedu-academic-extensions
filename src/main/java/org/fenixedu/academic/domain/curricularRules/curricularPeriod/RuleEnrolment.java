@@ -119,7 +119,15 @@ abstract public class RuleEnrolment extends RuleEnrolment_Base {
     }
 
     protected String getPartialRegimeLabelPrefix() {
-        return getApplyToPartialRegime() == null ? "" : " [" + RegistrationRegimeType.PARTIAL_TIME.getLocalizedName() + "]";
+        if (getApplyToPartialRegime() == null) {
+            return "";
+        }
+
+        if (Boolean.TRUE.equals(getApplyToPartialRegime())) {
+            return " [" + RegistrationRegimeType.PARTIAL_TIME.getLocalizedName() + "]";
+        }
+
+        return " [" + RegistrationRegimeType.FULL_TIME.getLocalizedName() + "]";
     }
 
     protected boolean hasValidStatute(final EnrolmentContext enrolmentContext) {
