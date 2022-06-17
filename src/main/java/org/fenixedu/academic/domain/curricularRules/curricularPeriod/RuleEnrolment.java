@@ -36,6 +36,7 @@ import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
 import org.fenixedu.academic.domain.enrolment.EnrolmentContext;
 import org.fenixedu.academic.domain.enrolment.IDegreeModuleToEvaluate;
 import org.fenixedu.academic.domain.exceptions.DomainException;
+import org.fenixedu.academic.domain.student.RegistrationRegimeType;
 import org.fenixedu.academic.domain.student.services.StatuteServices;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
@@ -108,7 +109,17 @@ abstract public class RuleEnrolment extends RuleEnrolment_Base {
         final RuleEnrolment ruleEnrolment = (RuleEnrolment) target;
         ruleEnrolment.setIncludeEnrolments(getIncludeEnrolments());
         ruleEnrolment.setApplyToFlunkedStudents(getApplyToFlunkedStudents());
+        ruleEnrolment.setApplyToPartialRegime(getApplyToPartialRegime());
         ruleEnrolment.getStatuteTypesSet().addAll(getStatuteTypesSet());
+    }
+
+    protected boolean hasValidRegime(final EnrolmentContext enrolmentContext) {
+        return getApplyToPartialRegime() == null || enrolmentContext.getRegistration()
+                .isPartialRegime(enrolmentContext.getExecutionYear()) == getApplyToPartialRegime().booleanValue();
+    }
+
+    protected String getPartialRegimeLabelPrefix() {
+        return getApplyToPartialRegime() == null ? "" : "[" + RegistrationRegimeType.PARTIAL_TIME.getLocalizedName() + "]";
     }
 
     protected boolean hasValidStatute(final EnrolmentContext enrolmentContext) {

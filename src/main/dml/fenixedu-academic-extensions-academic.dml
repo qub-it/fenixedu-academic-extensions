@@ -905,6 +905,7 @@ class curricularRules.curricularPeriod.CurricularPeriodRule {
 	class curricularRules.curricularPeriod.RuleEnrolment extends curricularRules.curricularPeriod.CurricularPeriodRule {
 		boolean includeEnrolments;
 		Boolean applyToFlunkedStudents;
+		Boolean applyToPartialRegime;
 	}
 	
 		class curricularRules.curricularPeriod.enrolment.CreditsInEnrolmentPeriod extends curricularRules.curricularPeriod.RuleEnrolment {
@@ -933,6 +934,10 @@ class curricularRules.curricularPeriod.CurricularPeriodRule {
 		
 		class curricularRules.curricularPeriod.enrolment.CreditsEnroledAsFirstTime extends curricularRules.curricularPeriod.RuleEnrolment {
 		}
+		
+		class curricularRules.curricularPeriod.enrolment.MinCreditsInEnrolmentPeriod extends curricularRules.curricularPeriod.RuleEnrolment {
+		}
+		
 		
 	class curricularRules.curricularPeriod.RuleTransition extends curricularRules.curricularPeriod.CurricularPeriodRule {
 		boolean allowToCollectAllCurricularPlans;

@@ -1,3 +1,5 @@
+- Improvement: Add curricular period rule to test min credits to enrol
+
 4.13.2 (14-06-2022)
 - Bug Fix: Prevent NPE on calculation of curricular periods for line
 
