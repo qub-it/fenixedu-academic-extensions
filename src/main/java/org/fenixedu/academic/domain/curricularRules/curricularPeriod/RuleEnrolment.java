@@ -119,7 +119,7 @@ abstract public class RuleEnrolment extends RuleEnrolment_Base {
     }
 
     protected String getPartialRegimeLabelPrefix() {
-        return getApplyToPartialRegime() == null ? "" : "[" + RegistrationRegimeType.PARTIAL_TIME.getLocalizedName() + "]";
+        return getApplyToPartialRegime() == null ? "" : " [" + RegistrationRegimeType.PARTIAL_TIME.getLocalizedName() + "]";
     }
 
     protected boolean hasValidStatute(final EnrolmentContext enrolmentContext) {
@@ -129,7 +129,7 @@ abstract public class RuleEnrolment extends RuleEnrolment_Base {
     }
 
     protected String getStatuteTypesLabelPrefix() {
-        return !getStatuteTypesSet().isEmpty() ? "["
+        return !getStatuteTypesSet().isEmpty() ? " ["
                 + getStatuteTypesSet().stream().map(s -> s.getName().getContent()).collect(Collectors.joining(", ")) + "] " : "";
     }
 

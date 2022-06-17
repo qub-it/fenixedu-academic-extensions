@@ -114,7 +114,7 @@ public class MinCreditsInEnrolmentPeriod extends MinCreditsInEnrolmentPeriod_Bas
                 getConfiguration().getCurricularPeriod().getFullLabel());
 
         final String literalMessage =
-                prefix + " " + getPartialRegimeLabelPrefix() + getStatuteTypesLabelPrefix() + BundleUtil.getString(BUNDLE,
+                prefix + getPartialRegimeLabelPrefix() + getStatuteTypesLabelPrefix() + " " + BundleUtil.getString(BUNDLE,
                         "label.MinCreditsInEnrolmentPeriod", minToEnrol.toPlainString(), enroledCredits.toPlainString());
 
         return RuleResult.createWarning(getDegreeModule(), Collections.singleton(new RuleResultMessage(literalMessage, false)));
