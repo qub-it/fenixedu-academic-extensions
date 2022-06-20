@@ -1,3 +1,5 @@
+- Bug Fix: Prevent NPE sorting curriculum entries without code
+
 4.14.0 (20-06-2022)
 - Improvement: Add curricular period rule to test min credits to enrol
 

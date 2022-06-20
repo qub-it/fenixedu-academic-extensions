@@ -8,12 +8,30 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
 import org.fenixedu.academic.domain.student.curriculum.ICurriculumEntry;
 import org.fenixedu.commons.i18n.LocalizedString;
 import org.fenixedu.commons.i18n.LocalizedString.Builder;
 
 public class CreditsTransferRemarksCollection {
+
+    private static final Comparator<ICurriculumEntry> CURRICULUM_ENTRY_COMPARATOR_BY_CODE = (x, y) -> {
+
+        if (StringUtils.isBlank(x.getCode()) && StringUtils.isBlank(y.getCode())) {
+            return 0;
+        }
+
+        if (StringUtils.isBlank(x.getCode())) {
+            return 1;
+        }
+
+        if (StringUtils.isBlank(y.getCode())) {
+            return -1;
+        }
+
+        return x.getCode().compareTo(y.getCode());
+    };
 
     private char nextRemarkId = 'a';
 
@@ -74,7 +92,7 @@ public class CreditsTransferRemarksCollection {
     public static CreditsTransferRemarksCollection build(final Collection<ICurriculumEntry> curriculumEntries,
             final StudentCurricularPlan studentCurricularPlan) {
         final CreditsTransferRemarksCollection remarks = new CreditsTransferRemarksCollection();
-        curriculumEntries.stream().sorted((x, y) -> x.getCode().compareTo(y.getCode()))
+        curriculumEntries.stream().sorted(CURRICULUM_ENTRY_COMPARATOR_BY_CODE)
                 .flatMap(e -> CreditsTransferRemarkEntry.buildEntries(e, studentCurricularPlan).stream())
                 .forEach(re -> remarks.addEntry(re));
         remarks.sortAndAssignRemarkIds(curriculumEntries);
