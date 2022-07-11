@@ -54,7 +54,12 @@ public class ConclusionReport {
         @Override
         public BigDecimal getConclusionCredits() {
             return null;
-        };
+        }
+
+        @Override
+        public String getConclusionProcessNotes() {
+            return null;
+        }
 
     }
 
@@ -104,6 +109,10 @@ public class ConclusionReport {
 
     public BigDecimal getConclusionCredits() {
         return BigDecimal.valueOf(this.conclusionBean.getEctsCredits());
+    }
+
+    public String getConclusionProcessNotes() {
+        return this.conclusionBean.getConclusionProcessNotes();
     }
 
     public static ConclusionReport empty() {

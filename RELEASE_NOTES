@@ -1,3 +1,5 @@
+- Improvement: Add conclusion process notes field to conclusion report
+
 4.14.1 (20-06-2022)
 - Bug Fix: Prevent NPE sorting curriculum entries without code
 
