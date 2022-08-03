@@ -293,11 +293,20 @@ public class CurricularPeriodServices {
 
     //TODO: move to CurriculumLineServices 
     public static CurricularPeriod getCurricularPeriod(final CurriculumLine line) {
-        final DegreeCurricularPlan degreeCurricularPlan =
-                line.getCurriculumGroup().isNoCourseGroupCurriculumGroup() || line.getDegreeModule() == null ? line
-                        .getDegreeCurricularPlanOfStudent() : line.getDegreeCurricularPlanOfDegreeModule();
+        final DegreeCurricularPlan degreeCurricularPlan = getDegreeCurricularPlanForCurricularPeriod(line);
         return degreeCurricularPlan.getCurricularPeriodFor(getCurricularYear(line), getCurricularPeriodChildOrder(line),
                 line.getExecutionInterval().getAcademicPeriod());
+    }
+
+    private static DegreeCurricularPlan getDegreeCurricularPlanForCurricularPeriod(final CurriculumLine line) {
+        if (line.getCurriculumGroup().isNoCourseGroupCurriculumGroup() || line.getDegreeModule() == null) {
+            return line.getDegreeCurricularPlanOfStudent();
+        }
+
+        final DegreeModule degreeModule = line instanceof OptionalEnrolment ? ((OptionalEnrolment) line)
+                .getOptionalCurricularCourse() : line.getDegreeModule();
+
+        return degreeModule.getParentDegreeCurricularPlan();
     }
 
     private static int getCurricularPeriodChildOrder(final CurriculumLine line) {
