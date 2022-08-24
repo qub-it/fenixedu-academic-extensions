@@ -1,3 +1,5 @@
+- Refactor: Unification of code from previous years enrolment rule 
+
 4.14.4 (03-08-2022)
 - Bug fix: use correct plan to calculate curricular period for optional enrollment
 

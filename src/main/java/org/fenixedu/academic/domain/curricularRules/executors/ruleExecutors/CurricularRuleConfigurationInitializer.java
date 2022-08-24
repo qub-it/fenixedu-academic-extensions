@@ -53,8 +53,6 @@ abstract public class CurricularRuleConfigurationInitializer {
         CurricularRuleExecutor.setCurricularRuleApprovalExecutor(CURRICULAR_RULE_APPROVAL_EXECUTOR);
         logger.info("CurricularRuleApprovalExecutor: Overriding default");
 
-        PreviousYearsEnrolmentBySemesterExecutor
-                .setSkipCollectCurricularCoursesPredicate(PREVIOUS_YEARS_ENROLMENT_COURSES_SKIP_PREDICATE);
         PreviousYearsEnrolmentByYearExecutor
                 .setSkipCollectCurricularCoursesPredicate(PREVIOUS_YEARS_ENROLMENT_COURSES_SKIP_PREDICATE);
 
