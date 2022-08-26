@@ -62,4 +62,8 @@ public class ConditionedRoute extends ConditionedRoute_Base {
         return Lists.newArrayList(new GenericPair<Object, Boolean>(label, false));
     }
 
+    @Override
+    public boolean isRulePreventingAutomaticEnrolment() {
+        return true;
+    }
 }
