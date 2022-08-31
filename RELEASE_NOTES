@@ -1,4 +1,5 @@
 - Bug Fix: Mark rules that prevent automatic group enrolment
+- Refactor: Replace usage of RegistrationStateType by RegistrationStateTypeEnum
 
 4.14.5 (24-08-2022)
 - Refactor: Unification of code from previous years enrolment rule 

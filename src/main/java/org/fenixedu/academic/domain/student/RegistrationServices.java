@@ -43,7 +43,7 @@ import org.fenixedu.academic.domain.student.curriculum.CurriculumLineServices;
 import org.fenixedu.academic.domain.student.curriculum.ICurriculum;
 import org.fenixedu.academic.domain.student.curriculum.ICurriculumEntry;
 import org.fenixedu.academic.domain.student.registrationStates.RegistrationState;
-import org.fenixedu.academic.domain.student.registrationStates.RegistrationStateType;
+import org.fenixedu.academic.domain.student.registrationStates.RegistrationStateTypeEnum;
 import org.fenixedu.academic.domain.studentCurriculum.Credits;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumLine;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumModule;
@@ -195,7 +195,7 @@ public class RegistrationServices {
 
             // ATTENTION: conclusion state year != conclusion year
             if (conclusionYear != null && year.isAfterOrEquals(conclusionYear)) {
-                result = new RegistrationStateBean(RegistrationStateType.CONCLUDED);
+                result = new RegistrationStateBean(RegistrationStateTypeEnum.CONCLUDED);
                 result.setRegistration(registration);
                 result.setStateDate(conclusionDate);
             }
@@ -243,7 +243,7 @@ public class RegistrationServices {
 
                 // ATTENTION: conclusion state year != conclusion year
                 if (conclusionYear != null && year.isAfterOrEquals(conclusionYear)) {
-                    conclusionResult = new RegistrationStateBean(RegistrationStateType.CONCLUDED);
+                    conclusionResult = new RegistrationStateBean(RegistrationStateTypeEnum.CONCLUDED);
                     conclusionResult.setRegistration(registration);
                     conclusionResult.setStateDate(conclusionDate);
                     result.add(conclusionResult);

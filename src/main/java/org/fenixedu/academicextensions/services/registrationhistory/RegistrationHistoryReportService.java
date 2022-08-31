@@ -35,7 +35,7 @@ import org.fenixedu.academic.domain.student.curriculum.CurriculumGradeCalculator
 import org.fenixedu.academic.domain.student.curriculum.CurriculumLineServices;
 import org.fenixedu.academic.domain.student.curriculum.ICurriculum;
 import org.fenixedu.academic.domain.student.curriculum.conclusion.RegistrationConclusionServices;
-import org.fenixedu.academic.domain.student.registrationStates.RegistrationStateType;
+import org.fenixedu.academic.domain.student.registrationStates.RegistrationStateTypeEnum;
 import org.fenixedu.academic.dto.student.RegistrationConclusionBean;
 import org.fenixedu.academic.dto.student.RegistrationStateBean;
 import org.fenixedu.bennu.core.domain.Bennu;
@@ -54,7 +54,7 @@ public class RegistrationHistoryReportService {
     private Set<RegistrationRegimeType> regimeTypes = Sets.newHashSet();
     private Set<RegistrationProtocol> registrationProtocols = Sets.newHashSet();
     private Set<IngressionType> ingressionTypes = Sets.newHashSet();
-    private Set<RegistrationStateType> registrationStateTypes = Sets.newHashSet();
+    private Set<RegistrationStateTypeEnum> registrationStateTypes = Sets.newHashSet();
     private Set<StatuteType> statuteTypes = Sets.newHashSet();
     private Boolean firstTimeOnly;
     private Boolean withEnrolments;
@@ -133,7 +133,7 @@ public class RegistrationHistoryReportService {
         this.ingressionTypes.addAll(ingressionTypes);
     }
 
-    public void filterRegistrationStateTypes(Collection<RegistrationStateType> registrationStateTypes) {
+    public void filterRegistrationStateTypes(Collection<RegistrationStateTypeEnum> registrationStateTypes) {
         this.registrationStateTypes.addAll(registrationStateTypes);
     }
 
@@ -363,7 +363,7 @@ public class RegistrationHistoryReportService {
 
             if (Boolean.TRUE.equals(this.registrationStateLastInExecutionYear)) {
                 lastStateFilter = r -> r.getLastRegistrationState() != null
-                        && this.registrationStateTypes.contains(r.getLastRegistrationState().getStateType());
+                        && this.registrationStateTypes.contains(r.getLastRegistrationState().getStateTypeEnum());
             } else {
                 lastStateFilter = r -> checkRegistrationStatesIntersection(r);
             }
@@ -374,7 +374,7 @@ public class RegistrationHistoryReportService {
 
                 final Predicate<RegistrationHistoryReport> registrationStateFilter =
                         r -> r.getAllLastRegistrationStates().stream().filter(b -> checkRegistrationStateIsInExecutionYear(r, b))
-                                .anyMatch(b -> this.registrationStateTypes.contains(b.getStateType()));
+                                .anyMatch(b -> this.registrationStateTypes.contains(b.getStateTypeEnum()));
 
                 result = result.and(registrationStateFilter);
             }
@@ -402,12 +402,12 @@ public class RegistrationHistoryReportService {
     private boolean checkRegistrationStatesIntersection(RegistrationHistoryReport r) {
         return !Sets
                 .intersection(this.registrationStateTypes,
-                        r.getAllLastRegistrationStates().stream().map(b -> b.getStateType()).collect(Collectors.toSet()))
+                        r.getAllLastRegistrationStates().stream().map(b -> b.getStateTypeEnum()).collect(Collectors.toSet()))
                 .isEmpty();
     }
 
     private boolean checkRegistrationStateIsInExecutionYear(final RegistrationHistoryReport r, final RegistrationStateBean b) {
-        if (b.getStateType() == RegistrationStateType.CONCLUDED) {
+        if (b.getStateTypeEnum() == RegistrationStateTypeEnum.CONCLUDED) {
             return RegistrationServices.getConclusionExecutionYear(b.getRegistration()) == r.getExecutionYear();
         }
 
