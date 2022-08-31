@@ -205,7 +205,7 @@ public class RegistrationServices {
         if (result == null) {
             final RegistrationState state = registration.getLastRegistrationState(year);
             if (state != null) {
-                result = new RegistrationStateBean(state.getStateType());
+                result = new RegistrationStateBean(state.getStateTypeEnum());
                 result.setRegistration(registration);
                 result.setStateDateTime(state.getStateDate());
                 result.setRemarks(state.getRemarks());
@@ -252,7 +252,7 @@ public class RegistrationServices {
         }
 
         result.addAll(registration.getRegistrationStates(year).stream().map(s -> {
-            final RegistrationStateBean bean = new RegistrationStateBean(s.getStateType());
+            final RegistrationStateBean bean = new RegistrationStateBean(s.getStateTypeEnum());
             bean.setStateDateTime(s.getStateDate());
             bean.setRegistration(registration);
             bean.setExecutionInterval(s.getExecutionInterval());
