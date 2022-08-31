@@ -316,7 +316,7 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 
     public String getLastRegistrationStateType() {
         final RegistrationStateBean state = getLastRegistrationState();
-        return state == null ? null : state.getStateType().getDescription();
+        return state == null ? null : state.getStateTypeEnum().getDescription();
     }
 
     public String getLastRegistrationStateRemarks() {
