@@ -1,3 +1,4 @@
+4.15.3 (13-09-2022)
 - Refactor: Expose grade sugestion publicly and don't initialize grade value with sugestion
 
 4.15.2 (31-08-2022)
