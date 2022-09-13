@@ -81,7 +81,7 @@ public class MarkBean implements IBean, Comparable<MarkBean> {
     public MarkBean(final CompetenceCourseMarkSheet markSheet, final EnrolmentEvaluation evaluation) {
         this(markSheet, evaluation.getEnrolment());
         setEvaluation(evaluation);
-        setGradeValueSuggested();
+        setGradeValueAndGradeSuggested();
 
         if (!evaluation.isTemporary()) {
             setGradeAvailableDate(evaluation.getGradeAvailableDateYearMonthDay().toLocalDate());
@@ -91,7 +91,7 @@ public class MarkBean implements IBean, Comparable<MarkBean> {
     public MarkBean(final CompetenceCourseMarkSheet markSheet, final Enrolment enrolment) {
         setMarkSheet(markSheet);
         setEnrolment(enrolment);
-        setGradeValueSuggested();
+        setGradeValueAndGradeSuggested();
 
         final Registration registration = enrolment.getRegistration();
         this.studentNumber = registration.getNumber();
@@ -166,27 +166,12 @@ public class MarkBean implements IBean, Comparable<MarkBean> {
         }
     }
 
-    private void setGradeValueSuggested() {
-        setInfoMessage(null);
-        final Grade current = evaluation == null ? Grade.createEmptyGrade() : evaluation.getGrade();
+    private void setGradeValueAndGradeSuggested() {
+        Optional.ofNullable(evaluation).map(EnrolmentEvaluation::getGrade).map(Grade::getValue).ifPresent(this::setGradeValue);
 
-        String suggestionValue = null;
-        final Grade suggestion = calculateGradeSuggested();
-        if (!suggestion.isEmpty() && suggestion.compareTo(current) != 0) {
-            suggestionValue = suggestion.getValue();
-            setInfoMessage(AcademicExtensionsUtil.bundle("info.MarkBean.gradeValue.suggestion", suggestionValue));
-        }
-
-        setGradeValue(!current.isEmpty() ? current.getValue() : suggestionValue);
-    }
-
-    private Grade calculateGradeSuggested() {
-        if (this.gradeSuggested == null) {
-            this.gradeSuggested =
-                    gradeSuggestionCalculator != null ? gradeSuggestionCalculator.apply(this) : Grade.createEmptyGrade();
-        }
-
-        return this.gradeSuggested;
+        final Grade calculatedGradeSuggestion =
+                gradeSuggestionCalculator != null ? gradeSuggestionCalculator.apply(this) : Grade.createEmptyGrade();
+        setGradeSuggested(calculatedGradeSuggestion);
     }
 
     public String getGradeValue() {
@@ -196,6 +181,14 @@ public class MarkBean implements IBean, Comparable<MarkBean> {
     public void setGradeValue(final String input) {
         this.gradeValue = input;
         cleanupGrade();
+    }
+
+    public Grade getGradeSuggested() {
+        return gradeSuggested;
+    }
+
+    public void setGradeSuggested(Grade gradeSuggested) {
+        this.gradeSuggested = gradeSuggested;
     }
 
     private void cleanupGrade() {
