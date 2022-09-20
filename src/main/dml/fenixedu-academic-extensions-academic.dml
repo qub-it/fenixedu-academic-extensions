@@ -192,9 +192,10 @@ relation GradeScaleValidatorDegreeTypes {
 
 class evaluation.markSheet.CompetenceCourseMarkSheet {
     LocalDate evaluationDate;
-    boolean printed;
-    GradeScaleEnumAcademicExtensions gradeScaleEnum;
     LocalDate expireDate;
+    GradeScaleEnumAcademicExtensions gradeScaleEnum;
+    boolean printed;
+    boolean includeStudentsNotEnrolledInOtherEvaluations;
 }
 
 	relation CompetenceCourseMarkSheetGradeScale {

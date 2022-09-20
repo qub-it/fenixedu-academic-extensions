@@ -1,3 +1,5 @@
+- Improvement: Include students not enrolled in other evaluations to marksheet
+
 4.15.3 (13-09-2022)
 - Refactor: Expose grade sugestion publicly and don't initialize grade value with sugestion
 
