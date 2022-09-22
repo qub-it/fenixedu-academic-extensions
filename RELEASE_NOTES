@@ -1,3 +1,5 @@
+- Refactor: Remove deprecated relation between EvaluationSeasonPeriod and OccupationPeriod
+
 4.15.4 (22-09-2022)
 - Improvement: Include students not enrolled in other evaluations to marksheet
 

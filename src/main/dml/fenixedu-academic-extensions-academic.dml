@@ -74,16 +74,6 @@ relation EvaluationSeasonPeriodRelation {
     }
 }
 
-relation EvaluationSeasonOccupationPeriod {
-    protected evaluation.season.EvaluationSeasonPeriod playsRole evaluationSeasonPeriod {
-        multiplicity *;
-    }
-
-    .org.fenixedu.academic.domain.OccupationPeriod playsRole occupationPeriod {
-        multiplicity 1;
-    }
-}
-
 relation EvaluationSeasonPeriodExecutionInterval {
     evaluation.season.EvaluationSeasonPeriod playsRole evaluationSeasonPeriod {
         multiplicity *;
