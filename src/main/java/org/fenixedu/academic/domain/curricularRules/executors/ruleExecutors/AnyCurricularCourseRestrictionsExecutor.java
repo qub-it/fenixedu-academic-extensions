@@ -1,9 +1,16 @@
 package org.fenixedu.academic.domain.curricularRules.executors.ruleExecutors;
 
+import java.util.Collection;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.fenixedu.academic.domain.CurricularCourse;
+import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.curricularRules.AnyCurricularCourseRestrictions;
 import org.fenixedu.academic.domain.curricularRules.ICurricularRule;
 import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
+import org.fenixedu.academic.domain.degreeStructure.CourseGroup;
 import org.fenixedu.academic.domain.enrolment.EnroledOptionalEnrolment;
 import org.fenixedu.academic.domain.enrolment.EnrolmentContext;
 import org.fenixedu.academic.domain.enrolment.IDegreeModuleToEvaluate;
@@ -38,29 +45,43 @@ public class AnyCurricularCourseRestrictionsExecutor extends CurricularRuleExecu
     @Override
     protected RuleResult executeEnrolmentVerificationWithRules(ICurricularRule curricularRule,
             IDegreeModuleToEvaluate sourceDegreeModuleToEvaluate, EnrolmentContext enrolmentContext) {
-
-        if (!canApplyRule(enrolmentContext, curricularRule)) {
-            return RuleResult.createNA(sourceDegreeModuleToEvaluate.getDegreeModule());
-        }
-
         final AnyCurricularCourseRestrictions rule = (AnyCurricularCourseRestrictions) curricularRule;
 
         final CurricularCourse curricularCourseToEnrol = getCurricularCourseFromOptional(sourceDegreeModuleToEvaluate);
         if (curricularCourseToEnrol != null) {
 
-            if (isAllowedCourseGroup(rule, curricularCourseToEnrol)) {
+            if (isAllowedCourseGroup(rule, curricularCourseToEnrol,
+                    sourceDegreeModuleToEvaluate.getExecutionInterval().getExecutionYear())) {
                 return createResultFalse(rule, sourceDegreeModuleToEvaluate, curricularCourseToEnrol,
                         "curricularRules.ruleExecutors.AnyCurricularCourseRestrictions.only.allowedCourseGroups");
             }
         }
 
         return RuleResult.createTrue(sourceDegreeModuleToEvaluate.getDegreeModule());
-
     }
 
-    private boolean isAllowedCourseGroup(final AnyCurricularCourseRestrictions rule,
-            final CurricularCourse curricularCourseToEnrol) {
-        return Sets.intersection(rule.getCourseGroupsSet(), curricularCourseToEnrol.getAllParentCourseGroups()).isEmpty();
+    @Override
+    protected RuleResult executeEnrolmentPrefilter(ICurricularRule curricularRule,
+            IDegreeModuleToEvaluate sourceDegreeModuleToEvaluate, EnrolmentContext enrolmentContext) {
+
+        if (sourceDegreeModuleToEvaluate instanceof OptionalDegreeModuleToEnrol) {
+            final RuleResult result =
+                    executeEnrolmentVerificationWithRules(curricularRule, sourceDegreeModuleToEvaluate, enrolmentContext);
+            return result.isTrue() ? result : RuleResult.createFalse(sourceDegreeModuleToEvaluate.getDegreeModule());
+        }
+
+        return RuleResult.createNA(sourceDegreeModuleToEvaluate.getDegreeModule());
+    }
+
+    private boolean isAllowedCourseGroup(final AnyCurricularCourseRestrictions rule, final CurricularCourse courseToEnrol,
+            final ExecutionYear executionYear) {
+        final Collection<CourseGroup> parentGroups = courseToEnrol.getParentContextsByExecutionYear(executionYear).stream()
+                .map(ctx -> ctx.getParentCourseGroup()).collect(Collectors.toSet());
+        final Set<CourseGroup> ancestorGroups =
+                Stream.concat(parentGroups.stream(), parentGroups.stream().flatMap(cg -> cg.getAllParentCourseGroups().stream()))
+                        .collect(Collectors.toSet());
+
+        return Sets.intersection(rule.getCourseGroupsSet(), ancestorGroups).isEmpty();
     }
 
     /**

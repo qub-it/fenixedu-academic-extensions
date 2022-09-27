@@ -28,11 +28,11 @@ package org.fenixedu.academic.domain.curricularRules.executors.ruleExecutors;
 import org.fenixedu.academic.domain.CompetenceCourse;
 import org.fenixedu.academic.domain.CurricularCourse;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
 import org.fenixedu.academic.domain.curricularRules.AnyCurricularCourseExceptions;
 import org.fenixedu.academic.domain.curricularRules.ICurricularRule;
 import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
-import org.fenixedu.academic.domain.degreeStructure.Context;
 import org.fenixedu.academic.domain.enrolment.EnroledOptionalEnrolment;
 import org.fenixedu.academic.domain.enrolment.EnrolmentContext;
 import org.fenixedu.academic.domain.enrolment.IDegreeModuleToEvaluate;
@@ -105,7 +105,8 @@ public class AnyCurricularCourseExceptionsExecutorLogic extends AbstractCurricul
         final Boolean optionalsConfiguration = rule.getOptionalsConfiguration();
         if (optionalsConfiguration != null) {
 
-            final boolean isOptional = hasOneOptionalParentCourseGroup(curricularCourseToEnrol);
+            final boolean isOptional =
+                    hasOneOptionalParentCourseGroup(curricularCourseToEnrol, sourceDegreeModuleToEvaluate.getExecutionInterval());
 
             if (optionalsConfiguration && !isOptional) {
                 result = createResultFalse(rule, sourceDegreeModuleToEvaluate, curricularCourseToEnrol,
@@ -121,14 +122,10 @@ public class AnyCurricularCourseExceptionsExecutorLogic extends AbstractCurricul
         return result;
     }
 
-    static private boolean hasOneOptionalParentCourseGroup(final CurricularCourse curricularCourseToEnrol) {
-        for (final Context context : curricularCourseToEnrol.getParentContextsSet()) {
-            if (context.getParentCourseGroup().getIsOptional()) {
-                return true;
-            }
-        }
-
-        return false;
+    private static boolean hasOneOptionalParentCourseGroup(final CurricularCourse curricularCourseToEnrol,
+            ExecutionInterval executionInterval) {
+        return curricularCourseToEnrol.getParentContextsByExecutionYear(executionInterval.getExecutionYear()).stream()
+                .anyMatch(ctx -> ctx.getParentCourseGroup().getIsOptional());
     }
 
     private RuleResult verifyCompetenceCourses(final AnyCurricularCourseExceptions rule,
@@ -152,7 +149,7 @@ public class AnyCurricularCourseExceptionsExecutorLogic extends AbstractCurricul
         return result;
     }
 
-    static public boolean isException(final CompetenceCourse competenceCourse,
+    private static boolean isException(final CompetenceCourse competenceCourse,
             final DegreeCurricularPlan chosenDegreeCurricularPlan, final StudentCurricularPlan studentCurricularPlan) {
 
         boolean result = false;
@@ -171,8 +168,8 @@ public class AnyCurricularCourseExceptionsExecutorLogic extends AbstractCurricul
             final IDegreeModuleToEvaluate sourceDegreeModuleToEvaluate, final CurricularCourse curricularCourseToEnrol,
             final String messageKey) {
 
-        final String message = BundleUtil.getString(AcademicExtensionsUtil.BUNDLE, messageKey,
-                curricularCourseToEnrol.getName(), rule.getDegreeModuleToApplyRule().getName());
+        final String message = BundleUtil.getString(AcademicExtensionsUtil.BUNDLE, messageKey, curricularCourseToEnrol.getName(),
+                rule.getDegreeModuleToApplyRule().getName());
 
         return sourceDegreeModuleToEvaluate.isEnroled() ? RuleResult.createImpossibleWithLiteralMessage(
                 sourceDegreeModuleToEvaluate.getDegreeModule(),

@@ -13,9 +13,7 @@ import org.fenixedu.academic.domain.degreeStructure.DegreeModule;
 import org.fenixedu.academic.domain.enrolment.EnrolmentContext;
 import org.fenixedu.academic.domain.enrolment.IDegreeModuleToEvaluate;
 import org.fenixedu.academic.dto.GenericPair;
-import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
-import org.fenixedu.bennu.core.i18n.BundleUtil;
 
 import com.google.common.collect.Lists;
 
@@ -67,13 +65,6 @@ public class AnyCurricularCourseRestrictions extends AnyCurricularCourseRestrict
         if (!getCourseGroupsSet().isEmpty()) {
             label.append(AcademicExtensionsUtil.bundle("label.AnyCurricularCourseRestrictions.allowedCourseGroups",
                     getCourseGroupsDescription()));
-        }
-
-        if (getContextCourseGroup() != null) {
-            label.append(", ");
-            label.append(BundleUtil.getString(Bundle.BOLONHA, "label.inGroup"));
-            label.append(" ");
-            label.append(getContextCourseGroup().getOneFullName());
         }
 
         return Lists.newArrayList(new GenericPair<Object, Boolean>(label, false));

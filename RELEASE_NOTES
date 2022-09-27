@@ -1,4 +1,8 @@
+- Improvement: Add AnyCurricularCourseRestrictionsExecutor prefilter support
+- Bug Fix: AnyCurricularCourseExceptionsExecutor should use execution interval to test optional / mandatory groups
+- Bug Fix: AnyCurricularCourseRestrictionsExecutor should use execution interval to test groups
 - Refactor: Remove deprecated relation between EvaluationSeasonPeriod and OccupationPeriod
+
 
 4.15.4 (22-09-2022)
 - Improvement: Include students not enrolled in other evaluations to marksheet
