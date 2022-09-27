@@ -1,3 +1,4 @@
+4.16.0 (27-09-2022)
 - Improvement: Add AnyCurricularCourseRestrictionsExecutor prefilter support
 - Bug Fix: AnyCurricularCourseExceptionsExecutor should use execution interval to test optional / mandatory groups
 - Bug Fix: AnyCurricularCourseRestrictionsExecutor should use execution interval to test groups
