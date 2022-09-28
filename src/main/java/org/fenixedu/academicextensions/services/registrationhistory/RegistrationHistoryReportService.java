@@ -20,6 +20,7 @@ import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionYear;
+import org.fenixedu.academic.domain.Grade;
 import org.fenixedu.academic.domain.candidacy.IngressionType;
 import org.fenixedu.academic.domain.degree.DegreeType;
 import org.fenixedu.academic.domain.degreeStructure.CurricularPeriodServices;
@@ -31,7 +32,6 @@ import org.fenixedu.academic.domain.student.RegistrationServices;
 import org.fenixedu.academic.domain.student.StatuteType;
 import org.fenixedu.academic.domain.student.Student;
 import org.fenixedu.academic.domain.student.curriculum.Curriculum;
-import org.fenixedu.academic.domain.student.curriculum.CurriculumGradeCalculator;
 import org.fenixedu.academic.domain.student.curriculum.CurriculumLineServices;
 import org.fenixedu.academic.domain.student.curriculum.ICurriculum;
 import org.fenixedu.academic.domain.student.curriculum.conclusion.RegistrationConclusionServices;
@@ -629,8 +629,9 @@ public class RegistrationHistoryReportService {
 
     static protected BigDecimal calculateAverage(Registration registration) {
         final Curriculum curriculum = (Curriculum) RegistrationServices.getCurriculum(registration, null);
-        return ((CurriculumGradeCalculator) curriculum.getGradeCalculator()).calculateAverage(curriculum).setScale(5,
-                RoundingMode.DOWN);
+        final Grade grade = curriculum.getUnroundedGrade();
+
+        return grade.isNumeric() ? grade.getNumericValue().setScale(5, RoundingMode.DOWN) : BigDecimal.ZERO;
     }
 
     static protected void addConclusion(final RegistrationHistoryReport report) {

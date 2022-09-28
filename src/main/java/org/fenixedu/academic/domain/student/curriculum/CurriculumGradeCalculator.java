@@ -30,15 +30,18 @@ public class CurriculumGradeCalculator
 
     private Grade finalGrade;
 
+    private Grade unroundedGrade;
+
     private void doCalculus(final Curriculum curriculum) {
         GradeScale gradeScale = curriculum.getStudentCurricularPlan().getDegree().getNumericGradeScale();
-        
+
         this.curriculum = curriculum;
         this.sumPiCi = BigDecimal.ZERO;
         this.sumPi = BigDecimal.ZERO;
         countAverage(curriculum.getEnrolmentRelatedEntries());
         countAverage(curriculum.getDismissalRelatedEntries());
         final BigDecimal avg = calculateAverage();
+        this.unroundedGrade = Grade.createGrade(avg.toString(), gradeScale);
 
         // qubExtension, bug fix on finalGrade calculation, must use rawAvg
         final BigDecimal rawAvg = avg.setScale(RAW_SCALE,
@@ -67,14 +70,6 @@ public class CurriculumGradeCalculator
         return sumPi.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : sumPiCi.divide(sumPi, FULL_SCALE, ROUNDING_DEFAULT);
     }
 
-    public BigDecimal calculateAverage(Curriculum curriculum) {
-        if (sumPiCi == null) {
-            doCalculus(curriculum);
-        }
-
-        return calculateAverage();
-    }
-
     @Override
     public Grade rawGrade(Curriculum curriculum) {
         if (rawGrade == null) {
@@ -92,11 +87,12 @@ public class CurriculumGradeCalculator
     }
 
     @Override
-    public BigDecimal weigthedGradeSum(Curriculum curriculum) {
-        if (sumPiCi == null) {
+    public Grade unroundedGrade(Curriculum curriculum) {
+        if (unroundedGrade == null) {
             doCalculus(curriculum);
         }
-        return sumPiCi;
+
+        return unroundedGrade;
     }
 
     public Curriculum getCurriculum() {
