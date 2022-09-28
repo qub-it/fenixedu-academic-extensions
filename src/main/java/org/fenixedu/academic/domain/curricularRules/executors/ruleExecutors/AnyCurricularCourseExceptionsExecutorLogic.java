@@ -149,7 +149,7 @@ public class AnyCurricularCourseExceptionsExecutorLogic extends AbstractCurricul
         return result;
     }
 
-    private static boolean isException(final CompetenceCourse competenceCourse,
+    public static boolean isException(final CompetenceCourse competenceCourse,
             final DegreeCurricularPlan chosenDegreeCurricularPlan, final StudentCurricularPlan studentCurricularPlan) {
 
         boolean result = false;
