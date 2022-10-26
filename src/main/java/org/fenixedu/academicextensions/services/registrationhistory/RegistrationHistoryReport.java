@@ -31,6 +31,7 @@ import org.fenixedu.academic.domain.contacts.PhysicalAddress;
 import org.fenixedu.academic.domain.curricularRules.prescription.PrescriptionConfig;
 import org.fenixedu.academic.domain.curricularRules.prescription.PrescriptionEntry;
 import org.fenixedu.academic.domain.degree.DegreeType;
+import org.fenixedu.academic.domain.degreeStructure.BranchType;
 import org.fenixedu.academic.domain.degreeStructure.ProgramConclusion;
 import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
@@ -227,12 +228,14 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     }
 
     public String getPrimaryBranchName() {
-        return getStudentCurricularPlan().getMajorBranchCurriculumGroups().stream().map(b -> b.getName().getContent())
+        return getStudentCurricularPlan().getBranchCurriculumGroups().stream()
+                .filter(b -> b.getDegreeModule().getBranchType() == BranchType.MAJOR).map(b -> b.getName().getContent())
                 .collect(Collectors.joining(","));
     }
 
     public String getSecondaryBranchName() {
-        return getStudentCurricularPlan().getMinorBranchCurriculumGroups().stream().map(b -> b.getName().getContent())
+        return getStudentCurricularPlan().getBranchCurriculumGroups().stream()
+                .filter(b -> b.getDegreeModule().getBranchType() == BranchType.MINOR).map(b -> b.getName().getContent())
                 .collect(Collectors.joining(","));
     }
 
