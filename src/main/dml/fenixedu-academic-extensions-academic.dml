@@ -1572,10 +1572,14 @@ relation DegreeInfoExtendedDegreeInfo {
 // ======================= Registration Observations =========================
 class student.RegistrationObservations{
 	String value;
+	DateTime whenCreated;
+	String createdBy;
+	DateTime whenUpdated;
+	String updatedBy;
 }
 
 relation RegistrationObservationRegistration{
-	protected .org.fenixedu.academic.domain.student.Registration playsRole registration {
+	.org.fenixedu.academic.domain.student.Registration playsRole registration {
         multiplicity 1..1;
     }
     

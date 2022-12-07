@@ -745,8 +745,7 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     public String getRegistrationObservations() {
         final Registration registration = getRegistration();
         return registration == null ? null : registration.getRegistrationObservationsSet().stream()
-                .map(o -> RegistrationObservations.readVersioningUpdatorUsername(o) + ":" + o.getValue())
-                .collect(Collectors.joining(" \n --------------\n "));
+                .map(o -> o.getUpdatedBy() + ":" + o.getValue()).collect(Collectors.joining(" \n --------------\n "));
     }
 
     private PrecedentDegreeInformation getCompletedPrecedentInformation() {

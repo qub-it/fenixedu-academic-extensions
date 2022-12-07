@@ -1,12 +1,7 @@
 package org.fenixedu.academic.domain.student;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.fenixedu.academic.domain.student.Registration;
+import org.fenixedu.bennu.core.security.Authenticate;
 import org.joda.time.DateTime;
 
 import pt.ist.fenixframework.FenixFramework;
@@ -17,22 +12,26 @@ public class RegistrationObservations extends RegistrationObservations_Base {
     private static final int LIMIT_NUMBER_OF_LINES = 6;
     private static final int LIMIT_NUMBER_OF_CHARS = 200;
 
+    protected RegistrationObservations() {
+        setWhenCreated(new DateTime());
+        setCreatedBy(Authenticate.getUser().getUsername());
+        updateLastModificationData();
+    }
+
     public RegistrationObservations(Registration registration) {
-        super();
+        this();
         setRegistration(registration);
     }
 
     @Override
-    public Registration getRegistration() {
-        return super.getRegistration();
+    public void setValue(String value) {
+        super.setValue(value);
+        updateLastModificationData();
     }
 
-    public static void setupDeleteListener() {
-        FenixFramework.getDomainModel().registerDeletionListener(Registration.class, registration -> {
-            for (RegistrationObservations observations : registration.getRegistrationObservationsSet()) {
-                observations.delete();
-            }
-        });
+    private void updateLastModificationData() {
+        setWhenUpdated(new DateTime());
+        setUpdatedBy(Authenticate.getUser().getUsername());
     }
 
     public void delete() {
@@ -59,27 +58,7 @@ public class RegistrationObservations extends RegistrationObservations_Base {
         return value.replaceAll("\r\n", "<br>");
     }
 
-    static Comparator<Object> compareByModifiedDate = (x, y) -> {
-        DateTime xUpdateDate = readVersioningUpdateDate(x);
-        DateTime yUpdateDate = readVersioningUpdateDate(y);
-        
-        if (xUpdateDate == null || yUpdateDate == null) {
-            return 0;
-        }
-        return xUpdateDate.compareTo(yUpdateDate);
-    };
-
-    public static List<RegistrationObservations> getLastThreeSortedObservations(Registration registration) {
-        return registration.getRegistrationObservationsSet().stream().sorted(compareByModifiedDate.reversed()).limit(3)
-                .collect(Collectors.toList());
-    }
-
-    public static List<RegistrationObservations> getReverseSortedObservations(Registration registration) {
-        return registration.getRegistrationObservationsSet().stream().sorted(compareByModifiedDate.reversed())
-                .collect(Collectors.toList());
-    }
-
-    public static int nthIndexOf(String s, char c, int n) {
+    private static int nthIndexOf(String s, char c, int n) {
         int i = -1;
         while (n-- > 0) {
             i = s.indexOf(c, i + 1);
@@ -88,35 +67,13 @@ public class RegistrationObservations extends RegistrationObservations_Base {
         }
         return i;
     }
-    
-    public static <T> String readVersioningUpdatorUsername(T obj) {
-        try {
-            Object versioningUpdatedBy = PropertyUtils.getProperty(obj, "versioningUpdatedBy");
 
-            if (versioningUpdatedBy == null) {
-                return null;
+    public static void setupDeleteListener() {
+        FenixFramework.getDomainModel().registerDeletionListener(Registration.class, registration -> {
+            for (RegistrationObservations observations : registration.getRegistrationObservationsSet()) {
+                observations.delete();
             }
-
-            return (String) PropertyUtils.getProperty(versioningUpdatedBy, "username");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        });
     }
 
-    public static <T> DateTime readVersioningUpdateDate(T obj) {
-        try {
-            Object versioningUpdateDate = PropertyUtils.getProperty(obj, "versioningUpdateDate");
-
-            if (versioningUpdateDate == null) {
-                return null;
-            }
-
-            return (DateTime) PropertyUtils.getProperty(versioningUpdateDate, "date");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-
-    
 }
