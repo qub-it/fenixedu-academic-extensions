@@ -1,7 +1,5 @@
 package org.fenixedu.academic.domain.student.gradingTable;
 
-import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -9,12 +7,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.io.FileUtils;
 import org.fenixedu.academic.domain.CompetenceCourse;
 import org.fenixedu.academic.domain.CurricularCourse;
 import org.fenixedu.academic.domain.Enrolment;
@@ -87,9 +82,11 @@ public class CourseGradingTable extends CourseGradingTable_Base {
         final String grade = entry.getGrade().isEmpty() ? "-" : entry.getGrade().getValue();
         String ectsGrade = null;
         if (entry instanceof ExternalEnrolment) {
-            DefaultGradingTable table = DefaultGradingTable.getDefaultGradingTable();
-            if (table != null) {
-                ectsGrade = table.getEctsGrade(grade);
+            final ExternalEnrolment externalEnrolment = (ExternalEnrolment) entry;
+            if (externalEnrolment.getEctsGrade() != null && !externalEnrolment.getEctsGrade().isEmpty()) {
+                ectsGrade = externalEnrolment.getEctsGrade().getValue();
+            } else {
+                ectsGrade = DefaultGradingTable.getDefaultGradingTable().getEctsGrade(grade);
             }
         } else if (entry instanceof CurriculumLine) {
             CurriculumLine line = (CurriculumLine) entry;
@@ -224,15 +221,16 @@ public class CourseGradingTable extends CourseGradingTable_Base {
                     if (!enrolment.getGrade().isNumeric()) {
                         continue;
                     }
-                    
-                    if(gradeScale != null) {
-                        if(enrolment.getGrade().getGradeScale() != gradeScale) {
-                            throw new DomainException("error.CourseGradingTable.harvestEnrolmentsUsedInSample.gradeScale.mismatch");
+
+                    if (gradeScale != null) {
+                        if (enrolment.getGrade().getGradeScale() != gradeScale) {
+                            throw new DomainException(
+                                    "error.CourseGradingTable.harvestEnrolmentsUsedInSample.gradeScale.mismatch");
                         }
                     } else {
                         gradeScale = enrolment.getGrade().getGradeScale();
                     }
-                    
+
                     sample.add(enrolment);
                 }
             }
