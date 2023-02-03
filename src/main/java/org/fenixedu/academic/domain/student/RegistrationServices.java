@@ -171,6 +171,7 @@ public class RegistrationServices {
     /**
      * HACK until RegistrationState is finally connected to ExecutionYear instead of searching for it with the state date
      */
+    @Deprecated(forRemoval = true)
     static public RegistrationStateBean getLastRegistrationState(final Registration registration, final ExecutionYear year) {
         RegistrationStateBean result = null;
 
@@ -215,6 +216,7 @@ public class RegistrationServices {
         return result;
     }
 
+    @Deprecated(forRemoval = true)
     public static List<RegistrationStateBean> getAllLastRegistrationStates(final Registration registration,
             final ExecutionYear year) {
         final List<RegistrationStateBean> result = Lists.newArrayList();

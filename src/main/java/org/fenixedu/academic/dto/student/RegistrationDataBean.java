@@ -2,6 +2,7 @@ package org.fenixedu.academic.dto.student;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Optional;
 
 import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionYear;
@@ -12,7 +13,6 @@ import org.fenixedu.academic.domain.student.RegistrationDataByExecutionYear;
 import org.fenixedu.academic.domain.student.RegistrationServices;
 import org.fenixedu.academic.domain.student.curriculum.CurriculumConfigurationInitializer.CurricularYearResult;
 import org.fenixedu.academic.domain.student.curriculum.CurriculumModuleServices;
-import org.fenixedu.academic.domain.student.registrationStates.RegistrationStateTypeEnum;
 import org.fenixedu.academic.domain.studentCurriculum.RootCurriculumGroup;
 import org.joda.time.LocalDate;
 import org.joda.time.YearMonthDay;
@@ -35,8 +35,6 @@ public class RegistrationDataBean implements Serializable {
     private Double creditsConcluded;
 
     private BigDecimal enroledEcts;
-
-    private RegistrationStateTypeEnum lastRegistrationStateType;
 
     private YearMonthDay lastAcademicActDate;
 
@@ -193,13 +191,8 @@ public class RegistrationDataBean implements Serializable {
     }
 
     public String getLastRegistrationStatePresentation() {
-        if (this.lastRegistrationStateType == null) {
-            final RegistrationStateBean bean =
-                    RegistrationServices.getLastRegistrationState(getRegistration(), getExecutionYear());
-            this.lastRegistrationStateType = bean == null ? null : bean.getStateTypeEnum();
-        }
-
-        return this.lastRegistrationStateType == null ? "-" : lastRegistrationStateType.getDescription();
+        return Optional.ofNullable(getRegistration().getLastRegistrationState(getExecutionYear()))
+                .map(state -> state.getType().getName().getContent()).orElse(null);
     }
 
     public YearMonthDay getLastAcademicActDate() {

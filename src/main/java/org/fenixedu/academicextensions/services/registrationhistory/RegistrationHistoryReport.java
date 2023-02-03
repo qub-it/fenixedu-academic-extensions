@@ -40,7 +40,6 @@ import org.fenixedu.academic.domain.person.IDDocumentType;
 import org.fenixedu.academic.domain.student.PrecedentDegreeInformation;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.RegistrationDataByExecutionYear;
-import org.fenixedu.academic.domain.student.RegistrationObservations;
 import org.fenixedu.academic.domain.student.RegistrationProtocol;
 import org.fenixedu.academic.domain.student.RegistrationRegimeType;
 import org.fenixedu.academic.domain.student.RegistrationServices;
@@ -88,7 +87,7 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 
     private Integer enrolmentsCount;
 
-    private RegistrationStateBean lastRegistrationState;
+    private RegistrationState lastRegistrationState;
 
     private BigDecimal enrolmentsCredits;
 
@@ -305,21 +304,21 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         return state == null ? null : state.getStateDate().toLocalDate();
     }
 
-    public RegistrationStateBean getLastRegistrationState() {
+    public RegistrationState getLastRegistrationState() {
         if (lastRegistrationState == null) {
-            lastRegistrationState = RegistrationServices.getLastRegistrationState(getRegistration(), getExecutionYear());
+            lastRegistrationState = getRegistration().getLastRegistrationState(getExecutionYear());
         }
 
         return lastRegistrationState;
     }
 
-    public List<RegistrationStateBean> getAllLastRegistrationStates() {
-        return RegistrationServices.getAllLastRegistrationStates(registration, executionYear);
+    public Set<RegistrationState> getAllLastRegistrationStates() {
+        return getRegistration().getRegistrationStates(executionYear);
     }
 
     public String getLastRegistrationStateType() {
-        final RegistrationStateBean state = getLastRegistrationState();
-        return state == null ? null : state.getStateTypeEnum().getDescription();
+        final RegistrationState state = getLastRegistrationState();
+        return state == null ? null : state.getType().getName().getContent();
     }
 
     public String getLastRegistrationStateRemarks() {
@@ -327,12 +326,12 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     }
 
     public LocalDate getLastRegistrationStateDate() {
-        final RegistrationStateBean state = getLastRegistrationState();
+        final RegistrationState state = getLastRegistrationState();
         return state == null ? null : state.getStateDate().toLocalDate();
     }
 
     public boolean getHasAnyInactiveRegistrationStateForYear() {
-        return getRegistration().getRegistrationStatesTypesEnums(getExecutionYear()).stream().anyMatch(s -> !s.isActive());
+        return getRegistration().getRegistrationStates(getExecutionYear()).stream().anyMatch(s -> !s.getType().getActive());
     }
 
     protected void addConclusion(ProgramConclusion programConclusion, RegistrationConclusionBean bean) {

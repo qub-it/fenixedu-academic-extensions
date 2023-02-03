@@ -1,3 +1,5 @@
+- Refactor: Replace usage of RegistrationStateType by RegistrationStateTypeEnum
+
 4.16.5 (19-12-2022)
 - Improvement: Allow ects grade override on external enrolments
 
