@@ -119,4 +119,12 @@ public class ConclusionReport {
         return EMPTY_CONCLUSION;
     }
 
+    public String getConclusionNumber() {
+        if (conclusionBean == null) {
+            return null;
+        }
+        String conclusionNumber = this.conclusionBean.getConclusionNumber();
+        return conclusionNumber;
+    }
+
 }
