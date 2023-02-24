@@ -1104,21 +1104,4 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     public String getHealthCardNumber() {
         return getPerson().getHealthCardNumber();
     }
-
-    public String getFinalConclusionNumber() {
-        ConclusionReport conclusion = getFinalConclusion();
-        if (conclusion == null) {
-            return null;
-        }
-        return conclusion.getConclusionNumber();
-    }
-
-    public String getPartialConclusionNumber() {
-        ConclusionReport conclusion = getPartialConclusion();
-        if (conclusion == null) {
-            return null;
-        }
-        return conclusion.getConclusionNumber();
-    }
-
 }

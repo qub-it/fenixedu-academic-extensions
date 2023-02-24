@@ -61,6 +61,11 @@ public class ConclusionReport {
             return null;
         }
 
+        @Override
+        public String getConclusionNumber() {
+            return null;
+        }
+
     }
 
     private static ConclusionReport EMPTY_CONCLUSION = new EmptyConclusionReportEntry();
@@ -120,11 +125,7 @@ public class ConclusionReport {
     }
 
     public String getConclusionNumber() {
-        if (conclusionBean == null) {
-            return null;
-        }
-        String conclusionNumber = this.conclusionBean.getConclusionNumber();
-        return conclusionNumber;
+        return this.conclusionBean.getConclusionNumber();
     }
 
 }

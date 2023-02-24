@@ -319,10 +319,8 @@ public class RegistrationHistoryReportService {
         }
 
         String number = conclusionBean.getConclusionNumber();
-        if (programConclusionNumber != null && StringUtils.isNotBlank(programConclusionNumber)) {
-            if ((number != null && !programConclusionNumber.equals(number)) || number == null) {
-                return false;
-            }
+        if (StringUtils.isNotBlank(programConclusionNumber) && !Objects.equals(programConclusionNumber, number)) {
+            return false;
         }
 
         return true;
