@@ -55,7 +55,6 @@ import org.fenixedu.academic.domain.treasury.ITreasuryBridgeAPI;
 import org.fenixedu.academic.domain.treasury.ITuitionTreasuryEvent;
 import org.fenixedu.academic.domain.treasury.TreasuryBridgeAPIFactory;
 import org.fenixedu.academic.dto.student.RegistrationConclusionBean;
-import org.fenixedu.academic.dto.student.RegistrationStateBean;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.academictreasury.domain.customer.PersonCustomer;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
@@ -1105,5 +1104,4 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     public String getHealthCardNumber() {
         return getPerson().getHealthCardNumber();
     }
-
 }

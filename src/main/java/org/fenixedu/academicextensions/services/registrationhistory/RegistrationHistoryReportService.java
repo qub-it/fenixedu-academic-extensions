@@ -15,6 +15,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.CompetenceCourse;
 import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
@@ -65,6 +66,7 @@ public class RegistrationHistoryReportService {
     private Set<ExecutionYear> graduatedExecutionYears = Sets.newHashSet();
     private LocalDate graduationPeriodStartDate;
     private LocalDate graduationPeriodEndDate;
+    private String programConclusionNumber;
 
     private Boolean registrationStateSetInExecutionYear;
     private Boolean registrationStateLastInExecutionYear;
@@ -188,6 +190,10 @@ public class RegistrationHistoryReportService {
         this.competenceCourses.addAll(competenceCourses);
     }
 
+    public void filterProgramConclusionNumber(final String number) {
+        this.programConclusionNumber = number;
+    }
+
     public Collection<RegistrationHistoryReport> generateReport() {
         try {
             prepareCaches();
@@ -309,6 +315,11 @@ public class RegistrationHistoryReportService {
         }
 
         if (graduationPeriodEndDate != null && conclusionDate.isAfter(graduationPeriodEndDate)) {
+            return false;
+        }
+
+        String number = conclusionBean.getConclusionNumber();
+        if (StringUtils.isNotBlank(programConclusionNumber) && !Objects.equals(programConclusionNumber, number)) {
             return false;
         }
 
