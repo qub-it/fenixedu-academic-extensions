@@ -58,6 +58,9 @@ abstract public class GradingTable extends GradingTable_Base {
         if (gc != null) {
             gc.setEctsGrade(ectsGrade);
         }
+        
+        //force value object update
+        setData(getData());
     }
 
     public void setGrade(final int mark, final String ectsGrade) {
@@ -89,6 +92,9 @@ abstract public class GradingTable extends GradingTable_Base {
         } else {
             getData().getTable().add(gc);
         }
+        
+        //force value object update
+        setData(getData());
     }
 
     public void addMark(final int mark, final String ectsGrade) {
