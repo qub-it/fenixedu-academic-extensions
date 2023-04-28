@@ -1,3 +1,4 @@
+4.17.3 (28-04-2023)
 - Bug fix: Credits aggregation by curricular period should filter by execution interval (if present) 
 
 4.17.2 (27-03-2023)
