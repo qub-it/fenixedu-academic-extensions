@@ -242,6 +242,10 @@ public class CurricularPeriodServices {
 
         for (final IDegreeModuleToEvaluate iter : RuleEnrolment.getEnroledAndEnroling(enrolmentContext)) {
 
+            if (interval != null && iter.getExecutionInterval() != interval) {
+                continue;
+            }
+
             final DegreeModule degreeModule = iter.getDegreeModule();
             if (applyToOptionals != null) {
                 final boolean isOptionalByGroup = iter.getCurriculumGroup().getDegreeModule().getIsOptional();
