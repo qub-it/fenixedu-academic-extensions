@@ -78,7 +78,7 @@ public class CreditsEnroledAsFirstTime extends CreditsEnroledAsFirstTime_Base {
             final Collection<Enrolment> filteredEnrolments = studentCurricularPlan.getEnrolmentsSet().stream()
                     .filter(e -> enrolmentContext.isToEvaluateRulesByYear() ? e.getExecutionYear().isBefore(enrolmentContext
                             .getExecutionYear()) : e.getExecutionPeriod().isBefore(enrolmentContext.getExecutionPeriod()))
-                    .collect(Collectors.toSet());
+                    .filter(e -> !e.isAnnulled()).collect(Collectors.toSet());
 
             for (final CurricularCourse curricularCourse : collectCurricularCoursesToInspect(degreeModuleToEvaluate)) {
 
