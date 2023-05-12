@@ -42,25 +42,20 @@ import org.fenixedu.academic.domain.student.curriculum.CurriculumConfigurationIn
 import org.fenixedu.academic.domain.student.curriculum.CurriculumLineServices;
 import org.fenixedu.academic.domain.student.curriculum.ICurriculum;
 import org.fenixedu.academic.domain.student.curriculum.ICurriculumEntry;
-import org.fenixedu.academic.domain.student.registrationStates.RegistrationState;
-import org.fenixedu.academic.domain.student.registrationStates.RegistrationStateTypeEnum;
 import org.fenixedu.academic.domain.studentCurriculum.Credits;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumLine;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumModule;
 import org.fenixedu.academic.domain.studentCurriculum.Dismissal;
 import org.fenixedu.academic.domain.studentCurriculum.EnrolmentWrapper;
 import org.fenixedu.academic.dto.student.RegistrationConclusionBean;
-import org.fenixedu.academic.dto.student.RegistrationStateBean;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.joda.time.YearMonthDay;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
@@ -166,104 +161,6 @@ public class RegistrationServices {
 
     static public void invalidateCacheCurricularYear(final Registration registration, final ExecutionYear executionYear) {
         CACHE_CURRICULAR_YEAR.invalidate(getCacheKey(registration, executionYear));
-    }
-
-    /**
-     * HACK until RegistrationState is finally connected to ExecutionYear instead of searching for it with the state date
-     */
-    @Deprecated(forRemoval = true)
-    static public RegistrationStateBean getLastRegistrationState(final Registration registration, final ExecutionYear year) {
-        RegistrationStateBean result = null;
-
-        final RegistrationDataByExecutionYear data = RegistrationDataServices.getRegistrationData(registration, year);
-        if (registration.isConcluded() /* && data == RegistrationDataServices.getLastRegistrationData(registration) */) {
-
-            ExecutionYear conclusionYear = null;
-            YearMonthDay conclusionDate = null;
-            try {
-
-                final StudentCurricularPlan lastCurricularPlan = registration.getLastStudentCurricularPlan();
-
-                final ProgramConclusion conclusion =
-                        ProgramConclusion.conclusionsFor(lastCurricularPlan).filter(i -> i.isTerminal()).findFirst().get();
-
-                final RegistrationConclusionBean bean = new RegistrationConclusionBean(lastCurricularPlan, conclusion);
-                conclusionYear = bean.getConclusionYear();
-                conclusionDate = bean.getConclusionDate();
-            } catch (final Throwable t) {
-                logger.error("Error trying to determine ConclusionYear: {}#{}", data.toString(), t.getMessage());
-            }
-
-            // ATTENTION: conclusion state year != conclusion year
-            if (conclusionYear != null && year.isAfterOrEquals(conclusionYear)) {
-                result = new RegistrationStateBean(RegistrationStateTypeEnum.CONCLUDED);
-                result.setRegistration(registration);
-                result.setStateDate(conclusionDate);
-            }
-        }
-
-        // what it should be in a perfect world
-        if (result == null) {
-            final RegistrationState state = registration.getLastRegistrationState(year);
-            if (state != null) {
-                result = new RegistrationStateBean(state.getStateTypeEnum());
-                result.setRegistration(registration);
-                result.setStateDateTime(state.getStateDate());
-                result.setRemarks(state.getRemarks());
-            }
-        }
-
-        return result;
-    }
-
-    @Deprecated(forRemoval = true)
-    public static List<RegistrationStateBean> getAllLastRegistrationStates(final Registration registration,
-            final ExecutionYear year) {
-        final List<RegistrationStateBean> result = Lists.newArrayList();
-
-        {
-            RegistrationStateBean conclusionResult = null;
-
-            final RegistrationDataByExecutionYear data = RegistrationDataServices.getRegistrationData(registration, year);
-            if (registration.isConcluded() /* && data == RegistrationDataServices.getLastRegistrationData(registration) */) {
-
-                ExecutionYear conclusionYear = null;
-                YearMonthDay conclusionDate = null;
-                try {
-
-                    final StudentCurricularPlan lastCurricularPlan = registration.getLastStudentCurricularPlan();
-
-                    final ProgramConclusion conclusion =
-                            ProgramConclusion.conclusionsFor(lastCurricularPlan).filter(i -> i.isTerminal()).findFirst().get();
-
-                    final RegistrationConclusionBean bean = new RegistrationConclusionBean(lastCurricularPlan, conclusion);
-                    conclusionYear = bean.getConclusionYear();
-                    conclusionDate = bean.getConclusionDate();
-                } catch (final Throwable t) {
-                    logger.error("Error trying to determine ConclusionYear: {}#{}", data.toString(), t.getMessage());
-                }
-
-                // ATTENTION: conclusion state year != conclusion year
-                if (conclusionYear != null && year.isAfterOrEquals(conclusionYear)) {
-                    conclusionResult = new RegistrationStateBean(RegistrationStateTypeEnum.CONCLUDED);
-                    conclusionResult.setRegistration(registration);
-                    conclusionResult.setStateDate(conclusionDate);
-                    result.add(conclusionResult);
-                }
-            }
-        }
-
-        result.addAll(registration.getRegistrationStates(year).stream().map(s -> {
-            final RegistrationStateBean bean = new RegistrationStateBean(s.getStateTypeEnum());
-            bean.setStateDateTime(s.getStateDate());
-            bean.setRegistration(registration);
-            bean.setExecutionInterval(s.getExecutionInterval());
-            bean.setRemarks(s.getRemarks());
-
-            return bean;
-        }).collect(Collectors.toSet()));
-
-        return result;
     }
 
     static public ExecutionYear getConclusionExecutionYear(final Registration registration) {

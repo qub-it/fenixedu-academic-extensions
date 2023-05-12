@@ -36,9 +36,8 @@ import org.fenixedu.academic.domain.student.curriculum.Curriculum;
 import org.fenixedu.academic.domain.student.curriculum.CurriculumLineServices;
 import org.fenixedu.academic.domain.student.curriculum.ICurriculum;
 import org.fenixedu.academic.domain.student.curriculum.conclusion.RegistrationConclusionServices;
-import org.fenixedu.academic.domain.student.registrationStates.RegistrationStateTypeEnum;
+import org.fenixedu.academic.domain.student.registrationStates.RegistrationStateType;
 import org.fenixedu.academic.dto.student.RegistrationConclusionBean;
-import org.fenixedu.bennu.core.domain.Bennu;
 import org.joda.time.LocalDate;
 
 import com.google.common.collect.HashMultimap;
@@ -54,7 +53,7 @@ public class RegistrationHistoryReportService {
     private Set<RegistrationRegimeType> regimeTypes = Sets.newHashSet();
     private Set<RegistrationProtocol> registrationProtocols = Sets.newHashSet();
     private Set<IngressionType> ingressionTypes = Sets.newHashSet();
-    private Set<RegistrationStateTypeEnum> registrationStateTypes = Sets.newHashSet();
+    private Set<RegistrationStateType> registrationStateTypes = Sets.newHashSet();
     private Set<StatuteType> statuteTypes = Sets.newHashSet();
     private Boolean firstTimeOnly;
     private Boolean withEnrolments;
@@ -134,7 +133,7 @@ public class RegistrationHistoryReportService {
         this.ingressionTypes.addAll(ingressionTypes);
     }
 
-    public void filterRegistrationStateTypes(Collection<RegistrationStateTypeEnum> registrationStateTypes) {
+    public void filterRegistrationStateTypes(Collection<RegistrationStateType> registrationStateTypes) {
         this.registrationStateTypes.addAll(registrationStateTypes);
     }
 
@@ -373,7 +372,7 @@ public class RegistrationHistoryReportService {
 
             if (Boolean.TRUE.equals(this.registrationStateLastInExecutionYear)) {
                 lastStateFilter = r -> r.getLastRegistrationState() != null
-                        && this.registrationStateTypes.contains(r.getLastRegistrationState().getStateTypeEnum());
+                        && this.registrationStateTypes.contains(r.getLastRegistrationState().getType());
             } else {
                 lastStateFilter = r -> checkRegistrationStatesIntersection(r);
             }
@@ -384,7 +383,7 @@ public class RegistrationHistoryReportService {
 
                 final Predicate<RegistrationHistoryReport> registrationStateFilter = r -> r.getAllLastRegistrationStates()
                         .stream().filter(state -> state.getExecutionInterval().getExecutionYear() == r.getExecutionYear())
-                        .anyMatch(b -> this.registrationStateTypes.contains(b.getStateTypeEnum()));
+                        .anyMatch(st -> this.registrationStateTypes.contains(st.getType()));
 
                 result = result.and(registrationStateFilter);
             }
@@ -410,8 +409,8 @@ public class RegistrationHistoryReportService {
     }
 
     private boolean checkRegistrationStatesIntersection(RegistrationHistoryReport r) {
-        return !Sets.intersection(this.registrationStateTypes, r.getAllLastRegistrationStates().stream()
-                .map(b -> b.getStateTypeEnum()).filter(Objects::nonNull).collect(Collectors.toSet())).isEmpty();
+        return !Sets.intersection(this.registrationStateTypes, r.getAllLastRegistrationStates().stream().map(b -> b.getType())
+                .filter(Objects::nonNull).collect(Collectors.toSet())).isEmpty();
     }
 
     private boolean hasActiveEnrolments(final RegistrationHistoryReport report) {
@@ -532,8 +531,9 @@ public class RegistrationHistoryReportService {
         }
 
         if (this.registrationStateTypes != null && !this.registrationStateTypes.isEmpty()) {
-            result.addAll(Bennu.getInstance().getRegistrationsSet().stream()
-                    .filter(studentNumberFilter.and(registrationCompetenceCourseFilter)).collect(Collectors.toSet()));
+            result.addAll(this.registrationStateTypes.stream().flatMap(st -> st.getRegistrationStatesSet().stream())
+                    .map(s -> s.getRegistration()).distinct().filter(studentNumberFilter.and(registrationCompetenceCourseFilter))
+                    .collect(Collectors.toSet()));
         }
 
         return result;
