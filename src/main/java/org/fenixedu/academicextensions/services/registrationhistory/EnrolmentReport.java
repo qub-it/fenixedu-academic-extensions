@@ -15,9 +15,9 @@ import org.fenixedu.academic.domain.Grade;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.domain.Shift;
-import org.fenixedu.academic.domain.ShiftType;
 import org.fenixedu.academic.domain.curricularPeriod.CurricularPeriod;
 import org.fenixedu.academic.domain.degreeStructure.CompetenceCourseServices;
+import org.fenixedu.academic.domain.degreeStructure.CourseLoadType;
 import org.fenixedu.academic.domain.degreeStructure.CurricularPeriodServices;
 import org.fenixedu.academic.domain.enrolment.EnrolmentServices;
 import org.fenixedu.academic.domain.student.Registration;
@@ -67,39 +67,39 @@ public class EnrolmentReport {
     }
 
     public Shift getTheoreticalShift() {
-        return getShiftByType(ShiftType.TEORICA);
+        return getShiftByLoadType(CourseLoadType.THEORETICAL);
     }
 
     public Shift getLaboratorialShift() {
-        return getShiftByType(ShiftType.LABORATORIAL);
+        return getShiftByLoadType(CourseLoadType.PRACTICAL_LABORATORY);
     }
 
     public Shift getProblemsShift() {
-        return getShiftByType(ShiftType.PROBLEMS);
+        return getShiftByLoadType(CourseLoadType.THEORETICAL_PRACTICAL);
     }
 
     public Shift getSeminaryShift() {
-        return getShiftByType(ShiftType.SEMINARY);
+        return getShiftByLoadType(CourseLoadType.SEMINAR);
     }
 
     public Shift getFieldWorkShift() {
-        return getShiftByType(ShiftType.FIELD_WORK);
+        return getShiftByLoadType(CourseLoadType.FIELD_WORK);
     }
 
     public Shift getTrainingPeriodShift() {
-        return getShiftByType(ShiftType.TRAINING_PERIOD);
+        return getShiftByLoadType(CourseLoadType.INTERNSHIP);
     }
 
     public Shift getTutorialOrientationShift() {
-        return getShiftByType(ShiftType.TUTORIAL_ORIENTATION);
+        return getShiftByLoadType(CourseLoadType.TUTORIAL_ORIENTATION);
     }
 
     public Shift getOtherShift() {
-        return getShiftByType(ShiftType.OTHER);
+        return getShiftByLoadType(CourseLoadType.OTHER);
     }
 
-    private Shift getShiftByType(final ShiftType shiftType) {
-        return getShifts().stream().filter(s -> s.getTypes().contains(shiftType)).findFirst().orElse(null);
+    private Shift getShiftByLoadType(final String loadTypeCode) {
+        return getShifts().stream().filter(s -> s.getCourseLoadType().getCode().equals(loadTypeCode)).findAny().orElse(null);
     }
 
     public Collection<SchoolClass> getSchoolClasses() {
