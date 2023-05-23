@@ -97,7 +97,7 @@ public class RegistrationDataBean implements Serializable {
             final ExecutionInterval executionInterval = getExecutionYear().isCurrent() ? ExecutionInterval
                     .findFirstCurrentChild(registration.getDegree().getCalendar()) : getExecutionYear().getFirstExecutionPeriod();
 
-            this.schoolClass = RegistrationServices.getSchoolClassBy(registration, executionInterval).orElse(null);
+            this.schoolClass = registration.findSchoolClass(executionInterval).orElse(null);
         }
 
         return this.schoolClass;
