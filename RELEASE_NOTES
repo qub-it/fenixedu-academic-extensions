@@ -1,3 +1,4 @@
+4.19.0 (23-05-2023)
 - Refactor: Remove ShiftType references in EnrolmentReport
 - Refactor: Replace ShiftType references by CourseLoadType in schedule enrolment listeners and rules
 - Refactor: Move school class enrolment methods to academic-core
