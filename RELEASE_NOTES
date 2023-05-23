@@ -1,4 +1,5 @@
 - Refactor: Remove ShiftType references in EnrolmentReport
+- Refactor: Replace ShiftType references by CourseLoadType in schedule enrolment listeners and rules
 
 4.18.0 (13-05-2023)
 - Refactor: Remove RegistrationStateTypeEnum references

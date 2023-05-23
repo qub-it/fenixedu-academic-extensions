@@ -3,9 +3,9 @@
  */
 package org.fenixedu.academic.domain.curricularRules;
 
-import java.util.Collections;
-import java.util.Optional;
-import java.util.SortedSet;
+import static java.util.stream.Collectors.toSet;
+
+import java.util.Collection;
 import java.util.function.Consumer;
 
 import org.fenixedu.academic.domain.Attends;
@@ -14,16 +14,10 @@ import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.domain.Shift;
-import org.fenixedu.academic.domain.ShiftType;
-import org.fenixedu.academic.domain.exceptions.DomainException;
+import org.fenixedu.academic.domain.degreeStructure.CourseLoadType;
 import org.fenixedu.academic.domain.student.Registration;
-import org.fenixedu.academic.domain.student.RegistrationServices;
 import org.fenixedu.bennu.core.signals.DomainObjectEvent;
 
-/**
- * @author shezad
- *
- */
 public class StudentScheduleListeners {
 
     static public Consumer<DomainObjectEvent<Enrolment>> SHIFTS_ENROLLER = new Consumer<DomainObjectEvent<Enrolment>>() {
@@ -46,28 +40,21 @@ public class StudentScheduleListeners {
                 final Registration registration = enrolment.getRegistration();
                 final ExecutionCourse executionCourse = attends.getExecutionCourse();
 
-                final Optional<SchoolClass> schoolClassOpt = registration.findSchoolClass(executionInterval);
+                final SchoolClass schoolClass = registration.findSchoolClass(executionInterval).orElse(null);
 
-                if (schoolClassOpt.isPresent()) {
-                    try {
-                        RegistrationServices.enrolInSchoolClassExecutionCoursesShifts(registration, schoolClassOpt.get(),
-                                Collections.singletonList(executionCourse));
-                    } catch (DomainException e) {
-                        if (!RegistrationServices.FULL_SCHOOL_CLASS_EXCEPTION_MSG.equals(e.getKey())) {
-                            throw e;
+                for (CourseLoadType courseLoadType : executionCourse.getCourseLoadTypes()) {
+                    if (registration.findEnrolledShiftFor(executionCourse, courseLoadType).isEmpty()) {
+
+                        final Collection<Shift> shiftsOfType = executionCourse.findShiftsByLoadType(courseLoadType)
+                                .filter(shift -> schoolClass == null || shift.getAssociatedClassesSet().contains(schoolClass))
+                                .collect(toSet());
+
+                        if (shiftsOfType.size() == 1) {
+                            final Shift shift = shiftsOfType.iterator().next();
+                            shift.enrol(registration);
                         }
                     }
-                    return;
                 }
-
-                for (final ShiftType shiftType : executionCourse.getShiftTypes()) {
-                    final SortedSet<Shift> shiftsByType = executionCourse.getShiftsByTypeOrderedByShiftName(shiftType);
-                    if (shiftsByType.size() == 1) {
-                        final Shift shift = shiftsByType.iterator().next();
-                        shift.enrol(registration);
-                    }
-                }
-
             }
 
         }

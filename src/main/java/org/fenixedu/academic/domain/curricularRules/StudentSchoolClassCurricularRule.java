@@ -1,15 +1,14 @@
 package org.fenixedu.academic.domain.curricularRules;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
+import static org.fenixedu.academicextensions.util.AcademicExtensionsUtil.BUNDLE;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
-import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.ExecutionInterval;
-import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
 import org.fenixedu.academic.domain.curricularRules.executors.ruleExecutors.StudentSchoolClassCurricularRuleExecutor;
 import org.fenixedu.academic.domain.curricularRules.executors.verifyExecutors.VerifyRuleExecutor;
@@ -18,10 +17,7 @@ import org.fenixedu.academic.domain.degreeStructure.DegreeModule;
 import org.fenixedu.academic.domain.enrolment.EnrolmentContext;
 import org.fenixedu.academic.domain.enrolment.IDegreeModuleToEvaluate;
 import org.fenixedu.academic.dto.GenericPair;
-import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
-
-import com.google.common.collect.Lists;
 
 public class StudentSchoolClassCurricularRule extends StudentSchoolClassCurricularRule_Base {
 
@@ -74,75 +70,36 @@ public class StudentSchoolClassCurricularRule extends StudentSchoolClassCurricul
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<GenericPair<Object, Boolean>> getLabel() {
-        final StringBuilder label = new StringBuilder();
+        final List<String> labels = new ArrayList<>();
+
         if (getSchoolClassMustContainCourse()) {
-            label.append(BundleUtil.getString(AcademicExtensionsUtil.BUNDLE,
-                    "label.StudentSchoolClassCurricularRule.schoolClassMustContainCourse"));
+            labels.add(BundleUtil.getString(BUNDLE, "label.StudentSchoolClassCurricularRule.schoolClassMustContainCourse"));
         }
         if (getCourseMustHaveFreeShifts()) {
-            if (label.length() > 0) {
-                label.append(", ");
-            }
-            label.append(BundleUtil.getString(AcademicExtensionsUtil.BUNDLE,
-                    "label.StudentSchoolClassCurricularRule.courseMustHaveFreeShifts"));
+            labels.add(BundleUtil.getString(BUNDLE, "label.StudentSchoolClassCurricularRule.courseMustHaveFreeShifts"));
         }
         if (getEnrolInShiftIfUnique()) {
-            if (label.length() > 0) {
-                label.append(", ");
-            }
-            label.append(BundleUtil.getString(AcademicExtensionsUtil.BUNDLE,
-                    "label.StudentSchoolClassCurricularRule.enrolInShiftIfUnique"));
+            labels.add(BundleUtil.getString(BUNDLE, "label.StudentSchoolClassCurricularRule.enrolInShiftIfUnique"));
         }
         if (getAllAvailableShiftsMustBeEnrolled()) {
-            if (label.length() > 0) {
-                label.append(", ");
-            }
-            label.append(BundleUtil.getString(AcademicExtensionsUtil.BUNDLE,
-                    "label.StudentSchoolClassCurricularRule.allAvailableShiftsMustBeEnrolled"));
+            labels.add(BundleUtil.getString(BUNDLE, "label.StudentSchoolClassCurricularRule.allAvailableShiftsMustBeEnrolled"));
         }
         if (StringUtils.isNotBlank(getSchoolClassNames())) {
-            if (label.length() > 0) {
-                label.append(", ");
-            }
-            label.append(BundleUtil.getString(AcademicExtensionsUtil.BUNDLE,
-                    "label.StudentSchoolClassCurricularRule.schoolClassNames", getSchoolClassNames()));
+            labels.add(BundleUtil.getString(BUNDLE, "label.StudentSchoolClassCurricularRule.schoolClassNames",
+                    getSchoolClassNames()));
         }
 
         if (getContextCourseGroup() != null) {
-            label.append(", ");
-            label.append(BundleUtil.getString(AcademicExtensionsUtil.BUNDLE, "label.inGroup"));
-            label.append(" ");
-            label.append(getContextCourseGroup().getOneFullName());
+            labels.add(BundleUtil.getString(BUNDLE, "label.inGroup") + " " + getContextCourseGroup().getOneFullName());
         }
 
-        return Lists.newArrayList(new GenericPair<Object, Boolean>(label, false));
+        return List.of(new GenericPair<>(labels.stream().collect(Collectors.joining(", ")), false));
     }
 
-    public Collection<SchoolClass> getSchoolClasses(final ExecutionInterval executionInterval) {
-
-        if (StringUtils.isNotBlank(getSchoolClassNames())) {
-
-            final ExecutionDegree executionDegree = getDegreeModuleToApplyRule().getParentDegreeCurricularPlan()
-                    .getExecutionDegreeByYear(executionInterval.getExecutionYear());
-
-            if (executionDegree != null) {
-                final Collection<SchoolClass> result = new HashSet<>();
-                final String[] schoolClassNamesSplitted =
-                        getSchoolClassNames().trim().replace(';', '/').replace(',', '/').split("/");
-                for (final String schoolClassName : schoolClassNamesSplitted) {
-                    result.addAll(executionDegree.getSchoolClassesSet().stream()
-                            .filter(sc -> sc.getExecutionInterval() == executionInterval
-                                    && schoolClassName.trim().equalsIgnoreCase((String) sc.getEditablePartOfName()))
-                            .collect(Collectors.toSet()));
-                }
-                return result;
-            }
-
-        }
-
-        return Collections.emptyList();
+    public Stream<String> getSchoolClassesSplitted() {
+        return StringUtils.isBlank(getSchoolClassNames()) ? Stream.empty() : Stream
+                .of(getSchoolClassNames().trim().replace(';', '/').replace(',', '/').split("/")).map(String::trim);
     }
 
     @Override

@@ -9,7 +9,6 @@ import org.fenixedu.academic.domain.Attends;
 import org.fenixedu.academic.domain.DegreeInfo;
 import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.EvaluationConfiguration;
-import org.fenixedu.academic.domain.Job;
 import org.fenixedu.academic.domain.Qualification;
 import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.domain.curricularPeriod.CurricularPeriod;
@@ -137,7 +136,7 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
             public void beforeRemove(final Enrolment enrolment, final Attends attends) {
                 final Registration registration = attends.getRegistration();
                 if (registration != null) {
-                    attends.getExecutionCourse().getAssociatedShifts().forEach(s -> s.unenrol(registration));
+                    registration.getShiftsFor(attends.getExecutionCourse()).forEach(s -> s.unenrol(registration));
                 }
             }
         });

@@ -1,20 +1,21 @@
 package org.fenixedu.academic.domain.curricularRules.executors.ruleExecutors;
 
-import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.CurricularCourse;
-import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.domain.Shift;
-import org.fenixedu.academic.domain.ShiftType;
 import org.fenixedu.academic.domain.curricularRules.ICurricularRule;
 import org.fenixedu.academic.domain.curricularRules.StudentSchoolClassCurricularRule;
 import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
+import org.fenixedu.academic.domain.degreeStructure.CourseLoadType;
 import org.fenixedu.academic.domain.enrolment.EnroledOptionalEnrolment;
 import org.fenixedu.academic.domain.enrolment.EnrolmentContext;
 import org.fenixedu.academic.domain.enrolment.IDegreeModuleToEvaluate;
@@ -22,9 +23,6 @@ import org.fenixedu.academic.domain.enrolment.OptionalDegreeModuleToEnrol;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.RegistrationServices;
 import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
-
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 
 public class StudentSchoolClassCurricularRuleExecutor extends CurricularRuleExecutor {
 
@@ -74,65 +72,47 @@ public class StudentSchoolClassCurricularRuleExecutor extends CurricularRuleExec
                     RegistrationServices.getCurricularYear(registration, executionInterval.getExecutionYear()).getResult();
             if (sourceDegreeModuleToEvaluate.getContext().getCurricularYear().equals(curricularYear)) {
 
-                if (registration.getSchoolClassesSet().stream().filter(sc -> sc.getExecutionPeriod() == executionInterval)
-                        .flatMap(sc -> sc.getAssociatedShiftsSet().stream().map(s -> s.getExecutionCourse())
-                                .flatMap(ec -> ec.getAssociatedCurricularCoursesSet().stream()))
-                        .noneMatch(cc -> cc == curricularCourse)) {
+                if (registration.findSchoolClass(executionInterval).stream().flatMap(sc -> sc.getAssociatedShiftsSet().stream())
+                        .map(Shift::getExecutionCourse)
+                        .noneMatch(ec -> ec.getAssociatedCurricularCoursesSet().contains(curricularCourse))) {
 
-                    return RuleResult.createFalseWithLiteralMessage(sourceDegreeModuleToEvaluate.getDegreeModule(),
-                            AcademicExtensionsUtil.bundle(
-                                    "curricularRules.ruleExecutors.StudentSchoolClassCurricularRuleExecutor.error.schoolClassMustContainCourse",
-                                    executionInterval.getName(), curricularCourse.getCode(), curricularCourse.getName()));
+                    return RuleResult.createFalseWithLiteralMessage(curricularCourse, AcademicExtensionsUtil.bundle(
+                            "curricularRules.ruleExecutors.StudentSchoolClassCurricularRuleExecutor.error.schoolClassMustContainCourse",
+                            executionInterval.getName(), curricularCourse.getCode(), curricularCourse.getName()));
                 }
             }
         }
+
+        final Optional<SchoolClass> registrationSchoolClass = registration.findSchoolClass(executionInterval);
 
         if (schoolClassCurricularRule.getCourseMustHaveFreeShifts()) {
 
-            final Set<SchoolClass> registrationSchoolClasses = registration.getSchoolClassesSet().stream()
-                    .filter(sc -> sc.getExecutionPeriod() == executionInterval).collect(Collectors.toSet());
-            if (!registrationSchoolClasses.isEmpty()) {
-                for (final SchoolClass schoolClass : registrationSchoolClasses) {
-                    final DegreeCurricularPlan degreeCurricularPlan = schoolClass.getExecutionDegree().getDegreeCurricularPlan();
-                    final Set<Shift> shifts = schoolClass.getAssociatedShiftsSet().stream()
-                            .filter(s -> getCurricularCourseFor(s.getExecutionCourse(), degreeCurricularPlan) == curricularCourse)
-                            .collect(Collectors.toSet());
+            if (registrationSchoolClass.isPresent()) {
+                final Set<Shift> shifts = registrationSchoolClass.get().getAssociatedShiftsSet().stream()
+                        .filter(s -> s.getExecutionCourse().getAssociatedCurricularCoursesSet().contains(curricularCourse))
+                        .collect(Collectors.toSet());
 
-                    final Multimap<ShiftType, Shift> shiftsTypesByShift = ArrayListMultimap.create();
-                    shifts.forEach(s -> s.getTypes().forEach(st -> shiftsTypesByShift.put(st, s)));
-
-                    for (final ShiftType shiftType : shiftsTypesByShift.keySet()) {
-                        final Collection<Shift> shiftsForType = shiftsTypesByShift.get(shiftType);
-                        if (shiftsForType.stream().noneMatch(s -> s.getStudentsSet().contains(registration))) {
-                            if (shiftsForType.stream().noneMatch(s -> isFree(s))) {
-                                return RuleResult.createFalseWithLiteralMessage(sourceDegreeModuleToEvaluate.getDegreeModule(),
-                                        AcademicExtensionsUtil.bundle(
-                                                "curricularRules.ruleExecutors.StudentSchoolClassCurricularRuleExecutor.error.courseMustHaveFreeShiftsInSchoolClass",
-                                                curricularCourse.getCode(), curricularCourse.getName()));
-                            }
-                        }
-                    }
-
+                if (isAllShiftsOfLoadTypeFull(registration, shifts)) {
+                    return RuleResult.createFalseWithLiteralMessage(curricularCourse, AcademicExtensionsUtil.bundle(
+                            "curricularRules.ruleExecutors.StudentSchoolClassCurricularRuleExecutor.error.courseMustHaveFreeShiftsInSchoolClass",
+                            curricularCourse.getCode(), curricularCourse.getName()));
                 }
+
             } else {
-                final Set<Shift> allShifts = curricularCourse.getExecutionCoursesByExecutionPeriod(executionInterval).stream()
-                        .flatMap(ec -> ec.getAssociatedShifts().stream()).collect(Collectors.toSet());
-                final Set<ShiftType> allShiftsTypes =
-                        allShifts.stream().flatMap(s -> s.getTypes().stream()).collect(Collectors.toSet());
-                for (final ShiftType shiftType : allShiftsTypes) {
-                    if (allShifts.stream().filter(s -> s.getTypes().contains(shiftType)).noneMatch(s -> isFree(s))) {
-                        return RuleResult.createFalseWithLiteralMessage(sourceDegreeModuleToEvaluate.getDegreeModule(),
-                                AcademicExtensionsUtil.bundle(
-                                        "curricularRules.ruleExecutors.StudentSchoolClassCurricularRuleExecutor.error.courseMustHaveFreeShifts",
-                                        curricularCourse.getCode(), curricularCourse.getName()));
-                    }
+                final Set<Shift> shifts = curricularCourse.getExecutionCoursesByExecutionPeriod(executionInterval).stream()
+                        .flatMap(ec -> ec.getShiftsSet().stream()).collect(Collectors.toSet());
+
+                if (isAllShiftsOfLoadTypeFull(registration, shifts)) {
+                    return RuleResult.createFalseWithLiteralMessage(curricularCourse, AcademicExtensionsUtil.bundle(
+                            "curricularRules.ruleExecutors.StudentSchoolClassCurricularRuleExecutor.error.courseMustHaveFreeShifts",
+                            curricularCourse.getCode(), curricularCourse.getName()));
                 }
             }
-
         }
 
-        if (StringUtils.isNotBlank(schoolClassCurricularRule.getSchoolClassNames()) && schoolClassCurricularRule
-                .getSchoolClasses(executionInterval).stream().noneMatch(sc -> sc.getRegistrationsSet().contains(registration))) {
+        if (StringUtils.isNotBlank(schoolClassCurricularRule.getSchoolClassNames())
+                && (registrationSchoolClass.isEmpty() || schoolClassCurricularRule.getSchoolClassesSplitted()
+                        .noneMatch(name -> name.equals(registrationSchoolClass.get().getName())))) {
 
             return RuleResult.createFalseWithLiteralMessage(sourceDegreeModuleToEvaluate.getDegreeModule(),
                     AcademicExtensionsUtil.bundle(
@@ -141,17 +121,25 @@ public class StudentSchoolClassCurricularRuleExecutor extends CurricularRuleExec
         }
 
         return RuleResult.createTrue(sourceDegreeModuleToEvaluate.getDegreeModule());
-
     }
 
-    private static CurricularCourse getCurricularCourseFor(ExecutionCourse executionCourse,
-            final DegreeCurricularPlan degreeCurricularPlan) {
-        return executionCourse.getAssociatedCurricularCoursesSet().stream()
-                .filter(cc -> cc.getDegreeCurricularPlan() == degreeCurricularPlan).findAny().orElse(null);
-    }
+    private boolean isAllShiftsOfLoadTypeFull(final Registration registration, final Set<Shift> shifts) {
 
-    private static boolean isFree(final Shift shift) {
-        return shift.getVacancies() > 0;
+        final Map<CourseLoadType, List<Shift>> shiftsByCourseLoad =
+                shifts.stream().collect(Collectors.groupingBy(Shift::getCourseLoadType));
+
+        for (final CourseLoadType courseLoadType : shiftsByCourseLoad.keySet()) {
+            final List<Shift> shiftsForType = shiftsByCourseLoad.get(courseLoadType);
+            final ExecutionCourse executionCourse = shiftsForType.iterator().next().getExecutionCourse();
+
+            if (registration.findEnrolledShiftFor(executionCourse, courseLoadType).isEmpty()
+                    && shiftsForType.stream().noneMatch(s -> s.isFreeFor(registration))) {
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }
