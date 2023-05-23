@@ -1,13 +1,10 @@
 package org.fenixedu.academic.domain.student;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.Callable;
@@ -22,19 +19,16 @@ import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.EnrolmentEvaluation;
-import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.IEnrolment;
 import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.domain.Shift;
-import org.fenixedu.academic.domain.ShiftType;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
 import org.fenixedu.academic.domain.degreeStructure.CurricularPeriodServices;
 import org.fenixedu.academic.domain.degreeStructure.DegreeModule;
 import org.fenixedu.academic.domain.degreeStructure.ProgramConclusion;
-import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.student.curriculum.CreditsReasonType;
 import org.fenixedu.academic.domain.student.curriculum.Curriculum;
 import org.fenixedu.academic.domain.student.curriculum.CurriculumConfigurationInitializer;
@@ -55,8 +49,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 import pt.ist.fenixframework.dml.runtime.RelationAdapter;
@@ -208,8 +200,6 @@ public class RegistrationServices {
                 .intValue();
     }
 
-    public static final String FULL_SCHOOL_CLASS_EXCEPTION_MSG = "label.schoolClassStudentEnrollment.fullSchoolClass";
-
     private static BiFunction<Registration, ExecutionInterval, Collection<SchoolClass>> initialSchoolClassesService =
             defaultInitialSchoolClassesService();
 
@@ -246,111 +236,14 @@ public class RegistrationServices {
     }
 
     @Deprecated
-    public static Optional<SchoolClass> getSchoolClassBy(final Registration registration,
-            final ExecutionInterval executionInterval) {
-        return registration.getSchoolClassesSet().stream().filter(sc -> sc.getExecutionInterval() == executionInterval)
-                .findFirst();
-    }
-
     public static void replaceSchoolClass(final Registration registration, final SchoolClass schoolClass,
             final ExecutionInterval executionInterval) {
-
-        final Optional<SchoolClass> currentSchoolClass = getSchoolClassBy(registration, executionInterval);
-        if (currentSchoolClass.isPresent()) {
-            currentSchoolClass.get().getAssociatedShiftsSet().forEach(s -> s.unenrol(registration));
-            registration.getSchoolClassesSet().remove(currentSchoolClass.get());
-        }
-
-        if (schoolClass != null) {
-            final List<ExecutionCourse> attendingExecutionCourses =
-                    registration.getAttendingExecutionCoursesFor(executionInterval);
-            registration.getSchoolClassesSet().add(schoolClass); // should add first in order to correct evaluation of shift capacities based on school classes
-            enrolInSchoolClassExecutionCoursesShifts(registration, schoolClass, attendingExecutionCourses);
-        }
+        SchoolClass.replaceSchoolClass(registration, schoolClass, executionInterval);
     }
 
-    public static void enrolInSchoolClassExecutionCoursesShifts(final Registration registration, final SchoolClass schoolClass,
-            final List<ExecutionCourse> attendingExecutionCourses) {
-        if (!schoolClass.isFreeFor(registration)) {
-            throw new DomainException(FULL_SCHOOL_CLASS_EXCEPTION_MSG);
-        }
-
-        final Comparator<Shift> vacanciesComparator = Comparator.comparing(Shift::getVacancies);
-
-        final Set<Shift> schoolClassesShifts = schoolClass.getAssociatedShiftsSet().stream()
-                .filter(s -> attendingExecutionCourses.contains(s.getExecutionCourse()) && s.getVacancies() > 0)
-                .collect(Collectors.toSet());
-
-        final Multimap<ExecutionCourse, Shift> shiftsByExecutionCourse = ArrayListMultimap.create();
-        schoolClassesShifts.forEach(s -> shiftsByExecutionCourse.put(s.getExecutionCourse(), s));
-        for (final ExecutionCourse executionCourse : shiftsByExecutionCourse.keySet()) {
-            final Multimap<ShiftType, Shift> shiftsByShiftTypes = ArrayListMultimap.create();
-            shiftsByExecutionCourse.get(executionCourse).forEach(s -> s.getTypes().forEach(st -> shiftsByShiftTypes.put(st, s)));
-
-            for (final ShiftType shiftType : shiftsByShiftTypes.keySet()) {
-                if (registration.getShiftFor(executionCourse, shiftType) == null) {
-                    final List<Shift> shiftsOrderedByVacancies = new ArrayList<>(shiftsByShiftTypes.get(shiftType));
-                    shiftsOrderedByVacancies.sort(vacanciesComparator);
-                    enrolInOneShift(shiftsOrderedByVacancies, registration);
-                }
-            }
-        }
-    }
-
-    private static void enrolInOneShift(Collection<Shift> shiftsOrderedByVacancies, Registration registration) {
-        String shiftName = null;
-        String shiftTypes = null;
-        String executionCourseName = null;
-
-        for (final Shift shift : shiftsOrderedByVacancies) {
-            shiftName = shift.getNome();
-            shiftTypes = shift.getShiftTypesPrettyPrint();
-            executionCourseName = shift.getExecutionCourse().getName();
-
-            if (shift.getStudentsSet().contains(registration) || shift.enrol(registration)) {
-                return;
-            }
-        }
-
-        throw new DomainException("error.registration.replaceSchoolClass.shiftFull", shiftName, shiftTypes, executionCourseName);
-    }
-
-    /**
-     * @deprecated use {@link SchoolClass#isFreeFor(Registration)}
-     */
     @Deprecated
-    public static boolean isSchoolClassFree(final SchoolClass schoolClass, final Registration registration) {
-        if (schoolClass != null) {
-
-            final List<Shift> attendingShiftsFromSchoolClass = getAttendingShifts(schoolClass, registration);
-
-            final Multimap<ExecutionCourse, Shift> shiftsByExecutionCourse = ArrayListMultimap.create();
-            attendingShiftsFromSchoolClass.forEach(s -> shiftsByExecutionCourse.put(s.getExecutionCourse(), s));
-            for (final ExecutionCourse executionCourse : shiftsByExecutionCourse.keySet()) {
-                final Multimap<ShiftType, Shift> shiftsByShiftType = ArrayListMultimap.create();
-                shiftsByExecutionCourse.get(executionCourse)
-                        .forEach(s -> s.getTypes().forEach(st -> shiftsByShiftType.put(st, s)));
-
-                for (final ShiftType shiftType : shiftsByShiftType.keySet()) {
-                    final Shift shift = registration.getShiftFor(executionCourse, shiftType);
-                    if (shift == null || !attendingShiftsFromSchoolClass.contains(shift)) {
-                        if (shiftsByShiftType.get(shiftType).stream().allMatch(s -> s.getVacancies() <= 0)) {
-                            return false;
-                        }
-                    }
-                }
-            }
-
-            return true;
-        }
-        return false;
-    }
-
     public static List<Shift> getAttendingShifts(final SchoolClass schoolClass, final Registration registration) {
-        final List<ExecutionCourse> attendingExecutionCourses =
-                registration.getAttendingExecutionCoursesFor(schoolClass.getExecutionPeriod());
-        return schoolClass.getAssociatedShiftsSet().stream()
-                .filter(s -> attendingExecutionCourses.contains(s.getExecutionCourse())).collect(Collectors.toList());
+        return schoolClass.findShiftsFor(registration).collect(Collectors.toList());
     }
 
     public static Collection<EnrolmentEvaluation> getImprovementEvaluations(final Registration registration,
