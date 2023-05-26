@@ -56,15 +56,16 @@ public class StudentSchoolClassCurricularRuleExecutor extends CurricularRuleExec
             return RuleResult.createNA(sourceDegreeModuleToEvaluate.getDegreeModule());
         }
 
-        if (sourceDegreeModuleToEvaluate instanceof OptionalDegreeModuleToEnrol
-                || sourceDegreeModuleToEvaluate instanceof EnroledOptionalEnrolment) {
+        if (sourceDegreeModuleToEvaluate instanceof EnroledOptionalEnrolment) {
             return RuleResult.createNA(sourceDegreeModuleToEvaluate.getDegreeModule());
         }
 
         final StudentSchoolClassCurricularRule schoolClassCurricularRule = (StudentSchoolClassCurricularRule) curricularRule;
         final Registration registration = enrolmentContext.getRegistration();
         final ExecutionInterval executionInterval = sourceDegreeModuleToEvaluate.getExecutionInterval();
-        final CurricularCourse curricularCourse = (CurricularCourse) sourceDegreeModuleToEvaluate.getDegreeModule();
+        final CurricularCourse curricularCourse =
+                sourceDegreeModuleToEvaluate instanceof OptionalDegreeModuleToEnrol ? ((OptionalDegreeModuleToEnrol) sourceDegreeModuleToEvaluate)
+                        .getCurricularCourse() : (CurricularCourse) sourceDegreeModuleToEvaluate.getDegreeModule();
 
         if (schoolClassCurricularRule.getSchoolClassMustContainCourse()) {
 
