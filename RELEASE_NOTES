@@ -1,3 +1,5 @@
+- Improvement: Check if marksheet date is not in the future
+
 4.19.1 (26-05-2023)
 - Improvement: Support optional courses in school class curricular rule
 

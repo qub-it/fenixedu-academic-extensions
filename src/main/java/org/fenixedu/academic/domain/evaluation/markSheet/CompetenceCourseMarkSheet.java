@@ -56,12 +56,12 @@ import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.Grade;
-import org.fenixedu.academic.domain.curriculum.grade.GradeScale;
 import org.fenixedu.academic.domain.Holiday;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.Professorship;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.curriculum.EnrolmentEvaluationContext;
+import org.fenixedu.academic.domain.curriculum.grade.GradeScale;
 import org.fenixedu.academic.domain.degree.DegreeType;
 import org.fenixedu.academic.domain.evaluation.EvaluationComparator;
 import org.fenixedu.academic.domain.evaluation.EvaluationServices;
@@ -186,9 +186,16 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
     }
 
     private void checkRulesEvaluationDate() {
+        checkIfEvaluationDateIsNotAfterToday();
         checkIfEvaluationDateIsWorkingDay();
         checkIfEvaluationDateIsInExamsPeriod();
         checkIfEvaluationsDateIsEqualToMarkSheetEvaluationDate();
+    }
+
+    public void checkIfEvaluationDateIsNotAfterToday() {
+        if (getEvaluationDate().toDateTimeAtStartOfDay().isAfterNow()) {
+            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheet.evaluationDate.cannotBeAfterToday");
+        }
     }
 
     private void checkIfEvaluationDateIsWorkingDay() {
