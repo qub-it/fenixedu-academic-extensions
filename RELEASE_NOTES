@@ -1,3 +1,4 @@
+- Refactor: Remove deprecated AcademicEnrolmentPeriod entities
 - Improvement: Check if marksheet date is not in the future
 
 4.19.1 (26-05-2023)

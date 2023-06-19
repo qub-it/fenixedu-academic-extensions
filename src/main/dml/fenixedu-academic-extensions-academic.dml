@@ -4,8 +4,6 @@ enum org.fenixedu.academic.domain.GradeScaleEnum as GradeScaleEnumAcademicExtens
 enum org.fenixedu.academic.domain.evaluation.markSheet.CompetenceCourseMarkSheetStateEnum as CompetenceCourseMarkSheetStateEnum;
 enum org.fenixedu.academic.domain.evaluation.markSheet.CompetenceCourseMarkSheetChangeRequestStateEnum as CompetenceCourseMarkSheetChangeRequestStateEnum;
 enum org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonPeriodType as EvaluationSeasonPeriodType;
-enum org.fenixedu.academic.domain.enrolment.period.AcademicEnrolmentPeriodType as AcademicEnrolmentPeriodType;
-enum org.fenixedu.academic.domain.enrolment.period.AutomaticEnrolment as AutomaticEnrolment;
  
 
 valueType org.fenixedu.academic.domain.ShiftTypes as ShiftTypes {
@@ -16,15 +14,6 @@ valueType org.fenixedu.academic.domain.ShiftTypes as ShiftTypes {
 
 external class .org.fenixedu.bennu.io.domain.GenericFile;
 external class .org.fenixedu.academic.domain.ExecutionDegree;
-
-class EnrolmentType {
-	String code (REQUIRED);
-	LocalizedString name (REQUIRED);
-}
-	relation EnrolmentTypeRoot {
-	    .org.fenixedu.bennu.core.domain.Bennu playsRole root { multiplicity 1..1; }
-	    EnrolmentType playsRole enrolmentTypes { multiplicity *; }
-	}
 
 // ==================== BEGIN: Evaluations ====================
 
@@ -1200,88 +1189,6 @@ relation PrescriptionBonificationStatuteStatuteType {
 		multiplicity 1..1;
 	}
 }
-
-
-//======================= = AcademicEnrolmentPeriod = =========================
-
-class enrolment.period.AcademicEnrolmentPeriod {
-	LocalizedString name;
-    DateTime startDate;
-    DateTime endDate;
-    Boolean firstTimeRegistration;
-    Boolean restrictToSelectedStatutes;
-    Boolean restrictToSelectedIngressionTypes;
-    Integer minStudentNumber;
-    Integer maxStudentNumber;
-    Integer curricularYear;
-    AcademicEnrolmentPeriodType enrolmentPeriodType;
-    AutomaticEnrolment automaticEnrolment;
-    Boolean allowEnrolWithDebts;
-    Boolean schoolClassSelectionMandatory;
-}
-
-relation AcademicEnrolmentPeriodBennu {
-    public enrolment.period.AcademicEnrolmentPeriod playsRole academicEnrolmentPeriods {
-        multiplicity *;
-    }
-
-    protected .org.fenixedu.bennu.core.domain.Bennu playsRole bennu {
-        multiplicity 1..1;
-    }
-}
-
-relation AcademicEnrolmentPeriodExecutionInterval {
-    public enrolment.period.AcademicEnrolmentPeriod playsRole academicEnrolmentPeriods {
-        multiplicity *;
-    }
-
-    public .org.fenixedu.academic.domain.ExecutionInterval playsRole executionSemester {
-        multiplicity 1..1;
-    }    
-}
-
-relation AcademicEnrolmentPeriodDegreeCurricularPlan {
-    public enrolment.period.AcademicEnrolmentPeriod playsRole academicEnrolmentPeriods {
-        multiplicity *;
-    }
-
-    public .org.fenixedu.academic.domain.DegreeCurricularPlan playsRole degreeCurricularPlans {
-        multiplicity *;
-    }    
-}
-
-relation AcademicEnrolmentPeriodStatuteType {
-    public enrolment.period.AcademicEnrolmentPeriod playsRole academicEnrolmentPeriods {
-        multiplicity *;
-    }
-
-    public .org.fenixedu.academic.domain.student.StatuteType playsRole statuteTypes {
-        multiplicity *;
-    }    
-}
-
-relation AcademicEnrolmentPeriodIngressionType {
-    public enrolment.period.AcademicEnrolmentPeriod playsRole academicEnrolmentPeriods {
-        multiplicity *;
-    }
-    public .org.fenixedu.academic.domain.candidacy.IngressionType playsRole ingressionTypes {
-        multiplicity *;
-    }
-}
-
-relation AcademicEnrolmentPeriodEnrolmentType {
-    public enrolment.period.AcademicEnrolmentPeriod playsRole academicEnrolmentPeriods {
-        multiplicity *;
-    }
-    public .org.fenixedu.academic.domain.EnrolmentType playsRole enrolmentTypes {
-        multiplicity *;
-    }
-}
-
-
-//======================= = END AcademicEnrolmentPeriod = =========================
-
-
 
 // ====================== = ECTS Grading Table = ========================
 
