@@ -186,17 +186,17 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
     }
 
     private void checkRulesEvaluationDate() {
-        checkIfEvaluationDateIsNotAfterToday();
+//        checkIfEvaluationDateIsNotAfterToday();
         checkIfEvaluationDateIsWorkingDay();
         checkIfEvaluationDateIsInExamsPeriod();
         checkIfEvaluationsDateIsEqualToMarkSheetEvaluationDate();
     }
 
-    public void checkIfEvaluationDateIsNotAfterToday() {
-        if (getEvaluationDate().toDateTimeAtStartOfDay().isAfterNow()) {
-            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheet.evaluationDate.cannotBeAfterToday");
-        }
-    }
+//    public void checkIfEvaluationDateIsNotAfterToday() {
+//        if (getEvaluationDate().toDateTimeAtStartOfDay().isAfterNow()) {
+//            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheet.evaluationDate.cannotBeAfterToday");
+//        }
+//    }
 
     private void checkIfEvaluationDateIsWorkingDay() {
         if (getEvaluationDate().getDayOfWeek() == DateTimeConstants.SUNDAY || Holiday.isHoliday(getEvaluationDate())) {
