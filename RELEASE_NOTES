@@ -1,3 +1,6 @@
+- Refactor: Rename invocation of TreasuryEvent::getAmountToPay to TreasuryEvent::getAmountWithVatToPay
+- Refactor: Replaces references of ITuitionTreasuryEvent by IAcademicTreasuryEvent
+
 4.20.1 (27-06-2023)
 - Improvement: Revert check of marksheet date in the future
 

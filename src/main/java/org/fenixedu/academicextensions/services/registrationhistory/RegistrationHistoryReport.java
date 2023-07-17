@@ -51,8 +51,8 @@ import org.fenixedu.academic.domain.student.curriculum.ICurriculum;
 import org.fenixedu.academic.domain.student.registrationStates.RegistrationState;
 import org.fenixedu.academic.domain.student.services.StatuteServices;
 import org.fenixedu.academic.domain.studentCurriculum.ExternalCurriculumGroup;
+import org.fenixedu.academic.domain.treasury.IAcademicTreasuryEvent;
 import org.fenixedu.academic.domain.treasury.ITreasuryBridgeAPI;
-import org.fenixedu.academic.domain.treasury.ITuitionTreasuryEvent;
 import org.fenixedu.academic.domain.treasury.TreasuryBridgeAPIFactory;
 import org.fenixedu.academic.dto.student.RegistrationConclusionBean;
 import org.fenixedu.academic.util.Bundle;
@@ -957,7 +957,7 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
             return false;
         }
 
-        final ITuitionTreasuryEvent event =
+        final IAcademicTreasuryEvent event =
                 treasuryBridgeAPI.getTuitionForRegistrationTreasuryEvent(registration, getExecutionYear());
 
         return event != null && event.isCharged();
@@ -969,14 +969,14 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
             return BigDecimal.ZERO;
         }
 
-        final ITuitionTreasuryEvent event =
+        final IAcademicTreasuryEvent event =
                 treasuryBridgeAPI.getTuitionForRegistrationTreasuryEvent(registration, getExecutionYear());
 
         if (event == null) {
             return BigDecimal.ZERO;
         }
 
-        return event.getAmountToPay();
+        return event.getAmountWithVatToPay();
     }
 
     public Integer getEnrolmentYears() {
