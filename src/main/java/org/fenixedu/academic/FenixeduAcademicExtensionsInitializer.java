@@ -27,6 +27,7 @@ import org.fenixedu.academic.domain.evaluation.EnrolmentEvaluationExtendedInform
 import org.fenixedu.academic.domain.evaluation.EvaluationComparator;
 import org.fenixedu.academic.domain.evaluation.config.MarkSheetSettings;
 import org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonServices;
+import org.fenixedu.academic.domain.evaluation.season.rule.EvaluationSeasonShiftType;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.organizationalStructure.Party;
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
@@ -115,6 +116,7 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
 
         UnavailableForEnrolmentRule.initializeDomainListenersAndExtensions();
 
+        EvaluationSeasonShiftType.migrateCourseLoadTypes();
     }
 
     private void setupListenersForStudentSchedule() {

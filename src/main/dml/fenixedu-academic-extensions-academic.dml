@@ -133,8 +133,12 @@ class evaluation.season.rule.EvaluationSeasonRule {
     	}
 
     class evaluation.season.rule.EvaluationSeasonShiftType extends evaluation.season.rule.EvaluationSeasonRule {
-        ShiftTypes shiftTypes (REQUIRED);
+        ShiftTypes shiftTypes;
     }
+		relation EvaluationSeasonShiftTypeCourseLoadType {
+		    degreeStructure.CourseLoadType playsRole courseLoadTypes { multiplicity 1..*; }
+		    evaluation.season.rule.EvaluationSeasonShiftType playsRole evaluationSeasonShiftTypes { multiplicity *; }
+		}    
 
     class evaluation.season.rule.EvaluationSeasonStatuteType extends evaluation.season.rule.EvaluationSeasonRule {
     }
