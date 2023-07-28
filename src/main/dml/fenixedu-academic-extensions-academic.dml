@@ -4,13 +4,6 @@ enum org.fenixedu.academic.domain.GradeScaleEnum as GradeScaleEnumAcademicExtens
 enum org.fenixedu.academic.domain.evaluation.markSheet.CompetenceCourseMarkSheetStateEnum as CompetenceCourseMarkSheetStateEnum;
 enum org.fenixedu.academic.domain.evaluation.markSheet.CompetenceCourseMarkSheetChangeRequestStateEnum as CompetenceCourseMarkSheetChangeRequestStateEnum;
 enum org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonPeriodType as EvaluationSeasonPeriodType;
- 
-
-valueType org.fenixedu.academic.domain.ShiftTypes as ShiftTypes {
-    externalizeWith {
-        JsonElement toJson();
-    }
-}
 
 external class .org.fenixedu.bennu.io.domain.GenericFile;
 external class .org.fenixedu.academic.domain.ExecutionDegree;
@@ -133,7 +126,6 @@ class evaluation.season.rule.EvaluationSeasonRule {
     	}
 
     class evaluation.season.rule.EvaluationSeasonShiftType extends evaluation.season.rule.EvaluationSeasonRule {
-        ShiftTypes shiftTypes;
     }
 		relation EvaluationSeasonShiftTypeCourseLoadType {
 		    degreeStructure.CourseLoadType playsRole courseLoadTypes { multiplicity 1..*; }
