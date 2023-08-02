@@ -48,11 +48,11 @@ abstract public class RegistrationConclusionServices {
 
         final Comparator<StudentCurricularPlan> planComparator;
         if (!x.isConcluded() && !y.isConcluded()) {
-            planComparator = StudentCurricularPlan.STUDENT_CURRICULAR_PLAN_COMPARATOR_BY_START_DATE.reversed()
+            planComparator = StudentCurricularPlan.COMPARATOR_BY_START_EXECUTION_AND_DATE.reversed()
                     .thenComparing(DomainObjectUtil.COMPARATOR_BY_ID.reversed());
         } else {
-            planComparator = StudentCurricularPlan.STUDENT_CURRICULAR_PLAN_COMPARATOR_BY_START_DATE
-                    .thenComparing(DomainObjectUtil.COMPARATOR_BY_ID);
+            planComparator =
+                    StudentCurricularPlan.COMPARATOR_BY_START_EXECUTION_AND_DATE.thenComparing(DomainObjectUtil.COMPARATOR_BY_ID);
         }
 
         return planComparator.compare(x.getCurriculumGroup().getStudentCurricularPlan(),
