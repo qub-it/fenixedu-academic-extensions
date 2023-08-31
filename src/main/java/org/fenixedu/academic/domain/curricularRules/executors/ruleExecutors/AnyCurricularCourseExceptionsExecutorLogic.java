@@ -151,8 +151,17 @@ public class AnyCurricularCourseExceptionsExecutorLogic extends AbstractCurricul
 
     public static boolean isException(final CompetenceCourse competenceCourse,
             final DegreeCurricularPlan chosenDegreeCurricularPlan, final StudentCurricularPlan studentCurricularPlan) {
-        return Bennu.getInstance().getAnyCurricularCourseExceptionsConfiguration().getCompetenceCoursesSet()
-                .contains(competenceCourse);
+
+        boolean result = false;
+
+        // can only be considered an exception if the user chose other DCP than his own
+        if (chosenDegreeCurricularPlan != studentCurricularPlan.getDegreeCurricularPlan()) {
+
+            result = Bennu.getInstance().getAnyCurricularCourseExceptionsConfiguration().getCompetenceCoursesSet()
+                    .contains(competenceCourse);
+        }
+
+        return result;
     }
 
     static private RuleResult createResultFalse(final AnyCurricularCourseExceptions rule,
