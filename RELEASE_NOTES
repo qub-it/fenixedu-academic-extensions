@@ -1,3 +1,4 @@
+4.21.4 (31-08-2023)
 - Refactor: Revert change AnyCurricularCourseExceptions should not excluded same DCP courses from exceptions
 
 4.21.3 (30-08-2023)
