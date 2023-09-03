@@ -130,8 +130,8 @@ abstract public class CompetenceCourseServices {
     static private boolean isApproved(final StudentCurricularPlan plan, final CompetenceCourse competence,
             final ExecutionInterval interval) {
 
-        final String key = String.format("%s#%s#%s", plan.getExternalId(), competence.getExternalId(),
-                (interval == null ? "null" : interval.getExternalId()));
+        final String key = plan.getExternalId() + "#" + competence.getExternalId() + "#"
+                + (interval == null ? "null" : interval.getExternalId());
 
         try {
             return CACHE_APPROVALS.get(key, new Callable<Boolean>() {

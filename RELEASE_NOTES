@@ -1,3 +1,5 @@
+- Improvement: Improve performance of cache key computation to check if competence is approved
+
 4.21.4 (31-08-2023)
 - Refactor: Revert change AnyCurricularCourseExceptions should not excluded same DCP courses from exceptions
 
