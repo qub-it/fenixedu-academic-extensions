@@ -40,7 +40,7 @@ public class RegistrationDataServices {
             observation.setValue(value);
 
             info.setCurricularYear(update);
-            RegistrationServices.invalidateCacheCurricularYear(registration, data.getExecutionYear());
+            RegistrationServices.invalidateCaches(registration, data.getExecutionYear());
         }
     }
 

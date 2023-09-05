@@ -1,3 +1,6 @@
+- Improvement: Increase size and expiration of competence course approval cache
+- Improvement: Allow competence course approval cache invalidation
+
 4.21.5 (03-09-2023)
 - Improvement: Improve performance of cache key computation to check if competence is approved
 

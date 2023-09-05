@@ -56,8 +56,8 @@ abstract public class CompetenceCourseServices {
 
     static final private Logger logger = LoggerFactory.getLogger(CompetenceCourseServices.class);
 
-    static final private int CACHE_APPROVALS_MAX_SIZE = 2000 /* average students */ * 25 /* average enrolments */;
-    static final private int CACHE_APPROVALS_EXPIRE_MIN = 1 /* cannot increase, since we don't invalidate upon approval CRUD */;
+    static final private int CACHE_APPROVALS_MAX_SIZE = 200_000;
+    static final private int CACHE_APPROVALS_EXPIRE_MIN = 10;
 
     static final private Cache<String, Boolean> CACHE_APPROVALS = CacheBuilder.newBuilder().concurrencyLevel(4)
             .maximumSize(CACHE_APPROVALS_MAX_SIZE).expireAfterWrite(CACHE_APPROVALS_EXPIRE_MIN, TimeUnit.MINUTES).build();
@@ -93,7 +93,8 @@ abstract public class CompetenceCourseServices {
         final Registration registration = plan.getRegistration();
         final CompetenceCourse competence = curricularCourse.getCompetenceCourse();
 
-        final Predicate<Enrolment> validEnrolment = (e) -> !e.isAnnulled() && e.getExecutionYear().isBeforeOrEquals(executionYear);
+        final Predicate<Enrolment> validEnrolment =
+                (e) -> !e.isAnnulled() && e.getExecutionYear().isBeforeOrEquals(executionYear);
 
         // optional curricular course
         if (competence == null) {
@@ -130,8 +131,7 @@ abstract public class CompetenceCourseServices {
     static private boolean isApproved(final StudentCurricularPlan plan, final CompetenceCourse competence,
             final ExecutionInterval interval) {
 
-        final String key = plan.getExternalId() + "#" + competence.getExternalId() + "#"
-                + (interval == null ? "null" : interval.getExternalId());
+        final String key = buildCourseApprovalCacheKey(plan, competence, interval);
 
         try {
             return CACHE_APPROVALS.get(key, new Callable<Boolean>() {
@@ -149,6 +149,14 @@ abstract public class CompetenceCourseServices {
             logger.error(String.format("Unable to get Approvals [%s %s %s]", new DateTime(), key, t.getLocalizedMessage()));
             return false;
         }
+    }
+
+    
+
+    private static String buildCourseApprovalCacheKey(final StudentCurricularPlan plan, final CompetenceCourse competence,
+            final ExecutionInterval interval) {
+        return plan.getExternalId() + "#" + competence.getExternalId() + "#"
+                + (interval == null ? "null" : interval.getExternalId());
     }
 
     static public Set<CurricularCourse> getExpandedCurricularCourses(final String code) {
@@ -201,6 +209,15 @@ abstract public class CompetenceCourseServices {
 
     static private String filterCode(final String input) {
         return !isExpandedCode(input) ? input : input.substring(0, input.lastIndexOf("_"));
+    }
+    
+    public static void invalidateCourseApprovalCache(final StudentCurricularPlan plan, final CurricularCourse curricularCourse,
+            final ExecutionInterval interval) {
+        if (curricularCourse == null || curricularCourse.getCompetenceCourse() == null) {
+            return;
+        }
+
+        CACHE_APPROVALS.invalidate(buildCourseApprovalCacheKey(plan, curricularCourse.getCompetenceCourse(), interval));
     }
 
 }

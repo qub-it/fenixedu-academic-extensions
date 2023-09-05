@@ -151,8 +151,9 @@ public class RegistrationServices {
         }
     }
 
-    static public void invalidateCacheCurricularYear(final Registration registration, final ExecutionYear executionYear) {
+    static public void invalidateCaches(final Registration registration, final ExecutionYear executionYear) {
         CACHE_CURRICULAR_YEAR.invalidate(getCacheKey(registration, executionYear));
+        CACHE_CURRICULUMS.invalidate(getCacheKey(registration, executionYear));
     }
 
     static public ExecutionYear getConclusionExecutionYear(final Registration registration) {
