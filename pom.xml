@@ -60,7 +60,7 @@
 		<dependency>
 			<groupId>com.qubit.solution.fenixedu</groupId>
 			<artifactId>fenixedu-academic-core</artifactId>
-			<version>42.1.8</version>
+			<version>43.0.0</version>
 		</dependency>
         <dependency>
             <groupId>org.fenixedu</groupId>
