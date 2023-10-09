@@ -21,7 +21,6 @@ import org.fenixedu.academic.domain.degree.ExtendedDegreeInfo;
 import org.fenixedu.academic.domain.degreeStructure.CompetenceCourseInformation;
 import org.fenixedu.academic.domain.degreeStructure.DegreeModule;
 import org.fenixedu.academic.domain.degreeStructure.OptionalCurricularCourse;
-import org.fenixedu.academic.domain.enrolment.EnrolmentManagerFactoryInitializer;
 import org.fenixedu.academic.domain.enrolment.EnrolmentPredicateInitializer;
 import org.fenixedu.academic.domain.evaluation.EnrolmentEvaluationExtendedInformation;
 import org.fenixedu.academic.domain.evaluation.EvaluationComparator;
@@ -76,7 +75,6 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
         RegistrationExtendedInformation.setupDeleteListener();
         RegistrationDataByExecutionYearExtendedInformation.setupDeleteListener();
         EctsAndWeightProviders.init();
-        EnrolmentManagerFactoryInitializer.init();
 
         setupListenersForStudentSchedule();
 
