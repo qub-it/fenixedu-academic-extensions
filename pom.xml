@@ -11,7 +11,7 @@
 
 	<groupId>org.fenixedu</groupId>
 	<artifactId>fenixedu-academic-extensions</artifactId>
-	<version>4.21.6</version>
+	<version>4.22.0</version>
 	<packaging>jar</packaging>
 
 	<name>FenixEdu Academic Extensions</name>
