@@ -961,6 +961,11 @@ relation RuleEnrolmentStatuteType {
 	.org.fenixedu.academic.domain.student.StatuteType playsRole statuteTypes { multiplicity *; }
 }
 
+relation RuleEnrolmentAcademicPeriodOrder {
+	curricularRules.curricularPeriod.RuleEnrolment playsRole ruleEnrolments { multiplicity *; }
+	.org.fenixedu.academic.domain.time.calendarStructure.AcademicPeriodOrder playsRole academicPeriodOrders { multiplicity *; }
+}
+
 relation CurricularPeriodConfigurationRuleTransition {
 	curricularRules.curricularPeriod.CurricularPeriodConfiguration playsRole configurationTransition {
 		multiplicity 0..1;

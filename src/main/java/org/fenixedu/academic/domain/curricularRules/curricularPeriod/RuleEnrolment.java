@@ -90,6 +90,7 @@ abstract public class RuleEnrolment extends RuleEnrolment_Base {
     public void delete() {
         super.setConfigurationEnrolment(null);
         getStatuteTypesSet().clear();
+        getAcademicPeriodOrdersSet().clear();
         super.delete();
     }
 
