@@ -13,6 +13,7 @@ import org.fenixedu.academic.domain.studentCurriculum.CurriculumGroup;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumLine;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumModule;
 import org.fenixedu.academic.domain.studentCurriculum.Dismissal;
+import org.fenixedu.academic.domain.time.calendarStructure.AcademicPeriod;
 import org.joda.time.YearMonthDay;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -138,8 +139,20 @@ public class CurriculumModuleServices {
             return BigDecimal.ZERO;
         }
 
-        if (toInspect.isAnual() && !interval.getChildOrder().equals(1)) {
-            return BigDecimal.ZERO;
+        if (toInspect.isAnual()) {
+
+            if (!interval.getChildOrder().equals(1)) {
+                return BigDecimal.ZERO;
+            }
+
+            final AcademicPeriod contextPeriod = toInspect.getCurricularCourse()
+                    .getParentContextsByExecutionYear(toInspect.getExecutionInterval().getExecutionYear()).stream()
+                    .map(ctx -> ctx.getCurricularPeriod().getAcademicPeriod()).distinct().findFirst()
+                    .orElse(AcademicPeriod.SEMESTER);
+
+            if (!interval.getAcademicPeriod().equals(contextPeriod)) {
+                return BigDecimal.ZERO;
+            }
         }
 
         final BigDecimal result = toInspect.getEctsCreditsForCurriculum();

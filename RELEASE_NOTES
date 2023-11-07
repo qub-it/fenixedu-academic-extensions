@@ -1,3 +1,5 @@
+- Bug fix: Annual curricular course credits should only be accounted once by period for enroled and not approved credits [#qubIT-Fenix-4545]
+
 4.23.1 (30-10-2023)
 - Bug fix: Add missing dismissal labels [#qubIT-Fenix-4498]
 
