@@ -108,7 +108,7 @@ public class CreditsInEnrolmentPeriod extends CreditsInEnrolmentPeriod_Base {
         final Set<DegreeModule> processedDegreeModules = Sets.newHashSet();
 
         for (final IDegreeModuleToEvaluate degreeModuleToEvaluate : getEnroledAndEnroling(enrolmentContext,
-                i -> i.getExecutionInterval().getExecutionYear() == enrolmentContext.getExecutionPeriod().getExecutionYear())) {
+                dme -> isValidForAcademicPeriods(dme))) {
 
             processedDegreeModules.add(degreeModuleToEvaluate.getDegreeModule());
 
@@ -136,6 +136,8 @@ public class CreditsInEnrolmentPeriod extends CreditsInEnrolmentPeriod_Base {
         return total.compareTo(getCredits()) <= 0 ? createTrue() : createFalseLabelled(total);
     }
 
+    
+    @Deprecated
     private RuleResult executeBySemester(final EnrolmentContext enrolmentContext) {
         BigDecimal total = BigDecimal.ZERO;
 

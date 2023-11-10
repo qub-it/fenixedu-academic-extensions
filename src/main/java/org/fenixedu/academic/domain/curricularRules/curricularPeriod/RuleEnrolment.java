@@ -31,10 +31,13 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.fenixedu.academic.domain.CompetenceCourse;
+import org.fenixedu.academic.domain.CurricularCourse;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
 import org.fenixedu.academic.domain.enrolment.EnrolmentContext;
 import org.fenixedu.academic.domain.enrolment.IDegreeModuleToEvaluate;
+import org.fenixedu.academic.domain.enrolment.OptionalDegreeModuleToEnrol;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.student.RegistrationRegimeType;
 import org.fenixedu.academic.domain.student.services.StatuteServices;
@@ -140,6 +143,28 @@ abstract public class RuleEnrolment extends RuleEnrolment_Base {
     protected String getStatuteTypesLabelPrefix() {
         return !getStatuteTypesSet().isEmpty() ? " ["
                 + getStatuteTypesSet().stream().map(s -> s.getName().getContent()).collect(Collectors.joining(", ")) + "] " : "";
+    }
+
+    protected boolean isValidForAcademicPeriods(IDegreeModuleToEvaluate toEvaluate) {
+        if (getAcademicPeriodOrdersSet().isEmpty()) {
+            return true;
+        }
+
+        if (!toEvaluate.getDegreeModule().isLeaf()) {
+            //groups
+            return true;
+        }
+
+        final CompetenceCourse competenceCourse;
+        if (toEvaluate instanceof OptionalDegreeModuleToEnrol) {
+            competenceCourse = ((OptionalDegreeModuleToEnrol) toEvaluate).getCurricularCourse().getCompetenceCourse();
+        } else {
+            competenceCourse = ((CurricularCourse) toEvaluate.getDegreeModule()).getCompetenceCourse();
+        }
+
+        return getAcademicPeriodOrdersSet().stream()
+                .anyMatch(apo -> apo.getAcademicPeriod().equals(competenceCourse.getAcademicPeriod())
+                        && apo.getPeriodOrder().intValue() == toEvaluate.getExecutionInterval().getChildOrder().intValue());
     }
 
     abstract public RuleResult execute(final EnrolmentContext enrolmentContext);

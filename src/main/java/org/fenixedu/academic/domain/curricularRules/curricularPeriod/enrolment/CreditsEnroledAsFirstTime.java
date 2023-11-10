@@ -37,10 +37,11 @@ public class CreditsEnroledAsFirstTime extends CreditsEnroledAsFirstTime_Base {
 
     @Override
     public RuleResult execute(EnrolmentContext enrolmentContext) {
-        return getSemester() != null ? executeByPeriod(enrolmentContext) : executeByYear(enrolmentContext);
+        return getSemester() != null ? executeBySemester(enrolmentContext) : executeByYear(enrolmentContext);
     }
 
-    private RuleResult executeByPeriod(EnrolmentContext enrolmentContext) {
+    @Deprecated
+    private RuleResult executeBySemester(EnrolmentContext enrolmentContext) {
         //TODO: support other types of periods (add new parameter indicating period type and semester is period order)
         final Predicate<IDegreeModuleToEvaluate> periodFilter = dme -> dme.isAnnualCurricularCourse(
                 enrolmentContext.getExecutionYear()) ? dme.getExecutionInterval().getExecutionYear() == enrolmentContext
@@ -62,6 +63,10 @@ public class CreditsEnroledAsFirstTime extends CreditsEnroledAsFirstTime_Base {
                 continue;
             }
 
+            if (!isValidForAcademicPeriods(degreeModuleToEvaluate)) {
+                continue;
+            }
+
             if (isFirstTimeEnrolment(enrolmentContext, degreeModuleToEvaluate)) {
                 total = total.add(BigDecimal.valueOf(degreeModuleToEvaluate.getEctsCredits()));
             }
@@ -76,8 +81,7 @@ public class CreditsEnroledAsFirstTime extends CreditsEnroledAsFirstTime_Base {
         for (final StudentCurricularPlan studentCurricularPlan : registration.getStudentCurricularPlansSet()) {
 
             final Collection<Enrolment> filteredEnrolments = studentCurricularPlan.getEnrolmentsSet().stream()
-                    .filter(e -> enrolmentContext.isToEvaluateRulesByYear() ? e.getExecutionYear().isBefore(enrolmentContext
-                            .getExecutionYear()) : e.getExecutionPeriod().isBefore(enrolmentContext.getExecutionPeriod()))
+                    .filter(e -> e.getExecutionInterval().isBefore(enrolmentContext.getExecutionPeriod()))
                     .filter(e -> !e.isAnnulled()).collect(Collectors.toSet());
 
             for (final CurricularCourse curricularCourse : collectCurricularCoursesToInspect(degreeModuleToEvaluate)) {
