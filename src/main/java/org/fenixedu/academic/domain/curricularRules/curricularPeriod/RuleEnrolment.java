@@ -115,6 +115,7 @@ abstract public class RuleEnrolment extends RuleEnrolment_Base {
         ruleEnrolment.setApplyToFlunkedStudents(getApplyToFlunkedStudents());
         ruleEnrolment.setApplyToPartialRegime(getApplyToPartialRegime());
         ruleEnrolment.getStatuteTypesSet().addAll(getStatuteTypesSet());
+        ruleEnrolment.getAcademicPeriodOrdersSet().addAll(getAcademicPeriodOrdersSet());
     }
 
     protected boolean hasValidRegime(final EnrolmentContext enrolmentContext) {
