@@ -87,8 +87,7 @@ public class CreditsNotEnroled extends CreditsNotEnroled_Base {
             return createFalseConfiguration();
         }
 
-        final ICurriculum curriculum = RegistrationServices.getCurriculum(enrolmentContext.getRegistration(),
-                enrolmentContext.getExecutionPeriod().getExecutionYear());
+        final ICurriculum curriculum = RegistrationServices.getCurriculum(enrolmentContext.getRegistration(), null);
 
         BigDecimal approved = getCreditsApproved(curriculum, configured);
         BigDecimal enroledAndEnroling = getCreditsEnroledAndEnroling(enrolmentContext, configured);
