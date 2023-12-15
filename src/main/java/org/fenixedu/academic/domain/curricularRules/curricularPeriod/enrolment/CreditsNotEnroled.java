@@ -115,7 +115,7 @@ public class CreditsNotEnroled extends CreditsNotEnroled_Base {
         BigDecimal result = BigDecimal.ZERO;
 
         final Map<CurricularPeriod, BigDecimal> curricularPeriodCredits =
-                CurricularPeriodServices.mapYearCredits(enrolmentContext, getApplyToOptionals(), null);
+                CurricularPeriodServices.mapYearCredits(enrolmentContext, getApplyToOptionals());
         final BigDecimal credits = curricularPeriodCredits.get(curricularPeriod);
         if (credits != null) {
             result = result.add(credits);

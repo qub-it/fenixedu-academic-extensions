@@ -95,7 +95,7 @@ public class MinCreditsInEnrolmentPeriod extends MinCreditsInEnrolmentPeriod_Bas
 
     private BigDecimal getEnroledCredits(final EnrolmentContext context) {
         final Collection<CurricularPeriod> curricularPeriods = getCurricularPeriodsForYears(context);
-        final Map<CurricularPeriod, BigDecimal> creditsByYear = mapYearCredits(context, null, null);
+        final Map<CurricularPeriod, BigDecimal> creditsByYear = mapYearCredits(context, null);
 
         return creditsByYear.entrySet().stream().filter(e -> curricularPeriods.contains(e.getKey())).map(e -> e.getValue())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);

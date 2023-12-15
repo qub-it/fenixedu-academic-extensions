@@ -3,6 +3,7 @@ package org.fenixedu.academic.domain.degreeStructure;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -12,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
+import org.fenixedu.academic.domain.CurricularCourse;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionYear;
@@ -23,11 +25,13 @@ import org.fenixedu.academic.domain.curricularRules.curricularPeriod.RuleEnrolme
 import org.fenixedu.academic.domain.enrolment.EnroledEnrolmentWrapper;
 import org.fenixedu.academic.domain.enrolment.EnrolmentContext;
 import org.fenixedu.academic.domain.enrolment.IDegreeModuleToEvaluate;
+import org.fenixedu.academic.domain.enrolment.OptionalDegreeModuleToEnrol;
 import org.fenixedu.academic.domain.student.curriculum.CurriculumLineServices;
 import org.fenixedu.academic.domain.student.curriculum.ICurriculum;
 import org.fenixedu.academic.domain.student.curriculum.ICurriculumEntry;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumLine;
 import org.fenixedu.academic.domain.time.calendarStructure.AcademicPeriod;
+import org.fenixedu.academic.domain.time.calendarStructure.AcademicPeriodOrder;
 import org.fenixedu.academic.dto.CurricularPeriodInfoDTO;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -234,6 +238,38 @@ public class CurricularPeriodServices {
     }
 
     public static Map<CurricularPeriod, BigDecimal> mapYearCredits(final EnrolmentContext enrolmentContext,
+            final Boolean applyToOptionals) {
+
+        final Map<CurricularPeriod, BigDecimal> result = Maps.newHashMap();
+
+        final DegreeCurricularPlan dcp = enrolmentContext.getStudentCurricularPlan().getDegreeCurricularPlan();
+
+        for (final IDegreeModuleToEvaluate iter : RuleEnrolment.getEnroledAndEnroling(enrolmentContext)) {
+
+            final DegreeModule degreeModule = iter.getDegreeModule();
+            if (applyToOptionals != null) {
+                final boolean isOptionalByGroup = iter.getCurriculumGroup().getDegreeModule().getIsOptional();
+                if ((applyToOptionals && !isOptionalByGroup) || (!applyToOptionals && isOptionalByGroup)) {
+                    continue;
+                }
+            }
+
+            final int year = getCurricularYear(iter);
+            final CurricularPeriod curricularPeriod = getCurricularPeriod(dcp, year);
+
+            if (curricularPeriod != null) {
+                final BigDecimal credits = BigDecimal.valueOf(iter.getEctsCredits());
+                final String code = degreeModule == null ? "Opt" : degreeModule.getCode();
+                addYearCredits(result, curricularPeriod, credits, code);
+            }
+        }
+
+        mapYearCreditsLogger(result);
+        return result;
+    }
+
+    @Deprecated(forRemoval = true)
+    public static Map<CurricularPeriod, BigDecimal> mapYearCredits(final EnrolmentContext enrolmentContext,
             final Boolean applyToOptionals, final ExecutionInterval interval) {
 
         final Map<CurricularPeriod, BigDecimal> result = Maps.newHashMap();
@@ -270,6 +306,40 @@ public class CurricularPeriodServices {
 
         mapYearCreditsLogger(result);
         return result;
+    }
+
+    public static Map<Integer, BigDecimal> mapYearCreditsForPeriods(final EnrolmentContext enrolmentContext,
+            final Collection<AcademicPeriodOrder> academicPeriodOrders) {
+        final Map<Integer, BigDecimal> result = new HashMap<>();
+
+        for (final IDegreeModuleToEvaluate iter : RuleEnrolment.getEnroledAndEnroling(enrolmentContext)) {
+
+            final AcademicPeriod courseAcademicPeriod = getCourseAcademicPeriod(iter);
+            final ExecutionInterval executionInterval = iter.getExecutionInterval();
+            if (!academicPeriodOrders.isEmpty() && academicPeriodOrders.stream().noneMatch(
+                    apo -> isAcademicPeriodOrderForCourse(apo, courseAcademicPeriod, executionInterval.getChildOrder()))) {
+                continue;
+            }
+
+            final Integer year = Integer.valueOf(getCurricularYear(iter));
+            final BigDecimal credits = BigDecimal.valueOf(iter.getEctsCredits());
+            result.merge(year, credits, (v1, v2) -> v1.add(v2));
+        }
+
+        return result;
+    }
+
+    private static AcademicPeriod getCourseAcademicPeriod(final IDegreeModuleToEvaluate iter) {
+        if (iter instanceof OptionalDegreeModuleToEnrol) {
+            return ((OptionalDegreeModuleToEnrol) iter).getCurricularCourse().getCompetenceCourse().getAcademicPeriod();
+        }
+
+        return ((CurricularCourse) iter.getDegreeModule()).getCompetenceCourse().getAcademicPeriod();
+    }
+
+    private static boolean isAcademicPeriodOrderForCourse(AcademicPeriodOrder periodOrder, AcademicPeriod courseAcademicPeriod,
+            Integer order) {
+        return periodOrder.getAcademicPeriod().equals(courseAcademicPeriod) && periodOrder.getPeriodOrder().equals(order);
     }
 
     public static void mapYearCreditsLogger(final Map<CurricularPeriod, BigDecimal> input) {

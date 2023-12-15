@@ -1,7 +1,8 @@
+- Refactor: CreditsInCurricularPeriod rule should take into account academic periods [#qubIT-Fenix-3818]
+
 4.25.0 (14-12-2023)
 - Improvement: Adds fenixedu OSS DM [#qubIT-Omnis-4736]
 - Improvement: CreditsNotEnroled rule should display current approved credits [#qubIT-Fenix-4684]
-
 
 4.24.0 (13-11-2023)
 - Refactor: Change enrolment rules to allow association of periods [#qubIT-Fenix-3969]

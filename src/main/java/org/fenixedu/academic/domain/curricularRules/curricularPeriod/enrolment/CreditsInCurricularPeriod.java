@@ -3,6 +3,7 @@ package org.fenixedu.academic.domain.curricularRules.curricularPeriod.enrolment;
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionYear;
@@ -90,12 +91,22 @@ public class CreditsInCurricularPeriod extends CreditsInCurricularPeriod_Base {
             return createNA();
         }
 
-        final Set<CurricularPeriod> configured = getCurricularPeriodsConfigured(getYearMin(), getYearMax(), true);
-        if (configured == null) {
-            return createFalseConfiguration();
+        // deprecated
+        if (getAcademicPeriodOrdersSet().isEmpty()) {
+            final Set<CurricularPeriod> configured = getCurricularPeriodsConfigured(getYearMin(), getYearMax(), true);
+            if (configured == null || configured.contains(null)) {
+                return createFalseConfiguration();
+            }
+
+            final BigDecimal total = getCreditsEnroledAndEnroling(enrolmentContext, configured);
+            return total.compareTo(getCredits()) <= 0 ? createTrue() : createFalseLabelled(total);
         }
 
-        final BigDecimal total = getCreditsEnroledAndEnroling(enrolmentContext, configured);
+        final Map<Integer, BigDecimal> creditsByYear =
+                CurricularPeriodServices.mapYearCreditsForPeriods(enrolmentContext, getAcademicPeriodOrdersSet());
+
+        final BigDecimal total = IntStream.rangeClosed(getYearMin(), getYearMax()).boxed()
+                .map(year -> creditsByYear.getOrDefault(year, BigDecimal.ZERO)).reduce(BigDecimal.ZERO, BigDecimal::add);
 
         return total.compareTo(getCredits()) <= 0 ? createTrue() : createFalseLabelled(total);
     }
@@ -116,6 +127,7 @@ public class CreditsInCurricularPeriod extends CreditsInCurricularPeriod_Base {
 
     }
 
+    @Deprecated
     private BigDecimal getCreditsEnroledAndEnroling(final EnrolmentContext enrolmentContext,
             final Set<CurricularPeriod> configured) {
 
