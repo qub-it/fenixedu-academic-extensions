@@ -136,7 +136,6 @@ public class CreditsInEnrolmentPeriod extends CreditsInEnrolmentPeriod_Base {
         return total.compareTo(getCredits()) <= 0 ? createTrue() : createFalseLabelled(total);
     }
 
-    
     @Deprecated
     private RuleResult executeBySemester(final EnrolmentContext enrolmentContext) {
         BigDecimal total = BigDecimal.ZERO;
@@ -147,8 +146,12 @@ public class CreditsInEnrolmentPeriod extends CreditsInEnrolmentPeriod_Base {
 
         for (final IDegreeModuleToEvaluate degreeModuleToEvaluate : getEnroledAndEnroling(enrolmentContext, filter)) {
 
-            final BigDecimal credits =
-                    BigDecimal.valueOf(degreeModuleToEvaluate.getAccumulatedEctsCredits(enrolmentContext.getExecutionPeriod()));
+            BigDecimal credits = BigDecimal.valueOf(degreeModuleToEvaluate.getEctsCredits());
+
+            if (degreeModuleToEvaluate.isAnnualCurricularCourse(enrolmentContext.getExecutionYear())) {
+                credits = credits.divide(new BigDecimal(2));
+            }
+
             total = total.add(credits);
         }
 

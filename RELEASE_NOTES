@@ -1,4 +1,5 @@
 - Refactor: CreditsInCurricularPeriod rule should take into account academic periods [#qubIT-Fenix-3818]
+- Refactor: When evaluating CreditsInEnrolmentPeriod by semester, split annual course credits [#qubIT-Fenix-3818]
 
 4.25.0 (14-12-2023)
 - Improvement: Adds fenixedu OSS DM [#qubIT-Omnis-4736]
