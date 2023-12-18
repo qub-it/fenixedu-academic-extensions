@@ -1,3 +1,4 @@
+4.26.0 (18-12-2023)
 - Refactor: CreditsInCurricularPeriod rule should take into account academic periods [#qubIT-Fenix-3818]
 - Refactor: When evaluating CreditsInEnrolmentPeriod by semester, split annual course credits [#qubIT-Fenix-3818]
 
