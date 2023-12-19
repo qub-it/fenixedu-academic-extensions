@@ -2,12 +2,8 @@ package org.fenixedu.academic.domain.curricularRules.curricularPeriod.enrolment;
 
 import java.math.BigDecimal;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.IntStream;
 
-import org.fenixedu.academic.domain.ExecutionInterval;
-import org.fenixedu.academic.domain.ExecutionYear;
-import org.fenixedu.academic.domain.curricularPeriod.CurricularPeriod;
 import org.fenixedu.academic.domain.curricularRules.curricularPeriod.CurricularPeriodConfiguration;
 import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
 import org.fenixedu.academic.domain.degreeStructure.CurricularPeriodServices;
@@ -91,17 +87,6 @@ public class CreditsInCurricularPeriod extends CreditsInCurricularPeriod_Base {
             return createNA();
         }
 
-        // deprecated
-        if (getAcademicPeriodOrdersSet().isEmpty()) {
-            final Set<CurricularPeriod> configured = getCurricularPeriodsConfigured(getYearMin(), getYearMax(), true);
-            if (configured == null || configured.contains(null)) {
-                return createFalseConfiguration();
-            }
-
-            final BigDecimal total = getCreditsEnroledAndEnroling(enrolmentContext, configured);
-            return total.compareTo(getCredits()) <= 0 ? createTrue() : createFalseLabelled(total);
-        }
-
         final Map<Integer, BigDecimal> creditsByYear =
                 CurricularPeriodServices.mapYearCreditsForPeriods(enrolmentContext, getAcademicPeriodOrdersSet());
 
@@ -125,29 +110,6 @@ public class CreditsInCurricularPeriod extends CreditsInCurricularPeriod_Base {
 
         return true;
 
-    }
-
-    @Deprecated
-    private BigDecimal getCreditsEnroledAndEnroling(final EnrolmentContext enrolmentContext,
-            final Set<CurricularPeriod> configured) {
-
-        BigDecimal result = BigDecimal.ZERO;
-
-        final ExecutionYear executionYear = enrolmentContext.getExecutionPeriod().getExecutionYear();
-        final ExecutionInterval interval = getSemester() == null ? null : executionYear.getExecutionSemesterFor(getSemester());
-
-        final Map<CurricularPeriod, BigDecimal> curricularPeriodCredits =
-                CurricularPeriodServices.mapYearCredits(enrolmentContext, getApplyToOptionals(), interval);
-        final Set<CurricularPeriod> toInspect = configured;
-
-        for (final CurricularPeriod iter : toInspect) {
-            final BigDecimal credits = curricularPeriodCredits.get(iter);
-            if (credits != null) {
-                result = result.add(credits);
-            }
-        }
-
-        return result;
     }
 
 }

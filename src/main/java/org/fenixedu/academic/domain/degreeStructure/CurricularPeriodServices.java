@@ -268,46 +268,6 @@ public class CurricularPeriodServices {
         return result;
     }
 
-    @Deprecated(forRemoval = true)
-    public static Map<CurricularPeriod, BigDecimal> mapYearCredits(final EnrolmentContext enrolmentContext,
-            final Boolean applyToOptionals, final ExecutionInterval interval) {
-
-        final Map<CurricularPeriod, BigDecimal> result = Maps.newHashMap();
-
-        final DegreeCurricularPlan dcp = enrolmentContext.getStudentCurricularPlan().getDegreeCurricularPlan();
-
-        for (final IDegreeModuleToEvaluate iter : RuleEnrolment.getEnroledAndEnroling(enrolmentContext)) {
-
-            if (interval != null && iter.getExecutionInterval() != interval) {
-                continue;
-            }
-
-            final DegreeModule degreeModule = iter.getDegreeModule();
-            if (applyToOptionals != null) {
-                final boolean isOptionalByGroup = iter.getCurriculumGroup().getDegreeModule().getIsOptional();
-                if ((applyToOptionals && !isOptionalByGroup) || (!applyToOptionals && isOptionalByGroup)) {
-                    continue;
-                }
-            }
-
-            final int year = getCurricularYear(iter);
-            final CurricularPeriod curricularPeriod =
-                    getCurricularPeriod(dcp, year, interval == null ? null : interval.getChildOrder());
-
-            if (curricularPeriod != null) {
-
-                final BigDecimal credits =
-                        BigDecimal.valueOf(interval != null ? iter.getAccumulatedEctsCredits(interval) : iter.getEctsCredits());
-
-                final String code = degreeModule == null ? "Opt" : degreeModule.getCode();
-                addYearCredits(result, curricularPeriod, credits, code);
-            }
-        }
-
-        mapYearCreditsLogger(result);
-        return result;
-    }
-
     public static Map<Integer, BigDecimal> mapYearCreditsForPeriods(final EnrolmentContext enrolmentContext,
             final Collection<AcademicPeriodOrder> academicPeriodOrders) {
         final Map<Integer, BigDecimal> result = new HashMap<>();
