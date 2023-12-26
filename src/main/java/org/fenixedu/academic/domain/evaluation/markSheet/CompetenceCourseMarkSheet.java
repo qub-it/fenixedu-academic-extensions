@@ -31,6 +31,7 @@ import java.text.Collator;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -346,12 +347,14 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
     }
 
     private Set<EvaluationSeasonPeriod> getEvaluationSeasonPeriods(final EvaluationSeasonPeriodType periodType) {
-        final Set<EvaluationSeasonPeriod> result = Sets.<EvaluationSeasonPeriod> newHashSet();
+        final Set<EvaluationSeasonPeriod> result = new HashSet<>();
 
-        for (final EvaluationSeasonPeriod iter : getExecutionInterval().getEvaluationSeasonPeriodSet()) {
-            if (iter.getPeriodType() == periodType && iter.getSeason() == getEvaluationSeason()
-                    && !Sets.intersection(iter.getExecutionDegrees(), getExecutionDegrees()).isEmpty()) {
-                result.add(iter);
+        final Set<ExecutionDegree> executionDegreesForThisMarksheet = getExecutionDegrees();
+
+        for (final EvaluationSeasonPeriod period : getExecutionInterval().getEvaluationSeasonPeriodSet()) {
+            if (period.getPeriodType() == periodType && period.getSeason() == getEvaluationSeason()
+                    && !Sets.intersection(period.getExecutionDegrees(), executionDegreesForThisMarksheet).isEmpty()) {
+                result.add(period);
             }
         }
 
@@ -360,7 +363,8 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
 
     private Set<ExecutionDegree> getExecutionDegrees() {
         return getExecutionCourse().getAssociatedCurricularCoursesSet().stream()
-                .map(i -> i.getExecutionDegreeFor(getExecutionInterval().getAcademicInterval())).collect(Collectors.toSet());
+                .flatMap(course -> course.getDegreeCurricularPlan().findExecutionDegree(getExecutionInterval()).stream())
+                .collect(Collectors.toSet());
     }
 
     // @formatter: off

@@ -1,3 +1,5 @@
+- Bug fix: On evaluation season period validation, don't use execution degree finder by academic interval [#UL-FC-4743]
+
 4.27.0 (19-12-2023)
 - Refactor: Remove support for semester field in CreditsInCurricularPeriod rule [#qubIT-Fenix-3818]
 
