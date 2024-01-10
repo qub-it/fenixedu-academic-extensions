@@ -27,11 +27,13 @@
 
 package org.fenixedu.academic.domain.evaluation.markSheet;
 
+import static org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonPeriodType.EXAMS;
+import static org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonPeriodType.GRADE_SUBMISSION;
+
 import java.text.Collator;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -53,7 +55,6 @@ import org.fenixedu.academic.domain.EnrolmentEvaluation;
 import org.fenixedu.academic.domain.Evaluation;
 import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.academic.domain.ExecutionCourse;
-import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.Grade;
@@ -68,7 +69,6 @@ import org.fenixedu.academic.domain.evaluation.EvaluationComparator;
 import org.fenixedu.academic.domain.evaluation.EvaluationServices;
 import org.fenixedu.academic.domain.evaluation.config.MarkSheetSettings;
 import org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonPeriod;
-import org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonPeriodType;
 import org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonServices;
 import org.fenixedu.academic.domain.evaluation.season.rule.EvaluationSeasonRule;
 import org.fenixedu.academic.domain.evaluation.season.rule.GradeScaleValidator;
@@ -339,32 +339,12 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
     }
 
     public Set<EvaluationSeasonPeriod> getGradeSubmissionPeriods() {
-        return getEvaluationSeasonPeriods(EvaluationSeasonPeriodType.GRADE_SUBMISSION);
+        return EvaluationSeasonPeriod.findBy(getExecutionCourse(), getEvaluationSeason(), GRADE_SUBMISSION)
+                .collect(Collectors.toSet());
     }
 
     public Set<EvaluationSeasonPeriod> getExamsPeriods() {
-        return getEvaluationSeasonPeriods(EvaluationSeasonPeriodType.EXAMS);
-    }
-
-    private Set<EvaluationSeasonPeriod> getEvaluationSeasonPeriods(final EvaluationSeasonPeriodType periodType) {
-        final Set<EvaluationSeasonPeriod> result = new HashSet<>();
-
-        final Set<ExecutionDegree> executionDegreesForThisMarksheet = getExecutionDegrees();
-
-        for (final EvaluationSeasonPeriod period : getExecutionInterval().getEvaluationSeasonPeriodSet()) {
-            if (period.getPeriodType() == periodType && period.getSeason() == getEvaluationSeason()
-                    && !Sets.intersection(period.getExecutionDegrees(), executionDegreesForThisMarksheet).isEmpty()) {
-                result.add(period);
-            }
-        }
-
-        return result;
-    }
-
-    private Set<ExecutionDegree> getExecutionDegrees() {
-        return getExecutionCourse().getAssociatedCurricularCoursesSet().stream()
-                .flatMap(course -> course.getDegreeCurricularPlan().findExecutionDegree(getExecutionInterval()).stream())
-                .collect(Collectors.toSet());
+        return EvaluationSeasonPeriod.findBy(getExecutionCourse(), getEvaluationSeason(), EXAMS).collect(Collectors.toSet());
     }
 
     // @formatter: off

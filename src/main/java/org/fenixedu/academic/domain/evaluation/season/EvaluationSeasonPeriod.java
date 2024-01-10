@@ -2,13 +2,16 @@ package org.fenixedu.academic.domain.evaluation.season;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.fenixedu.academic.domain.EvaluationSeason;
+import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionYear;
@@ -104,6 +107,24 @@ public class EvaluationSeasonPeriod extends EvaluationSeasonPeriod_Base {
     public static Set<EvaluationSeasonPeriod> findBy(final ExecutionYear executionYear) {
         return executionYear != null ? executionYear.getExecutionPeriodsSet().stream()
                 .flatMap(es -> es.getEvaluationSeasonPeriodSet().stream()).collect(Collectors.toSet()) : new HashSet<>();
+    }
+
+    public static Stream<EvaluationSeasonPeriod> findBy(final ExecutionCourse executionCourse, final EvaluationSeason season,
+            final EvaluationSeasonPeriodType periodType) {
+        if (executionCourse == null) {
+            return Stream.empty();
+        }
+
+        final ExecutionInterval executionInterval = executionCourse.getExecutionInterval();
+
+        final Set<ExecutionDegree> executionDegreesForCourse = executionCourse.getAssociatedCurricularCoursesSet().stream()
+                .flatMap(course -> course.getDegreeCurricularPlan().findExecutionDegree(executionInterval).stream())
+                .collect(Collectors.toSet());
+
+        return executionInterval.getEvaluationSeasonPeriodSet().stream()
+                .filter(period -> periodType == null || period.getPeriodType() == periodType)
+                .filter(period -> season == null || period.getSeason() == season)
+                .filter(period -> !Collections.disjoint(period.getExecutionDegrees(), executionDegreesForCourse));
     }
 
     @Deprecated
