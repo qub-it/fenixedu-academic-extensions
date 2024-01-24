@@ -1,3 +1,5 @@
+- Improvement: Allow multiple mobility records for same period [#qubIT-Fenix-4869]
+
 4.27.3 (11-01-2024)
 - Refactor: Add EvaluationSeasonPeriod finder method [#qubIT-Fenix-4817]
 

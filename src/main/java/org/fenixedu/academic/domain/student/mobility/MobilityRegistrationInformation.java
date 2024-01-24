@@ -190,30 +190,6 @@ public class MobilityRegistrationInformation extends MobilityRegistrationInforma
             throw new AcademicExtensionsDomainException("error.MobilityRegistrationInformation.mobilityActivityType.required");
         }
 
-        checkOverlaps();
-
-    }
-
-    private void checkOverlaps() {
-
-        for (final MobilityRegistrationInformation information : MobilityRegistrationInformation.findAll(getRegistration())) {
-
-            if (information == this) {
-                continue;
-            }
-
-            if (information.getBegin() == null || information.getEnd() == null) {
-                throw new AcademicExtensionsDomainException("error.MobilityRegistrationInformation.period.overlaps");
-            }
-
-            if (getBegin().isAfter(information.getEnd()) || getEnd().isBefore(information.getBegin())) {
-                continue;
-            }
-
-            throw new AcademicExtensionsDomainException("error.MobilityRegistrationInformation.period.overlaps");
-
-        }
-
     }
 
     protected void checkRulesForOutgoing() {
