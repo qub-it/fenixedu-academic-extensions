@@ -8,6 +8,11 @@ import org.fenixedu.academic.domain.studentCurriculum.CycleCurriculumGroup;
 import org.fenixedu.academic.dto.student.RegistrationConclusionBean;
 import org.joda.time.LocalDate;
 
+/**
+ * @deprecated use {@link RegistrationConclusionBean}
+ *
+ */
+@Deprecated
 public class RegistrationConclusionInformation {
 
     private RegistrationConclusionBean registrationConclusionBean;
@@ -41,15 +46,7 @@ public class RegistrationConclusionInformation {
     }
 
     public ExecutionYear getConclusionYear() {
-        if(registrationConclusionBean.isConclusionProcessed()) {
-            return registrationConclusionBean.getConclusionYear();
-        }
-        
-        if(registrationConclusionBean.getConclusionYear() != null) {
-            return registrationConclusionBean.getConclusionYear();
-        }
-        
-        return ExecutionYear.readByDateTime(registrationConclusionBean.getConclusionDate().toLocalDate());
+        return registrationConclusionBean.getConclusionYear();
     }
 
     public boolean isConcluded() {
