@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -50,6 +51,7 @@ import org.fenixedu.academic.domain.student.curriculum.CurriculumConfigurationIn
 import org.fenixedu.academic.domain.student.curriculum.ICurriculum;
 import org.fenixedu.academic.domain.student.registrationStates.RegistrationState;
 import org.fenixedu.academic.domain.student.services.StatuteServices;
+import org.fenixedu.academic.domain.studentCurriculum.CurriculumLine;
 import org.fenixedu.academic.domain.studentCurriculum.ExternalCurriculumGroup;
 import org.fenixedu.academic.domain.treasury.IAcademicTreasuryEvent;
 import org.fenixedu.academic.domain.treasury.ITreasuryBridgeAPI;
@@ -1103,5 +1105,49 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 
     public String getHealthCardNumber() {
         return getPerson().getHealthCardNumber();
+    }
+
+    private Set<CurriculumLine> getApprovedCoursesForExecutionYear() {
+        StudentCurricularPlan studentCurricularPlan = getStudentCurricularPlan();
+        return studentCurricularPlan.getApprovedCurriculumLines().stream()
+                .filter(cl -> cl.getExecutionYear().equals(getExecutionYear())).collect(Collectors.toSet());
+    }
+
+    private Set<CurriculumLine> getReprovedCoursesForExecutionYear() {
+        StudentCurricularPlan studentCurricularPlan = getStudentCurricularPlan();
+        Set<CurriculumLine> approvedCoursesForExecutionYear = getApprovedCoursesForExecutionYear();
+        Set<CurriculumLine> reprovedCoursesForExecutionYear = new HashSet<>();
+        studentCurricularPlan.getAllCurriculumLines().stream().filter(cl -> cl.getExecutionYear().equals(getExecutionYear()))
+                .forEach(cl -> {
+                    if (!approvedCoursesForExecutionYear.contains(cl)) {
+                        reprovedCoursesForExecutionYear.add(cl);
+                    }
+                });
+    }
+
+    public long getNumberApprovedCoursesForExecutionYear() {
+        return getApprovedCoursesForExecutionYear().size();
+    }
+
+    public long getNumberFlunkedCoursesForExecutionYear() {
+        return getReprovedCoursesForExecutionYear().size();
+    }
+
+    public Double getECTSApprovedCoursesForExecutionYear() {
+        StudentCurricularPlan studentCurricularPlan = getStudentCurricularPlan();
+
+        Optional<Double> reduce =
+                getApprovedCoursesForExecutionYear().stream().map(cl -> cl.getAprovedEctsCredits()).reduce(Double::sum);
+
+        return reduce.isEmpty() ? 0.0 : reduce.get();
+    }
+
+    public Double getECTSReprovedCoursesForExecutionYear() {
+        StudentCurricularPlan studentCurricularPlan = getStudentCurricularPlan();
+
+        Optional<Double> reduce =
+                getReprovedCoursesForExecutionYear().stream().map(cl -> cl.getEctsCredits()).reduce(Double::sum);
+
+        return reduce.isEmpty() ? 0.0 : reduce.get();
     }
 }
