@@ -30,8 +30,8 @@ import static org.fenixedu.academic.util.CurricularPeriodLabelFormatter.getFullL
 
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -44,7 +44,6 @@ import org.fenixedu.academic.domain.curricularPeriod.CurricularPeriod;
 import org.fenixedu.academic.domain.degreeStructure.CurricularPeriodServices;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumLine;
 import org.fenixedu.academic.domain.studentCurriculum.Dismissal;
-import org.fenixedu.academic.util.CurricularPeriodLabelFormatter;
 import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 import org.joda.time.YearMonthDay;
 
@@ -116,21 +115,32 @@ public class AverageEntry implements Comparable<AverageEntry> {
 
     @Override
     public int compareTo(final AverageEntry o) {
-        int result = getEntryInfo().compareTo(o.getEntryInfo());
+        final ICurriculumEntry leftEntry = getEntry();
+        final ICurriculumEntry rightEntry = o.getEntry();
+        final Comparator<ICurriculumEntry> comparatorByDate = (x, y) -> getConclusionDateOnTarget(x, studentCurricularPlan)
+                .compareTo(getConclusionDateOnTarget(y, studentCurricularPlan));
+        return comparatorByDate.thenComparing((x, y) -> compareCurricularPeriods(x, y))
+                .thenComparing((x, y) -> getPresentationNameFor(x).compareTo(getPresentationNameFor(y)))
+                .compare(leftEntry, rightEntry);
+    }
 
-        if (result == 0) {
-            if (getCurricularYear() != null && o.getCurricularYear() != null) {
-                result = 0;
-            } else {
-                result = getCurricularYear() != null ? -1 : 1;
-            }
+    private int compareCurricularPeriods(ICurriculumEntry left, ICurriculumEntry right) {
+        final CurricularPeriod leftPeriod = getCurricularPeriod(left);
+        final CurricularPeriod rightPeriod = getCurricularPeriod(right);
+
+        if (leftPeriod == null && rightPeriod == null) {
+            return 0;
         }
 
-        if (result == 0) {
-            result = getPresentationNameFor(getEntry()).compareTo(getPresentationNameFor(o.getEntry()));
+        if (leftPeriod != null && rightPeriod != null) {
+            return leftPeriod.compareTo(rightPeriod);
         }
 
-        return result;
+        if (leftPeriod == null) {
+            return -1;
+        }
+
+        return 1;
     }
 
     static private String getPresentationNameFor(final ICurriculumEntry entry) {
