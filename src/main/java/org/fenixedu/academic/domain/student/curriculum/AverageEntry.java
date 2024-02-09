@@ -25,9 +25,13 @@
  */
 package org.fenixedu.academic.domain.student.curriculum;
 
+import static java.util.Optional.ofNullable;
+import static org.fenixedu.academic.util.CurricularPeriodLabelFormatter.getFullLabel;
+
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -36,12 +40,12 @@ import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.OptionalEnrolment;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
+import org.fenixedu.academic.domain.curricularPeriod.CurricularPeriod;
 import org.fenixedu.academic.domain.degreeStructure.CurricularPeriodServices;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumLine;
 import org.fenixedu.academic.domain.studentCurriculum.Dismissal;
-import org.fenixedu.academic.util.Bundle;
+import org.fenixedu.academic.util.CurricularPeriodLabelFormatter;
 import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
-import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.joda.time.YearMonthDay;
 
 import com.google.common.collect.Lists;
@@ -56,7 +60,6 @@ public class AverageEntry implements Comparable<AverageEntry> {
     private StudentCurricularPlan studentCurricularPlan;
     private String approvalTypeDescription;
     private Integer curricularYear;
-    private Integer curricularSemester;
     private String entryInfo;
     private String targetCurriculumLinesInfo;
     private YearMonthDay conclusionDateOnTarget;
@@ -66,7 +69,6 @@ public class AverageEntry implements Comparable<AverageEntry> {
         this.studentCurricularPlan = studentCurricularPlan;
         this.approvalTypeDescription = getApprovalTypeDescription(entry, studentCurricularPlan);
         this.curricularYear = getCurricularYear(entry);
-        this.curricularSemester = getCurricularSemester(entry);
         this.entryInfo = getEntryInfo(entry);
         this.targetCurriculumLinesInfo = getTargetCurriculumLinesInfo(entry, studentCurricularPlan);
         this.conclusionDateOnTarget = getConclusionDateOnTarget(entry, studentCurricularPlan);
@@ -98,10 +100,6 @@ public class AverageEntry implements Comparable<AverageEntry> {
 
     public Integer getCurricularYear() {
         return curricularYear;
-    }
-
-    public Integer getCurricularSemester() {
-        return curricularSemester;
     }
 
     public String getEntryInfo() {
@@ -189,16 +187,6 @@ public class AverageEntry implements Comparable<AverageEntry> {
         return result;
     }
 
-    static private Integer getCurricularSemester(final ICurriculumEntry entry) {
-        Integer result = null;
-
-        if (entry instanceof CurriculumLine) {
-            result = CurricularPeriodServices.getCurricularSemester((CurriculumLine) entry);
-        }
-
-        return result;
-    }
-
     static private String getTargetCurriculumLinesInfo(final ICurriculumEntry entry,
             final StudentCurricularPlan studentCurricularPlan) {
         final Set<CurriculumLine> lines = entry.getCurriculumLinesForCurriculum(studentCurricularPlan);
@@ -212,20 +200,18 @@ public class AverageEntry implements Comparable<AverageEntry> {
         }
 
         return lines.stream().map(line -> getEntryInfo((ICurriculumEntry) line)).distinct().sorted()
-                .collect(Collectors.joining(" "));
+                .collect(Collectors.joining("; "));
     }
 
     static private String getEntryInfo(final ICurriculumEntry entry) {
-        String curricularYear = "";
-        String curricularSemester = "";
-        if (entry instanceof CurriculumLine) {
-            curricularYear = String.valueOf(CurricularPeriodServices.getCurricularYear((CurriculumLine) entry)) + " "
-                    + BundleUtil.getString(Bundle.APPLICATION, "label.curricular.year") + ", ";
-            curricularSemester = String.valueOf(CurricularPeriodServices.getCurricularSemester((CurriculumLine) entry)) + " "
-                    + BundleUtil.getString(Bundle.APPLICATION, "label.semester.short");
-        }
-        final String executionYear = entry.getExecutionYear() == null ? "" : " " + entry.getExecutionYear().getQualifiedName();
-        return curricularYear + curricularSemester + executionYear;
+        final String curricularPeriod = ofNullable(getCurricularPeriod(entry)).map(p -> getFullLabel(p, true) + " ").orElse("");
+        final String executionYear = ofNullable(entry.getExecutionYear()).map(ey -> ey.getQualifiedName()).orElse("");
+
+        return curricularPeriod + executionYear;
+    }
+
+    private static CurricularPeriod getCurricularPeriod(final ICurriculumEntry entry) {
+        return entry instanceof CurriculumLine ? CurricularPeriodServices.getCurricularPeriod((CurriculumLine) entry) : null;
     }
 
     static public YearMonthDay getConclusionDateOnTarget(final ICurriculumEntry entry,

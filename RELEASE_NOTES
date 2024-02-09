@@ -1,3 +1,5 @@
+- Bug fix: Show correct curricular period on program conclusion summary [#qubIT-Fenix-4943]
+
 4.27.5 (25-01-2024)
 - Bug fix: Delete ExecutionYear.readByDateTime() on RegistrationConclusionInformation [#qubIT-Fenix-3548]
 
