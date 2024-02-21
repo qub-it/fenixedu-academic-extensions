@@ -1,5 +1,12 @@
 - Improvement: Added fields to RegistrationHistoryReport
 
+4.27.7 (19-02-2024)
+- Improvement: Show more detailed error when uploading invalid grade [#qubIT-Fenix-4965]
+
+4.27.6 (12-02-2024)
+- Improvement: Sort curriculum entries on program conclusion summary [#qubIT-Fenix-4944]
+- Bug fix: Show correct curricular period on program conclusion summary [#qubIT-Fenix-4943]
+
 4.27.5 (25-01-2024)
 - Bug fix: Delete ExecutionYear.readByDateTime() on RegistrationConclusionInformation [#qubIT-Fenix-3548]
 

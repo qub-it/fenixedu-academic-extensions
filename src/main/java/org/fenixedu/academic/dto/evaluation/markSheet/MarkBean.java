@@ -275,7 +275,7 @@ public class MarkBean implements IBean, Comparable<MarkBean> {
 
             if (!getMarkSheet().isGradeValueAccepted(getGradeValue())) {
                 setErrorMessage(AcademicExtensionsUtil.bundle("error.MarkBean.gradeValue.does.not.belong.to.scale",
-                        getGradeScale().getName().getContent()));
+                        getGradeValue(), getGradeScale().getName().getContent(), String.valueOf(studentNumber)));
 
             } else {
 
