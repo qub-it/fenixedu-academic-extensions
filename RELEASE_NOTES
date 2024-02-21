@@ -1,3 +1,5 @@
+- Improvement: Added fields to RegistrationHistoryReport
+
 4.27.5 (25-01-2024)
 - Bug fix: Delete ExecutionYear.readByDateTime() on RegistrationConclusionInformation [#qubIT-Fenix-3548]
 

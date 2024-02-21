@@ -116,9 +116,25 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 
     private BigDecimal executionYearCreditsMandatoryApproved;
 
+    private Boolean executionYearEnroledOptionalFlunked;
+
+    private Boolean executionYearEnroledOptionalInAdvance;
+
+    private BigDecimal executionYearCreditsOptionalEnroled;
+
+    private BigDecimal executionYearCreditsOptionalApproved;
+
     private LocalDate executionYearConclusionDate;
 
     private BigDecimal currentAverage;
+
+    private Integer numberApprovedCoursesForExecutionYear;
+
+    private BigDecimal creditsApprovedCoursesForExecutionYear;
+
+    private Integer numberFlunkedCoursesForExecutionYear;
+
+    private BigDecimal creditsFlunkedCoursesForExecutionYear;
 
     public RegistrationHistoryReport(final Registration registration, final ExecutionYear executionYear) {
         this.executionYear = executionYear;
@@ -1107,47 +1123,100 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         return getPerson().getHealthCardNumber();
     }
 
-    private Set<CurriculumLine> getApprovedCoursesForExecutionYear() {
-        StudentCurricularPlan studentCurricularPlan = getStudentCurricularPlan();
-        return studentCurricularPlan.getApprovedCurriculumLines().stream()
-                .filter(cl -> cl.getExecutionYear().equals(getExecutionYear())).collect(Collectors.toSet());
+    public Boolean getExecutionYearEnroledOptionalFlunked() {
+        if (this.executionYearEnroledOptionalFlunked == null) {
+            RegistrationHistoryReportService.addExecutionYearOptionalCoursesData(this);
+        }
+
+        return this.executionYearEnroledOptionalFlunked;
     }
 
-    private Set<CurriculumLine> getReprovedCoursesForExecutionYear() {
-        StudentCurricularPlan studentCurricularPlan = getStudentCurricularPlan();
-        Set<CurriculumLine> approvedCoursesForExecutionYear = getApprovedCoursesForExecutionYear();
-        Set<CurriculumLine> reprovedCoursesForExecutionYear = new HashSet<>();
-        studentCurricularPlan.getAllCurriculumLines().stream().filter(cl -> cl.getExecutionYear().equals(getExecutionYear()))
-                .forEach(cl -> {
-                    if (!approvedCoursesForExecutionYear.contains(cl)) {
-                        reprovedCoursesForExecutionYear.add(cl);
-                    }
-                });
+    protected void setExecutionYearEnroledOptionalFlunked(final boolean input) {
+        this.executionYearEnroledOptionalFlunked = input;
     }
 
-    public long getNumberApprovedCoursesForExecutionYear() {
-        return getApprovedCoursesForExecutionYear().size();
+    public Boolean getExecutionYearEnroledOptionalInAdvance() {
+        if (this.executionYearEnroledOptionalInAdvance == null) {
+            RegistrationHistoryReportService.addExecutionYearOptionalCoursesData(this);
+        }
+
+        return this.executionYearEnroledOptionalInAdvance;
     }
 
-    public long getNumberFlunkedCoursesForExecutionYear() {
-        return getReprovedCoursesForExecutionYear().size();
+    protected void setExecutionYearEnroledOptionalInAdvance(final boolean input) {
+        this.executionYearEnroledOptionalInAdvance = input;
     }
 
-    public Double getECTSApprovedCoursesForExecutionYear() {
-        StudentCurricularPlan studentCurricularPlan = getStudentCurricularPlan();
+    public BigDecimal getExecutionYearCreditsOptionalEnroled() {
+        if (this.executionYearCreditsOptionalEnroled == null) {
+            RegistrationHistoryReportService.addExecutionYearOptionalCoursesData(this);
+        }
 
-        Optional<Double> reduce =
-                getApprovedCoursesForExecutionYear().stream().map(cl -> cl.getAprovedEctsCredits()).reduce(Double::sum);
-
-        return reduce.isEmpty() ? 0.0 : reduce.get();
+        return this.executionYearCreditsOptionalEnroled;
     }
 
-    public Double getECTSReprovedCoursesForExecutionYear() {
-        StudentCurricularPlan studentCurricularPlan = getStudentCurricularPlan();
+    protected void setExecutionYearCreditsOptionalEnroled(final BigDecimal input) {
+        this.executionYearCreditsOptionalEnroled = input;
+    }
 
-        Optional<Double> reduce =
-                getReprovedCoursesForExecutionYear().stream().map(cl -> cl.getEctsCredits()).reduce(Double::sum);
+    public BigDecimal getExecutionYearCreditsOptionalApproved() {
+        if (this.executionYearCreditsOptionalApproved == null) {
+            RegistrationHistoryReportService.addExecutionYearOptionalCoursesData(this);
+        }
 
-        return reduce.isEmpty() ? 0.0 : reduce.get();
+        return this.executionYearCreditsOptionalApproved;
+    }
+
+    protected void setExecutionYearCreditsOptionalApproved(final BigDecimal input) {
+        this.executionYearCreditsOptionalApproved = input;
+    }
+
+    //Ticket
+    public Integer getNumberApprovedCoursesForExecutionYear() {
+        if (this.numberApprovedCoursesForExecutionYear == null) {
+            RegistrationHistoryReportService.addApprovedCoursesForExecutionYearData(this);
+        }
+
+        return this.numberApprovedCoursesForExecutionYear;
+    }
+
+    protected void setNumberApprovedCoursesForExecutionYear(final Integer input) {
+        this.numberApprovedCoursesForExecutionYear = input;
+    }
+
+    public BigDecimal getCreditsApprovedCoursesForExecutionYear() {
+        if (this.creditsApprovedCoursesForExecutionYear == null) {
+            RegistrationHistoryReportService.addApprovedCoursesForExecutionYearData(this);
+        }
+
+        return this.creditsApprovedCoursesForExecutionYear;
+    }
+
+    protected void setCreditsApprovedCoursesForExecutionYear(final BigDecimal input) {
+        this.creditsApprovedCoursesForExecutionYear = input;
+    }
+
+    public Integer getNumberFlunkedCoursesForExecutionYear() {
+        if (this.numberFlunkedCoursesForExecutionYear == null) {
+            RegistrationHistoryReportService.addFlunkedCoursesForExecutionYearData(this);
+        }
+
+        return this.numberFlunkedCoursesForExecutionYear;
+    }
+
+    protected void setNumberFlunkedCoursesForExecutionYear(final Integer input) {
+        this.numberFlunkedCoursesForExecutionYear = input;
+    }
+
+    public BigDecimal getCreditsFlunkedCoursesForExecutionYear() {
+        if (this.creditsFlunkedCoursesForExecutionYear == null) {
+            RegistrationHistoryReportService.addFlunkedCoursesForExecutionYearData(this);
+        }
+
+        return this.creditsFlunkedCoursesForExecutionYear;
+    }
+
+    protected void setCreditsFlunkedCoursesForExecutionYear(final BigDecimal input) {
+        this.creditsFlunkedCoursesForExecutionYear = input;
     }
 }

@@ -691,4 +691,79 @@ public class RegistrationHistoryReportService {
         }
     }
 
+    static protected void addExecutionYearOptionalCoursesData(final RegistrationHistoryReport report) {
+        final Collection<Enrolment> enrolments = report.getEnrolments();
+        if (!enrolments.isEmpty()) {
+
+            final Integer registrationYear = report.getCurricularYear();
+            if (registrationYear != null) {
+
+                boolean enroledOptionalFlunked = false;
+                boolean enroledOptionalInAdvance = false;
+                BigDecimal creditsOptionalEnroled = BigDecimal.ZERO;
+                BigDecimal creditsOptionalApproved = BigDecimal.ZERO;
+
+                for (final Enrolment iter : enrolments) {
+
+                    if (!CurriculumLineServices.isNormal(iter)) {
+                        continue;
+                    }
+
+                    final boolean isOptionalByGroup = CurriculumLineServices.isOptionalByGroup(iter);
+                    if (isOptionalByGroup) {
+                        final int enrolmentYear = CurricularPeriodServices.getCurricularYear(iter);
+
+                        if (enrolmentYear < registrationYear) {
+                            enroledOptionalFlunked = true;
+
+                        } else if (enrolmentYear > registrationYear) {
+                            enroledOptionalInAdvance = true;
+
+                        } else {
+
+                            final BigDecimal ects = iter.getEctsCreditsForCurriculum();
+                            creditsOptionalEnroled = creditsOptionalEnroled.add(ects);
+
+                            if (iter.isApproved()) {
+                                creditsOptionalApproved = creditsOptionalApproved.add(ects);
+                            }
+                        }
+                    }
+
+                    report.setExecutionYearEnroledOptionalFlunked(enroledOptionalFlunked);
+                    report.setExecutionYearEnroledOptionalInAdvance(enroledOptionalInAdvance);
+                    report.setExecutionYearCreditsOptionalEnroled(creditsOptionalEnroled);
+                    report.setExecutionYearCreditsOptionalApproved(creditsOptionalApproved);
+                }
+
+            }
+        }
+    }
+
+    static private Predicate<Enrolment> isApprovedFilter(RegistrationHistoryReport result) {
+        return e -> CurriculumLineServices.isNormal(e) && e.isApproved();
+    }
+
+    static private Predicate<Enrolment> isFlunkedFilter(RegistrationHistoryReport result) {
+        return e -> CurriculumLineServices.isNormal(e) && !e.isApproved();
+    }
+
+    static protected void addApprovedCoursesForExecutionYearData(final RegistrationHistoryReport report) {
+        final Collection<Enrolment> enrolments = report.getEnrolments();
+
+        final Predicate<Enrolment> approvedFilter = isApprovedFilter(report);
+
+        report.setNumberApprovedCoursesForExecutionYear(countFiltered(enrolments, approvedFilter));
+        report.setCreditsApprovedCoursesForExecutionYear(sumCredits(enrolments, approvedFilter));
+    }
+
+    static protected void addFlunkedCoursesForExecutionYearData(final RegistrationHistoryReport report) {
+        final Collection<Enrolment> enrolments = report.getEnrolments();
+
+        final Predicate<Enrolment> flunkedFilter = isFlunkedFilter(report);
+
+        report.setNumberFlunkedCoursesForExecutionYear(countFiltered(enrolments, flunkedFilter));
+        report.setCreditsFlunkedCoursesForExecutionYear(sumCredits(enrolments, flunkedFilter));
+    }
+
 }
