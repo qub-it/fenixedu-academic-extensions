@@ -745,7 +745,7 @@ public class RegistrationHistoryReportService {
     }
 
     static private Predicate<Enrolment> isFlunkedFilter(RegistrationHistoryReport result) {
-        return e -> CurriculumLineServices.isNormal(e) && !e.isApproved();
+        return e -> CurriculumLineServices.isNormal(e) && e.isFlunked();
     }
 
     static protected void addApprovedCoursesForExecutionYearData(final RegistrationHistoryReport report) {
