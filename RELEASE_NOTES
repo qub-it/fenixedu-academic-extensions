@@ -1,3 +1,5 @@
+- Improvement: Added fields to RegistrationHistoryReport [#UL-FL-11521]
+
 4.27.7 (19-02-2024)
 - Improvement: Show more detailed error when uploading invalid grade [#qubIT-Fenix-4965]
 

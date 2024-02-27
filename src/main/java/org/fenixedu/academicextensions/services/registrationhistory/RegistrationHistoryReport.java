@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -50,6 +51,7 @@ import org.fenixedu.academic.domain.student.curriculum.CurriculumConfigurationIn
 import org.fenixedu.academic.domain.student.curriculum.ICurriculum;
 import org.fenixedu.academic.domain.student.registrationStates.RegistrationState;
 import org.fenixedu.academic.domain.student.services.StatuteServices;
+import org.fenixedu.academic.domain.studentCurriculum.CurriculumLine;
 import org.fenixedu.academic.domain.studentCurriculum.ExternalCurriculumGroup;
 import org.fenixedu.academic.domain.treasury.IAcademicTreasuryEvent;
 import org.fenixedu.academic.domain.treasury.ITreasuryBridgeAPI;
@@ -114,9 +116,25 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 
     private BigDecimal executionYearCreditsMandatoryApproved;
 
+    private Boolean executionYearEnroledOptionalFlunked;
+
+    private Boolean executionYearEnroledOptionalInAdvance;
+
+    private BigDecimal executionYearCreditsOptionalEnroled;
+
+    private BigDecimal executionYearCreditsOptionalApproved;
+
     private LocalDate executionYearConclusionDate;
 
     private BigDecimal currentAverage;
+
+    private Integer numberApprovedCoursesForExecutionYear;
+
+    private BigDecimal creditsApprovedCoursesForExecutionYear;
+
+    private Integer numberFlunkedCoursesForExecutionYear;
+
+    private BigDecimal creditsFlunkedCoursesForExecutionYear;
 
     public RegistrationHistoryReport(final Registration registration, final ExecutionYear executionYear) {
         this.executionYear = executionYear;
@@ -1103,5 +1121,102 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 
     public String getHealthCardNumber() {
         return getPerson().getHealthCardNumber();
+    }
+
+    public Boolean getExecutionYearEnroledOptionalFlunked() {
+        if (this.executionYearEnroledOptionalFlunked == null) {
+            RegistrationHistoryReportService.addExecutionYearOptionalCoursesData(this);
+        }
+
+        return this.executionYearEnroledOptionalFlunked;
+    }
+
+    protected void setExecutionYearEnroledOptionalFlunked(final boolean input) {
+        this.executionYearEnroledOptionalFlunked = input;
+    }
+
+    public Boolean getExecutionYearEnroledOptionalInAdvance() {
+        if (this.executionYearEnroledOptionalInAdvance == null) {
+            RegistrationHistoryReportService.addExecutionYearOptionalCoursesData(this);
+        }
+
+        return this.executionYearEnroledOptionalInAdvance;
+    }
+
+    protected void setExecutionYearEnroledOptionalInAdvance(final boolean input) {
+        this.executionYearEnroledOptionalInAdvance = input;
+    }
+
+    public BigDecimal getExecutionYearCreditsOptionalEnroled() {
+        if (this.executionYearCreditsOptionalEnroled == null) {
+            RegistrationHistoryReportService.addExecutionYearOptionalCoursesData(this);
+        }
+
+        return this.executionYearCreditsOptionalEnroled;
+    }
+
+    protected void setExecutionYearCreditsOptionalEnroled(final BigDecimal input) {
+        this.executionYearCreditsOptionalEnroled = input;
+    }
+
+    public BigDecimal getExecutionYearCreditsOptionalApproved() {
+        if (this.executionYearCreditsOptionalApproved == null) {
+            RegistrationHistoryReportService.addExecutionYearOptionalCoursesData(this);
+        }
+
+        return this.executionYearCreditsOptionalApproved;
+    }
+
+    protected void setExecutionYearCreditsOptionalApproved(final BigDecimal input) {
+        this.executionYearCreditsOptionalApproved = input;
+    }
+
+    //Ticket
+    public Integer getNumberApprovedCoursesForExecutionYear() {
+        if (this.numberApprovedCoursesForExecutionYear == null) {
+            RegistrationHistoryReportService.addApprovedCoursesForExecutionYearData(this);
+        }
+
+        return this.numberApprovedCoursesForExecutionYear;
+    }
+
+    protected void setNumberApprovedCoursesForExecutionYear(final Integer input) {
+        this.numberApprovedCoursesForExecutionYear = input;
+    }
+
+    public BigDecimal getCreditsApprovedCoursesForExecutionYear() {
+        if (this.creditsApprovedCoursesForExecutionYear == null) {
+            RegistrationHistoryReportService.addApprovedCoursesForExecutionYearData(this);
+        }
+
+        return this.creditsApprovedCoursesForExecutionYear;
+    }
+
+    protected void setCreditsApprovedCoursesForExecutionYear(final BigDecimal input) {
+        this.creditsApprovedCoursesForExecutionYear = input;
+    }
+
+    public Integer getNumberFlunkedCoursesForExecutionYear() {
+        if (this.numberFlunkedCoursesForExecutionYear == null) {
+            RegistrationHistoryReportService.addFlunkedCoursesForExecutionYearData(this);
+        }
+
+        return this.numberFlunkedCoursesForExecutionYear;
+    }
+
+    protected void setNumberFlunkedCoursesForExecutionYear(final Integer input) {
+        this.numberFlunkedCoursesForExecutionYear = input;
+    }
+
+    public BigDecimal getCreditsFlunkedCoursesForExecutionYear() {
+        if (this.creditsFlunkedCoursesForExecutionYear == null) {
+            RegistrationHistoryReportService.addFlunkedCoursesForExecutionYearData(this);
+        }
+
+        return this.creditsFlunkedCoursesForExecutionYear;
+    }
+
+    protected void setCreditsFlunkedCoursesForExecutionYear(final BigDecimal input) {
+        this.creditsFlunkedCoursesForExecutionYear = input;
     }
 }
