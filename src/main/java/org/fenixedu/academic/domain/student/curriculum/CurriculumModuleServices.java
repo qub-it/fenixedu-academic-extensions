@@ -24,6 +24,7 @@ public class CurriculumModuleServices {
 
     static final public Logger logger = LoggerFactory.getLogger(CurriculumModuleServices.class);
 
+    @Deprecated
     static public BigDecimal getCreditsConcluded(final CurriculumGroup toInspect, final ExecutionInterval interval) {
         if (interval instanceof ExecutionYear) {
             return BigDecimal.valueOf(
@@ -33,6 +34,7 @@ public class CurriculumModuleServices {
         }
     }
 
+    @Deprecated
     static private BigDecimal getCreditsConcludedChildInterval(final CurriculumGroup toInspect,
             final ExecutionInterval interval) {
 
@@ -46,8 +48,8 @@ public class CurriculumModuleServices {
             result = result.add(getCreditsConcluded(iter, interval));
         }
 
-        final CreditsLimit rule =
-                (CreditsLimit) toInspect.getMostRecentActiveCurricularRule(CurricularRuleType.CREDITS_LIMIT, interval);
+        final CreditsLimit rule = (CreditsLimit) toInspect.getMostRecentActiveCurricularRule(CurricularRuleType.CREDITS_LIMIT,
+                interval.getExecutionYear());
         if (rule == null) {
             return result;
         } else {
@@ -55,6 +57,7 @@ public class CurriculumModuleServices {
         }
     }
 
+    @Deprecated
     static private BigDecimal getCreditsConcluded(final CurriculumModule toInspect, final ExecutionInterval interval) {
 
         BigDecimal result = BigDecimal.ZERO;

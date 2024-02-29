@@ -1,3 +1,5 @@
+- Refactor: Allow combination of rules to test conclusion [#qubIT-Fenix-4972]
+
 4.27.8 (27-02-2024)
 - Improvement: Added fields to RegistrationHistoryReport [#UL-FL-11521]
 
