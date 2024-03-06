@@ -1,3 +1,4 @@
+4.28.0 (06-03-2024)
 - Refactor: Remove deprecated PersonServices [#qubIT-Fenix-2661]
 - Improvement: Support indication if season allows creation of marksheet [#qubIT-Fenix-4997]
 
