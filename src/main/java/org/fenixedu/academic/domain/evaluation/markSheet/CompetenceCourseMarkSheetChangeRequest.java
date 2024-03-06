@@ -1,11 +1,11 @@
 package org.fenixedu.academic.domain.evaluation.markSheet;
 
 import java.util.Comparator;
+import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
-import org.fenixedu.academic.domain.person.services.PersonServices;
 import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -79,8 +79,7 @@ public class CompetenceCourseMarkSheetChangeRequest extends CompetenceCourseMark
             }
 
             if (getResponseDate() == null) {
-                throw new AcademicExtensionsDomainException(
-                        "error.CompetenceCourseMarkSheetChangeRequest.responseDate.required");
+                throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheetChangeRequest.responseDate.required");
             }
         }
 
@@ -134,7 +133,8 @@ public class CompetenceCourseMarkSheetChangeRequest extends CompetenceCourseMark
         if (!key.isEmpty()) {
             final DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
             result = AcademicExtensionsUtil.bundle(key, getRequestDate().toString(formatter),
-                    PersonServices.getDisplayName(getResponder()), getResponseDate().toString(formatter));
+                    Optional.ofNullable(getResponder()).map(p -> p.getDisplayName()).orElse(""),
+                    getResponseDate().toString(formatter));
         }
 
         return result;
