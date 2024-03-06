@@ -1,3 +1,5 @@
+- Improvement: Support indication if season allows creation of marksheet [#qubIT-Fenix-4997]
+
 4.27.9 (29-02-2024)
 - Refactor: Allow combination of rules to test conclusion [#qubIT-Fenix-4972]
 

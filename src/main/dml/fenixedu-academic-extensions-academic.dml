@@ -77,6 +77,7 @@ class evaluation.season.EvaluationSeasonInformation {
 	boolean requiresEnrolmentEvaluation;
 	boolean supportsEmptyGrades;
 	boolean supportsTeacherConfirmation;
+	Boolean allowsMarksheets;
 	Integer minPastYearsToAcceptImprovementEnrolments;
 	Integer maxPastYearsToAcceptImprovementEnrolments;	
 }

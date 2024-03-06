@@ -41,7 +41,7 @@ public class EvaluationSeasonInformation extends EvaluationSeasonInformation_Bas
     }
 
     protected void init(final EvaluationSeason evaluationSeason, final boolean active, final boolean requiresEnrolmentEvaluation,
-            final boolean supportsEmptyGrades, final boolean supportsTeacherConfirmation) {
+            final boolean supportsEmptyGrades, final boolean supportsTeacherConfirmation, final boolean allowsMarksheets) {
 
         setSeason(evaluationSeason);
         setSeasonOrder(EvaluationSeasonServices.maxOrder() + 1);
@@ -49,6 +49,7 @@ public class EvaluationSeasonInformation extends EvaluationSeasonInformation_Bas
         setRequiresEnrolmentEvaluation(requiresEnrolmentEvaluation);
         setSupportsEmptyGrades(supportsEmptyGrades);
         setSupportsTeacherConfirmation(supportsTeacherConfirmation);
+        setAllowsMarksheets(allowsMarksheets);
         checkRules();
     }
 
@@ -62,14 +63,14 @@ public class EvaluationSeasonInformation extends EvaluationSeasonInformation_Bas
         }
     }
 
-    @Atomic
     public void edit(final boolean active, final boolean requiresEnrolmentEvaluation, final boolean supportsEmptyGrades,
-            final boolean supportsTeacherConfirmation) {
+            final boolean supportsTeacherConfirmation, final boolean allowsMarksheets) {
 
         setActive(active);
         setRequiresEnrolmentEvaluation(requiresEnrolmentEvaluation);
         setSupportsEmptyGrades(supportsEmptyGrades);
         setSupportsTeacherConfirmation(supportsTeacherConfirmation);
+        setAllowsMarksheets(allowsMarksheets);
         checkRules();
     }
 
@@ -87,11 +88,17 @@ public class EvaluationSeasonInformation extends EvaluationSeasonInformation_Bas
     @Atomic
     public static EvaluationSeasonInformation create(final EvaluationSeason evaluationSeason, final boolean active,
             final boolean requiresEnrolmentEvaluation, final boolean supportsEmptyGrades,
-            final boolean supportsTeacherConfirmation) {
+            final boolean supportsTeacherConfirmation, final boolean allowsMarksheets) {
 
         final EvaluationSeasonInformation result = new EvaluationSeasonInformation();
-        result.init(evaluationSeason, active, requiresEnrolmentEvaluation, supportsEmptyGrades, supportsTeacherConfirmation);
+        result.init(evaluationSeason, active, requiresEnrolmentEvaluation, supportsEmptyGrades, supportsTeacherConfirmation,
+                allowsMarksheets);
         return result;
+    }
+
+    @Override
+    public Boolean getAllowsMarksheets() {
+        return super.getAllowsMarksheets() != null ? super.getAllowsMarksheets() : Boolean.TRUE; // this should be a primitive boolean but we're avoiding migration of existing data
     }
 
 }

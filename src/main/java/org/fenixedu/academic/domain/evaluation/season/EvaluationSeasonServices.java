@@ -71,10 +71,10 @@ abstract public class EvaluationSeasonServices {
 
     static private void init(final EvaluationSeason evaluationSeason, final boolean active,
             final boolean requiresEnrolmentEvaluation, final boolean supportsEmptyGrades,
-            final boolean supportsTeacherConfirmation) {
+            final boolean supportsTeacherConfirmation, final boolean allowsMarksheets) {
 
         EvaluationSeasonInformation.create(evaluationSeason, active, requiresEnrolmentEvaluation, supportsEmptyGrades,
-                supportsTeacherConfirmation);
+                supportsTeacherConfirmation, allowsMarksheets);
         checkRules(evaluationSeason);
     }
 
@@ -130,7 +130,7 @@ abstract public class EvaluationSeasonServices {
     static public void edit(final EvaluationSeason evaluationSeason, final String code, final LocalizedString acronym,
             final LocalizedString name, final boolean normal, final boolean improvement, final boolean special,
             final boolean specialAuthorization, final boolean active, final boolean requiresEnrolmentEvaluation,
-            final boolean supportsEmptyGrades, final boolean supportsTeacherConfirmation) {
+            final boolean supportsEmptyGrades, final boolean supportsTeacherConfirmation, final boolean allowsMarksheets) {
 
         checkSeasonExistsForName(evaluationSeason, name);
 
@@ -143,22 +143,45 @@ abstract public class EvaluationSeasonServices {
         evaluationSeason.setSpecialAuthorization(specialAuthorization);
 
         evaluationSeason.getInformation().edit(active, requiresEnrolmentEvaluation, supportsEmptyGrades,
-                supportsTeacherConfirmation);
+                supportsTeacherConfirmation, allowsMarksheets);
         checkRules(evaluationSeason);
+    }
+
+    @Deprecated
+    @Atomic
+    static public void edit(final EvaluationSeason evaluationSeason, final String code, final LocalizedString acronym,
+            final LocalizedString name, final boolean normal, final boolean improvement, final boolean special,
+            final boolean specialAuthorization, final boolean active, final boolean requiresEnrolmentEvaluation,
+            final boolean supportsEmptyGrades, final boolean supportsTeacherConfirmation) {
+
+        edit(evaluationSeason, code, acronym, name, normal, improvement, special, specialAuthorization, active,
+                requiresEnrolmentEvaluation, supportsEmptyGrades, supportsTeacherConfirmation, true);
     }
 
     @Atomic
     static public EvaluationSeason create(final String code, final LocalizedString acronym, final LocalizedString name,
             final boolean normal, final boolean improvement, final boolean special, final boolean specialAuthorization,
             final boolean active, final boolean requiresEnrolmentEvaluation, final boolean supportsEmptyGrades,
-            final boolean supportsTeacherConfirmation) {
+            final boolean supportsTeacherConfirmation, final boolean allowsMarksheets) {
 
         final EvaluationSeason evaluationSeason =
                 new EvaluationSeason(acronym, name, normal, improvement, specialAuthorization, special);
         evaluationSeason.setCode(code);
 
-        init(evaluationSeason, active, requiresEnrolmentEvaluation, supportsEmptyGrades, supportsTeacherConfirmation);
+        init(evaluationSeason, active, requiresEnrolmentEvaluation, supportsEmptyGrades, supportsTeacherConfirmation,
+                allowsMarksheets);
         return evaluationSeason;
+    }
+
+    @Deprecated
+    @Atomic
+    static public EvaluationSeason create(final String code, final LocalizedString acronym, final LocalizedString name,
+            final boolean normal, final boolean improvement, final boolean special, final boolean specialAuthorization,
+            final boolean active, final boolean requiresEnrolmentEvaluation, final boolean supportsEmptyGrades,
+            final boolean supportsTeacherConfirmation) {
+
+        return create(code, acronym, name, normal, improvement, special, specialAuthorization, active,
+                requiresEnrolmentEvaluation, supportsEmptyGrades, supportsTeacherConfirmation, true);
     }
 
     static public Stream<EvaluationSeason> findAll() {
@@ -513,7 +536,7 @@ abstract public class EvaluationSeasonServices {
 
             if (iter.getInformation() == null) {
                 logger.info("Init " + iter.getName().getContent());
-                EvaluationSeasonInformation.create(iter, false, false, true, false).setSeasonOrder(i);
+                EvaluationSeasonInformation.create(iter, false, false, true, false, true).setSeasonOrder(i);
             }
         }
     }
