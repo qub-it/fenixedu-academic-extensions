@@ -155,7 +155,7 @@ abstract public class CurricularPeriodRule extends CurricularPeriodRule_Base {
         target.setYearMax(getYearMax());;
     }
 
-    private String getMessagesPrefix() {
+    protected String getMessagesPrefix() {
         return getMessagesPrefix(getConfiguration(), getHideMessagePrefix());
     }
 
