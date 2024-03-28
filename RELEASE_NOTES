@@ -1,3 +1,5 @@
+- Improvement: Add support for dynamic fields on registration [#qubIT-Fenix-5115]
+
 4.28.1 (22-03-2024)
 - Refactor: Change visibility of method to add enrolment message prefix [#qubIT-Fenix-5083]
 

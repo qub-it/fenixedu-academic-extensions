@@ -833,6 +833,11 @@ class dml.DynamicField {
 		dml.DynamicField playsRole dynamicField { multiplicity *; }
 		.org.fenixedu.academic.domain.organizationalStructure.Party playsRole party { multiplicity 0..1; }
 	}
+	
+	relation DynamicFieldsForRegistration {
+		dml.DynamicField playsRole dynamicField { multiplicity *; }
+		.org.fenixedu.academic.domain.student.Registration playsRole registration { multiplicity 0..1; }
+	}
 
 // ==================== END: DynamicField ====================
 
