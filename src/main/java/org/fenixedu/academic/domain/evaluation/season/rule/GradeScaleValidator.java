@@ -1,9 +1,10 @@
 package org.fenixedu.academic.domain.evaluation.season.rule;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.BigDecimalValidator;
@@ -11,6 +12,7 @@ import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.academic.domain.curriculum.grade.GradeScale;
 import org.fenixedu.academic.domain.degree.DegreeType;
 import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
+import org.fenixedu.academic.domain.organizationalStructure.Unit;
 import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 import org.fenixedu.commons.i18n.LocalizedString;
 import org.fenixedu.commons.i18n.LocalizedString.Builder;
@@ -29,24 +31,27 @@ public class GradeScaleValidator extends GradeScaleValidator_Base {
     @Atomic
     static public EvaluationSeasonRule create(final EvaluationSeason season, final GradeScale gradeScale,
             final String gradeValues, final LocalizedString description, final boolean appliesToCurriculumAggregatorEntry,
-            final Set<DegreeType> degreeTypes) {
+            final Collection<DegreeType> degreeTypes, final Collection<Unit> units) {
 
         final GradeScaleValidator result = new GradeScaleValidator();
-        result.init(season, gradeScale, gradeValues, description, appliesToCurriculumAggregatorEntry, degreeTypes);
+        result.init(season, gradeScale, gradeValues, description, appliesToCurriculumAggregatorEntry, degreeTypes, units);
         return result;
     }
 
     private void init(final EvaluationSeason season, final GradeScale gradeScale, final String gradeValues,
             final LocalizedString description, final boolean appliesToCurriculumAggregatorEntry,
-            final Set<DegreeType> degreeTypes) {
+            final Collection<DegreeType> degreeTypes, final Collection<Unit> units) {
 
-        super.init(season);
         setGradeScale(gradeScale);
         setGradeValues(gradeValues);
         setRuleDescription(description);
         setAppliesToCurriculumAggregatorEntry(appliesToCurriculumAggregatorEntry);
         getDegreeTypeSet().clear();
         getDegreeTypeSet().addAll(degreeTypes);
+        getUnitsSet().clear();
+        getUnitsSet().addAll(units);
+
+        super.init(season);
 
         checkRules();
     }
@@ -78,17 +83,22 @@ public class GradeScaleValidator extends GradeScaleValidator_Base {
             }
 
             final GradeScaleValidator o = (GradeScaleValidator) i;
+            final boolean existsOtherForSameDegreeTypes = !Sets.intersection(o.getDegreeTypeSet(), getDegreeTypeSet()).isEmpty();
+            final boolean existsOtherForSameUnits = getUnitsSet().isEmpty() || o.getUnitsSet().isEmpty()
+                    || !Sets.intersection(o.getUnitsSet(), getUnitsSet()).isEmpty();
+            
             return o.getGradeScale() == getGradeScale()
                     && o.getAppliesToCurriculumAggregatorEntry() == getAppliesToCurriculumAggregatorEntry()
-                    && !Sets.intersection(o.getDegreeTypeSet(), getDegreeTypeSet()).isEmpty();
+                    && existsOtherForSameDegreeTypes && existsOtherForSameUnits;
         };
     }
 
     @Atomic
     public void edit(final GradeScale gradeScale, final String gradeValues, final LocalizedString description,
-            final boolean appliesToCurriculumAggregatorEntry, final Set<DegreeType> degreeTypes) {
+            final boolean appliesToCurriculumAggregatorEntry, final Collection<DegreeType> degreeTypes,
+            final Collection<Unit> units) {
 
-        init(getSeason(), gradeScale, gradeValues, description, appliesToCurriculumAggregatorEntry, degreeTypes);
+        init(getSeason(), gradeScale, gradeValues, description, appliesToCurriculumAggregatorEntry, degreeTypes, units);
     }
 
     @Override
@@ -104,6 +114,10 @@ public class GradeScaleValidator extends GradeScaleValidator_Base {
         builder.append(String.valueOf(getDegreeTypeSet().stream().count()), " [");
         builder.append(AcademicExtensionsUtil.bundle("label.Degree.degreeType"), " ");
         builder.append("]");
+        builder.append(getUnitsSet().isEmpty() ? "" : " [" + getUnitsSet().stream()
+                .map(u -> StringUtils.isNotBlank(u.getAcronym()) ? u.getAcronym() : u.getNameI18n().getContent())
+                .collect(Collectors.joining(", ")) + "]");
+
         return builder.build();
     }
 
@@ -160,6 +174,8 @@ public class GradeScaleValidator extends GradeScaleValidator_Base {
     public void delete() {
         super.setGradeScale(null);
         getDegreeTypeSet().clear();
+        getUnitsSet().clear();
+
         super.delete();
     }
 

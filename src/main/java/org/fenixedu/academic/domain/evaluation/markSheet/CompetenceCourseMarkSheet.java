@@ -74,6 +74,7 @@ import org.fenixedu.academic.domain.evaluation.season.rule.EvaluationSeasonRule;
 import org.fenixedu.academic.domain.evaluation.season.rule.GradeScaleValidator;
 import org.fenixedu.academic.domain.evaluation.services.EnrolmentEvaluationServices;
 import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
+import org.fenixedu.academic.domain.organizationalStructure.Unit;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.services.EnrolmentServices;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumModule;
@@ -840,6 +841,12 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
                 continue;
             }
 
+            if (!validator.getUnitsSet().isEmpty()
+                    && Sets.intersection(getExecutionCourseDegreesParentsUnits(getExecutionCourse()), validator.getUnitsSet())
+                            .isEmpty()) {
+                continue;
+            }
+
             if (gradeValidatorToConsiderExtensionPredicate != null
                     && !gradeValidatorToConsiderExtensionPredicate.test(validator, this)) {
                 continue;
@@ -853,6 +860,11 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
         }
 
         return result.isEmpty() ? null : result.first();
+    }
+
+    private Set<Unit> getExecutionCourseDegreesParentsUnits(final ExecutionCourse executionCourse) {
+        return getExecutionCourse().getAssociatedCurricularCoursesSet().stream().map(c -> c.getDegree()).distinct()
+                .flatMap(d -> d.getUnit().getAllParentUnits().stream()).collect(Collectors.toSet());
     }
 
     private static BiPredicate<GradeScaleValidator, CompetenceCourseMarkSheet> gradeValidatorToConsiderExtensionPredicate;

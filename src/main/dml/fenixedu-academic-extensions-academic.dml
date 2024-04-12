@@ -125,6 +125,11 @@ class evaluation.season.rule.EvaluationSeasonRule {
 				multiplicity *;
 			}    		
     	}
+    	
+    	relation GradeScaleValidatorUnits {
+			evaluation.season.rule.GradeScaleValidator playsRole gradeScaleValidators { multiplicity *; }
+			.org.fenixedu.academic.domain.organizationalStructure.Unit playsRole units { multiplicity *; }
+		}
 
     class evaluation.season.rule.EvaluationSeasonShiftType extends evaluation.season.rule.EvaluationSeasonRule {
     }
