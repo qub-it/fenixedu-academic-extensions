@@ -80,5 +80,10 @@
 			<groupId>org.fenixedu</groupId>
 			<artifactId>fenixedu-academic-treasury-base</artifactId>
 		</dependency>
+		<!-- Added because of usage of org.fenixedu.bennu.IBean-->
+		<dependency>
+			<groupId>com.qubit.solution.fenixedu</groupId>
+			<artifactId>fenixedu-ulisboa-tools</artifactId>
+		</dependency>
 	</dependencies>
 </project>
