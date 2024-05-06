@@ -1,10 +1,16 @@
 package org.fenixedu.academic.services.evaluation;
 
+import static java.util.Collections.synchronizedList;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -31,10 +37,15 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
+import pt.ist.fenixframework.Atomic;
+import pt.ist.fenixframework.Atomic.TxMode;
+
 /**
  * @see {@link com.qubit.qubEdu.module.academicOffice.domain.grade.marksheet.report.MarkSheetStatusReportService}
  */
 abstract public class MarkSheetStatusReportService {
+
+    private static final int THREAD_BLOCK_SIZE = 10;
 
     static public List<ExecutionCourseSeasonReport> getReportsForExecutionCourse(final ExecutionCourse executionCourse) {
 
@@ -96,8 +107,46 @@ abstract public class MarkSheetStatusReportService {
         return result;
     }
 
-    static private List<CompetenceCourseSeasonReport> iterateCompetenceCourses(final ExecutionInterval interval,
-            final Set<CompetenceCourse> toProcess, final Set<EvaluationSeason> seasons) {
+    private static List<CompetenceCourseSeasonReport> iterateCompetenceCourses(final ExecutionInterval interval,
+            final Set<CompetenceCourse> competenceCourses, final Set<EvaluationSeason> seasons) {
+        final List<Throwable> errors = synchronizedList(new ArrayList<>());
+        final List<CompetenceCourseSeasonReport> result = synchronizedList(new ArrayList<>());
+        final List<CompetenceCourse> toProcess = new ArrayList<>(competenceCourses);
+        final ExecutorService executor =
+                Executors.newFixedThreadPool(Math.max(Runtime.getRuntime().availableProcessors() / 4, 1));
+
+        int startIndex = 0;
+        while (startIndex < toProcess.size()) {
+            final int endIndex = Math.min(startIndex + THREAD_BLOCK_SIZE, toProcess.size());
+            final List<CompetenceCourse> block = toProcess.subList(startIndex, endIndex);
+            executor.submit(() -> {
+                try {
+                    result.addAll(iterateCompetenceCoursesBlock(interval, block, seasons));
+                } catch (Throwable e) {
+                    errors.add(e.getCause() != null ? e.getCause() : e);
+                }
+            });
+            
+            startIndex = endIndex;
+        }
+
+        executor.shutdown();
+        try {
+            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        } catch (InterruptedException e) {
+            //ignore
+        }
+
+        if (!errors.isEmpty()) {
+            throw new RuntimeException(errors.stream().map(e -> e.getMessage()).distinct().collect(Collectors.joining("\n")));
+        }
+
+        return result;
+    }
+
+    @Atomic(mode = TxMode.READ)
+    static private List<CompetenceCourseSeasonReport> iterateCompetenceCoursesBlock(final ExecutionInterval interval,
+            final Collection<CompetenceCourse> toProcess, final Set<EvaluationSeason> seasons) {
 
         final List<CompetenceCourseSeasonReport> result = Lists.newArrayList();
 
