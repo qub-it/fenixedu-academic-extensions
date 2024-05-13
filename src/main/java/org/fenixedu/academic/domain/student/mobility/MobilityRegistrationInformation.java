@@ -20,8 +20,6 @@ import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.commons.i18n.LocalizedString;
 import org.joda.time.LocalDate;
 
-import com.google.common.base.Strings;
-
 import pt.ist.fenixframework.Atomic;
 
 public class MobilityRegistrationInformation extends MobilityRegistrationInformation_Base {
@@ -198,10 +196,6 @@ public class MobilityRegistrationInformation extends MobilityRegistrationInforma
             throw new AcademicExtensionsDomainException("error.MobilityRegistrationInformation.countryUnit.required");
         }
 
-        if (getForeignInstitutionUnit() == null) {
-            throw new AcademicExtensionsDomainException("error.MobilityRegistrationInformation.foreignInstitutionUnit.required");
-        }
-
     }
 
     private void checkRulesForIncoming() {
@@ -273,36 +267,7 @@ public class MobilityRegistrationInformation extends MobilityRegistrationInforma
     }
 
     public Country getCountry() {
-        return getCountryUnit() != null ? Country
-                .readByTwoLetterCode(getCountryUnit().getAcronym()) : getCountryByForeignInstitutionUnit();
-    }
-
-    @Deprecated
-    private Country getCountryByForeignInstitutionUnit() {
-
-        //legacy
-        if (getForeignInstitutionUnit() == null) {
-            return null;
-        }
-
-        final Set<Unit> countries =
-                getForeignInstitutionUnit().getParentUnits().stream().filter(u -> u.isCountryUnit()).collect(Collectors.toSet());
-
-        if (countries.size() > 1) {
-            throw new AcademicExtensionsDomainException(
-                    "error.MobilityRegistrationInformation.found.more.than.one.parent.country.of.foreign.unit");
-        }
-
-        if (countries.size() == 1) {
-            Unit countryUnit = countries.iterator().next();
-            if ((countryUnit).getCountry() != null) {
-                return (countryUnit).getCountry();
-            } else if (!Strings.isNullOrEmpty((countryUnit).getAcronym())) {
-                return Country.readByTwoLetterCode((countryUnit).getAcronym());
-            }
-        }
-
-        return null;
+        return getCountryUnit() != null ? Country.readByTwoLetterCode(getCountryUnit().getAcronym()) : null;
     }
 
     public boolean hasCountry() {
