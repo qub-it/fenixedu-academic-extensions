@@ -1,3 +1,5 @@
+- Improvement: Improve EN error messages for shifts enrolment rule [#qubIT-Fenix-5310]
+
 4.30.0 (16-05-2024)
 - Refactor: Adds IBean and TupleDataSourceBean from ulisboa tools [#qubIT-Omnis-5836]
 
