@@ -1,3 +1,4 @@
+4.31.0 (24-05-2024)
 - Improvement: Added curricular period rule to restrict enrolment credits based on registration protocol [#qubIT-Fenix-5324]
 - Bug fix: Unavailable for enrolment rule should always prefilter courses [#qubIT-Fenix-5322]
 
