@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 import org.fenixedu.academic.domain.CompetenceCourse;
 import org.fenixedu.academic.domain.CurricularCourse;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
 import org.fenixedu.academic.domain.enrolment.EnrolmentContext;
 import org.fenixedu.academic.domain.enrolment.IDegreeModuleToEvaluate;
@@ -94,6 +95,7 @@ abstract public class RuleEnrolment extends RuleEnrolment_Base {
         super.setConfigurationEnrolment(null);
         getStatuteTypesSet().clear();
         getAcademicPeriodOrdersSet().clear();
+        getRegistrationProtocolsSet().clear();
         super.delete();
     }
 
@@ -116,6 +118,7 @@ abstract public class RuleEnrolment extends RuleEnrolment_Base {
         ruleEnrolment.setApplyToPartialRegime(getApplyToPartialRegime());
         ruleEnrolment.getStatuteTypesSet().addAll(getStatuteTypesSet());
         ruleEnrolment.getAcademicPeriodOrdersSet().addAll(getAcademicPeriodOrdersSet());
+        ruleEnrolment.getRegistrationProtocolsSet().addAll(getRegistrationProtocolsSet());
     }
 
     protected boolean hasValidRegime(final EnrolmentContext enrolmentContext) {
@@ -139,6 +142,11 @@ abstract public class RuleEnrolment extends RuleEnrolment_Base {
         return getStatuteTypesSet().isEmpty()
                 || StatuteServices.findStatuteTypes(enrolmentContext.getRegistration(), enrolmentContext.getExecutionYear())
                         .stream().anyMatch(s -> getStatuteTypesSet().contains(s));
+    }
+
+    protected boolean hasValidRegistrationProtocol(final EnrolmentContext enrolmentContext) {
+        return getRegistrationProtocolsSet().isEmpty()
+                || getRegistrationProtocolsSet().contains(enrolmentContext.getRegistration().getRegistrationProtocol());
     }
 
     protected String getStatuteTypesLabelPrefix() {
@@ -166,6 +174,16 @@ abstract public class RuleEnrolment extends RuleEnrolment_Base {
         return getAcademicPeriodOrdersSet().stream()
                 .anyMatch(apo -> apo.getAcademicPeriod().equals(competenceCourse.getAcademicPeriod())
                         && apo.getPeriodOrder().intValue() == toEvaluate.getExecutionInterval().getChildOrder().intValue());
+    }
+
+    protected boolean isValidForAcademicPeriods(CompetenceCourse competenceCourse, ExecutionInterval executionInterval) {
+        if (getAcademicPeriodOrdersSet().isEmpty()) {
+            return true;
+        }
+
+        return getAcademicPeriodOrdersSet().stream()
+                .anyMatch(apo -> apo.getAcademicPeriod().equals(competenceCourse.getAcademicPeriod())
+                        && apo.getPeriodOrder().intValue() == executionInterval.getChildOrder().intValue());
     }
 
     abstract public RuleResult execute(final EnrolmentContext enrolmentContext);

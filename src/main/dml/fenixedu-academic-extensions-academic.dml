@@ -912,6 +912,9 @@ class curricularRules.curricularPeriod.CurricularPeriodRule {
 			
 			class curricularRules.curricularPeriod.enrolment.CreditsInEnrolmentPeriodForStatutes extends curricularRules.curricularPeriod.enrolment.CreditsInEnrolmentPeriod {
 			}
+			
+			class curricularRules.curricularPeriod.enrolment.CreditsInEnrolmentPeriodForRegistrationProtocols extends curricularRules.curricularPeriod.enrolment.CreditsInEnrolmentPeriod {
+			}
 		
 		class curricularRules.curricularPeriod.enrolment.CreditsInCurricularPeriod extends curricularRules.curricularPeriod.RuleEnrolment {
 		}
@@ -975,6 +978,11 @@ relation RuleEnrolmentStatuteType {
 relation RuleEnrolmentAcademicPeriodOrder {
 	curricularRules.curricularPeriod.RuleEnrolment playsRole ruleEnrolments { multiplicity *; }
 	.org.fenixedu.academic.domain.time.calendarStructure.AcademicPeriodOrder playsRole academicPeriodOrders { multiplicity *; }
+}
+
+relation RuleEnrolmentRegistrationProtocol {
+	curricularRules.curricularPeriod.RuleEnrolment playsRole ruleEnrolments { multiplicity *; }
+	.org.fenixedu.academic.domain.student.RegistrationProtocol playsRole registrationProtocols { multiplicity *; }
 }
 
 relation CurricularPeriodConfigurationRuleTransition {
