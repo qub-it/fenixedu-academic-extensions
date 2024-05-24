@@ -4,7 +4,6 @@ import org.fenixedu.academic.domain.curricularRules.ICurricularRule;
 import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
 import org.fenixedu.academic.domain.enrolment.EnrolmentContext;
 import org.fenixedu.academic.domain.enrolment.IDegreeModuleToEvaluate;
-import org.fenixedu.academic.util.CurricularRuleLabelFormatter;
 
 public class UnavailableForEnrolmentRuleExecutor extends CurricularRuleExecutor {
 
@@ -23,9 +22,7 @@ public class UnavailableForEnrolmentRuleExecutor extends CurricularRuleExecutor 
     @Override
     protected RuleResult executeEnrolmentPrefilter(ICurricularRule curricularRule,
             IDegreeModuleToEvaluate sourceDegreeModuleToEvaluate, EnrolmentContext enrolmentContext) {
-        return sourceDegreeModuleToEvaluate.isEnroled() ? RuleResult
-                .createImpossibleWithLiteralMessage(sourceDegreeModuleToEvaluate.getDegreeModule(), CurricularRuleLabelFormatter
-                        .getLabel(curricularRule)) : RuleResult.createFalse(sourceDegreeModuleToEvaluate.getDegreeModule());
+        return RuleResult.createFalse(sourceDegreeModuleToEvaluate.getDegreeModule());
     }
 
     @Override

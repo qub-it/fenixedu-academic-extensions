@@ -1,3 +1,5 @@
+- Bug fix: Unavailable for enrolment rule should always prefilter courses [#qubIT-Fenix-5322]
+
 4.30.1 (21-05-2024)
 - Improvement: Improve EN error messages for shifts enrolment rule [#qubIT-Fenix-5310]
 
