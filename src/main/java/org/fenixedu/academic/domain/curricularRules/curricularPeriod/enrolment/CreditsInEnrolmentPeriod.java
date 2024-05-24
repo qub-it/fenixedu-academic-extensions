@@ -117,8 +117,11 @@ public class CreditsInEnrolmentPeriod extends CreditsInEnrolmentPeriod_Base {
         }
 
         if (getIncludeEnrolments()) {
+            //deprecated mode: 
+            //applies to EnrolmentModel.SEMESTER and validation for full year (total credits in semester S2 cannot exceed total in year=S1+S2)
+            //applies to EnrolmentModel.YEAR and validation for full year with multiple enrolment periods (e.g. Period 1 = S1+S2 and Period 2 = S2 OR Period 1 = S1 and Period 2 = S2) 
 
-            // must include approved and flunked enrolments from the other semester 
+            // must include approved and flunked enrolments from the other periods
 
             for (final Enrolment enrolment : enrolmentContext.getStudentCurricularPlan().getEnrolmentsSet()) {
 
@@ -128,6 +131,24 @@ public class CreditsInEnrolmentPeriod extends CreditsInEnrolmentPeriod_Base {
 
                 if (enrolment.getExecutionYear() == enrolmentContext.getExecutionYear()
                         && enrolment.getExecutionPeriod() != enrolmentContext.getExecutionPeriod()) {
+                    total = total.add(enrolment.getEctsCreditsForCurriculum());
+                }
+            }
+
+        } else {
+
+            //must include flunked and approved enrolments
+            if (enrolmentContext.isToEvaluateRulesByYear()) {
+
+                for (final Enrolment enrolment : enrolmentContext.getStudentCurricularPlan()
+                        .getEnrolmentsByExecutionYear(enrolmentContext.getExecutionYear())) {
+
+                    if (enrolment.isAnnulled() || processedDegreeModules.contains(enrolment.getCurricularCourse())
+                            || !isValidForAcademicPeriods(enrolment.getCurricularCourse().getCompetenceCourse(),
+                                    enrolment.getExecutionInterval())) {
+                        continue;
+                    }
+
                     total = total.add(enrolment.getEctsCreditsForCurriculum());
                 }
             }
