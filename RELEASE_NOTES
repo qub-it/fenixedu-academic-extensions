@@ -1,3 +1,4 @@
+- Refactor: Remove deprecated methods of StatuteServices [#qubIT-Fenix-5325]
 - Bug fix: Correctly count enroled credits for enrolment period in anual enrolment model [#qubIT-Fenix-5329]
 
 4.31.0 (24-05-2024)

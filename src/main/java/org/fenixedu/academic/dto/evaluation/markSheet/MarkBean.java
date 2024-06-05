@@ -29,6 +29,7 @@ package org.fenixedu.academic.dto.evaluation.markSheet;
 
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -44,8 +45,8 @@ import org.fenixedu.academic.domain.curriculum.grade.GradeScale;
 import org.fenixedu.academic.domain.evaluation.markSheet.CompetenceCourseMarkSheet;
 import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.academic.domain.student.Registration;
+import org.fenixedu.academic.domain.student.StatuteType;
 import org.fenixedu.academic.domain.student.services.EnrolmentServices;
-import org.fenixedu.academic.domain.student.services.StatuteServices;
 import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 import org.fenixedu.bennu.IBean;
 import org.fenixedu.bennu.core.security.Authenticate;
@@ -100,9 +101,8 @@ public class MarkBean implements IBean, Comparable<MarkBean> {
                 enrolment.getStudentCurricularPlan().getDegree().getPresentationName().replace("'", " ").replace("\"", " ");
         this.degreeCode = enrolment.getStudentCurricularPlan().getDegree().getCode();
         this.shifts = EnrolmentServices.getShiftsDescription(enrolment, markSheet.getExecutionSemester());
-        this.statutes =
-                StatuteServices.getVisibleStatuteTypesDescription(enrolment.getRegistration(), enrolment.getExecutionInterval())
-                        .replace("'", " ").replace("\"", " ");
+        this.statutes = StatuteType.findforRegistration(registration, enrolment.getExecutionInterval())
+                .filter(s -> s.getVisible()).map(s -> s.getName().getContent()).distinct().collect(Collectors.joining(", "));
     }
 
     public CompetenceCourseMarkSheet getMarkSheet() {
