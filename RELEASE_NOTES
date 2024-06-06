@@ -1,3 +1,5 @@
+- Improvement: Performance improvement to handle heavly load in CompeteceCourseServices [#qubIT-Fenix-5358]
+
 4.33.0 (17-06-2024)
 - Improvement: Performs release for jdk 17 [#qubIT-Omnis-4737]
 
