@@ -9,6 +9,7 @@ import org.fenixedu.academic.domain.Attends;
 import org.fenixedu.academic.domain.DegreeInfo;
 import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.EvaluationConfiguration;
+import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.Qualification;
 import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.domain.curricularPeriod.CurricularPeriod;
@@ -41,6 +42,7 @@ import org.fenixedu.academic.domain.student.curriculum.conclusion.ConclusionProc
 import org.fenixedu.academic.domain.studentCurriculum.Credits;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumLine;
 import org.fenixedu.academic.domain.studentCurriculum.Dismissal;
+import org.fenixedu.academic.service.services.manager.MergeExecutionCourses;
 import org.fenixedu.bennu.core.signals.Signal;
 import org.fenixedu.bennu.core.util.CoreConfiguration;
 import org.slf4j.Logger;
@@ -112,6 +114,8 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
         registerDeletionListenersForDynamicFields();
 
         UnavailableForEnrolmentRule.initializeDomainListenersAndExtensions();
+
+        MergeExecutionCourses.registerMergeHandler(FenixeduAcademicExtensionsInitializer::mergeExecutionCoursesMarksheets);
     }
 
     private void setupListenersForStudentSchedule() {
@@ -224,6 +228,11 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
             df.delete();
         }));
 
+    }
+
+    private static void mergeExecutionCoursesMarksheets(final ExecutionCourse from, final ExecutionCourse to) {
+        to.getCompetenceCourseMarkSheetSet().addAll(from.getCompetenceCourseMarkSheetSet());
+        from.getCompetenceCourseMarkSheetSet().clear();
     }
 
     @SuppressWarnings("unchecked")
