@@ -25,8 +25,10 @@
  */
 package org.fenixedu.academic.domain.degreeStructure;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
@@ -48,8 +50,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Sets;
 
 abstract public class CompetenceCourseServices {
@@ -59,11 +59,11 @@ abstract public class CompetenceCourseServices {
     static final private int CACHE_APPROVALS_MAX_SIZE = 200_000;
     static final private int CACHE_APPROVALS_EXPIRE_MIN = 10;
 
-    static final private Cache<String, Boolean> CACHE_APPROVALS = CacheBuilder.newBuilder().concurrencyLevel(4)
-            .maximumSize(CACHE_APPROVALS_MAX_SIZE).expireAfterWrite(CACHE_APPROVALS_EXPIRE_MIN, TimeUnit.MINUTES).build();
+    static final private Map<StudentCurricularPlan, Cache<String, Boolean>> CACHE_APPROVALS =
+            new ConcurrentHashMap<StudentCurricularPlan, Cache<String, Boolean>>();
 
-    static final private Cache<String, Set<StudentCurricularPlan>> CACHE_SCPS = CacheBuilder.newBuilder().concurrencyLevel(4)
-            .maximumSize(CACHE_APPROVALS_MAX_SIZE).expireAfterWrite(CACHE_APPROVALS_EXPIRE_MIN, TimeUnit.MINUTES).build();
+    static final private Map<StudentCurricularPlan, Cache<Registration, Set<StudentCurricularPlan>>> CACHE_SCPS =
+            new ConcurrentHashMap<StudentCurricularPlan, Cache<Registration, Set<StudentCurricularPlan>>>();
 
     static public boolean isCompetenceCourseApproved(final StudentCurricularPlan plan, final CurricularCourse course,
             final ExecutionInterval Interval) {
@@ -76,13 +76,15 @@ abstract public class CompetenceCourseServices {
             return plan.isApproved(course, Interval);
         }
 
-        Set<StudentCurricularPlan> set;
-        String key = registration.getExternalId();
+        Cache<Registration, Set<StudentCurricularPlan>> cache = CACHE_SCPS.computeIfAbsent(plan,
+                p -> CacheBuilder.newBuilder().concurrencyLevel(4).maximumSize(CACHE_APPROVALS_MAX_SIZE)
+                        .expireAfterWrite(CACHE_APPROVALS_EXPIRE_MIN, TimeUnit.MINUTES).build());
         try {
-            set = CACHE_SCPS.get(key, () -> getScpsToCheck(registration));
+            Set<StudentCurricularPlan> set = cache.get(registration, () -> getScpsToCheck(registration));
             return set.stream().anyMatch(i -> isApproved(i, competence, Interval));
         } catch (ExecutionException e) {
-            logger.error(String.format("Unable to get Approvals [%s %s %s]", new DateTime(), key, e.getLocalizedMessage()));
+            logger.error(String.format("Unable to get Approvals [%s %s %s]", new DateTime(), registration.getExternalId(),
+                    e.getLocalizedMessage()));
             return false;
         }
     }
@@ -131,14 +133,17 @@ abstract public class CompetenceCourseServices {
     static private boolean isApproved(final StudentCurricularPlan plan, final CompetenceCourse competence,
             final ExecutionInterval interval) {
 
-        final String key = buildCourseApprovalCacheKey(plan, competence, interval);
+        Cache<String, Boolean> scpCache = getApprovalCacheForSCP(plan);
+
+        final String key = buildCourseApprovalCacheKey(competence, interval);
 
         try {
-            return CACHE_APPROVALS.get(key, new Callable<Boolean>() {
+            return scpCache.get(key, new Callable<Boolean>() {
 
                 @Override
                 public Boolean call() throws Exception {
-                    logger.debug(String.format("Miss on Approvals cache [%s %s]", new DateTime(), key));
+                    logger.debug(
+                            String.format("Miss on Approvals cache [%s %s]", new DateTime(), plan.getExternalId() + "#" + key));
                     final Set<CurricularCourse> curriculars = getExpandedCurricularCourses(competence.getCode());
                     return curriculars == null ? false : curriculars.stream()
                             .anyMatch(curricular -> plan.isApproved(curricular, interval));
@@ -146,41 +151,34 @@ abstract public class CompetenceCourseServices {
             });
 
         } catch (final Throwable t) {
-            logger.error(String.format("Unable to get Approvals [%s %s %s]", new DateTime(), key, t.getLocalizedMessage()));
+            logger.error(String.format("Unable to get Approvals [%s %s %s]", new DateTime(), plan.getExternalId() + "#" + key,
+                    t.getLocalizedMessage()));
             return false;
         }
     }
 
-    
-
-    private static String buildCourseApprovalCacheKey(final StudentCurricularPlan plan, final CompetenceCourse competence,
-            final ExecutionInterval interval) {
-        return plan.getExternalId() + "#" + competence.getExternalId() + "#"
-                + (interval == null ? "null" : interval.getExternalId());
+    private static Cache<String, Boolean> getApprovalCacheForSCP(final StudentCurricularPlan plan) {
+        Cache<String, Boolean> scpCache = CACHE_APPROVALS.computeIfAbsent(plan, p -> CacheBuilder.newBuilder().concurrencyLevel(4)
+                .maximumSize(CACHE_APPROVALS_MAX_SIZE).expireAfterWrite(CACHE_APPROVALS_EXPIRE_MIN, TimeUnit.MINUTES).build());
+        return scpCache;
     }
+
+    private static String buildCourseApprovalCacheKey(final CompetenceCourse competence, final ExecutionInterval interval) {
+        return competence.getExternalId() + "#" + (interval == null ? "null" : interval.getExternalId());
+    }
+
+    private static Map<String, Set<CurricularCourse>> CACHE_COMPETENCE_CURRICULARS = new ConcurrentHashMap<>();
 
     static public Set<CurricularCourse> getExpandedCurricularCourses(final String code) {
         final String key = filterCode(code);
-
         try {
-            return CACHE_COMPETENCE_CURRICULARS.get(key);
-
+            return CACHE_COMPETENCE_CURRICULARS.computeIfAbsent(key, k -> loadExpandedCurricularCourses(k));
         } catch (final Throwable t) {
             logger.error(String.format("Unable to get CompetenceCourse CurricularCourses [%s %s %s]", new DateTime(), key,
                     t.getLocalizedMessage()));
             return null;
         }
     }
-
-    static final private LoadingCache<String, Set<CurricularCourse>> CACHE_COMPETENCE_CURRICULARS =
-            CacheBuilder.newBuilder().concurrencyLevel(8).build(new CacheLoader<String, Set<CurricularCourse>>() {
-
-                @Override
-                public Set<CurricularCourse> load(final String key) throws Exception {
-                    logger.debug(String.format("Miss on CompetenceCourse CurricularCourses cache [%s %s]", new DateTime(), key));
-                    return loadExpandedCurricularCourses(key);
-                }
-            });
 
     static private Set<CurricularCourse> loadExpandedCurricularCourses(final String key) {
         Set<CurricularCourse> result = Sets.newHashSet();
@@ -210,14 +208,15 @@ abstract public class CompetenceCourseServices {
     static private String filterCode(final String input) {
         return !isExpandedCode(input) ? input : input.substring(0, input.lastIndexOf("_"));
     }
-    
+
     public static void invalidateCourseApprovalCache(final StudentCurricularPlan plan, final CurricularCourse curricularCourse,
             final ExecutionInterval interval) {
         if (curricularCourse == null || curricularCourse.getCompetenceCourse() == null) {
             return;
         }
 
-        CACHE_APPROVALS.invalidate(buildCourseApprovalCacheKey(plan, curricularCourse.getCompetenceCourse(), interval));
+        Cache<String, Boolean> approvalCacheForSCP = getApprovalCacheForSCP(plan);
+        approvalCacheForSCP.invalidate(buildCourseApprovalCacheKey(curricularCourse.getCompetenceCourse(), interval));
     }
 
 }
