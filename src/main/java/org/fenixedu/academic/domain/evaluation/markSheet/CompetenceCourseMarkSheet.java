@@ -109,7 +109,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
         };
 
         private String normalize(final String input) {
-            return input == null ? "" : input.replaceAll("\\s+", "").toUpperCase();
+            return input == null ? "" : input.replaceAll("\\s+", "_").toUpperCase();
         }
     };
 
@@ -894,6 +894,8 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
         // unfortunately this is relevant for the evaluation comparator used by Enrolment.getFinalEnrolmentEvaluation
         CompetenceCourseMarkSheetStateChange.createConfirmedState(this, byTeacher, null);
 
+        // TODO: test evaluation periods
+        
         for (final EnrolmentEvaluation evaluation : getEnrolmentEvaluationSet()) {
 
             // it hasn't been touched since last confirmation
