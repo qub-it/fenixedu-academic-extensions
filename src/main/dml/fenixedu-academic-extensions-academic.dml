@@ -241,7 +241,7 @@ relation CompetenceCourseMarkSheetSnapshotEntryRelation {
 	}
 	
 	evaluation.markSheet.CompetenceCourseMarkSheetSnapshotEntry playsRole entry {
-		multiplicity 1..*;
+		multiplicity *;
 	}
 }
 
