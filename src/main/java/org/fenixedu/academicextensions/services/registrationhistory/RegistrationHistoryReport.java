@@ -814,8 +814,7 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 		return info == null ? null : info.getDegreeDesignation();
 	}
 
-	// NEW
-	public String getQualificationCountryOfOrigin() {
+	public String getQualificationCountry() {
 		final PrecedentDegreeInformation info = getCompletedPrecedentInformation();
 		if (info == null) {
 			return null;
@@ -823,7 +822,6 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 		final Country country = info.getCountry();
 		return country == null ? null : country.getName();
 	}
-	//
 
 	public String getOriginInstitutionName() {
 		final PrecedentDegreeInformation info = getPreviousPrecedentInformation();
@@ -842,8 +840,7 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 		return info == null ? null : info.getDegreeDesignation();
 	}
 
-	// NEW
-	public String getOriginCountryOfOrigin() {
+	public String getOriginCountry() {
 		final PrecedentDegreeInformation info = getPreviousPrecedentInformation();
 		if (info == null) {
 			return null;
@@ -851,7 +848,6 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 		final Country country = info.getCountry();
 		return country == null ? null : country.getName();
 	}
-	//
 
 	public String getUsername() {
 		final Person person = getPerson();
@@ -1040,6 +1036,54 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 		}
 
 		return event.getAmountWithVatToPay();
+	}
+	
+	public BigDecimal getPaidTuitionAmount() {
+		final ITreasuryBridgeAPI treasuryBridgeAPI = TreasuryBridgeAPIFactory.implementation();
+		if (treasuryBridgeAPI == null) {
+			return BigDecimal.ZERO;
+		}
+
+		final IAcademicTreasuryEvent event = treasuryBridgeAPI.getTuitionForRegistrationTreasuryEvent(registration,
+				getExecutionYear());
+
+		if (event == null) {
+			return BigDecimal.ZERO;
+		}
+
+		return event.getAmountWithVatToPay().subtract(event.getRemainingAmountToPay());
+	}
+	
+	public BigDecimal getNetExemptTuitionAmount() {
+		final ITreasuryBridgeAPI treasuryBridgeAPI = TreasuryBridgeAPIFactory.implementation();
+		if (treasuryBridgeAPI == null) {
+			return BigDecimal.ZERO;
+		}
+
+		final IAcademicTreasuryEvent event = treasuryBridgeAPI.getTuitionForRegistrationTreasuryEvent(registration,
+				getExecutionYear());
+
+		if (event == null) {
+			return BigDecimal.ZERO;
+		}
+
+		return event.getNetExemptedAmount();
+	}
+	
+	public BigDecimal getRemainingAmountToPay() {
+		final ITreasuryBridgeAPI treasuryBridgeAPI = TreasuryBridgeAPIFactory.implementation();
+		if (treasuryBridgeAPI == null) {
+			return BigDecimal.ZERO;
+		}
+
+		final IAcademicTreasuryEvent event = treasuryBridgeAPI.getTuitionForRegistrationTreasuryEvent(registration,
+				getExecutionYear());
+
+		if (event == null) {
+			return BigDecimal.ZERO;
+		}
+
+		return event.getRemainingAmountToPay();
 	}
 
 	public Integer getEnrolmentYears() {
