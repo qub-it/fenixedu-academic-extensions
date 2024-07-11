@@ -1,3 +1,5 @@
+- Improvement: Adds methods to RegistrationHistoryReport for number of registration, countries of previous precedents and tuition values [#qubIT-Fenix-5365]
+
 4.34.2 (09-07-2024)
 - Refactor: Remove consistency check between marksheet snapshot and entries [#qubIT-Fenix-4893]
 
