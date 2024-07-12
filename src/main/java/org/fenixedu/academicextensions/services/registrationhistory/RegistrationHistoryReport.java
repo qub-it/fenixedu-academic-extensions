@@ -1015,21 +1015,25 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     }
 
     public BigDecimal getTuitionAmount() {
-        return getTreasuryEventOfTuitionForRegistration() == null ? BigDecimal.ZERO : treasuryEvent.getAmountWithVatToPay()
+        final IAcademicTreasuryEvent treasuryEvent = getTreasuryEventOfTuitionForRegistration();
+        return treasuryEvent == null ? BigDecimal.ZERO : treasuryEvent.getAmountWithVatToPay()
                 .add(treasuryEvent.getNetExemptedAmount());
     }
 
     public BigDecimal getPaidTuitionAmount() {
-        return getTreasuryEventOfTuitionForRegistration() == null ? BigDecimal.ZERO : treasuryEvent.getAmountWithVatToPay()
+        final IAcademicTreasuryEvent treasuryEvent = getTreasuryEventOfTuitionForRegistration();
+        return treasuryEvent == null ? BigDecimal.ZERO : treasuryEvent.getAmountWithVatToPay()
                 .subtract(treasuryEvent.getRemainingAmountToPay());
     }
 
     public BigDecimal getNetExemptTuitionAmount() {
-        return getTreasuryEventOfTuitionForRegistration() == null ? BigDecimal.ZERO : treasuryEvent.getNetExemptedAmount();
+        final IAcademicTreasuryEvent treasuryEvent = getTreasuryEventOfTuitionForRegistration();
+        return treasuryEvent == null ? BigDecimal.ZERO : treasuryEvent.getNetExemptedAmount();
     }
 
     public BigDecimal getRemainingAmountToPay() {
-        return getTreasuryEventOfTuitionForRegistration() == null ? BigDecimal.ZERO : treasuryEvent.getRemainingAmountToPay();
+        final IAcademicTreasuryEvent treasuryEvent = getTreasuryEventOfTuitionForRegistration();
+        return treasuryEvent == null ? BigDecimal.ZERO : treasuryEvent.getRemainingAmountToPay();
     }
 
     public Integer getEnrolmentYears() {
