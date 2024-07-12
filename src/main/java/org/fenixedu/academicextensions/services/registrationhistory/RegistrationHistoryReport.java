@@ -146,18 +146,6 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
                     getStudent().getNumber().toString(), getDegree().getCode(), executionYear.getQualifiedName());
         }
 
-        this.treasuryEvent = getTreasuryEventOfTuitionForRegistration();
-    }
-
-    private IAcademicTreasuryEvent getTreasuryEventOfTuitionForRegistration() {
-        final ITreasuryBridgeAPI treasuryBridgeAPI = TreasuryBridgeAPIFactory.implementation();
-        if (treasuryBridgeAPI == null) {
-            return null;
-        }
-
-        final IAcademicTreasuryEvent event =
-                treasuryBridgeAPI.getTuitionForRegistrationTreasuryEvent(registration, getExecutionYear());
-        return event;
     }
 
     @Override
@@ -1010,22 +998,38 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         return event != null && event.isCharged();
     }
 
+    private IAcademicTreasuryEvent getTreasuryEventOfTuitionForRegistration() {
+        if (this.treasuryEvent != null) {
+            return this.treasuryEvent;
+        }
+
+        final ITreasuryBridgeAPI treasuryBridgeAPI = TreasuryBridgeAPIFactory.implementation();
+        if (treasuryBridgeAPI == null) {
+            return null;
+        }
+
+        final IAcademicTreasuryEvent event =
+                treasuryBridgeAPI.getTuitionForRegistrationTreasuryEvent(registration, getExecutionYear());
+        this.treasuryEvent = event;
+        return this.treasuryEvent;
+    }
+
     public BigDecimal getTuitionAmount() {
-        return treasuryEvent == null ? BigDecimal.ZERO : treasuryEvent.getAmountWithVatToPay()
+        return getTreasuryEventOfTuitionForRegistration() == null ? BigDecimal.ZERO : treasuryEvent.getAmountWithVatToPay()
                 .add(treasuryEvent.getNetExemptedAmount());
     }
 
     public BigDecimal getPaidTuitionAmount() {
-        return treasuryEvent == null ? BigDecimal.ZERO : treasuryEvent.getAmountWithVatToPay()
+        return getTreasuryEventOfTuitionForRegistration() == null ? BigDecimal.ZERO : treasuryEvent.getAmountWithVatToPay()
                 .subtract(treasuryEvent.getRemainingAmountToPay());
     }
 
     public BigDecimal getNetExemptTuitionAmount() {
-        return treasuryEvent == null ? BigDecimal.ZERO : treasuryEvent.getNetExemptedAmount();
+        return getTreasuryEventOfTuitionForRegistration() == null ? BigDecimal.ZERO : treasuryEvent.getNetExemptedAmount();
     }
 
     public BigDecimal getRemainingAmountToPay() {
-        return treasuryEvent == null ? BigDecimal.ZERO : treasuryEvent.getRemainingAmountToPay();
+        return getTreasuryEventOfTuitionForRegistration() == null ? BigDecimal.ZERO : treasuryEvent.getRemainingAmountToPay();
     }
 
     public Integer getEnrolmentYears() {
