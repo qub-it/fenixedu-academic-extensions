@@ -94,14 +94,6 @@ public class CreditsLimitWithPreviousApprovalsExecutor extends CurricularRuleExe
         }
     }
 
-    // author = "legidio", comment = "Deprecated: grades must be set before enrolment periods"
-    @Override
-    @Deprecated
-    protected RuleResult executeEnrolmentWithRulesAndTemporaryEnrolment(final ICurricularRule curricularRule,
-            IDegreeModuleToEvaluate sourceDegreeModuleToEvaluate, final EnrolmentContext enrolmentContext) {
-        return executeEnrolmentVerificationWithRules(curricularRule, sourceDegreeModuleToEvaluate, enrolmentContext);
-    }
-
     /**
      * @see CreditsLimitExecutor.createImpossibleResult(CreditsLimit, IDegreeModuleToEvaluate, Double)
      */
@@ -119,11 +111,7 @@ public class CreditsLimitWithPreviousApprovalsExecutor extends CurricularRuleExe
         }
     }
 
-    @Override
-    protected RuleResult executeEnrolmentInEnrolmentEvaluation(final ICurricularRule curricularRule,
-            final IDegreeModuleToEvaluate sourceDegreeModuleToEvaluate, final EnrolmentContext enrolmentContext) {
-        return RuleResult.createNA(sourceDegreeModuleToEvaluate.getDegreeModule());
-    }
+
 
     @Override
     protected boolean canBeEvaluated(ICurricularRule curricularRule, IDegreeModuleToEvaluate sourceDegreeModuleToEvaluate,

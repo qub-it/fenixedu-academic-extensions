@@ -1,32 +1,24 @@
 package org.fenixedu.academic.domain.enrolment;
 
-import java.util.ArrayList;
+import org.apache.commons.lang.StringUtils;
+import org.fenixedu.academic.domain.CurricularCourse;
+import org.fenixedu.academic.domain.Enrolment;
+import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.ExecutionInterval;
+import org.fenixedu.academic.domain.OptionalEnrolment;
+import org.fenixedu.academic.domain.degreeStructure.DegreeModule;
+import org.fenixedu.academic.domain.exceptions.DomainException;
+import org.fenixedu.academic.domain.student.Registration;
+import org.fenixedu.academic.domain.student.curriculum.ConclusionProcessVersion;
+import org.fenixedu.academic.domain.studentCurriculum.CurriculumModule;
+import pt.ist.fenixframework.dml.runtime.RelationAdapter;
+import pt.ist.fenixframework.dml.runtime.RelationListener;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.apache.commons.lang.StringUtils;
-import org.fenixedu.academic.domain.CurricularCourse;
-import org.fenixedu.academic.domain.Enrolment;
-import org.fenixedu.academic.domain.Enrolment.EnrolmentPredicate;
-import org.fenixedu.academic.domain.EvaluationSeason;
-import org.fenixedu.academic.domain.ExecutionCourse;
-import org.fenixedu.academic.domain.ExecutionInterval;
-import org.fenixedu.academic.domain.OptionalEnrolment;
-import org.fenixedu.academic.domain.StudentCurricularPlan;
-import org.fenixedu.academic.domain.curriculum.EnrolmentEvaluationContext;
-import org.fenixedu.academic.domain.degreeStructure.DegreeModule;
-import org.fenixedu.academic.domain.exceptions.DomainException;
-import org.fenixedu.academic.domain.student.Registration;
-import org.fenixedu.academic.domain.student.curriculum.ConclusionProcessVersion;
-import org.fenixedu.academic.domain.studentCurriculum.CurriculumGroup;
-import org.fenixedu.academic.domain.studentCurriculum.CurriculumModule;
-import org.fenixedu.academic.domain.studentCurriculum.NoCourseGroupCurriculumGroup;
-
-import pt.ist.fenixframework.dml.runtime.RelationAdapter;
-import pt.ist.fenixframework.dml.runtime.RelationListener;
 
 public class EnrolmentServices extends org.fenixedu.academic.domain.student.services.EnrolmentServices {
 
@@ -124,53 +116,6 @@ public class EnrolmentServices extends org.fenixedu.academic.domain.student.serv
         }
 
         return null;
-    }
-
-    static public List<Enrolment> getEnrolmentsToEnrol(final StudentCurricularPlan studentCurricularPlan,
-            final ExecutionInterval executionInterval, final EvaluationSeason evaluationSeason,
-            final EnrolmentPredicate predicate) {
-        final List<Enrolment> result = new ArrayList<Enrolment>();
-        //Refresh curriculum groups set
-        getCurriculumGroupsToEnrol(studentCurricularPlan.getRoot());
-
-        List<Enrolment> allEnrolments = new ArrayList<Enrolment>();
-        getEnrolmentsToEnrol(studentCurricularPlan.getRoot(), allEnrolments);
-        for (Enrolment enrolment : allEnrolments) {
-            if (predicate.fill(evaluationSeason, executionInterval, EnrolmentEvaluationContext.MARK_SHEET_EVALUATION)
-                    .testExceptionless(enrolment)) {
-                result.add(enrolment);
-            }
-        }
-
-        return result;
-
-    }
-
-    static public Set<CurriculumGroup> getCurriculumGroupsToEnrol(CurriculumGroup curriculumGroup) {
-        final Set<CurriculumGroup> curriculumGroupsToEnrol = curriculumGroup.getCurriculumGroupsToEnrolmentProcess();
-        if (!curriculumGroup.isNoCourseGroupCurriculumGroup()) {
-            for (final NoCourseGroupCurriculumGroup group : curriculumGroup.getNoCourseGroupCurriculumGroups()) {
-                if (group.isVisible()) {
-                    curriculumGroupsToEnrol.add(group);
-                }
-            }
-        }
-        return curriculumGroupsToEnrol;
-    }
-
-    static public List<Enrolment> getEnrolmentsToEnrol(CurriculumGroup curriculumGroup, List<Enrolment> enrolmentList) {
-        for (CurriculumModule curriculumModule : curriculumGroup.getCurriculumModulesSet()) {
-            if (curriculumModule.isEnrolment()) {
-                final Enrolment enrolment = (Enrolment) curriculumModule;
-                enrolmentList.add(enrolment);
-            }
-        }
-
-        final Set<CurriculumGroup> curriculumGroupsToEnrolmentProcess = getCurriculumGroupsToEnrol(curriculumGroup);
-        for (CurriculumGroup group : curriculumGroupsToEnrolmentProcess) {
-            getEnrolmentsToEnrol(group, enrolmentList);
-        }
-        return enrolmentList;
     }
 
 }

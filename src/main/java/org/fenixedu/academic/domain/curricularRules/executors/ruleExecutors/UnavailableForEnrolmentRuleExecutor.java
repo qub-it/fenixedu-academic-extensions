@@ -8,12 +8,6 @@ import org.fenixedu.academic.domain.enrolment.IDegreeModuleToEvaluate;
 public class UnavailableForEnrolmentRuleExecutor extends CurricularRuleExecutor {
 
     @Override
-    protected RuleResult executeEnrolmentWithRulesAndTemporaryEnrolment(ICurricularRule curricularRule,
-            IDegreeModuleToEvaluate sourceDegreeModuleToEvaluate, EnrolmentContext enrolmentContext) {
-        return executeEnrolmentVerificationWithRules(curricularRule, sourceDegreeModuleToEvaluate, enrolmentContext);
-    }
-
-    @Override
     protected RuleResult executeEnrolmentVerificationWithRules(ICurricularRule curricularRule,
             IDegreeModuleToEvaluate degreeModuleToEvaluate, EnrolmentContext enrolmentContext) {
         return RuleResult.createNA(degreeModuleToEvaluate.getDegreeModule());
@@ -25,11 +19,7 @@ public class UnavailableForEnrolmentRuleExecutor extends CurricularRuleExecutor 
         return RuleResult.createFalse(sourceDegreeModuleToEvaluate.getDegreeModule());
     }
 
-    @Override
-    protected RuleResult executeEnrolmentInEnrolmentEvaluation(final ICurricularRule curricularRule,
-            final IDegreeModuleToEvaluate sourceDegreeModuleToEvaluate, final EnrolmentContext enrolmentContext) {
-        return RuleResult.createNA(sourceDegreeModuleToEvaluate.getDegreeModule());
-    }
+
 
     @Override
     protected boolean canBeEvaluated(ICurricularRule curricularRule, IDegreeModuleToEvaluate sourceDegreeModuleToEvaluate,

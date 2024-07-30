@@ -1,13 +1,13 @@
 package org.fenixedu.academic.domain.student.services;
 
-import java.util.Collection;
-import java.util.stream.Collectors;
-
 import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.Grade;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.curriculum.EnrollmentState;
+
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 //TODO: merge with new EnrolmentServices from specifications
 public class EnrolmentServices {

@@ -35,14 +35,6 @@ import org.fenixedu.academic.domain.student.services.StatuteServices;
 
 public class StudentStatuteCurricularRuleVerifier extends VerifyRuleExecutor {
 
-    //  author = "legidio", comment = "Deprecated: grades must be set before enrolment periods"
-    @Deprecated
-    @Override
-    protected RuleResult verifyEnrolmentWithTemporaryEnrolment(ICurricularRule curricularRule, EnrolmentContext enrolmentContext,
-            DegreeModule degreeModuleToVerify, CourseGroup parentCourseGroup) {
-        return RuleResult.createNA(degreeModuleToVerify);
-    }
-
     @Override
     protected RuleResult verifyEnrolmentWithRules(ICurricularRule curricularRule, EnrolmentContext enrolmentContext,
             DegreeModule degreeModuleToVerify, CourseGroup parentCourseGroup) {

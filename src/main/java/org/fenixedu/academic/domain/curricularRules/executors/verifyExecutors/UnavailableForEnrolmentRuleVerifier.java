@@ -8,13 +8,6 @@ import org.fenixedu.academic.domain.enrolment.EnrolmentContext;
 
 public class UnavailableForEnrolmentRuleVerifier extends VerifyRuleExecutor {
 
-    @Deprecated
-    @Override
-    protected RuleResult verifyEnrolmentWithTemporaryEnrolment(ICurricularRule curricularRule, EnrolmentContext enrolmentContext,
-            DegreeModule degreeModuleToVerify, CourseGroup parentCourseGroup) {
-        return RuleResult.createNA(degreeModuleToVerify);
-    }
-
     @Override
     protected RuleResult verifyEnrolmentWithRules(ICurricularRule curricularRule, EnrolmentContext enrolmentContext,
             DegreeModule degreeModuleToVerify, CourseGroup parentCourseGroup) {

@@ -1,3 +1,5 @@
+- Refactor: Remove legacy evaluation season and temporary enrolment logic [#qubIT-Fenix-5554]
+
 4.34.3 (12-07-2024)
 - Improvement: Adds methods to RegistrationHistoryReport for number of registration, countries of previous precedents and tuition values [#qubIT-Fenix-5365]
 

@@ -22,7 +22,6 @@ import org.fenixedu.academic.domain.degree.ExtendedDegreeInfo;
 import org.fenixedu.academic.domain.degreeStructure.CompetenceCourseInformation;
 import org.fenixedu.academic.domain.degreeStructure.DegreeModule;
 import org.fenixedu.academic.domain.degreeStructure.OptionalCurricularCourse;
-import org.fenixedu.academic.domain.enrolment.EnrolmentPredicateInitializer;
 import org.fenixedu.academic.domain.evaluation.EnrolmentEvaluationExtendedInformation;
 import org.fenixedu.academic.domain.evaluation.EvaluationComparator;
 import org.fenixedu.academic.domain.evaluation.config.MarkSheetSettings;
@@ -71,7 +70,6 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
         AnyCurricularCourseExceptionsInitializer.init();
         ConclusionProcessListenersInitializer.init();
         CurriculumConfigurationInitializer.init();
-        EnrolmentPredicateInitializer.init();
         RegistrationRegimeVerifierInitializer.init();
 
         RegistrationExtendedInformation.setupDeleteListener();

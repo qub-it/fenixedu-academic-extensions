@@ -10,12 +10,6 @@ import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 public class BlockEnrolmentInAdvancedCurricularCoursesExecutor extends CurricularRuleExecutor {
 
     @Override
-    protected RuleResult executeEnrolmentWithRulesAndTemporaryEnrolment(ICurricularRule curricularRule,
-            IDegreeModuleToEvaluate sourceDegreeModuleToEvaluate, EnrolmentContext enrolmentContext) {
-        return executeEnrolmentVerificationWithRules(curricularRule, sourceDegreeModuleToEvaluate, enrolmentContext);
-    }
-
-    @Override
     protected RuleResult executeEnrolmentVerificationWithRules(ICurricularRule curricularRule,
             IDegreeModuleToEvaluate degreeModuleToEvaluate, EnrolmentContext enrolmentContext) {
 
@@ -55,11 +49,7 @@ public class BlockEnrolmentInAdvancedCurricularCoursesExecutor extends Curricula
                                 .createFalse(sourceDegreeModuleToEvaluate.getDegreeModule());
     }
 
-    @Override
-    protected RuleResult executeEnrolmentInEnrolmentEvaluation(final ICurricularRule curricularRule,
-            final IDegreeModuleToEvaluate sourceDegreeModuleToEvaluate, final EnrolmentContext enrolmentContext) {
-        return RuleResult.createNA(sourceDegreeModuleToEvaluate.getDegreeModule());
-    }
+
 
     @Override
     protected boolean canBeEvaluated(ICurricularRule curricularRule, IDegreeModuleToEvaluate sourceDegreeModuleToEvaluate,
