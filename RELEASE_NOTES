@@ -1,3 +1,5 @@
+- Bug fix: Course with free shifts curricular rule not validating correctly if already enrolled in school class [#UL-FBA-1662]
+
 4.35.0 (05-08-2024)
 - Refactor: Remove legacy evaluation season and temporary enrolment logic [#qubIT-Fenix-5554]
 

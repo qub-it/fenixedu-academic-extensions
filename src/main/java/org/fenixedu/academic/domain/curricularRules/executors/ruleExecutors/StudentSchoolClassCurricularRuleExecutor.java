@@ -75,27 +75,13 @@ public class StudentSchoolClassCurricularRuleExecutor extends CurricularRuleExec
         final Optional<SchoolClass> registrationSchoolClass = registration.findSchoolClass(executionInterval);
 
         if (schoolClassCurricularRule.getCourseMustHaveFreeShifts()) {
+            final Set<Shift> shifts =
+                    getShiftsToCheckIfFull(registrationSchoolClass.orElse(null), curricularCourse, executionInterval);
 
-            if (registrationSchoolClass.isPresent()) {
-                final Set<Shift> shifts = registrationSchoolClass.get().getAssociatedShiftsSet().stream()
-                        .filter(s -> s.getExecutionCourse().getAssociatedCurricularCoursesSet().contains(curricularCourse))
-                        .collect(Collectors.toSet());
-
-                if (isAllShiftsOfLoadTypeFull(registration, shifts)) {
-                    return RuleResult.createFalseWithLiteralMessage(curricularCourse, AcademicExtensionsUtil.bundle(
-                            "curricularRules.ruleExecutors.StudentSchoolClassCurricularRuleExecutor.error.courseMustHaveFreeShiftsInSchoolClass",
-                            curricularCourse.getCode(), curricularCourse.getName()));
-                }
-
-            } else {
-                final Set<Shift> shifts = curricularCourse.getExecutionCoursesByExecutionPeriod(executionInterval).stream()
-                        .flatMap(ec -> ec.getShiftsSet().stream()).collect(Collectors.toSet());
-
-                if (isAllShiftsOfLoadTypeFull(registration, shifts)) {
-                    return RuleResult.createFalseWithLiteralMessage(curricularCourse, AcademicExtensionsUtil.bundle(
-                            "curricularRules.ruleExecutors.StudentSchoolClassCurricularRuleExecutor.error.courseMustHaveFreeShifts",
-                            curricularCourse.getCode(), curricularCourse.getName()));
-                }
+            if (isAllShiftsOfLoadTypeFull(registration, shifts)) {
+                return RuleResult.createFalseWithLiteralMessage(curricularCourse, AcademicExtensionsUtil.bundle(
+                        "curricularRules.ruleExecutors.StudentSchoolClassCurricularRuleExecutor.error.courseMustHaveFreeShifts",
+                        curricularCourse.getCode(), curricularCourse.getName()));
             }
         }
 
@@ -110,6 +96,23 @@ public class StudentSchoolClassCurricularRuleExecutor extends CurricularRuleExec
         }
 
         return RuleResult.createTrue(sourceDegreeModuleToEvaluate.getDegreeModule());
+    }
+
+    private static Set<Shift> getShiftsToCheckIfFull(final SchoolClass schoolClass,
+            final CurricularCourse curricularCourse, final ExecutionInterval executionInterval) {
+
+        if (schoolClass != null) {
+            final Set<Shift> shifts = schoolClass.getAssociatedShiftsSet().stream()
+                    .filter(s -> s.getExecutionCourse().getAssociatedCurricularCoursesSet().contains(curricularCourse))
+                    .collect(Collectors.toSet());
+
+            if (!shifts.isEmpty()) {
+                return shifts;
+            }
+        }
+
+        return curricularCourse.getExecutionCoursesByExecutionPeriod(executionInterval).stream()
+                .flatMap(ec -> ec.getShiftsSet().stream()).collect(Collectors.toSet());
     }
 
     private boolean isAllShiftsOfLoadTypeFull(final Registration registration, final Set<Shift> shifts) {
