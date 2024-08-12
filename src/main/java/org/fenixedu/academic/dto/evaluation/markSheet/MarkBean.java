@@ -322,6 +322,12 @@ public class MarkBean implements IBean, Comparable<MarkBean> {
 
         } else {
 
+            // report concurrent mark sheet editions
+            final CompetenceCourseMarkSheet evaluationMarkSheet = evaluation.getCompetenceCourseMarkSheet();
+            if (evaluationMarkSheet != null && evaluationMarkSheet != getMarkSheet()) {
+                throw new AcademicExtensionsDomainException("error.MarkBean.evaluation.already.edited");
+            }
+
             if (!hasGradeValue()) {
                 CompetenceCourseMarkSheet.removeEnrolmentEvaluationData(evaluation);
 
