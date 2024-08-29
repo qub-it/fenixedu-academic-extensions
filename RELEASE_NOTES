@@ -1,3 +1,5 @@
+- Bug fix: When evaluating rule of first time enroled credits, take into account if it's for the whole year [#UL-FL-11933]
+
 4.35.2 (12-08-2024)
 - Bug fix: Prevent empty marksheet when one user is adding a grade and other is removing the same [#UL-FD-2093]
 

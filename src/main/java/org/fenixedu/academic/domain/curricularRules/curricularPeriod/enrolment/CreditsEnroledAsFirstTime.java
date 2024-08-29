@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.fenixedu.academic.domain.CurricularCourse;
 import org.fenixedu.academic.domain.Enrolment;
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
 import org.fenixedu.academic.domain.curricularRules.curricularPeriod.CurricularPeriodConfiguration;
 import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
@@ -48,8 +49,8 @@ public class CreditsEnroledAsFirstTime extends CreditsEnroledAsFirstTime_Base {
                         .getExecutionYear() : dme.getExecutionInterval().getChildOrder().intValue() == getSemester().intValue();
 
         final BigDecimal total = getEnroledAndEnroling(enrolmentContext, periodFilter).stream()
-                .filter(dme -> isFirstTimeEnrolment(enrolmentContext, dme)).map(dme -> BigDecimal.valueOf(dme.getEctsCredits()))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .filter(dme -> isFirstTimeEnrolment(enrolmentContext, dme, false))
+                .map(dme -> BigDecimal.valueOf(dme.getEctsCredits())).reduce(BigDecimal.ZERO, BigDecimal::add);
 
         return total.compareTo(getCredits()) <= 0 ? createTrue() : createFalseLabelled(total);
     }
@@ -67,7 +68,7 @@ public class CreditsEnroledAsFirstTime extends CreditsEnroledAsFirstTime_Base {
                 continue;
             }
 
-            if (isFirstTimeEnrolment(enrolmentContext, degreeModuleToEvaluate)) {
+            if (isFirstTimeEnrolment(enrolmentContext, degreeModuleToEvaluate, true)) {
                 total = total.add(BigDecimal.valueOf(degreeModuleToEvaluate.getEctsCredits()));
             }
         }
@@ -75,21 +76,23 @@ public class CreditsEnroledAsFirstTime extends CreditsEnroledAsFirstTime_Base {
         return total.compareTo(getCredits()) <= 0 ? createTrue() : createFalseLabelled(total);
     }
 
-    private boolean isFirstTimeEnrolment(EnrolmentContext enrolmentContext, IDegreeModuleToEvaluate degreeModuleToEvaluate) {
+    private boolean isFirstTimeEnrolment(EnrolmentContext enrolmentContext, IDegreeModuleToEvaluate degreeModuleToEvaluate,
+            boolean checkWholeYear) {
         final Registration registration = enrolmentContext.getStudentCurricularPlan().getRegistration();
+        final ExecutionInterval enrolmentContextInterval =
+                checkWholeYear ? enrolmentContext.getExecutionYear() : enrolmentContext.getExecutionPeriod();
 
         for (final StudentCurricularPlan studentCurricularPlan : registration.getStudentCurricularPlansSet()) {
 
-            final Collection<Enrolment> filteredEnrolments = studentCurricularPlan.getEnrolmentsSet().stream()
-                    .filter(e -> e.getExecutionInterval().isBefore(enrolmentContext.getExecutionPeriod()))
-                    .filter(e -> !e.isAnnulled()).collect(Collectors.toSet());
+            final Collection<Enrolment> pastEnrolments = studentCurricularPlan.getEnrolmentsSet().stream().filter(e -> {
+                final ExecutionInterval enrolmentInterval = checkWholeYear ? e.getExecutionYear() : e.getExecutionInterval();
+                return enrolmentInterval.isBefore(enrolmentContextInterval);
+            }).filter(e -> !e.isAnnulled()).collect(Collectors.toSet());
 
             for (final CurricularCourse curricularCourse : collectCurricularCoursesToInspect(degreeModuleToEvaluate)) {
-
-                if (filteredEnrolments.stream().anyMatch(e -> e.getCurricularCourse() == curricularCourse)) {
+                if (pastEnrolments.stream().anyMatch(e -> e.getCurricularCourse() == curricularCourse)) {
                     return false;
                 }
-
             }
 
         }
