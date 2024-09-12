@@ -876,13 +876,13 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     public String getNationality() {
         final Person person = getPerson();
         final Country country = person.getCountry();
-        return country == null ? null : country.getName();
+        return country == null ? null : country.getLocalizedName().getContent();
     }
 
     public String getCountryOfBirth() {
         final Person person = getPerson();
         final Country country = person.getCountryOfBirth();
-        return country == null ? null : country.getName();
+        return country == null ? null : country.getLocalizedName().getContent();
     }
 
     public String getFiscalNumber() {

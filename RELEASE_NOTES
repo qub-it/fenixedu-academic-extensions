@@ -1,3 +1,4 @@
+- Bug fix: Use correct locale when exporting nationality and country of birth fields [#qubIT-Fenix-5782]
 4.35.3 (29-08-2024)
 - Bug fix: When evaluating rule of first time enroled credits, take into account if it's for the whole year [#UL-FL-11933]
 
