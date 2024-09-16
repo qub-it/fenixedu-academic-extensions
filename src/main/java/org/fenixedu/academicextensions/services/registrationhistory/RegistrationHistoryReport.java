@@ -13,6 +13,7 @@ import java.util.SortedSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.fenixedu.academic.domain.Country;
 import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
@@ -33,6 +34,7 @@ import org.fenixedu.academic.domain.curricularRules.prescription.PrescriptionCon
 import org.fenixedu.academic.domain.curricularRules.prescription.PrescriptionEntry;
 import org.fenixedu.academic.domain.degree.DegreeType;
 import org.fenixedu.academic.domain.degreeStructure.BranchType;
+import org.fenixedu.academic.domain.degreeStructure.CourseGroup;
 import org.fenixedu.academic.domain.degreeStructure.ProgramConclusion;
 import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
@@ -706,6 +708,14 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     public String getDegreePresentationName() {
         final Degree degree = getDegree();
         return degree == null ? null : degree.getPresentationNameI18N().getContent();
+    }
+
+    public String getDegreeConclusionName() {
+        final DegreeCurricularPlan curricularPlan = getStudentCurricularPlan().getDegreeCurricularPlan();
+        return curricularPlan.getAllCoursesGroups().stream()
+                .filter(cg -> cg.getProgramConclusion() != null && cg.getProgramConclusion().isTerminal())
+                .filter(cg -> cg.getConclusionTitle() != null && !cg.getConclusionTitle().isEmpty()).findFirst()
+                .map(cg -> cg.getConclusionTitle().getContent()).orElseGet(() -> getDegreePresentationName());
     }
 
     protected IngressionType getIngressionType() {
