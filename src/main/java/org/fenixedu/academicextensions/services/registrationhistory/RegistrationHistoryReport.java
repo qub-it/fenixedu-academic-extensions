@@ -1269,13 +1269,6 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     }
 
     public Unit getDegreeUnit() {
-        if (this.degreeUnit == null) {
-            RegistrationHistoryReportService.addDegreeUnit(this);
-        }
-        return degreeUnit;
-    }
-
-    public void setDegreeUnit(Unit degreeUnit) {
-        this.degreeUnit = degreeUnit;
+        return getRegistration().getDegree().getUnit();
     }
 }

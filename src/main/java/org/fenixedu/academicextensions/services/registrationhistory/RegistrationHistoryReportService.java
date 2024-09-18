@@ -770,11 +770,4 @@ public class RegistrationHistoryReportService {
         report.setNumberFlunkedCoursesForExecutionYear(countFiltered(enrolments, flunkedFilter));
         report.setCreditsFlunkedCoursesForExecutionYear(sumCredits(enrolments, flunkedFilter));
     }
-
-    static void addDegreeUnit(RegistrationHistoryReport report) {
-        Unit degreeUnit = report.getRegistration().getDegree().getUnit();
-        
-        report.setDegreeUnit(degreeUnit);
-    }
-
 }

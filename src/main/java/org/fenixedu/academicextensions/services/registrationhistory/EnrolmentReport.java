@@ -16,6 +16,7 @@ import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.curricularPeriod.CurricularPeriod;
+import org.fenixedu.academic.domain.curriculum.EnrollmentState;
 import org.fenixedu.academic.domain.degreeStructure.CompetenceCourseServices;
 import org.fenixedu.academic.domain.degreeStructure.CourseLoadType;
 import org.fenixedu.academic.domain.degreeStructure.CurricularPeriodServices;
@@ -35,6 +36,8 @@ public class EnrolmentReport {
 
     private EnrolmentEvaluation finalEvaluation;
 
+    private EnrollmentState state;
+
     public EnrolmentReport(final Enrolment enrolment) {
         this(enrolment, enrolment.getExecutionInterval());
     }
@@ -45,6 +48,7 @@ public class EnrolmentReport {
      * @param executionInterval if it's not enroled in execution interval (for improvement only purposes)
      */
     public EnrolmentReport(final Enrolment enrolment, final ExecutionInterval executionInterval) {
+        this.state = enrolment.getEnrollmentState();
         this.enrolment = Objects.requireNonNull(enrolment);
         this.executionInterval = Objects.requireNonNull(executionInterval);
         this.finalEvaluation = enrolment.getFinalEnrolmentEvaluation();
@@ -170,4 +174,7 @@ public class EnrolmentReport {
         return RegistrationServices.getCurricularYear(getRegistration(), getExecutionInterval().getExecutionYear()).getResult();
     }
 
+    public EnrollmentState getState() {
+        return state;
+    }
 }
