@@ -6,14 +6,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang3.StringUtils;
 import org.fenixedu.academic.domain.Country;
 import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
@@ -34,7 +32,6 @@ import org.fenixedu.academic.domain.curricularRules.prescription.PrescriptionCon
 import org.fenixedu.academic.domain.curricularRules.prescription.PrescriptionEntry;
 import org.fenixedu.academic.domain.degree.DegreeType;
 import org.fenixedu.academic.domain.degreeStructure.BranchType;
-import org.fenixedu.academic.domain.degreeStructure.CourseGroup;
 import org.fenixedu.academic.domain.degreeStructure.ProgramConclusion;
 import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
@@ -138,6 +135,8 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     private BigDecimal creditsFlunkedCoursesForExecutionYear;
 
     private IAcademicTreasuryEvent treasuryEvent;
+
+    private Unit degreeUnit;
 
     public RegistrationHistoryReport(final Registration registration, final ExecutionYear executionYear) {
         this.executionYear = executionYear;
@@ -1267,5 +1266,16 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 
     protected void setCreditsFlunkedCoursesForExecutionYear(final BigDecimal input) {
         this.creditsFlunkedCoursesForExecutionYear = input;
+    }
+
+    public Unit getDegreeUnit() {
+        if (this.degreeUnit == null) {
+            RegistrationHistoryReportService.addDegreeUnit(this);
+        }
+        return degreeUnit;
+    }
+
+    public void setDegreeUnit(Unit degreeUnit) {
+        this.degreeUnit = degreeUnit;
     }
 }
