@@ -36,8 +36,6 @@ public class EnrolmentReport {
 
     private EnrolmentEvaluation finalEvaluation;
 
-    private EnrollmentState state;
-
     public EnrolmentReport(final Enrolment enrolment) {
         this(enrolment, enrolment.getExecutionInterval());
     }
@@ -48,7 +46,6 @@ public class EnrolmentReport {
      * @param executionInterval if it's not enroled in execution interval (for improvement only purposes)
      */
     public EnrolmentReport(final Enrolment enrolment, final ExecutionInterval executionInterval) {
-        this.state = enrolment.getEnrollmentState();
         this.enrolment = Objects.requireNonNull(enrolment);
         this.executionInterval = Objects.requireNonNull(executionInterval);
         this.finalEvaluation = enrolment.getFinalEnrolmentEvaluation();
@@ -174,7 +171,8 @@ public class EnrolmentReport {
         return RegistrationServices.getCurricularYear(getRegistration(), getExecutionInterval().getExecutionYear()).getResult();
     }
 
-    public EnrollmentState getState() {
-        return state;
+    public String getState() {
+        EnrollmentState state = getEnrolment().getEnrollmentState();
+        return state == EnrollmentState.NOT_EVALUATED ? EnrollmentState.NOT_APROVED.getDescription() : state.getDescription();
     }
 }
