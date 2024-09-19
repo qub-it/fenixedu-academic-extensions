@@ -136,8 +136,6 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 
     private IAcademicTreasuryEvent treasuryEvent;
 
-    private Unit degreeUnit;
-
     public RegistrationHistoryReport(final Registration registration, final ExecutionYear executionYear) {
         this.executionYear = executionYear;
         this.registration = registration;
@@ -1268,7 +1266,15 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         this.creditsFlunkedCoursesForExecutionYear = input;
     }
 
-    public Unit getDegreeUnit() {
-        return getRegistration().getDegree().getUnit();
+    public String getDegreeUnitNameWithAcronym() {
+        return getRegistration().getDegree().getUnit().getNameWithAcronym();
+    }
+
+    public Integer getMobilityInCount() {
+        return (int) getRegistration().getMobilityRegistrationInformationsSet().stream().filter(m -> m.isIncoming()).count();
+    }
+
+    public Integer getMobilityOutCount() {
+        return (int) getRegistration().getMobilityRegistrationInformationsSet().stream().filter(m -> !m.isIncoming()).count();
     }
 }
