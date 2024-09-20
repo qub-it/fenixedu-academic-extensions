@@ -1270,27 +1270,23 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     }
 
     public String getDegreeUnitAggregatePath() {
-        List<Unit> unitList = List.of(this.getRegistration().getDegree().getUnit());
-        List<String> parentUnits = new ArrayList<>();
-        String parentString;
-        
-        while (!unitList.stream().allMatch(u -> u.getParentsSet().isEmpty())) {
-            parentString = "";
-            List<Unit> tempUnitList = unitList;
-            unitList.clear();
-            
-            for (Unit unit : tempUnitList) {
-                parentString.concat(
-                        unit.getParentsSet().stream().map(p -> p.getParentParty().getName()).collect(Collectors.joining("; ")));
-                if (tempUnitList.get(tempUnitList.size() - 1) != unit) {
-                    parentString.concat("; ");
+        Unit self = getRegistration().getDegree().getUnit();
+        return self.getParentUnits().stream().map(u -> {
+            StringBuilder builder = new StringBuilder();
+            List<Unit> parentUnits = u.getParentUnitsPath();
+            int index = 1;
+            for (Unit unit : parentUnits) {
+                if (!unit.isAggregateUnit()) {
+                    if (index == 1) {
+                        builder.append(unit.getNameWithAcronym());
+                    } else {
+                        builder.append(" > " + unit.getNameWithAcronym());
+                    }
                 }
-                unitList.addAll(unit.getParentUnits());
+                index++;
             }
-            parentUnits.add(parentString);
-        }
-
-        return parentUnits.stream().collect(Collectors.joining(" - "));
+            return builder.toString() + " > " + self.getName();
+        }).collect(Collectors.joining("; "));
     }
 
     public Integer getMobilityInCount() {
