@@ -1,6 +1,7 @@
 package org.fenixedu.academicextensions.services.registrationhistory;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -65,6 +66,8 @@ import org.joda.time.format.DateTimeFormat;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+
+import antlr.StringUtils;
 
 public class RegistrationHistoryReport implements Comparable<RegistrationHistoryReport> {
 
@@ -1266,8 +1269,28 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         this.creditsFlunkedCoursesForExecutionYear = input;
     }
 
-    public String getDegreeUnitNameWithAcronym() {
-        return getRegistration().getDegree().getUnit().getNameWithAcronym();
+    public String getDegreeUnitAggregatePath() {
+        List<Unit> unitList = List.of(this.getRegistration().getDegree().getUnit());
+        List<String> parentUnits = new ArrayList<>();
+        String parentString;
+        
+        while (!unitList.stream().allMatch(u -> u.getParentsSet().isEmpty())) {
+            parentString = "";
+            List<Unit> tempUnitList = unitList;
+            unitList.clear();
+            
+            for (Unit unit : tempUnitList) {
+                parentString.concat(
+                        unit.getParentsSet().stream().map(p -> p.getParentParty().getName()).collect(Collectors.joining("; ")));
+                if (tempUnitList.get(tempUnitList.size() - 1) != unit) {
+                    parentString.concat("; ");
+                }
+                unitList.addAll(unit.getParentUnits());
+            }
+            parentUnits.add(parentString);
+        }
+
+        return parentUnits.stream().collect(Collectors.joining(" - "));
     }
 
     public Integer getMobilityInCount() {

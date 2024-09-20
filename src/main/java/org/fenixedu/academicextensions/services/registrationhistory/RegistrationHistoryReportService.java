@@ -769,4 +769,5 @@ public class RegistrationHistoryReportService {
         report.setNumberFlunkedCoursesForExecutionYear(countFiltered(enrolments, flunkedFilter));
         report.setCreditsFlunkedCoursesForExecutionYear(sumCredits(enrolments, flunkedFilter));
     }
+
 }
