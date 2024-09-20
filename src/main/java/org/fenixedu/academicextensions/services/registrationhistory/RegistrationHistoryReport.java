@@ -1271,22 +1271,8 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 
     public String getDegreeUnitAggregatePath() {
         Unit self = getRegistration().getDegree().getUnit();
-        return self.getParentUnits().stream().map(u -> {
-            StringBuilder builder = new StringBuilder();
-            List<Unit> parentUnits = u.getParentUnitsPath();
-            int index = 1;
-            for (Unit unit : parentUnits) {
-                if (!unit.isAggregateUnit()) {
-                    if (index == 1) {
-                        builder.append(unit.getNameWithAcronym());
-                    } else {
-                        builder.append(" > " + unit.getNameWithAcronym());
-                    }
-                }
-                index++;
-            }
-            return builder.toString() + " > " + self.getName();
-        }).collect(Collectors.joining("; "));
+        return self.getParentUnits().stream().map(u -> u.getParentUnitsPresentationName(" > ") + " > " + self.getName())
+                .collect(Collectors.joining("; "));
     }
 
     public Integer getMobilityInCount() {
