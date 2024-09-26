@@ -1,7 +1,6 @@
 package org.fenixedu.academicextensions.services.registrationhistory;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -66,8 +65,6 @@ import org.joda.time.format.DateTimeFormat;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
-import antlr.StringUtils;
 
 public class RegistrationHistoryReport implements Comparable<RegistrationHistoryReport> {
 
