@@ -16,6 +16,7 @@ import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.curricularPeriod.CurricularPeriod;
+import org.fenixedu.academic.domain.curriculum.EnrollmentState;
 import org.fenixedu.academic.domain.degreeStructure.CompetenceCourseServices;
 import org.fenixedu.academic.domain.degreeStructure.CourseLoadType;
 import org.fenixedu.academic.domain.degreeStructure.CurricularPeriodServices;
@@ -170,4 +171,8 @@ public class EnrolmentReport {
         return RegistrationServices.getCurricularYear(getRegistration(), getExecutionInterval().getExecutionYear()).getResult();
     }
 
+    public String getState() {
+        EnrollmentState state = getEnrolment().getEnrollmentState();
+        return state == EnrollmentState.NOT_EVALUATED ? EnrollmentState.NOT_APROVED.getDescription() : state.getDescription();
+    }
 }
