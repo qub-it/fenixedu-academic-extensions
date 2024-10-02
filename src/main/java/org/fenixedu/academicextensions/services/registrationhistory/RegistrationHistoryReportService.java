@@ -57,6 +57,7 @@ public class RegistrationHistoryReportService {
     private Set<StatuteType> statuteTypes = Sets.newHashSet();
     private Boolean firstTimeOnly;
     private Boolean withEnrolments;
+    private Integer curricularYear;
     private Boolean withAnnuledEnrolments;
     private Boolean dismissalsOnly;
     private Boolean improvementEnrolmentsOnly;
@@ -147,6 +148,10 @@ public class RegistrationHistoryReportService {
 
     public void filterWithEnrolments(final Boolean input) {
         this.withEnrolments = input;
+    }
+
+    public void filterCurricularYear(Integer curricularYear) {
+        this.curricularYear = curricularYear;
     }
 
     public void filterWithAnnuledEnrolments(final Boolean input) {
@@ -394,6 +399,12 @@ public class RegistrationHistoryReportService {
         final Predicate<RegistrationHistoryReport> graduatedFilter = filterGraduated();
         if (!this.graduatedExecutionYears.isEmpty()) {
             result = result.and(graduatedFilter);
+        }
+
+        if (this.curricularYear != null) {
+            Predicate<RegistrationHistoryReport> curricularYearFilter = r -> RegistrationServices
+                    .getCurricularYear(r.getRegistration(), r.getExecutionYear()).getResult() == curricularYear;
+            result = result.and(curricularYearFilter);
         }
 
         if (this.withEnrolments != null) {
