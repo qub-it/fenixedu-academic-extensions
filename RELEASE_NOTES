@@ -1,3 +1,4 @@
+- Refactor: Move the DynamicField classes to the Academic-core module
 - Improvement: Add curricular year filter to registration history report [#UL-ISEG-7272]
 - Bug fix: Enrolments Report filter 'With Anulled Enrolments' fixed in the RegistrationHistoryReport [#ISCTE-FENIXEDU-810]
 
