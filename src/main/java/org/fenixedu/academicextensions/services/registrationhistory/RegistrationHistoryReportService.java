@@ -240,7 +240,9 @@ public class RegistrationHistoryReportService {
 
         final Set<EnrolmentReport> result = Sets.newHashSet();
         final Collection<RegistrationHistoryReport> historyReports = generateReport();
-        result.addAll(historyReports.stream().flatMap(r -> r.getEnrolments().stream().filter(competenceCourseFilter))
+        result.addAll(historyReports.stream().flatMap(
+                r -> (Boolean.TRUE.equals(this.withAnnuledEnrolments) ? r.getEnrolmentsIncludingAnnuled() : r.getEnrolments())
+                        .stream().filter(competenceCourseFilter))
                 .map(e -> new EnrolmentReport(e)).collect(Collectors.toSet()));
         result.addAll(historyReports.stream()
                 .flatMap(r -> r.getImprovementEvaluations().stream()
@@ -496,8 +498,8 @@ public class RegistrationHistoryReportService {
             Stream<Enrolment> stream = executionYear.getExecutionPeriodsSet().stream()
                     .flatMap(semester -> semester.getEnrolmentsSet().stream()).filter(enrolmentCompetenceCourseFilter);
 
-            if (withEnrolments) {
-                stream = stream.filter(e -> Boolean.TRUE.equals(this.withAnnuledEnrolments) || !e.isAnnulled());
+            if (withEnrolments && !Boolean.TRUE.equals(this.withAnnuledEnrolments)) {
+                stream = stream.filter(e -> !e.isAnnulled());
             }
 
             if (this.firstTimeOnly != null && this.firstTimeOnly) {
