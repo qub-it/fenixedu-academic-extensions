@@ -11,7 +11,7 @@
 
 	<groupId>org.fenixedu</groupId>
 	<artifactId>fenixedu-academic-extensions</artifactId>
-	<version>4.35.7</version>
+	<version>4.35.8</version>
 	<packaging>jar</packaging>
 
 	<name>FenixEdu Academic Extensions</name>
@@ -21,7 +21,7 @@
 			<dependency>
 				<groupId>com.qubit.solution.fenixedu</groupId>
 				<artifactId>fenixedu-oss-dependency-management</artifactId>
-				<version>292</version>
+				<version>293</version>
 				<scope>import</scope>
 				<type>pom</type>
 			</dependency>
