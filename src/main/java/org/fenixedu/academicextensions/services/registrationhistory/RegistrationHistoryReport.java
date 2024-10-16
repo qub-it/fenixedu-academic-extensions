@@ -34,6 +34,7 @@ import org.fenixedu.academic.domain.degree.DegreeType;
 import org.fenixedu.academic.domain.degreeStructure.BranchType;
 import org.fenixedu.academic.domain.degreeStructure.ProgramConclusion;
 import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
+import org.fenixedu.academic.domain.log.CurriculumLineLog;
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
 import org.fenixedu.academic.domain.person.Gender;
 import org.fenixedu.academic.domain.person.IDDocumentType;
@@ -58,7 +59,6 @@ import org.fenixedu.academic.dto.student.RegistrationConclusionBean;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.academictreasury.domain.customer.PersonCustomer;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.YearMonthDay;
 import org.joda.time.format.DateTimeFormat;
@@ -349,9 +349,8 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     }
 
     public LocalDate getLastEnrolmentUpdateDate() {
-        Set<LocalDate> localDates = registration.getCurriculumLineLogsSet().stream()
-                .map(log -> log.getDateDateTime().toLocalDate()).collect(Collectors.toSet());
-        return Collections.max(localDates);
+        return registration.getCurriculumLineLogsSet().stream().max(Comparator.comparing(CurriculumLineLog::getDateDateTime))
+                .map(log -> log.getDateDateTime().toLocalDate()).orElse(null);
     }
 
     public boolean getHasAnyInactiveRegistrationStateForYear() {
