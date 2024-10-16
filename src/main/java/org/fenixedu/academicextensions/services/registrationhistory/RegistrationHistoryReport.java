@@ -58,6 +58,7 @@ import org.fenixedu.academic.dto.student.RegistrationConclusionBean;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.academictreasury.domain.customer.PersonCustomer;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.YearMonthDay;
 import org.joda.time.format.DateTimeFormat;
@@ -345,6 +346,12 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     public LocalDate getLastRegistrationStateDate() {
         final RegistrationState state = getLastRegistrationState();
         return state == null ? null : state.getStateDate().toLocalDate();
+    }
+
+    public LocalDate getLastEnrolmentUpdateDate() {
+        Set<LocalDate> localDates = registration.getCurriculumLineLogsSet().stream()
+                .map(log -> log.getDateDateTime().toLocalDate()).collect(Collectors.toSet());
+        return Collections.max(localDates);
     }
 
     public boolean getHasAnyInactiveRegistrationStateForYear() {
