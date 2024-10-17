@@ -351,8 +351,8 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     }
 
     public DateTime getLastEnrolmentUpdateDateTime() {
-        return registration.getCurriculumLineLogsSet().stream().filter(log -> log instanceof EnrolmentLog)
-                .max(Comparator.comparing(CurriculumLineLog::getDateDateTime)).map(log -> log.getDateDateTime()).orElse(null);
+        return registration.getCurriculumLineLogsSet().stream().filter(log -> log instanceof EnrolmentLog).map(log -> log.getDateDateTime())
+                .max(DateTime::compareTo).orElse(null);
     }
 
     public boolean getHasAnyInactiveRegistrationStateForYear() {
