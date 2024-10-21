@@ -34,7 +34,6 @@ import org.fenixedu.academic.domain.degree.DegreeType;
 import org.fenixedu.academic.domain.degreeStructure.BranchType;
 import org.fenixedu.academic.domain.degreeStructure.ProgramConclusion;
 import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
-import org.fenixedu.academic.domain.log.CurriculumLineLog;
 import org.fenixedu.academic.domain.log.EnrolmentLog;
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
 import org.fenixedu.academic.domain.person.Gender;
@@ -351,8 +350,8 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     }
 
     public DateTime getLastEnrolmentUpdateDateTime() {
-        return registration.getCurriculumLineLogsSet().stream().filter(log -> log instanceof EnrolmentLog).map(log -> log.getDateDateTime())
-                .max(DateTime::compareTo).orElse(null);
+        return registration.getCurriculumLineLogsSet().stream().filter(log -> log instanceof EnrolmentLog)
+                .map(log -> log.getDateDateTime()).max(Comparator.naturalOrder()).orElse(null);
     }
 
     public boolean getHasAnyInactiveRegistrationStateForYear() {
