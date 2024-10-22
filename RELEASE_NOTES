@@ -1,3 +1,5 @@
+- Improvement: Add last enrolment update date to registration history report [#qubIT-Fenix-5876]
+
 4.35.8 (09-10-2024)
 - Refactor: Move the DynamicField classes to the Academic-core module [#qubIT-Fenix-5889]
 
