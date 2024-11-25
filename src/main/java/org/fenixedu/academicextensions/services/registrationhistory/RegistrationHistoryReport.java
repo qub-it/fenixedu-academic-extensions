@@ -861,6 +861,12 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         return person == null ? null : person.getDocumentIdNumber();
     }
 
+    public LocalDate getDocumentIdExpirationDate() {
+        final Person person = getPerson();
+        YearMonthDay expirationDate = person == null ? null : person.getExpirationDateOfDocumentIdYearMonthDay();
+        return expirationDate == null ? null : expirationDate.toLocalDate();
+    }
+
     public String getGender() {
         final Person person = getPerson();
         final Gender gender = person.getGender();
