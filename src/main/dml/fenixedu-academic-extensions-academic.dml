@@ -1,6 +1,5 @@
 package org.fenixedu.academic.domain;
 
-enum org.fenixedu.academic.domain.GradeScaleEnum as GradeScaleEnumAcademicExtensions;
 enum org.fenixedu.academic.domain.evaluation.markSheet.CompetenceCourseMarkSheetStateEnum as CompetenceCourseMarkSheetStateEnum;
 enum org.fenixedu.academic.domain.evaluation.markSheet.CompetenceCourseMarkSheetChangeRequestStateEnum as CompetenceCourseMarkSheetChangeRequestStateEnum;
 enum org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonPeriodType as EvaluationSeasonPeriodType;
@@ -110,7 +109,6 @@ class evaluation.season.rule.EvaluationSeasonRule {
 	}
 
     class evaluation.season.rule.GradeScaleValidator extends evaluation.season.rule.EvaluationSeasonRule {
-        GradeScaleEnum gradeScaleEnum;
         String gradeValues;
         LocalizedString ruleDescription;
         boolean appliesToCurriculumAggregatorEntry;
@@ -174,7 +172,6 @@ relation GradeScaleValidatorDegreeTypes {
 class evaluation.markSheet.CompetenceCourseMarkSheet {
     LocalDate evaluationDate;
     LocalDate expireDate;
-    GradeScaleEnumAcademicExtensions gradeScaleEnum;
     boolean printed;
     boolean includeStudentsNotEnrolledInOtherEvaluations;
 }
