@@ -45,10 +45,9 @@ import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.StatuteType;
 import org.fenixedu.academic.domain.student.services.StatuteServices;
-import org.fenixedu.academic.domain.treasury.IImprovementTreasuryEvent;
-import org.fenixedu.academic.domain.treasury.TreasuryBridgeAPIFactory;
 import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 import org.fenixedu.academictreasury.domain.event.AcademicTreasuryEvent;
+import org.fenixedu.academictreasury.services.PersonServices;
 import org.fenixedu.commons.i18n.LocalizedString;
 import org.fenixedu.treasury.util.LocalizedStringUtil;
 import org.joda.time.LocalDate;
@@ -272,8 +271,8 @@ abstract public class EvaluationSeasonServices {
             final Registration registration = enrolment.getRegistration();
             final Person person = registration.getPerson();
 
-            if (isEnrolmentsInEvaluationsDependOnAcademicalActsBlocked() && TreasuryBridgeAPIFactory.implementation()
-                    .isAcademicalActsBlocked(person, new LocalDate())) {
+            if (isEnrolmentsInEvaluationsDependOnAcademicalActsBlocked() && PersonServices.isAcademicalActsBlocked(person,
+                    new LocalDate())) {
                 return true;
             }
 
