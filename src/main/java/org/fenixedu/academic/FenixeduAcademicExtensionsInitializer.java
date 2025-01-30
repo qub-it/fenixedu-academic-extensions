@@ -22,6 +22,7 @@ import org.fenixedu.academic.domain.degree.ExtendedDegreeInfo;
 import org.fenixedu.academic.domain.degreeStructure.CompetenceCourseInformation;
 import org.fenixedu.academic.domain.degreeStructure.DegreeModule;
 import org.fenixedu.academic.domain.degreeStructure.OptionalCurricularCourse;
+import org.fenixedu.academic.domain.enrolment.EnrolmentServices;
 import org.fenixedu.academic.domain.evaluation.EnrolmentEvaluationExtendedInformation;
 import org.fenixedu.academic.domain.evaluation.EvaluationComparator;
 import org.fenixedu.academic.domain.evaluation.config.MarkSheetSettings;
@@ -34,8 +35,10 @@ import org.fenixedu.academic.domain.student.RegistrationDataByExecutionYearExten
 import org.fenixedu.academic.domain.student.RegistrationExtendedInformation;
 import org.fenixedu.academic.domain.student.RegistrationObservations;
 import org.fenixedu.academic.domain.student.RegistrationRegimeVerifierInitializer;
+import org.fenixedu.academic.domain.student.RegistrationServices;
 import org.fenixedu.academic.domain.student.curriculum.CurriculumConfigurationInitializer;
 import org.fenixedu.academic.domain.student.curriculum.CurriculumLineExtendedInformation;
+import org.fenixedu.academic.domain.student.curriculum.CurriculumLineServices;
 import org.fenixedu.academic.domain.student.curriculum.EctsAndWeightProviders;
 import org.fenixedu.academic.domain.student.curriculum.conclusion.ConclusionProcessListenersInitializer;
 import org.fenixedu.academic.domain.studentCurriculum.Credits;
@@ -65,6 +68,10 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
     @Atomic(mode = TxMode.SPECULATIVE_READ)
     @Override
     public void contextInitialized(final ServletContextEvent event) {
+
+        CurriculumLineServices.initialize();
+        RegistrationServices.initialize();
+        EnrolmentServices.initialize();
 
         CurricularRuleConfigurationInitializer.init();
         AnyCurricularCourseExceptionsInitializer.init();

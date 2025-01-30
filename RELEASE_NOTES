@@ -1,3 +1,5 @@
+- Bug fix: Allow to delete dissertation enrolment after conclusion is reverted [#ISCTE-FENIXEDU-735]
+
 4.35.12 (29-01-2025)
 - Bug fix: Display course name in marksheet according to the version of that period [#ISCTE-FENIXEDU-997]
 

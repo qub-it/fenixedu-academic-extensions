@@ -95,7 +95,7 @@ public class RegistrationServices {
                 }
             };
 
-    static {
+    public static void initialize() {
         Dismissal.getRelationDegreeModuleCurriculumModule().addListener(CREDITS_CREATION_DISABLE_ACCUMULATED);
     }
 

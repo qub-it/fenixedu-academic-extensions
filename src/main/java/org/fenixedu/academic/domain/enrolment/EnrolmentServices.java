@@ -42,7 +42,7 @@ public class EnrolmentServices extends org.fenixedu.academic.domain.student.serv
                 }
             };
 
-    static {
+    public static void initialize() {
         CurriculumModule.getRelationDegreeModuleCurriculumModule().addListener(ON_ENROLMENT_DELETION);
     }
 

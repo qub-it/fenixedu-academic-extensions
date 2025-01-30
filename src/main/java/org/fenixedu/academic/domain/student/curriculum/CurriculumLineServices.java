@@ -41,7 +41,7 @@ abstract public class CurriculumLineServices {
         }
     };
 
-    static {
+    public static void initialize() {
         Dismissal.getRelationCreditsDismissalEquivalence().addListener(ON_DISMISSAL_DELETION);
     }
 
