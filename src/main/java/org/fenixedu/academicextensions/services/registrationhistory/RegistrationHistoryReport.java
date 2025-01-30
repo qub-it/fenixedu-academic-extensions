@@ -52,12 +52,11 @@ import org.fenixedu.academic.domain.student.curriculum.ICurriculum;
 import org.fenixedu.academic.domain.student.registrationStates.RegistrationState;
 import org.fenixedu.academic.domain.student.services.StatuteServices;
 import org.fenixedu.academic.domain.studentCurriculum.ExternalCurriculumGroup;
-import org.fenixedu.academic.domain.treasury.IAcademicTreasuryEvent;
-import org.fenixedu.academic.domain.treasury.ITreasuryBridgeAPI;
-import org.fenixedu.academic.domain.treasury.TreasuryBridgeAPIFactory;
 import org.fenixedu.academic.dto.student.RegistrationConclusionBean;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.academictreasury.domain.customer.PersonCustomer;
+import org.fenixedu.academictreasury.domain.event.AcademicTreasuryEvent;
+import org.fenixedu.academictreasury.services.TuitionServices;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -136,7 +135,7 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 
     private BigDecimal creditsFlunkedCoursesForExecutionYear;
 
-    private IAcademicTreasuryEvent treasuryEvent;
+    private AcademicTreasuryEvent treasuryEvent;
 
     public RegistrationHistoryReport(final Registration registration, final ExecutionYear executionYear) {
         this.executionYear = executionYear;
@@ -260,10 +259,12 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     public Collection<StudentStatute> getStudentStatutes() {
         final Set<StudentStatute> result = Sets.newHashSet();
 
-        result.addAll(registration.getStudentStatutesSet().stream()
-                .filter(s -> s.isValidOnAnyExecutionPeriodFor(getExecutionYear())).collect(Collectors.toSet()));
-        result.addAll(getStudent().getStudentStatutesSet().stream()
-                .filter(s -> s.isValidOnAnyExecutionPeriodFor(getExecutionYear())).collect(Collectors.toSet()));
+        result.addAll(
+                registration.getStudentStatutesSet().stream().filter(s -> s.isValidOnAnyExecutionPeriodFor(getExecutionYear()))
+                        .collect(Collectors.toSet()));
+        result.addAll(
+                getStudent().getStudentStatutesSet().stream().filter(s -> s.isValidOnAnyExecutionPeriodFor(getExecutionYear()))
+                        .collect(Collectors.toSet()));
 
         return result;
     }
@@ -283,8 +284,8 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 
                 final ExecutionInterval endInterval = s.getEndExecutionInterval();
                 if (endInterval == beginInterval) {
-                    dates = BundleUtil.getString(Bundle.ENUMERATION, beginInterval.getAcademicPeriod().getAbbreviatedName()) + " "
-                            + beginInterval.getChildOrder();
+                    dates = BundleUtil.getString(Bundle.ENUMERATION,
+                            beginInterval.getAcademicPeriod().getAbbreviatedName()) + " " + beginInterval.getChildOrder();
                 }
 
             } else {
@@ -367,10 +368,9 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     }
 
     public List<ProgramConclusion> getProgramConclusions() {
-        return getConclusionReports()
-                .keySet().stream().sorted(Comparator.comparing(ProgramConclusion::getName)
-                        .thenComparing(ProgramConclusion::getDescription).thenComparing(ProgramConclusion::getExternalId))
-                .collect(Collectors.toList());
+        return getConclusionReports().keySet().stream()
+                .sorted(Comparator.comparing(ProgramConclusion::getName).thenComparing(ProgramConclusion::getDescription)
+                        .thenComparing(ProgramConclusion::getExternalId)).collect(Collectors.toList());
     }
 
     public RegistrationConclusionBean getConclusionReportFor(ProgramConclusion programConclusion) {
@@ -419,9 +419,8 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     public Integer getPreviousYearCurricularYear() {
 
         final ExecutionYear previous = getExecutionYear().getPreviousExecutionYear();
-        if (registration.getStartExecutionYear().isAfterOrEquals(getExecutionYear())
-                || registration.getStudentCurricularPlan(previous) == null
-                || registration.getStudentCurricularPlan(getExecutionYear()) == null) {
+        if (registration.getStartExecutionYear().isAfterOrEquals(getExecutionYear()) || registration.getStudentCurricularPlan(
+                previous) == null || registration.getStudentCurricularPlan(getExecutionYear()) == null) {
 
             return null;
         }
@@ -1007,52 +1006,41 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     }
 
     public boolean isTuitionCharged() {
-        final ITreasuryBridgeAPI treasuryBridgeAPI = TreasuryBridgeAPIFactory.implementation();
-        if (treasuryBridgeAPI == null) {
-            return false;
-        }
-
-        final IAcademicTreasuryEvent event =
-                treasuryBridgeAPI.getTuitionForRegistrationTreasuryEvent(registration, getExecutionYear());
+        final AcademicTreasuryEvent event =
+                TuitionServices.findAcademicTreasuryEventTuitionForRegistration(registration, getExecutionYear());
 
         return event != null && event.isCharged();
     }
 
-    private IAcademicTreasuryEvent getTreasuryEventOfTuitionForRegistration() {
+    private AcademicTreasuryEvent getTreasuryEventOfTuitionForRegistration() {
         if (this.treasuryEvent != null) {
             return this.treasuryEvent;
         }
 
-        final ITreasuryBridgeAPI treasuryBridgeAPI = TreasuryBridgeAPIFactory.implementation();
-        if (treasuryBridgeAPI == null) {
-            return null;
-        }
+        this.treasuryEvent = TuitionServices.findAcademicTreasuryEventTuitionForRegistration(registration, getExecutionYear());
 
-        final IAcademicTreasuryEvent event =
-                treasuryBridgeAPI.getTuitionForRegistrationTreasuryEvent(registration, getExecutionYear());
-        this.treasuryEvent = event;
         return this.treasuryEvent;
     }
 
     public BigDecimal getTuitionAmount() {
-        final IAcademicTreasuryEvent treasuryEvent = getTreasuryEventOfTuitionForRegistration();
+        final AcademicTreasuryEvent treasuryEvent = getTreasuryEventOfTuitionForRegistration();
         return treasuryEvent == null ? BigDecimal.ZERO : treasuryEvent.getAmountWithVatToPay()
                 .add(treasuryEvent.getNetExemptedAmount());
     }
 
     public BigDecimal getPaidTuitionAmount() {
-        final IAcademicTreasuryEvent treasuryEvent = getTreasuryEventOfTuitionForRegistration();
+        final AcademicTreasuryEvent treasuryEvent = getTreasuryEventOfTuitionForRegistration();
         return treasuryEvent == null ? BigDecimal.ZERO : treasuryEvent.getAmountWithVatToPay()
                 .subtract(treasuryEvent.getRemainingAmountToPay());
     }
 
     public BigDecimal getNetExemptTuitionAmount() {
-        final IAcademicTreasuryEvent treasuryEvent = getTreasuryEventOfTuitionForRegistration();
+        final AcademicTreasuryEvent treasuryEvent = getTreasuryEventOfTuitionForRegistration();
         return treasuryEvent == null ? BigDecimal.ZERO : treasuryEvent.getNetExemptedAmount();
     }
 
     public BigDecimal getRemainingAmountToPay() {
-        final IAcademicTreasuryEvent treasuryEvent = getTreasuryEventOfTuitionForRegistration();
+        final AcademicTreasuryEvent treasuryEvent = getTreasuryEventOfTuitionForRegistration();
         return treasuryEvent == null ? BigDecimal.ZERO : treasuryEvent.getRemainingAmountToPay();
     }
 
@@ -1150,8 +1138,8 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 
                 });
 
-        return result.toString().endsWith("|") ? result.delete(result.length() - 1, result.length()).toString() : result
-                .toString();
+        return result.toString().endsWith("|") ? result.delete(result.length() - 1, result.length())
+                .toString() : result.toString();
     }
 
     public ResearchArea getResearchArea() {
@@ -1170,8 +1158,8 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 
     private ExternalCurriculumGroup getAffinityCycleCurriculumGroup() {
         final StudentCurricularPlan studentCurricularPlan = getStudentCurricularPlan();
-        return studentCurricularPlan.getExternalCurriculumGroups().isEmpty() ? null : studentCurricularPlan
-                .getExternalCurriculumGroups().iterator().next();
+        return studentCurricularPlan.getExternalCurriculumGroups()
+                .isEmpty() ? null : studentCurricularPlan.getExternalCurriculumGroups().iterator().next();
     }
 
     public String getIban() {
