@@ -1,4 +1,5 @@
 - Refactor: Remove usage of ITreasuryBrigdeAPI#getTuitionForRegistrationTreasuryEvent [#qubIT-Fenix-6565]
+- Refactor: Remove usage of ITreasuryBridgeAPI#getImprovementTaxTreasuryEvent [#qubIT-Fenix-6565]
 
 4.35.13 (30-01-2025)
 - Bug fix: Allow to delete dissertation enrolment after conclusion is reverted [#ISCTE-FENIXEDU-735]
