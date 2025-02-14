@@ -557,7 +557,8 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
             }
         }
 
-        return result;
+        return result.stream().filter(e -> e.getCurricularCourse().getCompetenceCourse() == competence)
+                .collect(Collectors.toSet());
     }
 
     public Set<Enrolment> getExecutionCourseEnrolmentsNotInAnyMarkSheet() {

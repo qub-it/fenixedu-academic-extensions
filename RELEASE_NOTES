@@ -1,3 +1,5 @@
+- Bug fix: Execution course with multiple competence courses should result one marksheet per competence [#UL-FD-2177]
+
 4.35.14 (30-01-2025)
 - Refactor: Remove usage of ITreasuryBrigdeAPI#getTuitionForRegistrationTreasuryEvent [#qubIT-Fenix-6565]
 - Refactor: Remove usage of ITreasuryBridgeAPI#getImprovementTaxTreasuryEvent [#qubIT-Fenix-6565]
