@@ -784,14 +784,12 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 
     private PrecedentDegreeInformation getCompletedPrecedentInformation() {
         final Registration registration = getRegistration();
-        final StudentCandidacy candidacy = registration == null ? null : registration.getStudentCandidacy();
-        return candidacy == null ? null : candidacy.getCompletedDegreeInformation();
+        return registration == null ? null : registration.getCompletedDegreeInformation();
     }
 
     private PrecedentDegreeInformation getPreviousPrecedentInformation() {
         final Registration registration = getRegistration();
-        final StudentCandidacy candidacy = registration == null ? null : registration.getStudentCandidacy();
-        return candidacy == null ? null : candidacy.getPreviousDegreeInformation();
+        return registration == null ? null : registration.getPreviousDegreeInformation();
     }
 
     public String getQualificationInstitutionName() {
