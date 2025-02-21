@@ -1,3 +1,4 @@
+4.35.16 (21-02-2025)
 - Refactor: Move PrecedentDegreeInformation relations from the StudentCandidacy to Registration [#qubIT-Fenix-6617]
 - Improvement: Adds degree name column for optional course enrollments in enrollments export file [#UL-FF-3501]
 
