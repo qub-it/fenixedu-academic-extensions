@@ -175,4 +175,9 @@ public class EnrolmentReport {
         EnrollmentState state = getEnrolment().getEnrollmentState();
         return state == EnrollmentState.NOT_EVALUATED ? EnrollmentState.NOT_APROVED.getDescription() : state.getDescription();
     }
+
+    public String getOptionalCourseDegreeName() {
+        Degree enrolmentDegree = this.enrolment.getCurricularCourse().getDegree();
+        return enrolmentDegree.equals(this.getDegree()) ? "" : enrolmentDegree.getPresentationName();
+    }
 }
