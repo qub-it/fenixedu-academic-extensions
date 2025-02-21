@@ -177,7 +177,7 @@ public class EnrolmentReport {
     }
 
     public String getOptionalCourseDegreeName() {
-        String enrolmentDegreeName = this.enrolment.getCurricularCourse().getDegree().getPresentationName();
-        return enrolmentDegreeName.equals(this.getDegree().getPresentationName()) ? "" : enrolmentDegreeName;
+        Degree enrolmentDegree = this.enrolment.getCurricularCourse().getDegree();
+        return enrolmentDegree.equals(this.getDegree()) ? "" : enrolmentDegree.getPresentationName();
     }
 }
