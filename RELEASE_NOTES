@@ -1,5 +1,5 @@
-- Improvement: Adds degree name column for optional course enrollments in enrollments export file [#UL-FF-3501]
 - Refactor: Move PrecedentDegreeInformation relations from the StudentCandidacy to Registration [#qubIT-Fenix-6617]
+- Improvement: Adds degree name column for optional course enrollments in enrollments export file [#UL-FF-3501]
 
 4.35.15 (14-02-2025)
 - Bug fix: Execution course with multiple competence courses should result one marksheet per competence [#UL-FD-2177]
