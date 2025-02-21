@@ -26,7 +26,6 @@ import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.domain.SchoolLevelType;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
 import org.fenixedu.academic.domain.candidacy.IngressionType;
-import org.fenixedu.academic.domain.candidacy.StudentCandidacy;
 import org.fenixedu.academic.domain.contacts.PhysicalAddress;
 import org.fenixedu.academic.domain.curricularRules.prescription.PrescriptionConfig;
 import org.fenixedu.academic.domain.curricularRules.prescription.PrescriptionEntry;
@@ -339,6 +338,11 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     public String getLastRegistrationStateType() {
         final RegistrationState state = getLastRegistrationState();
         return state == null ? null : state.getType().getName().getContent();
+    }
+
+    public String getLastRegistrationStateExecutionYear() {
+        final RegistrationState state = getLastRegistrationState();
+        return state == null ? null : state.getExecutionYear().getQualifiedName();
     }
 
     public String getLastRegistrationStateRemarks() {
