@@ -141,6 +141,22 @@ public class EnrolmentReport {
         return enrolment.getCreationDateDateTime();
     }
 
+    public String getEnrolmentHours() {
+        DateTime enrolmentDate = getEnrolmentDate();
+        return String.format("%02d", enrolmentDate.getHourOfDay());
+    }
+
+    public String getEnrolmentMinutes() {
+        DateTime enrolmentDate = getEnrolmentDate();
+        return String.format("%02d:%02d", enrolmentDate.getHourOfDay(), enrolmentDate.getMinuteOfHour());
+    }
+
+    public String getEnrolmentSeconds() {
+        DateTime enrolmentDate = getEnrolmentDate();
+        return String.format("%02d:%02d:%02d", enrolmentDate.getHourOfDay(), enrolmentDate.getMinuteOfHour(),
+                enrolmentDate.getSecondOfMinute());
+    }
+
     public LocalDate getEvaluationDate() {
         return Optional.ofNullable(this.finalEvaluation).map(ev -> finalEvaluation.getExamDateYearMonthDay().toLocalDate())
                 .orElse(null);
