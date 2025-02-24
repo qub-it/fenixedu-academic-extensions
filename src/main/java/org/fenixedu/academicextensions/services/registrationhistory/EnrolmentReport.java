@@ -27,6 +27,7 @@ import org.fenixedu.academic.domain.studentCurriculum.CurriculumGroup;
 import org.fenixedu.academic.domain.time.calendarStructure.AcademicPeriod;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
 
 public class EnrolmentReport {
 
@@ -142,19 +143,15 @@ public class EnrolmentReport {
     }
 
     public String getEnrolmentHours() {
-        DateTime enrolmentDate = getEnrolmentDate();
-        return String.format("%02d", enrolmentDate.getHourOfDay());
+        return getEnrolmentDate().toString(DateTimeFormat.forPattern("HH"));
     }
 
     public String getEnrolmentMinutes() {
-        DateTime enrolmentDate = getEnrolmentDate();
-        return String.format("%02d:%02d", enrolmentDate.getHourOfDay(), enrolmentDate.getMinuteOfHour());
+        return getEnrolmentDate().toString(DateTimeFormat.forPattern("HH:mm"));
     }
 
     public String getEnrolmentSeconds() {
-        DateTime enrolmentDate = getEnrolmentDate();
-        return String.format("%02d:%02d:%02d", enrolmentDate.getHourOfDay(), enrolmentDate.getMinuteOfHour(),
-                enrolmentDate.getSecondOfMinute());
+        return getEnrolmentDate().toString(DateTimeFormat.forPattern("HH:mm:ss"));
     }
 
     public LocalDate getEvaluationDate() {
