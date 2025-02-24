@@ -1,3 +1,5 @@
+- Improvement: Adds column for Last Registration State Execution Year to exportable students list file [#UCP-FENIXEDU-289]
+
 4.35.16 (21-02-2025)
 - Refactor: Move PrecedentDegreeInformation relations from the StudentCandidacy to Registration [#qubIT-Fenix-6617]
 - Improvement: Adds degree name column for optional course enrollments in enrollments export file [#UL-FF-3501]
