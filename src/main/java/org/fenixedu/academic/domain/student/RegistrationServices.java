@@ -388,8 +388,7 @@ public class RegistrationServices {
     }
 
     public static Collection<ExecutionYear> getEnrolmentYears(Registration registration) {
-        //TODO: implement option to check if registration data is valid instead of checking if enrolment date is filled
-        return registration.getRegistrationDataByExecutionYearSet().stream().filter(rd -> rd.getEnrolmentDate() != null)
+        return registration.getRegistrationDataByExecutionYearSet().stream().filter(rd -> rd.getActive())
                 .map(rd -> rd.getExecutionYear()).collect(Collectors.toSet());
     }
 
