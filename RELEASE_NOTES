@@ -1,4 +1,5 @@
 - Refactor: Use active attribute of registration data by year instead of enrolment date [#qubIT-Fenix-4927]
+- Improvement: Add active registration data by year filter to registration history report service [#qubIT-Fenix-4927]
 
 4.35.17 (24-02-2025)
 - Improvement: Adds column for Last Registration State Execution Year to exportable students list file [#UCP-FENIXEDU-289]

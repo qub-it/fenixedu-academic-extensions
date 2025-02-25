@@ -57,6 +57,7 @@ public class RegistrationHistoryReportService {
     private Set<StatuteType> statuteTypes = Sets.newHashSet();
     private Boolean firstTimeOnly;
     private Boolean withEnrolments;
+    private Boolean withActiveRegistrationDataByYear;
     private Integer curricularYear;
     private Boolean withAnnuledEnrolments;
     private Boolean dismissalsOnly;
@@ -148,6 +149,10 @@ public class RegistrationHistoryReportService {
 
     public void filterWithEnrolments(final Boolean input) {
         this.withEnrolments = input;
+    }
+
+    public void filterWithActiveRegistrationDataByYear(Boolean input){
+        this.withActiveRegistrationDataByYear = input;
     }
 
     public void filterCurricularYear(Integer curricularYear) {
@@ -418,6 +423,13 @@ public class RegistrationHistoryReportService {
             }
         }
 
+        if (this.withActiveRegistrationDataByYear != null) {
+            final Predicate<RegistrationHistoryReport> withActiveRegistrationDataByYearFilter =
+                    r -> r.getRegistration().getDataByExecutionYear(r.getExecutionYear())
+                            .map(d -> d.getActive() == this.withActiveRegistrationDataByYear.booleanValue()).orElse(false);
+            result = result.and(withActiveRegistrationDataByYearFilter);
+        }
+
         return result;
     }
 
@@ -546,6 +558,11 @@ public class RegistrationHistoryReportService {
         if (this.registrationStateTypes != null && !this.registrationStateTypes.isEmpty()) {
             result.addAll(this.registrationStateTypes.stream().flatMap(st -> st.getRegistrationStatesSet().stream())
                     .map(s -> s.getRegistration()).distinct().filter(studentNumberFilter.and(registrationCompetenceCourseFilter))
+                    .collect(Collectors.toSet()));
+        }
+
+        if (this.withActiveRegistrationDataByYear != null) {
+            result.addAll(executionYear.getRegistrationDataByExecutionYearSet().stream().map(rd -> rd.getRegistration())
                     .collect(Collectors.toSet()));
         }
 
