@@ -1,3 +1,5 @@
+- Bug fix: Apply student number filter when building search universe for registration data by year filter [#qubIT-Fenix-4927]
+
 4.35.18 (25-02-2025)
 - Refactor: Use active attribute of registration data by year instead of enrolment date [#qubIT-Fenix-4927]
 - Improvement: Add active registration data by year filter to registration history report service [#qubIT-Fenix-4927]
