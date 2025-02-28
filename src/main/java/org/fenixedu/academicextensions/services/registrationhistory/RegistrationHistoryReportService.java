@@ -563,7 +563,7 @@ public class RegistrationHistoryReportService {
 
         if (this.withActiveRegistrationDataByYear != null) {
             result.addAll(executionYear.getRegistrationDataByExecutionYearSet().stream().map(rd -> rd.getRegistration())
-                    .filter(studentNumberFilter).collect(Collectors.toSet()));
+                    .filter(studentNumberFilter.and(registrationCompetenceCourseFilter)).collect(Collectors.toSet()));
         }
 
         return result;
