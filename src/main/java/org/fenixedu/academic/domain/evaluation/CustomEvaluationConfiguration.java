@@ -7,6 +7,7 @@ import java.util.function.Predicate;
 import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.EnrolmentEvaluation;
 import org.fenixedu.academic.domain.EvaluationSeason;
+import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.bennu.core.domain.Bennu;
 
 public class CustomEvaluationConfiguration extends CustomEvaluationConfiguration_Base {
@@ -35,6 +36,14 @@ public class CustomEvaluationConfiguration extends CustomEvaluationConfiguration
         final Predicate<EnrolmentEvaluation> isFinal = EnrolmentEvaluation::isFinal;
         final Predicate<EnrolmentEvaluation> isSeason = e -> e.getEvaluationSeason().equals(season);
         return enrolment.getEvaluationsSet().stream().filter(isFinal.and(isSeason)).max(ENROLMENT_EVALUATION_ORDER);
+    }
+
+    @Override
+    public Optional<EnrolmentEvaluation> getFinalEnrolmentEvaluation(Enrolment enrolment, ExecutionInterval executionInterval) {
+        Predicate<EnrolmentEvaluation> isFinal = EnrolmentEvaluation::isFinal;
+        final Predicate<EnrolmentEvaluation> isSpecialAuthorization = getSpecialAuthorizationFilter(enrolment);
+        return enrolment.getEvaluationsSet().stream().filter(isFinal.and(isSpecialAuthorization))
+                .filter(ev -> ev.getExecutionInterval() == executionInterval).max(ENROLMENT_EVALUATION_ORDER);
     }
 
     @Override
