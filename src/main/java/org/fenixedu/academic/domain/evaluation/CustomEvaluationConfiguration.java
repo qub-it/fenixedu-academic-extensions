@@ -10,6 +10,11 @@ import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.bennu.core.domain.Bennu;
 
+/**
+ * @deprecated Use {@link org.fenixedu.academic.domain.EvaluationConfiguration} instead with enrolment evaluation filters
+ *
+ */
+@Deprecated
 public class CustomEvaluationConfiguration extends CustomEvaluationConfiguration_Base {
 
     private static Comparator<EnrolmentEvaluation> ENROLMENT_EVALUATION_ORDER = new EvaluationComparator();
