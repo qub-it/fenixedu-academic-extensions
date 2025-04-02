@@ -99,6 +99,10 @@ public class CurricularPeriodServices {
     }
 
     private static int getCurricularYear(final IDegreeModuleToEvaluate input) {
+        if (input.getCurriculumGroup().isNoCourseGroupCurriculumGroup()) {
+            return 1;
+        }
+
         return input instanceof EnroledEnrolmentWrapper ? getCurricularYear(
                 ((EnroledEnrolmentWrapper) input).getCurriculumModule()) : input.getContext().getCurricularYear();
     }

@@ -1,4 +1,5 @@
 - Refactor: Deprecated custom evaluation configuration since standard evaluation configuration now allows filters [#qubIT-Fenix-6779]
+- Bug fix: Correctly calculate curricular for entries in extra/standalone curriculum groups [#qubIT-Fenix-6775]
 
 4.35.21 (11-03-2025)
 - Bug fix: Correctly display enrolment final grade by execution interval [#UL-FD-2187]
