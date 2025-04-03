@@ -1,3 +1,5 @@
+- Bug fix: Correctly calculate curricular for entries in extra/standalone curriculum groups [#qubIT-Fenix-6775]
+
 4.35.22 (02-04-2025)
 - Refactor: Deprecated custom evaluation configuration since standard evaluation configuration now allows filters [#qubIT-Fenix-6779]
 - Bug fix: Correctly calculate curricular for entries in extra/standalone curriculum groups [#qubIT-Fenix-6775]

@@ -17,6 +17,10 @@ public class BlockEnrolmentInAdvancedCurricularCoursesExecutor extends Curricula
             return RuleResult.createNA(degreeModuleToEvaluate.getDegreeModule());
         }
 
+        if (degreeModuleToEvaluate.getCurriculumGroup().isNoCourseGroupCurriculumGroup()) {
+            return RuleResult.createTrue(degreeModuleToEvaluate.getDegreeModule());
+        }
+
         final int curricularYear = RegistrationServices
                 .getCurricularYear(enrolmentContext.getRegistration(), enrolmentContext.getExecutionYear()).getResult();
         if (degreeModuleToEvaluate.getContext() != null
