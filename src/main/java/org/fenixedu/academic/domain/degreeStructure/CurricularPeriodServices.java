@@ -1,5 +1,7 @@
 package org.fenixedu.academic.domain.degreeStructure;
 
+import static java.util.Optional.ofNullable;
+
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
@@ -252,7 +254,8 @@ public class CurricularPeriodServices {
 
             final DegreeModule degreeModule = iter.getDegreeModule();
             if (applyToOptionals != null) {
-                final boolean isOptionalByGroup = iter.getCurriculumGroup().getDegreeModule().getIsOptional();
+                final boolean isOptionalByGroup =
+                        ofNullable(iter.getCurriculumGroup().getDegreeModule()).map(dm -> dm.getIsOptional()).orElse(false);
                 if ((applyToOptionals && !isOptionalByGroup) || (!applyToOptionals && isOptionalByGroup)) {
                     continue;
                 }

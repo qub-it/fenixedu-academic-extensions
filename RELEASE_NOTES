@@ -1,3 +1,5 @@
+- Bug fix: Correctly handle optional credits by year mapping in extra/standalone entries [#UL-FM-3278]
+
 4.35.23 (03-04-2025)
 - Bug fix: Correctly calculate curricular for entries in extra/standalone curriculum groups [#qubIT-Fenix-6775]
 
