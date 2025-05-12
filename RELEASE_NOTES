@@ -1,3 +1,5 @@
+- Improvement: Improves error message when unenroling a student that already has an evaluation grade [#ISCTE-FENIXEDU-925]
+
 4.35.24 (14-04-2025)
 - Bug fix: Correctly handle optional credits by year mapping in extra/standalone entries [#UL-FM-3278]
 
