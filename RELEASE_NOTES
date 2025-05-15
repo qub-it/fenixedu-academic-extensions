@@ -1,3 +1,5 @@
+- Bug fix: Registration history list should export statutes by registration (not all)  [#UCP-FENIXEDU-393]
+
 4.35.24 (14-04-2025)
 - Bug fix: Correctly handle optional credits by year mapping in extra/standalone entries [#UL-FM-3278]
 

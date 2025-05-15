@@ -261,9 +261,9 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         result.addAll(
                 registration.getStudentStatutesSet().stream().filter(s -> s.isValidOnAnyExecutionPeriodFor(getExecutionYear()))
                         .collect(Collectors.toSet()));
-        result.addAll(
-                getStudent().getStudentStatutesSet().stream().filter(s -> s.isValidOnAnyExecutionPeriodFor(getExecutionYear()))
-                        .collect(Collectors.toSet()));
+
+        result.addAll(getStudent().getStudentStatutesSet().stream().filter(s -> s.getRegistration() == null)
+                .filter(s -> s.isValidOnAnyExecutionPeriodFor(getExecutionYear())).collect(Collectors.toSet()));
 
         return result;
     }
