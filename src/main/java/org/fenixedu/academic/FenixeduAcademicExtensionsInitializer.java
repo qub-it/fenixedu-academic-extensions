@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.Attends;
 import org.fenixedu.academic.domain.DegreeInfo;
 import org.fenixedu.academic.domain.Enrolment;
+import org.fenixedu.academic.domain.EnrolmentEvaluation;
 import org.fenixedu.academic.domain.EvaluationConfiguration;
 import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.Qualification;
@@ -45,6 +46,8 @@ import org.fenixedu.academic.domain.studentCurriculum.Credits;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumLine;
 import org.fenixedu.academic.domain.studentCurriculum.Dismissal;
 import org.fenixedu.academic.service.services.manager.MergeExecutionCourses;
+import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.fenixedu.bennu.core.signals.Signal;
 import org.fenixedu.bennu.core.util.CoreConfiguration;
 import org.slf4j.Logger;
@@ -109,6 +112,7 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
         setupListenerForSchoolClassDelete();
         setupListenerForInvalidEquivalences();
 
+        registerDeletionListenerOnEnrolmentEvaluation();
         registerDeletionListenerOnCurriculumLineForCourseGradingTable();
         registerDeletionListenerOnDegreeModuleForCurriculumLineLogs();
 
@@ -170,6 +174,15 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
                     throw new DomainException("error.Equivalence.can.only.be.applied.to.curricular.courses");
 
                 }
+            }
+        });
+    }
+
+    private void registerDeletionListenerOnEnrolmentEvaluation() {
+        FenixFramework.getDomainModel().registerDeletionListener(EnrolmentEvaluation.class, enrolmentEvaluation -> {
+            if (enrolmentEvaluation.getCompetenceCourseMarkSheet() != null) {
+                throw new RuntimeException(BundleUtil.getString(AcademicExtensionsUtil.BUNDLE,
+                        "error.unenrolment.not.possible.student.already.in.marksheet"));
             }
         });
     }
