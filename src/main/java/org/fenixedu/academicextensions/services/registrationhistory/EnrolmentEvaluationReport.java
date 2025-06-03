@@ -12,6 +12,7 @@ import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.Grade;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.student.Registration;
+import org.fenixedu.academic.domain.student.RegistrationServices;
 import org.fenixedu.academic.domain.time.calendarStructure.AcademicPeriod;
 import org.joda.time.LocalDate;
 
@@ -75,4 +76,7 @@ public class EnrolmentEvaluationReport {
         return getRegistration().getDegree();
     }
 
+    public Integer getCurricularYear() {
+        return RegistrationServices.getCurricularYear(getRegistration(), getExecutionInterval().getExecutionYear()).getResult();
+    }
 }

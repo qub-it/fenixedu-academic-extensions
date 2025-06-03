@@ -1,4 +1,5 @@
 - Improvement: Improves error message when unenroling a student that already has an evaluation grade [#ISCTE-FENIXEDU-925]
+- Improvement: Add student curricular year field to enrolment evaluation report [#ISCTE-FENIXEDU-1132]
 
 4.35.25 (15-05-2025)
 - Bug fix: Registration history list should export statutes by registration (not all)  [#UCP-FENIXEDU-393]
