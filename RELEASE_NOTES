@@ -1,3 +1,4 @@
+4.35.27 (24-06-2025)
 - Refactor: Join hardcoded and dynamicField setters/getters for ExtendedDegreeInfo refactor [#qubIT-Fenix-6512]
 
 4.35.26 (03-06-2025)
