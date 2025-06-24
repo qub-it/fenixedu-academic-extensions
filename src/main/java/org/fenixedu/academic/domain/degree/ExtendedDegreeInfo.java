@@ -1,7 +1,6 @@
 package org.fenixedu.academic.domain.degree;
 
 import java.util.Objects;
-import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.Degree;
@@ -77,101 +76,100 @@ public class ExtendedDegreeInfo extends ExtendedDegreeInfo_Base {
 
     @Override
     public LocalizedString getScientificAreas() {
-        return findFieldByCode(SCIENTIFIC_AREAS).map(dF -> dF.getValue(LocalizedString.class))
+        return DynamicField.find(this.getDegreeInfo(), SCIENTIFIC_AREAS).map(dF -> dF.getValue(LocalizedString.class))
                 .orElseGet(super::getScientificAreas);
     }
 
     @Override
     public void setScientificAreas(final LocalizedString scientificAreas) {
-        findFieldByCode(SCIENTIFIC_AREAS).ifPresent(dF -> dF.edit(scientificAreas));
+        DynamicField.find(this.getDegreeInfo(), SCIENTIFIC_AREAS).ifPresent(dF -> dF.edit(scientificAreas));
         super.setScientificAreas(scientificAreas);
     }
 
     @Override
     public LocalizedString getStudyRegime() {
-        return findFieldByCode(STUDY_REGIME).map(dF -> dF.getValue(LocalizedString.class)).orElseGet(super::getStudyRegime);
+        return DynamicField.find(this.getDegreeInfo(), STUDY_REGIME).map(dF -> dF.getValue(LocalizedString.class))
+                .orElseGet(super::getStudyRegime);
     }
 
     @Override
     public void setStudyRegime(final LocalizedString studyRegime) {
-        findFieldByCode(STUDY_REGIME).ifPresent(dF -> dF.edit(studyRegime));
+        DynamicField.find(this.getDegreeInfo(), STUDY_REGIME).ifPresent(dF -> dF.edit(studyRegime));
         super.setStudyRegime(studyRegime);
     }
 
     @Override
     public LocalizedString getStudyProgrammeDuration() {
-        return findFieldByCode(STUDY_PROGRAMME_DURATION).map(dF -> dF.getValue(LocalizedString.class))
+        return DynamicField.find(this.getDegreeInfo(), STUDY_PROGRAMME_DURATION).map(dF -> dF.getValue(LocalizedString.class))
                 .orElseGet(super::getStudyProgrammeDuration);
     }
 
     @Override
     public void setStudyProgrammeDuration(final LocalizedString studyProgrammeDuration) {
-        findFieldByCode(STUDY_PROGRAMME_DURATION).ifPresent(dF -> dF.edit(studyProgrammeDuration));
+        DynamicField.find(this.getDegreeInfo(), STUDY_PROGRAMME_DURATION).ifPresent(dF -> dF.edit(studyProgrammeDuration));
         super.setStudyProgrammeDuration(studyProgrammeDuration);
     }
 
     @Override
     public LocalizedString getStudyProgrammeRequirements() {
-        return findFieldByCode(STUDY_PROGRAMME_REQUIREMENTS).map(dF -> dF.getValue(LocalizedString.class))
+        return DynamicField.find(this.getDegreeInfo(), STUDY_PROGRAMME_REQUIREMENTS).map(dF -> dF.getValue(LocalizedString.class))
                 .orElseGet(super::getStudyProgrammeRequirements);
     }
 
     @Override
     public void setStudyProgrammeRequirements(final LocalizedString studyProgrammeRequirements) {
-        findFieldByCode(STUDY_PROGRAMME_REQUIREMENTS).ifPresent(dF -> dF.edit(studyProgrammeRequirements));
+        DynamicField.find(this.getDegreeInfo(), STUDY_PROGRAMME_REQUIREMENTS)
+                .ifPresent(dF -> dF.edit(studyProgrammeRequirements));
         super.setStudyProgrammeRequirements(studyProgrammeRequirements);
     }
 
     @Override
     public LocalizedString getHigherEducationAccess() {
-        return findFieldByCode(HIGHER_EDUCATION_ACCESS).map(dF -> dF.getValue(LocalizedString.class))
+        return DynamicField.find(this.getDegreeInfo(), HIGHER_EDUCATION_ACCESS).map(dF -> dF.getValue(LocalizedString.class))
                 .orElseGet(super::getHigherEducationAccess);
     }
 
     @Override
     public void setHigherEducationAccess(final LocalizedString higherEducationAccess) {
-        findFieldByCode(HIGHER_EDUCATION_ACCESS).ifPresent(dF -> dF.edit(higherEducationAccess));
+        DynamicField.find(this.getDegreeInfo(), HIGHER_EDUCATION_ACCESS).ifPresent(dF -> dF.edit(higherEducationAccess));
         super.setHigherEducationAccess(higherEducationAccess);
     }
 
     @Override
     public LocalizedString getProfessionalStatus() {
-        return findFieldByCode(PROFESSIONAL_STATUTES).map(dF -> dF.getValue(LocalizedString.class))
+        return DynamicField.find(this.getDegreeInfo(), PROFESSIONAL_STATUTES).map(dF -> dF.getValue(LocalizedString.class))
                 .orElseGet(super::getProfessionalStatus);
     }
 
     @Override
     public void setProfessionalStatus(final LocalizedString professionalStatus) {
-        findFieldByCode(PROFESSIONAL_STATUTES).ifPresent(dF -> dF.edit(professionalStatus));
+        DynamicField.find(this.getDegreeInfo(), PROFESSIONAL_STATUTES).ifPresent(dF -> dF.edit(professionalStatus));
         super.setProfessionalStatus(professionalStatus);
     }
 
     @Override
     public LocalizedString getSupplementExtraInformation() {
-        return findFieldByCode(SUPPLEMENT_EXTRA_INFORMATION).map(dF -> dF.getValue(LocalizedString.class))
+        return DynamicField.find(this.getDegreeInfo(), SUPPLEMENT_EXTRA_INFORMATION).map(dF -> dF.getValue(LocalizedString.class))
                 .orElseGet(super::getSupplementExtraInformation);
     }
 
     @Override
     public void setSupplementExtraInformation(final LocalizedString supplementExtraInformation) {
-        findFieldByCode(SUPPLEMENT_EXTRA_INFORMATION).ifPresent(dF -> dF.edit(supplementExtraInformation));
+        DynamicField.find(this.getDegreeInfo(), SUPPLEMENT_EXTRA_INFORMATION)
+                .ifPresent(dF -> dF.edit(supplementExtraInformation));
         super.setSupplementExtraInformation(supplementExtraInformation);
     }
 
     @Override
     public LocalizedString getSupplementOtherSources() {
-        return findFieldByCode(SUPPLEMENT_OTHER_SOURCES).map(dF -> dF.getValue(LocalizedString.class))
+        return DynamicField.find(this.getDegreeInfo(), SUPPLEMENT_OTHER_SOURCES).map(dF -> dF.getValue(LocalizedString.class))
                 .orElseGet(super::getSupplementOtherSources);
     }
 
     @Override
     public void setSupplementOtherSources(final LocalizedString supplementOtherSources) {
-        findFieldByCode(SUPPLEMENT_OTHER_SOURCES).ifPresent(dF -> dF.edit(supplementOtherSources));
+        DynamicField.find(this.getDegreeInfo(), SUPPLEMENT_OTHER_SOURCES).ifPresent(dF -> dF.edit(supplementOtherSources));
         super.setSupplementOtherSources(supplementOtherSources);
-    }
-
-    private Optional<DynamicField> findFieldByCode(final String code) {
-        return Optional.ofNullable(DynamicField.findField(this.getDegreeInfo(), code));
     }
 
     public void delete() {
