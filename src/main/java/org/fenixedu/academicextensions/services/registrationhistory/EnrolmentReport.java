@@ -41,7 +41,7 @@ public class EnrolmentReport {
     }
 
     /**
-     * 
+     *
      * @param enrolment
      * @param executionInterval if it's not enroled in execution interval (for improvement only purposes)
      */
@@ -139,6 +139,10 @@ public class EnrolmentReport {
 
     public DateTime getEnrolmentDate() {
         return enrolment.getCreationDateDateTime();
+    }
+
+    public String getEnrolmentDayMonthYear() {
+        return getEnrolmentDate().toString("dd-MM-YY");
     }
 
     public String getEnrolmentHours() {
