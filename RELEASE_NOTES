@@ -1,3 +1,5 @@
+- Improvement: Add enrolment date view without time associated [#qubIT-Fenix-6510]
+
 4.35.27 (24-06-2025)
 - Refactor: Join hardcoded and dynamicField setters/getters for ExtendedDegreeInfo refactor [#qubIT-Fenix-6512]
 
