@@ -1,3 +1,5 @@
+- Refactor: Refactors SchoolLevelType, ProfessionalSituationConditionType and ProfessionType enums [#qubIT-Fenix-7009]
+
 4.35.28 (30-06-2025)
 - Improvement: Add enrolment date view without time associated [#qubIT-Fenix-6510]
 
