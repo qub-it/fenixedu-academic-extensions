@@ -23,7 +23,6 @@ import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.Grade;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.SchoolClass;
-import org.fenixedu.academic.domain.SchoolLevelType;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
 import org.fenixedu.academic.domain.candidacy.IngressionType;
 import org.fenixedu.academic.domain.contacts.PhysicalAddress;
@@ -802,9 +801,8 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     }
 
     public String getQualificationSchoolLevel() {
-        final PrecedentDegreeInformation info = getCompletedPrecedentInformation();
-        final SchoolLevelType schoolLevel = info.getSchoolLevel();
-        return schoolLevel == null ? null : schoolLevel.getLocalizedName();
+        return Optional.ofNullable(getCompletedPrecedentInformation()).map(PrecedentDegreeInformation::getEducationLevelType)
+                .map(elt -> elt.getName().getContent()).orElse(null);
     }
 
     public String getQualificationDegreeDesignation() {
@@ -823,9 +821,8 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     }
 
     public String getOriginSchoolLevel() {
-        final PrecedentDegreeInformation info = getPreviousPrecedentInformation();
-        final SchoolLevelType schoolLevel = info.getSchoolLevel();
-        return schoolLevel == null ? null : schoolLevel.getLocalizedName();
+        return Optional.ofNullable(getPreviousPrecedentInformation()).map(PrecedentDegreeInformation::getEducationLevelType)
+                .map(elt -> elt.getName().getContent()).orElse(null);
     }
 
     public String getOriginDegreeDesignation() {
