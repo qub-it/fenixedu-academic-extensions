@@ -142,7 +142,7 @@ public class EnrolmentReport {
     }
 
     public String getEnrolmentDayMonthYear() {
-        return getEnrolmentDate().toString("dd-MM-YY");
+        return getEnrolmentDate().toString("dd-MM-yyyy");
     }
 
     public String getEnrolmentHours() {
