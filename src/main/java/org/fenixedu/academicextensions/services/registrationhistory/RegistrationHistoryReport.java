@@ -585,16 +585,18 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 
     public BigDecimal getExecutionYearSimpleAverageWithCreditsTransfer() {
         BigDecimal sumOfGrades = BigDecimal.ZERO;
-        final List<ICurriculumEntry> curriculumEntries = getExecutionYearCurriculumEntries().toList();
+        final List<AverageEntry> averageEntries = getExecutionYearCurriculumEntries().map(
+                curriculumEntry -> new AverageEntry(curriculumEntry, getStudentCurricularPlan())).toList();
 
-        if (curriculumEntries.isEmpty()) {
+        for (AverageEntry averageEntry : averageEntries) {
+            sumOfGrades = sumOfGrades.add(averageEntry.getGradeValue());
+        }
+
+        if (averageEntries.isEmpty()) {
             return BigDecimal.ZERO;
         }
 
-        curriculumEntries.forEach(curriculumEntry -> sumOfGrades.add(
-                new AverageEntry(curriculumEntry, getStudentCurricularPlan()).getGradeValue()));
-
-        return sumOfGrades.divide(BigDecimal.valueOf(curriculumEntries.size()), RoundingMode.HALF_UP)
+        return sumOfGrades.divide(BigDecimal.valueOf(averageEntries.size()), RoundingMode.HALF_UP)
                 .setScale(2, RoundingMode.HALF_UP);
     }
 
