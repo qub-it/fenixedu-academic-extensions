@@ -585,18 +585,16 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 
     public BigDecimal getExecutionYearSimpleAverageWithCreditsTransfer() {
         BigDecimal sumOfGrades = BigDecimal.ZERO;
-        final List<AverageEntry> averageEntries =
-                getExecutionYearCurriculumEntries().map(e -> new AverageEntry(e, getStudentCurricularPlan())).toList();
+        final List<ICurriculumEntry> curriculumEntries = getExecutionYearCurriculumEntries().toList();
 
-        for (AverageEntry entry : averageEntries) {
-            sumOfGrades = sumOfGrades.add(entry.getGradeValue());
-        }
-
-        if (averageEntries.isEmpty()) {
+        if (curriculumEntries.isEmpty()) {
             return BigDecimal.ZERO;
         }
 
-        return sumOfGrades.divide(BigDecimal.valueOf(averageEntries.size()), RoundingMode.HALF_UP)
+        curriculumEntries.forEach(curriculumEntry -> sumOfGrades.add(
+                new AverageEntry(curriculumEntry, getStudentCurricularPlan()).getGradeValue()));
+
+        return sumOfGrades.divide(BigDecimal.valueOf(curriculumEntries.size()), RoundingMode.HALF_UP)
                 .setScale(2, RoundingMode.HALF_UP);
     }
 
@@ -614,10 +612,10 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         final List<ICurriculumEntry> curriculumEntries = getExecutionYearCurriculumEntries().toList();
 
         for (ICurriculumEntry entry : curriculumEntries) {
-            AverageEntry aE = new AverageEntry(entry, getStudentCurricularPlan());
             final BigDecimal weight = entry.getWeigthForCurriculum();
             sumOfWeights = sumOfWeights.add(weight);
-            sumOfGradesWeighted = sumOfGradesWeighted.add(weight.multiply(aE.getGradeValue()));
+            sumOfGradesWeighted =
+                    sumOfGradesWeighted.add(weight.multiply(new AverageEntry(entry, getStudentCurricularPlan()).getGradeValue()));
         }
 
         if (sumOfWeights.compareTo(BigDecimal.ZERO) == 0) {
