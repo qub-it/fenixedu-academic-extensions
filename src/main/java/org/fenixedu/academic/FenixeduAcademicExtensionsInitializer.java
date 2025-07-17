@@ -26,6 +26,7 @@ import org.fenixedu.academic.domain.degreeStructure.OptionalCurricularCourse;
 import org.fenixedu.academic.domain.enrolment.EnrolmentServices;
 import org.fenixedu.academic.domain.evaluation.EnrolmentEvaluationExtendedInformation;
 import org.fenixedu.academic.domain.evaluation.EvaluationComparator;
+import org.fenixedu.academic.domain.evaluation.config.MarkSheetSettings;
 import org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonServices;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.organizationalStructure.Party;
@@ -95,6 +96,8 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
         ExtendedDegreeInfo.setupCreationListener();
 
         EnrolmentEvaluationExtendedInformation.setupDeleteListener();
+
+        MarkSheetSettings.init();
 
         EnrolmentPeriodRestrictionsInitializer.init();
 
