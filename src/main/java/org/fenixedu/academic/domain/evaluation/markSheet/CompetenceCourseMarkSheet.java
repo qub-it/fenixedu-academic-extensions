@@ -1101,8 +1101,10 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
 
     public boolean getLimitTeacherView() {
         final Person logged = Authenticate.getUser().getPerson();
+        final MarkSheetSettings marksheetSettings =
+                getCompetenceCourse().getDepartmentUnit(getExecutionInterval()).getMarkSheetSettings();
         final boolean teacherCanView = getCertifier() == logged || getCreator() == logged
-                || MarkSheetSettings.getInstance().getAllowTeacherToChooseCertifier();
+                || marksheetSettings.getAllowTeacherToChooseCertifier();
         return !teacherCanView;
     }
 
