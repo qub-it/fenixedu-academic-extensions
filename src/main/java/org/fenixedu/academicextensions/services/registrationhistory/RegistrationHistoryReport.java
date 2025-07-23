@@ -1,6 +1,7 @@
 package org.fenixedu.academicextensions.services.registrationhistory;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Collection;
 import java.util.Collections;
@@ -47,12 +48,12 @@ import org.fenixedu.academic.domain.student.RegistrationServices;
 import org.fenixedu.academic.domain.student.ResearchArea;
 import org.fenixedu.academic.domain.student.Student;
 import org.fenixedu.academic.domain.student.StudentStatute;
-import org.fenixedu.academic.domain.student.curriculum.AverageEntry;
 import org.fenixedu.academic.domain.student.curriculum.CurriculumConfigurationInitializer.CurricularYearResult;
 import org.fenixedu.academic.domain.student.curriculum.ICurriculum;
 import org.fenixedu.academic.domain.student.curriculum.ICurriculumEntry;
 import org.fenixedu.academic.domain.student.registrationStates.RegistrationState;
 import org.fenixedu.academic.domain.student.services.StatuteServices;
+import org.fenixedu.academic.domain.studentCurriculum.Credits;
 import org.fenixedu.academic.domain.studentCurriculum.Dismissal;
 import org.fenixedu.academic.domain.studentCurriculum.ExternalCurriculumGroup;
 import org.fenixedu.academic.dto.student.RegistrationConclusionBean;
@@ -584,20 +585,16 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     }
 
     public BigDecimal getExecutionYearSimpleAverageWithCreditsTransfer() {
-        BigDecimal sumOfGrades = BigDecimal.ZERO;
-        final List<AverageEntry> averageEntries = getExecutionYearCurriculumEntries().map(
-                curriculumEntry -> new AverageEntry(curriculumEntry, getStudentCurricularPlan())).toList();
+        List<BigDecimal> grades = getCurriculumEntriesForExecutionYear(
+                getStudentCurricularPlan().getRoot().getCurriculum().getCurriculumEntries()).filter(
+                entry -> entry.getGrade().isNumeric()).map(e -> e.getGrade().getNumericValue()).toList();
 
-        for (AverageEntry averageEntry : averageEntries) {
-            sumOfGrades = sumOfGrades.add(averageEntry.getGradeValue());
-        }
-
-        if (averageEntries.isEmpty()) {
+        if (grades.isEmpty()) {
             return BigDecimal.ZERO;
         }
 
-        return sumOfGrades.divide(BigDecimal.valueOf(averageEntries.size()), RoundingMode.HALF_UP)
-                .setScale(2, RoundingMode.HALF_UP);
+        return grades.stream().reduce(BigDecimal.ZERO, BigDecimal::add)
+                .divide(BigDecimal.valueOf(grades.size()), MathContext.DECIMAL128).setScale(3, RoundingMode.HALF_UP);
     }
 
     public BigDecimal getExecutionYearWeightedAverage() {
@@ -611,44 +608,51 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     public BigDecimal getExecutionYearWeightedAverageWithCreditsTransfer() {
         BigDecimal sumOfGradesWeighted = BigDecimal.ZERO;
         BigDecimal sumOfWeights = BigDecimal.ZERO;
-        final List<ICurriculumEntry> curriculumEntries = getExecutionYearCurriculumEntries().toList();
+        List<ICurriculumEntry> curriculumEntries = getCurriculumEntriesForExecutionYear(
+                getStudentCurricularPlan().getRoot().getCurriculum().getCurriculumEntries()).filter(
+                entry -> entry.getGrade().isNumeric()).toList();
 
         for (ICurriculumEntry entry : curriculumEntries) {
             final BigDecimal weight = entry.getWeigthForCurriculum();
             sumOfWeights = sumOfWeights.add(weight);
-            sumOfGradesWeighted =
-                    sumOfGradesWeighted.add(weight.multiply(new AverageEntry(entry, getStudentCurricularPlan()).getGradeValue()));
+            sumOfGradesWeighted = sumOfGradesWeighted.add(weight.multiply(entry.getGrade().getNumericValue()));
         }
 
-        if (sumOfWeights.compareTo(BigDecimal.ZERO) == 0) {
+        if (sumOfWeights.equals(BigDecimal.ZERO)) {
             return BigDecimal.ZERO;
         }
 
-        return sumOfGradesWeighted.divide(sumOfWeights, curriculumEntries.size() * 2 + 1, RoundingMode.HALF_UP)
-                .setScale(2, RoundingMode.HALF_UP);
+        return sumOfGradesWeighted.divide(sumOfWeights, MathContext.DECIMAL128).setScale(3, RoundingMode.HALF_UP);
     }
 
     public BigDecimal getExecutionYearApprovedCreditsForConclusionWithCreditsTransfer() {
-        BigDecimal result = BigDecimal.ZERO;
-        getExecutionYearCurriculumEntries().forEach(e -> result.add(e.getEctsCreditsForCurriculum()));
-        return result;
+        return getCurriculumEntriesForExecutionYear(
+                getStudentCurricularPlan().getRoot().getCurriculum().getCurricularYearEntries()).map(
+                ICurriculumEntry::getEctsCreditsForCurriculum).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     public BigDecimal getExecutionYearApprovedCreditsForAverageWithCreditsTransfer() {
-        BigDecimal result = BigDecimal.ZERO;
-        getExecutionYearCurriculumEntries().forEach(
-                e -> result.add(new AverageEntry(e, getStudentCurricularPlan()).getGradeValue()));
-        return result;
+        return getCurriculumEntriesForExecutionYear(
+                getStudentCurricularPlan().getRoot().getCurriculum().getCurriculumEntries()).map(
+                ICurriculumEntry::getEctsCreditsForCurriculum).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    private Stream<ICurriculumEntry> getExecutionYearCurriculumEntries() {
-        return getCurriculum().getCurriculumEntries().stream().filter(e -> e.getExecutionYear().equals(getExecutionYear()));
+    public String getExecutionYearCreditsTransferReasons() {
+        return getStudentCurricularPlan().getCreditsSet().stream()
+                .filter(c -> c.getExecutionInterval().getExecutionYear() == getExecutionYear()).map(Credits::getReason)
+                .filter(Objects::nonNull).map(type -> type.getReason().getContent()).distinct().sorted()
+                .collect(Collectors.joining(", "));
     }
 
-    public String getExecutionYearCreditsTransferMotives() {
-        return getExecutionYearCurriculumEntries().filter(Dismissal.class::isInstance)
-                .map(e -> ((Dismissal) e).getCredits().getReason()).filter(Objects::nonNull).distinct()
-                .map(r -> r.getReason().getContent()).sorted().collect(Collectors.joining(", "));
+    private Stream<ICurriculumEntry> getCurriculumEntriesForExecutionYear(Collection<ICurriculumEntry> curriculumEntries) {
+        return curriculumEntries.stream().filter(entry -> {
+            if (entry instanceof Dismissal dismissal) {
+                final Credits credits = dismissal.getCredits();
+                return (credits.getIEnrolments().isEmpty() && entry.getExecutionYear() == executionYear)
+                        || credits.getIEnrolments().stream().allMatch(e -> e.getExecutionYear() == executionYear);
+            }
+            return entry.getExecutionYear() == executionYear;
+        });
     }
 
     public Boolean getExecutionYearEnroledMandatoryFlunked() {
