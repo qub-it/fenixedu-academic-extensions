@@ -15,8 +15,9 @@ public class MarkSheetSettings extends MarkSheetSettings_Base {
         setRoot(Bennu.getInstance());
     }
 
+    @Atomic
     public static MarkSheetSettings getInstance() {
-        return findAll().findFirst().get();
+        return findAll().findFirst().orElseGet(() -> new MarkSheetSettings());
     }
 
     @Atomic
