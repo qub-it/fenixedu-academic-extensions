@@ -584,10 +584,10 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         return this.executionYearSimpleAverage;
     }
 
-    public BigDecimal getExecutionYearSimpleAverageWithCreditsTransfer() {
-        List<BigDecimal> grades = getCurriculumEntriesForExecutionYear(
-                getStudentCurricularPlan().getRoot().getCurriculum().getCurriculumEntries()).filter(
-                entry -> entry.getGrade().isNumeric()).map(e -> e.getGrade().getNumericValue()).toList();
+    public BigDecimal getExecutionYearSimpleAverageWithDismissals() {
+        List<BigDecimal> grades = getStudentCurricularPlan().getRoot().getCurriculum().getCurriculumEntries().stream()
+                .filter(entry -> isApprovalInYear(entry, executionYear) && entry.getGrade().isNumeric())
+                .map(e -> e.getGrade().getNumericValue()).toList();
 
         if (grades.isEmpty()) {
             return BigDecimal.ZERO;
@@ -605,12 +605,12 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         return this.executionYearWeightedAverage;
     }
 
-    public BigDecimal getExecutionYearWeightedAverageWithCreditsTransfer() {
+    public BigDecimal getExecutionYearWeightedAverageWithDismissals() {
         BigDecimal sumOfGradesWeighted = BigDecimal.ZERO;
         BigDecimal sumOfWeights = BigDecimal.ZERO;
-        List<ICurriculumEntry> curriculumEntries = getCurriculumEntriesForExecutionYear(
-                getStudentCurricularPlan().getRoot().getCurriculum().getCurriculumEntries()).filter(
-                entry -> entry.getGrade().isNumeric()).toList();
+        List<ICurriculumEntry> curriculumEntries =
+                getStudentCurricularPlan().getRoot().getCurriculum().getCurriculumEntries().stream()
+                        .filter(entry -> isApprovalInYear(entry, executionYear) && entry.getGrade().isNumeric()).toList();
 
         for (ICurriculumEntry entry : curriculumEntries) {
             final BigDecimal weight = entry.getWeigthForCurriculum();
@@ -625,34 +625,32 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         return sumOfGradesWeighted.divide(sumOfWeights, MathContext.DECIMAL128).setScale(3, RoundingMode.HALF_UP);
     }
 
-    public BigDecimal getExecutionYearApprovedCreditsForConclusionWithCreditsTransfer() {
-        return getCurriculumEntriesForExecutionYear(
-                getStudentCurricularPlan().getRoot().getCurriculum().getCurricularYearEntries()).map(
-                ICurriculumEntry::getEctsCreditsForCurriculum).reduce(BigDecimal.ZERO, BigDecimal::add);
+    public BigDecimal getExecutionYearApprovedCreditsForConclusionWithDismissals() {
+        return getStudentCurricularPlan().getRoot().getCurriculum().getCurricularYearEntries().stream()
+                .filter(ce -> isApprovalInYear(ce, executionYear)).map(ICurriculumEntry::getEctsCreditsForCurriculum)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    public BigDecimal getExecutionYearApprovedCreditsForAverageWithCreditsTransfer() {
-        return getCurriculumEntriesForExecutionYear(
-                getStudentCurricularPlan().getRoot().getCurriculum().getCurriculumEntries()).map(
-                ICurriculumEntry::getEctsCreditsForCurriculum).reduce(BigDecimal.ZERO, BigDecimal::add);
+    public BigDecimal getExecutionYearApprovedCreditsForAverageWithDismissals() {
+        return getStudentCurricularPlan().getRoot().getCurriculum().getCurriculumEntries().stream()
+                .filter(ce -> isApprovalInYear(ce, executionYear)).map(ICurriculumEntry::getEctsCreditsForCurriculum)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    public String getExecutionYearCreditsTransferReasons() {
+    public String getExecutionYearDismissalReasons() {
         return getStudentCurricularPlan().getCreditsSet().stream()
                 .filter(c -> c.getExecutionInterval().getExecutionYear() == getExecutionYear()).map(Credits::getReason)
                 .filter(Objects::nonNull).map(type -> type.getReason().getContent()).distinct().sorted()
                 .collect(Collectors.joining(", "));
     }
 
-    private Stream<ICurriculumEntry> getCurriculumEntriesForExecutionYear(Collection<ICurriculumEntry> curriculumEntries) {
-        return curriculumEntries.stream().filter(entry -> {
-            if (entry instanceof Dismissal dismissal) {
-                final Credits credits = dismissal.getCredits();
-                return (credits.getIEnrolments().isEmpty() && entry.getExecutionYear() == executionYear)
-                        || credits.getIEnrolments().stream().allMatch(e -> e.getExecutionYear() == executionYear);
-            }
-            return entry.getExecutionYear() == executionYear;
-        });
+    private boolean isApprovalInYear(ICurriculumEntry entry, ExecutionYear executionYear) {
+        if (entry instanceof Dismissal dismissal) {
+            final Credits credits = dismissal.getCredits();
+            return (credits.getIEnrolments().isEmpty() && entry.getExecutionYear() == executionYear) || credits.getIEnrolments()
+                    .stream().allMatch(e -> e.getExecutionYear() == executionYear);
+        }
+        return entry.getExecutionYear() == executionYear;
     }
 
     public Boolean getExecutionYearEnroledMandatoryFlunked() {
