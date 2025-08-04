@@ -444,7 +444,7 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 
     public Integer getNextYearCurricularYear() {
         if (this.nextYearCurricularYear == null) {
-            final ExecutionYear next = getExecutionYear().getNextExecutionYear();
+            final ExecutionYear next = getNextExecutionYear();
             final CurricularYearResult result = RegistrationServices.getCurricularYear(getRegistration(), next);
             this.nextYearCurricularYear = result == null ? null : result.getResult();
         }
@@ -585,9 +585,10 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     }
 
     public BigDecimal getExecutionYearSimpleAverageWithDismissals() {
-        List<BigDecimal> grades = getStudentCurricularPlan().getRoot().getCurriculum().getCurriculumEntries().stream()
-                .filter(entry -> isApprovalInYear(entry, executionYear) && entry.getGrade().isNumeric())
-                .map(e -> e.getGrade().getNumericValue()).toList();
+        List<BigDecimal> grades =
+                RegistrationServices.getCurriculum(registration, getNextExecutionYear()).getCurriculumEntries().stream()
+                        .filter(entry -> isApprovalInYear(entry, executionYear) && entry.getGrade().isNumeric())
+                        .map(e -> e.getGrade().getNumericValue()).toList();
 
         if (grades.isEmpty()) {
             return BigDecimal.ZERO;
@@ -609,7 +610,7 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         BigDecimal sumOfGradesWeighted = BigDecimal.ZERO;
         BigDecimal sumOfWeights = BigDecimal.ZERO;
         List<ICurriculumEntry> curriculumEntries =
-                getStudentCurricularPlan().getRoot().getCurriculum().getCurriculumEntries().stream()
+                RegistrationServices.getCurriculum(registration, getNextExecutionYear()).getCurriculumEntries().stream()
                         .filter(entry -> isApprovalInYear(entry, executionYear) && entry.getGrade().isNumeric()).toList();
 
         for (ICurriculumEntry entry : curriculumEntries) {
@@ -626,13 +627,18 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     }
 
     public BigDecimal getExecutionYearApprovedCreditsForConclusionWithDismissals() {
-        return getStudentCurricularPlan().getRoot().getCurriculum().getCurricularYearEntries().stream()
+        return RegistrationServices.getCurriculum(registration, getNextExecutionYear()).getCurricularYearEntries().stream()
                 .filter(ce -> isApprovalInYear(ce, executionYear)).map(ICurriculumEntry::getEctsCreditsForCurriculum)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
+    private ExecutionYear getNextExecutionYear() {
+        return Optional.ofNullable(getExecutionYear().getNextExecutionYear()).orElseThrow(
+                () -> new AcademicExtensionsDomainException("error.RegistrationHistoryReport.nextExecutionYear.null"));
+    }
+
     public BigDecimal getExecutionYearApprovedCreditsForAverageWithDismissals() {
-        return getStudentCurricularPlan().getRoot().getCurriculum().getCurriculumEntries().stream()
+        return RegistrationServices.getCurriculum(registration, getNextExecutionYear()).getCurriculumEntries().stream()
                 .filter(ce -> isApprovalInYear(ce, executionYear)).map(ICurriculumEntry::getEctsCreditsForCurriculum)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
@@ -1150,7 +1156,7 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         }
 
         final BigDecimal studentEcts =
-                RegistrationServices.getCurriculum(registration, executionYear.getNextExecutionYear()).getSumEctsCredits();
+                RegistrationServices.getCurriculum(registration, getNextExecutionYear()).getSumEctsCredits();
 
         final int enrolmentYearsForPrescription = getEnrolmentYearsForPrescription().intValue();
 
