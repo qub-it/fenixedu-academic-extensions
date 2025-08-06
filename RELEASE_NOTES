@@ -1,3 +1,5 @@
+- Improvement: Add credits transfer related fields to registration history report [#qubIT-Fenix-7189]
+
 4.35.29 (30-07-2025)
 - Refactor: Refactors SchoolLevelType, ProfessionalSituationConditionType and ProfessionType enums [#qubIT-Fenix-7009]
 
