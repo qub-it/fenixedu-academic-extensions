@@ -173,7 +173,7 @@ abstract public class MarkSheetStatusReportService {
     static private void addNonEmptyReport(final List<CompetenceCourseSeasonReport> result,
             final CompetenceCourseSeasonReport report) {
 
-        if (report != null && report.getTotalStudents().intValue() > 0) {
+        if (report.getTotalStudents().intValue() > 0) {
             result.add(report);
         }
     }
@@ -181,22 +181,14 @@ abstract public class MarkSheetStatusReportService {
     static private CompetenceCourseSeasonReport generateReport(final ExecutionInterval interval, final CompetenceCourse toProcess,
             final EvaluationSeason season, final LocalDate evaluationDate) {
 
-        // setMarksheetsTotal
-        final Supplier<Stream<CompetenceCourseMarkSheet>> supplier =
-                () -> CompetenceCourseMarkSheet.findBy(interval, toProcess, (ExecutionCourse) null, season, (DateTime) null,
-                        (Set<Shift>) null, (CompetenceCourseMarkSheetStateEnum) null,
-                        (CompetenceCourseMarkSheetChangeRequestStateEnum) null);
-        if (supplier.get().anyMatch(ccm -> ccm.getEnrolmentEvaluationSet().isEmpty())) {
-            return null;
-        }
-
         final CompetenceCourseSeasonReport result = new CompetenceCourseSeasonReport(toProcess, season, interval, evaluationDate);
 
         // setNotEvaluatedStudents
         final AtomicInteger notEvaluatedStudents = new AtomicInteger(0);
-        toProcess.getExecutionCoursesByExecutionPeriod(interval).stream().forEach(i -> notEvaluatedStudents.addAndGet(
-                CompetenceCourseMarkSheet.getExecutionCourseEnrolmentsNotInAnyMarkSheet(interval, toProcess, i, season,
-                        (LocalDate) null, Sets.newHashSet()).size()));
+        toProcess.getExecutionCoursesByExecutionPeriod(interval).stream()
+                .forEach(i -> notEvaluatedStudents
+                        .addAndGet(CompetenceCourseMarkSheet.getExecutionCourseEnrolmentsNotInAnyMarkSheet(interval, toProcess, i,
+                                season, (LocalDate) null, Sets.newHashSet()).size()));
         result.setNotEvaluatedStudents(notEvaluatedStudents.get());
 
         final Set<Enrolment> enrolments = Sets.newHashSet();
@@ -221,12 +213,30 @@ abstract public class MarkSheetStatusReportService {
             }
         }
         result.setEvaluatedStudents(evaluatedStudents);
+
+        final Supplier<Stream<CompetenceCourseMarkSheet>> supplier =
+                () -> CompetenceCourseMarkSheet.findBy(interval, toProcess, (ExecutionCourse) null, season, (DateTime) null,
+                        (Set<Shift>) null, (CompetenceCourseMarkSheetStateEnum) null,
+                        (CompetenceCourseMarkSheetChangeRequestStateEnum) null);
+
+        //setMarksheetsTotal
         final long markSheetsTotal = supplier.get().count();
         result.setMarksheetsTotal(Long.valueOf(markSheetsTotal).intValue());
 
-        // setMarksheetsToConfirm
-        final long markSheetsToConfirm = supplier.get().filter(markSheet -> !markSheet.isConfirmed()).count();
-        result.setMarksheetsToConfirm(Long.valueOf(markSheetsToConfirm).intValue());
+        // setEditionMarksheets
+        final long editionMarksheets =
+                supplier.get().filter(ccm -> ccm.isEdition() && !ccm.getEnrolmentEvaluationSet().isEmpty()).count();
+        result.setEditionMarksheets(Long.valueOf(editionMarksheets).intValue());
+
+        // setSubmittedMarksheets
+        final long submittedMarksheets =
+                supplier.get().filter(ccm -> ccm.isSubmitted() && !ccm.getEnrolmentEvaluationSet().isEmpty()).count();
+        result.setSubmittedMarksheets(Long.valueOf(submittedMarksheets).intValue());
+
+        // setConfirmedMarksheets
+        final long confirmedMarksheets =
+                supplier.get().filter(ccm -> ccm.isConfirmed() && !ccm.getEnrolmentEvaluationSet().isEmpty()).count();
+        result.setConfirmedMarksheets(Long.valueOf(confirmedMarksheets).intValue());
 
         return result;
     }

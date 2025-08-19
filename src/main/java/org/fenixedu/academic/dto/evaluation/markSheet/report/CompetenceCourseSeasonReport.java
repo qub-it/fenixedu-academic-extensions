@@ -7,7 +7,7 @@
  *  - Copyright Â© 2015 Universidade de Lisboa (after any Go-Live phase)
  *
  *
- * 
+ *
  * This file is part of FenixEdu Academic.
  *
  * FenixEdu Academic is free software: you can redistribute it and/or modify
@@ -51,6 +51,12 @@ public class CompetenceCourseSeasonReport extends AbstractSeasonReport {
     private Integer evaluatedStudents = 0;
 
     private Integer marksheetsTotal = 0;
+
+    private Integer editionMarksheets = 0;
+
+    private Integer submittedMarksheets = 0;
+
+    private Integer confirmedMarksheets = 0;
 
     private Integer marksheetsToConfirm = 0;
 
@@ -108,7 +114,30 @@ public class CompetenceCourseSeasonReport extends AbstractSeasonReport {
         this.marksheetsTotal = input;
     }
 
-    @Override
+    public Integer getEditionMarksheets() {
+        return editionMarksheets;
+    }
+
+    public void setEditionMarksheets(final Integer editionMarksheets) {
+        this.editionMarksheets = editionMarksheets;
+    }
+
+    public Integer getSubmittedMarksheets() {
+        return submittedMarksheets;
+    }
+
+    public void setSubmittedMarksheets(final Integer submittedMarksheets) {
+        this.submittedMarksheets = submittedMarksheets;
+    }
+
+    public Integer getConfirmedMarksheets() {
+        return confirmedMarksheets;
+    }
+
+    public void setConfirmedMarksheets(final Integer confirmedMarksheets) {
+        this.confirmedMarksheets = confirmedMarksheets;
+    }
+
     public Integer getMarksheetsToConfirm() {
         return marksheetsToConfirm;
     }
@@ -122,7 +151,7 @@ public class CompetenceCourseSeasonReport extends AbstractSeasonReport {
     public ExecutionInterval getExecutionSemester() {
         return executionInterval;
     }
-    
+
     @Override
     public ExecutionInterval getExecutionInterval() {
         return executionInterval;
