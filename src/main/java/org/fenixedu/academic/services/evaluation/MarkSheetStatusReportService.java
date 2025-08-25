@@ -76,11 +76,13 @@ abstract public class MarkSheetStatusReportService {
 
     static public List<CompetenceCourseSeasonReport> getReportsForCompetenceCourses(final ExecutionInterval executionInterval,
             final Set<EvaluationSeason> seasons) {
-        return iterateCompetenceCourses(executionInterval, Stream.concat(
-                        executionInterval.getAssociatedExecutionCoursesSet().stream().flatMap(c -> c.getCompetenceCourses().stream()),
-                        executionInterval.getEnrolmentEvaluationsSet().stream()
-                                .map(e -> e.getEnrolment().getCurricularCourse().getCompetenceCourse())).collect(Collectors.toSet()),
-                seasons);
+
+        final Stream<CompetenceCourse> allCompetenceCourses = Stream.concat(
+                executionInterval.getAssociatedExecutionCoursesSet().stream().flatMap(eC -> eC.getCompetenceCourses().stream()),
+                executionInterval.getEnrolmentEvaluationsSet().stream()
+                        .map(eE -> eE.getEnrolment().getCurricularCourse().getCompetenceCourse()));
+
+        return iterateCompetenceCourses(executionInterval, allCompetenceCourses.collect(Collectors.toSet()), seasons);
     }
 
     private static List<CompetenceCourseSeasonReport> iterateCompetenceCourses(final ExecutionInterval interval,
@@ -128,10 +130,9 @@ abstract public class MarkSheetStatusReportService {
 
     static public List<CompetenceCourseSeasonReport> getReportsForCompetenceCourse(final ExecutionInterval interval,
             final CompetenceCourse toProcess, final Set<EvaluationSeason> seasons) {
-        return seasons.stream().flatMap(s -> {
-            final CompetenceCourseSeasonReport report = generateReport(interval, toProcess, s);
-            return report.getTotalStudents() > 0 ? Stream.of(report) : Stream.empty();
-        }).collect(Collectors.toCollection(ArrayList::new));
+        return seasons.stream()
+                .flatMap(s -> Optional.of(generateReport(interval, toProcess, s)).filter(r -> r.getTotalStudents() > 0).stream())
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     static private CompetenceCourseSeasonReport generateReport(final ExecutionInterval interval, final CompetenceCourse toProcess,

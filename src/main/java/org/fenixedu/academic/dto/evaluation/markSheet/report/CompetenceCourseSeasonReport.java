@@ -75,8 +75,8 @@ public class CompetenceCourseSeasonReport extends AbstractSeasonReport {
     public Collection<Person> getResponsibles() {
         final Collection<Person> result = new HashSet<Person>();
 
-        for (final ExecutionCourse executionCourse : getCompetenceCourse()
-                .getExecutionCoursesByExecutionPeriod(getExecutionSemester())) {
+        for (final ExecutionCourse executionCourse : getCompetenceCourse().getExecutionCoursesByExecutionPeriod(
+                getExecutionSemester())) {
             for (final Professorship professorship : executionCourse.getProfessorshipsSet()) {
                 if (professorship.isResponsibleFor()) {
                     result.add(professorship.getPerson());
@@ -138,6 +138,7 @@ public class CompetenceCourseSeasonReport extends AbstractSeasonReport {
         this.confirmedMarksheets = confirmedMarksheets;
     }
 
+    @Override
     public Integer getMarksheetsToConfirm() {
         return marksheetsToConfirm;
     }
@@ -164,8 +165,8 @@ public class CompetenceCourseSeasonReport extends AbstractSeasonReport {
 
         if (getCompetenceCourse() != null && getExecutionSemester() != null) {
 
-            for (final ExecutionCourse iter : getCompetenceCourse()
-                    .getExecutionCoursesByExecutionPeriod(getExecutionSemester())) {
+            for (final ExecutionCourse iter : getCompetenceCourse().getExecutionCoursesByExecutionPeriod(
+                    getExecutionSemester())) {
 
                 if (iter.getName().equals(getCompetenceCourse().getName())) {
                     nameSame.add(getDegrees(iter));
