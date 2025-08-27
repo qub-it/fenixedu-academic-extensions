@@ -7,7 +7,7 @@
  *  - Copyright Â© 2015 Universidade de Lisboa (after any Go-Live phase)
  *
  *
- * 
+ *
  * This file is part of FenixEdu Academic.
  *
  * FenixEdu Academic is free software: you can redistribute it and/or modify
@@ -52,6 +52,12 @@ public class CompetenceCourseSeasonReport extends AbstractSeasonReport {
 
     private Integer marksheetsTotal = 0;
 
+    private Integer editionMarksheets = 0;
+
+    private Integer submittedMarksheets = 0;
+
+    private Integer confirmedMarksheets = 0;
+
     private Integer marksheetsToConfirm = 0;
 
     public CompetenceCourseSeasonReport(final CompetenceCourse competenceCourse, final EvaluationSeason season,
@@ -69,8 +75,8 @@ public class CompetenceCourseSeasonReport extends AbstractSeasonReport {
     public Collection<Person> getResponsibles() {
         final Collection<Person> result = new HashSet<Person>();
 
-        for (final ExecutionCourse executionCourse : getCompetenceCourse()
-                .getExecutionCoursesByExecutionPeriod(getExecutionSemester())) {
+        for (final ExecutionCourse executionCourse : getCompetenceCourse().getExecutionCoursesByExecutionPeriod(
+                getExecutionSemester())) {
             for (final Professorship professorship : executionCourse.getProfessorshipsSet()) {
                 if (professorship.isResponsibleFor()) {
                     result.add(professorship.getPerson());
@@ -108,6 +114,30 @@ public class CompetenceCourseSeasonReport extends AbstractSeasonReport {
         this.marksheetsTotal = input;
     }
 
+    public Integer getEditionMarksheets() {
+        return editionMarksheets;
+    }
+
+    public void setEditionMarksheets(final Integer editionMarksheets) {
+        this.editionMarksheets = editionMarksheets;
+    }
+
+    public Integer getSubmittedMarksheets() {
+        return submittedMarksheets;
+    }
+
+    public void setSubmittedMarksheets(final Integer submittedMarksheets) {
+        this.submittedMarksheets = submittedMarksheets;
+    }
+
+    public Integer getConfirmedMarksheets() {
+        return confirmedMarksheets;
+    }
+
+    public void setConfirmedMarksheets(final Integer confirmedMarksheets) {
+        this.confirmedMarksheets = confirmedMarksheets;
+    }
+
     @Override
     public Integer getMarksheetsToConfirm() {
         return marksheetsToConfirm;
@@ -122,7 +152,7 @@ public class CompetenceCourseSeasonReport extends AbstractSeasonReport {
     public ExecutionInterval getExecutionSemester() {
         return executionInterval;
     }
-    
+
     @Override
     public ExecutionInterval getExecutionInterval() {
         return executionInterval;
@@ -135,8 +165,8 @@ public class CompetenceCourseSeasonReport extends AbstractSeasonReport {
 
         if (getCompetenceCourse() != null && getExecutionSemester() != null) {
 
-            for (final ExecutionCourse iter : getCompetenceCourse()
-                    .getExecutionCoursesByExecutionPeriod(getExecutionSemester())) {
+            for (final ExecutionCourse iter : getCompetenceCourse().getExecutionCoursesByExecutionPeriod(
+                    getExecutionSemester())) {
 
                 if (iter.getName().equals(getCompetenceCourse().getName())) {
                     nameSame.add(getDegrees(iter));
