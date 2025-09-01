@@ -15,9 +15,13 @@ public class MarkSheetSettings extends MarkSheetSettings_Base {
         setRoot(Bennu.getInstance());
     }
 
-    @Atomic
     public static MarkSheetSettings getInstance() {
-        return findAll().findFirst().orElseGet(() -> new MarkSheetSettings());
+        return findAll().findFirst().orElseGet(MarkSheetSettings::create);
+    }
+
+    @Atomic
+    private static MarkSheetSettings create() {
+        return new MarkSheetSettings();
     }
 
     @Atomic
@@ -52,28 +56,28 @@ public class MarkSheetSettings extends MarkSheetSettings_Base {
             throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheet.shift.required");
         }
 
-        if (!isRequiredAtLeastOneShift() && getInstance().getRequiredNumberOfShifts() != input) {
+        if (!isRequiredAtLeastOneShift() && getRequiredNumberOfShifts() != input) {
             throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheet.shifts.required",
-                    String.valueOf(getInstance().getRequiredNumberOfShifts()));
+                    String.valueOf(getRequiredNumberOfShifts()));
         }
 
         return true;
     }
 
     public boolean isUnspecifiedNumberOfShifts() {
-        return getInstance().getRequiredNumberOfShifts() < 0;
+        return getRequiredNumberOfShifts() < 0;
     }
 
     public boolean isNotAllowedShifts() {
-        return getInstance().getRequiredNumberOfShifts() == 0;
+        return getRequiredNumberOfShifts() == 0;
     }
 
     public boolean isRequiredAtLeastOneShift() {
-        return getInstance().getRequiredNumberOfShifts() >= 10;
+        return getRequiredNumberOfShifts() >= 10;
     }
 
     public boolean isMarkSheetTemplateCodeDefined() {
-        return StringUtils.isNotBlank(getInstance().getMarkSheetTemplateCode());
+        return StringUtils.isNotBlank(getMarkSheetTemplateCode());
     }
 
     public static Stream<MarkSheetSettings> findAll() {
