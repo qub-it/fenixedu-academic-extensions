@@ -97,7 +97,7 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
 
         EnrolmentEvaluationExtendedInformation.setupDeleteListener();
 
-        MarkSheetSettings.getInstance();
+        MarkSheetSettings.init();
 
         EnrolmentPeriodRestrictionsInitializer.init();
 

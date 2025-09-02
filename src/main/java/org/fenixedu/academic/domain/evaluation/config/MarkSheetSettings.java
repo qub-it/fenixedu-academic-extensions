@@ -15,12 +15,19 @@ public class MarkSheetSettings extends MarkSheetSettings_Base {
         setRoot(Bennu.getInstance());
     }
 
+    @Atomic
+    public static void init() {
+        if (getInstance() == null) {
+            create();
+        }
+    }
+
     public static MarkSheetSettings getInstance() {
         return findAll().findFirst().orElseGet(MarkSheetSettings::create);
     }
 
     @Atomic
-    private static MarkSheetSettings create() {
+    public static MarkSheetSettings create() {
         return new MarkSheetSettings();
     }
 
