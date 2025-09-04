@@ -52,11 +52,11 @@ public class CompetenceCourseSeasonReport extends AbstractSeasonReport {
 
     private Integer marksheetsTotal = 0;
 
-    private Integer editionMarksheets = 0;
+    private Integer marksheetsEditions = 0;
 
-    private Integer submittedMarksheets = 0;
+    private Integer marksheetsSubmitted = 0;
 
-    private Integer confirmedMarksheets = 0;
+    private Integer marksheetsConfirmed = 0;
 
     private Integer marksheetsToConfirm = 0;
 
@@ -114,28 +114,40 @@ public class CompetenceCourseSeasonReport extends AbstractSeasonReport {
         this.marksheetsTotal = input;
     }
 
-    public Integer getEditionMarksheets() {
-        return editionMarksheets;
+    public Integer getMarksheetsEditions() {
+        return marksheetsEditions;
     }
 
-    public void setEditionMarksheets(final Integer editionMarksheets) {
-        this.editionMarksheets = editionMarksheets;
+    public void setMarksheetsEditions(final Integer marksheetsEditions) {
+        this.marksheetsEditions = marksheetsEditions;
     }
 
-    public Integer getSubmittedMarksheets() {
-        return submittedMarksheets;
+    public void incMarksheetsEditions() {
+        this.marksheetsEditions++;
     }
 
-    public void setSubmittedMarksheets(final Integer submittedMarksheets) {
-        this.submittedMarksheets = submittedMarksheets;
+    public Integer getMarksheetsSubmitted() {
+        return marksheetsSubmitted;
     }
 
-    public Integer getConfirmedMarksheets() {
-        return confirmedMarksheets;
+    public void setMarksheetsSubmitted(final Integer marksheetsSubmitted) {
+        this.marksheetsSubmitted = marksheetsSubmitted;
     }
 
-    public void setConfirmedMarksheets(final Integer confirmedMarksheets) {
-        this.confirmedMarksheets = confirmedMarksheets;
+    public void incMarksheetsSubmitted() {
+        this.marksheetsSubmitted++;
+    }
+
+    public Integer getMarksheetsConfirmed() {
+        return marksheetsConfirmed;
+    }
+
+    public void setMarksheetsConfirmed(final Integer marksheetsConfirmed) {
+        this.marksheetsConfirmed = marksheetsConfirmed;
+    }
+
+    public void incMarksheetsConfirmed() {
+        this.marksheetsConfirmed++;
     }
 
     @Override

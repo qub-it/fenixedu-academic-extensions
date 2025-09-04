@@ -130,8 +130,7 @@ abstract public class MarkSheetStatusReportService {
 
     static public List<CompetenceCourseSeasonReport> getReportsForCompetenceCourse(final ExecutionInterval interval,
             final CompetenceCourse toProcess, final Set<EvaluationSeason> seasons) {
-        return seasons.stream()
-                .flatMap(s -> Optional.of(generateReport(interval, toProcess, s)).filter(r -> r.getTotalStudents() > 0).stream())
+        return seasons.stream().map(s -> generateReport(interval, toProcess, s)).filter(r -> r.getTotalStudents() > 0)
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
@@ -168,34 +167,22 @@ abstract public class MarkSheetStatusReportService {
         }
         result.setEvaluatedStudents(evaluatedStudents);
 
-        //set marksheet counters
-        int markSheetsTotal = 0;
-        int editionMarksheets = 0;
-        int submittedMarksheets = 0;
-        int confirmedMarksheets = 0;
-        int marksheetsToConfirm = 0;
         for (CompetenceCourseMarkSheet ccm : CompetenceCourseMarkSheet.findBy(interval, toProcess, null, season, null, null, null,
                 null).collect(Collectors.toSet())) {
             if (ccm.getEnrolmentEvaluationSet().isEmpty()) {
                 continue;
             }
-            markSheetsTotal++;
-            if (!ccm.isConfirmed()) {
-                if (ccm.isEdition()) {
-                    editionMarksheets++;
-                } else {
-                    submittedMarksheets++;
-                }
-                marksheetsToConfirm++;
-            } else {
-                confirmedMarksheets++;
+            if (ccm.isConfirmed()) {
+                result.incMarksheetsConfirmed();
+            } else if (ccm.isEdition()) {
+                result.incMarksheetsEditions();
+            } else if (ccm.isSubmitted()) {
+                result.incMarksheetsSubmitted();
             }
+            result.setMarksheetsToConfirm(result.getMarksheetsEditions() + result.getMarksheetsSubmitted());
+            result.setMarksheetsTotal(
+                    result.getMarksheetsEditions() + result.getMarksheetsSubmitted() + result.getMarksheetsConfirmed());
         }
-        result.setMarksheetsTotal(markSheetsTotal);
-        result.setEditionMarksheets(editionMarksheets);
-        result.setSubmittedMarksheets(submittedMarksheets);
-        result.setConfirmedMarksheets(confirmedMarksheets);
-        result.setMarksheetsToConfirm(marksheetsToConfirm);
 
         return result;
     }
