@@ -131,7 +131,7 @@ abstract public class MarkSheetStatusReportService {
     static public List<CompetenceCourseSeasonReport> getReportsForCompetenceCourse(final ExecutionInterval interval,
             final CompetenceCourse toProcess, final Set<EvaluationSeason> seasons) {
         return seasons.stream().map(s -> generateReport(interval, toProcess, s)).filter(r -> r.getTotalStudents() > 0)
-                .collect(Collectors.toCollection(ArrayList::new));
+                .collect(Collectors.toList());
     }
 
     static private CompetenceCourseSeasonReport generateReport(final ExecutionInterval interval, final CompetenceCourse toProcess,
@@ -169,19 +169,16 @@ abstract public class MarkSheetStatusReportService {
 
         for (CompetenceCourseMarkSheet ccm : CompetenceCourseMarkSheet.findBy(interval, toProcess, null, season, null, null, null,
                 null).collect(Collectors.toSet())) {
-            if (ccm.getEnrolmentEvaluationSet().isEmpty()) {
+            if (ccm.getEnrolmentEvaluationSet().isEmpty() && ccm.getExecutionCourseEnrolmentsNotInAnyMarkSheet().isEmpty()) {
                 continue;
             }
             if (ccm.isConfirmed()) {
                 result.incMarksheetsConfirmed();
             } else if (ccm.isEdition()) {
-                result.incMarksheetsEditions();
+                result.incMarksheetsInEdition();
             } else if (ccm.isSubmitted()) {
                 result.incMarksheetsSubmitted();
             }
-            result.setMarksheetsToConfirm(result.getMarksheetsEditions() + result.getMarksheetsSubmitted());
-            result.setMarksheetsTotal(
-                    result.getMarksheetsEditions() + result.getMarksheetsSubmitted() + result.getMarksheetsConfirmed());
         }
 
         return result;
