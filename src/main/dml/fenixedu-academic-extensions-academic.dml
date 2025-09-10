@@ -1408,14 +1408,6 @@ relation CurriculumLineCurriculumLineExtendedInformation {
 // ====================== = ExtendeDegreeInfo = ========================
 
 class degree.ExtendedDegreeInfo {
-	LocalizedString scientificAreas;
-	LocalizedString studyProgrammeDuration;
-	LocalizedString studyRegime;
-	LocalizedString studyProgrammeRequirements;
-	LocalizedString higherEducationAccess;
-	LocalizedString professionalStatus;
-	LocalizedString supplementExtraInformation;
-	LocalizedString supplementOtherSources;
 }
 
 relation BennuExtendedDegreeInfo {
