@@ -12,7 +12,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,14 +21,10 @@ import org.fenixedu.academic.domain.EnrolmentEvaluation;
 import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionInterval;
-import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.evaluation.markSheet.CompetenceCourseMarkSheet;
-import org.fenixedu.academic.domain.evaluation.markSheet.CompetenceCourseMarkSheetChangeRequestStateEnum;
-import org.fenixedu.academic.domain.evaluation.markSheet.CompetenceCourseMarkSheetStateEnum;
 import org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonServices;
 import org.fenixedu.academic.dto.evaluation.markSheet.report.CompetenceCourseSeasonReport;
 import org.fenixedu.academic.dto.evaluation.markSheet.report.ExecutionCourseSeasonReport;
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -82,29 +77,12 @@ abstract public class MarkSheetStatusReportService {
     static public List<CompetenceCourseSeasonReport> getReportsForCompetenceCourses(final ExecutionInterval executionInterval,
             final Set<EvaluationSeason> seasons) {
 
-        final List<CompetenceCourseSeasonReport> result = Lists.newArrayList();
+        final Stream<CompetenceCourse> allCompetenceCourses = Stream.concat(
+                executionInterval.getAssociatedExecutionCoursesSet().stream().flatMap(eC -> eC.getCompetenceCourses().stream()),
+                executionInterval.getEnrolmentEvaluationsSet().stream()
+                        .map(eE -> eE.getEnrolment().getCurricularCourse().getCompetenceCourse()));
 
-        final Set<CompetenceCourse> toProcess = collectCompetenceCourses(executionInterval);
-
-        result.addAll(iterateCompetenceCourses(executionInterval, toProcess, seasons));
-
-        return result;
-    }
-
-    static private Set<CompetenceCourse> collectCompetenceCourses(final ExecutionInterval interval) {
-
-        final Set<CompetenceCourse> result = Sets.newHashSet();
-
-        for (final ExecutionCourse executionCourse : interval.getAssociatedExecutionCoursesSet()) {
-            result.addAll(executionCourse.getCompetenceCourses());
-        }
-
-        // improvement of evaluations approved in previous years
-        for (final EnrolmentEvaluation evaluation : interval.getEnrolmentEvaluationsSet()) {
-            result.add(evaluation.getEnrolment().getCurricularCourse().getCompetenceCourse());
-        }
-
-        return result;
+        return iterateCompetenceCourses(executionInterval, allCompetenceCourses.collect(Collectors.toSet()), seasons);
     }
 
     private static List<CompetenceCourseSeasonReport> iterateCompetenceCourses(final ExecutionInterval interval,
@@ -126,7 +104,7 @@ abstract public class MarkSheetStatusReportService {
                     errors.add(e.getCause() != null ? e.getCause() : e);
                 }
             });
-            
+
             startIndex = endIndex;
         }
 
@@ -138,7 +116,7 @@ abstract public class MarkSheetStatusReportService {
         }
 
         if (!errors.isEmpty()) {
-            throw new RuntimeException(errors.stream().map(e -> e.getMessage()).distinct().collect(Collectors.joining("\n")));
+            throw new RuntimeException(errors.stream().map(Throwable::getMessage).distinct().collect(Collectors.joining("\n")));
         }
 
         return result;
@@ -147,52 +125,28 @@ abstract public class MarkSheetStatusReportService {
     @Atomic(mode = TxMode.READ)
     static private List<CompetenceCourseSeasonReport> iterateCompetenceCoursesBlock(final ExecutionInterval interval,
             final Collection<CompetenceCourse> toProcess, final Set<EvaluationSeason> seasons) {
-
-        final List<CompetenceCourseSeasonReport> result = Lists.newArrayList();
-
-        for (final CompetenceCourse iter : toProcess) {
-            result.addAll(getReportsForCompetenceCourse(interval, iter, seasons));
-        }
-
-        return result;
+        return toProcess.stream().flatMap(iter -> getReportsForCompetenceCourse(interval, iter, seasons).stream()).toList();
     }
 
     static public List<CompetenceCourseSeasonReport> getReportsForCompetenceCourse(final ExecutionInterval interval,
             final CompetenceCourse toProcess, final Set<EvaluationSeason> seasons) {
-
-        final List<CompetenceCourseSeasonReport> result = Lists.newArrayList();
-
-        for (final EvaluationSeason season : seasons) {
-
-            addNonEmptyReport(result, generateReport(interval, toProcess, season, (LocalDate) null));
-        }
-
-        return result;
-    }
-
-    static private void addNonEmptyReport(final List<CompetenceCourseSeasonReport> result,
-            final CompetenceCourseSeasonReport report) {
-
-        if (report.getTotalStudents().intValue() > 0) {
-            result.add(report);
-        }
+        return seasons.stream().map(s -> generateReport(interval, toProcess, s)).filter(r -> r.getTotalStudents() > 0)
+                .collect(Collectors.toList());
     }
 
     static private CompetenceCourseSeasonReport generateReport(final ExecutionInterval interval, final CompetenceCourse toProcess,
-            final EvaluationSeason season, final LocalDate evaluationDate) {
-
-        final CompetenceCourseSeasonReport result = new CompetenceCourseSeasonReport(toProcess, season, interval, evaluationDate);
+            final EvaluationSeason season) {
+        final CompetenceCourseSeasonReport result = new CompetenceCourseSeasonReport(toProcess, season, interval, null);
 
         // setNotEvaluatedStudents
-        final AtomicInteger notEvaluatedStudents = new AtomicInteger(0);
-        toProcess.getExecutionCoursesByExecutionPeriod(interval).stream()
-                .forEach(i -> notEvaluatedStudents
-                        .addAndGet(CompetenceCourseMarkSheet.getExecutionCourseEnrolmentsNotInAnyMarkSheet(interval, toProcess, i,
-                                season, (LocalDate) null, Sets.newHashSet()).size()));
+        final AtomicInteger notEvaluatedStudents = new AtomicInteger();
+        toProcess.getExecutionCoursesByExecutionPeriod(interval).forEach(i -> notEvaluatedStudents.addAndGet(
+                CompetenceCourseMarkSheet.getExecutionCourseEnrolmentsNotInAnyMarkSheet(interval, toProcess, i, season, null,
+                        Set.of()).size()));
         result.setNotEvaluatedStudents(notEvaluatedStudents.get());
 
         final Set<Enrolment> enrolments = Sets.newHashSet();
-        toProcess.getAssociatedCurricularCoursesSet().stream()
+        toProcess.getAssociatedCurricularCoursesSet()
                 .forEach(i -> enrolments.addAll(i.getEnrolmentsByAcademicInterval(interval.getAcademicInterval())));
 
         // improvement of evaluations approved in previous years
@@ -206,24 +160,26 @@ abstract public class MarkSheetStatusReportService {
         // setEvaluatedStudents
         int evaluatedStudents = 0;
         for (final Enrolment enrolment : enrolments) {
-
-            final Optional<EnrolmentEvaluation> evaluation = enrolment.getEnrolmentEvaluation(season, interval, (Boolean) null);
+            final Optional<EnrolmentEvaluation> evaluation = enrolment.getEnrolmentEvaluation(season, interval, null);
             if (evaluation.isPresent() && evaluation.get().getCompetenceCourseMarkSheet() != null) {
-                evaluatedStudents = evaluatedStudents + 1;
+                evaluatedStudents++;
             }
         }
         result.setEvaluatedStudents(evaluatedStudents);
 
-        // setMarksheetsTotal
-        final Supplier<Stream<CompetenceCourseMarkSheet>> supplier = () -> CompetenceCourseMarkSheet.findBy(interval, toProcess,
-                (ExecutionCourse) null, season, (DateTime) null, (Set<Shift>) null, (CompetenceCourseMarkSheetStateEnum) null,
-                (CompetenceCourseMarkSheetChangeRequestStateEnum) null);
-        final long markSheetsTotal = supplier.get().count();
-        result.setMarksheetsTotal(Long.valueOf(markSheetsTotal).intValue());
-
-        // setMarksheetsToConfirm
-        final long markSheetsToConfirm = supplier.get().filter(markSheet -> !markSheet.isConfirmed()).count();
-        result.setMarksheetsToConfirm(Long.valueOf(markSheetsToConfirm).intValue());
+        for (CompetenceCourseMarkSheet ccm : CompetenceCourseMarkSheet.findBy(interval, toProcess, null, season, null, null, null,
+                null).collect(Collectors.toSet())) {
+            if (ccm.getEnrolmentEvaluationSet().isEmpty() && ccm.getExecutionCourseEnrolmentsNotInAnyMarkSheet().isEmpty()) {
+                continue;
+            }
+            if (ccm.isConfirmed()) {
+                result.incMarksheetsConfirmed();
+            } else if (ccm.isEdition()) {
+                result.incMarksheetsInEdition();
+            } else if (ccm.isSubmitted()) {
+                result.incMarksheetsSubmitted();
+            }
+        }
 
         return result;
     }

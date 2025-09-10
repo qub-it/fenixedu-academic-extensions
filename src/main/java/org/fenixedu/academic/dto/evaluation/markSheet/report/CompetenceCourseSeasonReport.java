@@ -7,7 +7,7 @@
  *  - Copyright Â© 2015 Universidade de Lisboa (after any Go-Live phase)
  *
  *
- * 
+ *
  * This file is part of FenixEdu Academic.
  *
  * FenixEdu Academic is free software: you can redistribute it and/or modify
@@ -50,9 +50,11 @@ public class CompetenceCourseSeasonReport extends AbstractSeasonReport {
 
     private Integer evaluatedStudents = 0;
 
-    private Integer marksheetsTotal = 0;
+    private Integer marksheetsInEdition = 0;
 
-    private Integer marksheetsToConfirm = 0;
+    private Integer marksheetsSubmitted = 0;
+
+    private Integer marksheetsConfirmed = 0;
 
     public CompetenceCourseSeasonReport(final CompetenceCourse competenceCourse, final EvaluationSeason season,
             final ExecutionInterval executionInterval, final LocalDate evaluationDate) {
@@ -69,8 +71,8 @@ public class CompetenceCourseSeasonReport extends AbstractSeasonReport {
     public Collection<Person> getResponsibles() {
         final Collection<Person> result = new HashSet<Person>();
 
-        for (final ExecutionCourse executionCourse : getCompetenceCourse()
-                .getExecutionCoursesByExecutionPeriod(getExecutionSemester())) {
+        for (final ExecutionCourse executionCourse : getCompetenceCourse().getExecutionCoursesByExecutionPeriod(
+                getExecutionSemester())) {
             for (final Professorship professorship : executionCourse.getProfessorshipsSet()) {
                 if (professorship.isResponsibleFor()) {
                     result.add(professorship.getPerson());
@@ -101,20 +103,36 @@ public class CompetenceCourseSeasonReport extends AbstractSeasonReport {
 
     @Override
     public Integer getMarksheetsTotal() {
-        return marksheetsTotal;
+        return marksheetsInEdition + marksheetsSubmitted + marksheetsConfirmed;
     }
 
-    public void setMarksheetsTotal(final Integer input) {
-        this.marksheetsTotal = input;
+    public Integer getMarksheetsInEdition() {
+        return marksheetsInEdition;
+    }
+
+    public void incMarksheetsInEdition() {
+        this.marksheetsInEdition++;
+    }
+
+    public Integer getMarksheetsSubmitted() {
+        return marksheetsSubmitted;
+    }
+
+    public void incMarksheetsSubmitted() {
+        this.marksheetsSubmitted++;
+    }
+
+    public Integer getMarksheetsConfirmed() {
+        return marksheetsConfirmed;
+    }
+
+    public void incMarksheetsConfirmed() {
+        this.marksheetsConfirmed++;
     }
 
     @Override
     public Integer getMarksheetsToConfirm() {
-        return marksheetsToConfirm;
-    }
-
-    public void setMarksheetsToConfirm(Integer marksheetsToConfirm) {
-        this.marksheetsToConfirm = marksheetsToConfirm;
+        return marksheetsInEdition + marksheetsSubmitted;
     }
 
     @Deprecated
@@ -122,7 +140,7 @@ public class CompetenceCourseSeasonReport extends AbstractSeasonReport {
     public ExecutionInterval getExecutionSemester() {
         return executionInterval;
     }
-    
+
     @Override
     public ExecutionInterval getExecutionInterval() {
         return executionInterval;
@@ -135,8 +153,8 @@ public class CompetenceCourseSeasonReport extends AbstractSeasonReport {
 
         if (getCompetenceCourse() != null && getExecutionSemester() != null) {
 
-            for (final ExecutionCourse iter : getCompetenceCourse()
-                    .getExecutionCoursesByExecutionPeriod(getExecutionSemester())) {
+            for (final ExecutionCourse iter : getCompetenceCourse().getExecutionCoursesByExecutionPeriod(
+                    getExecutionSemester())) {
 
                 if (iter.getName().equals(getCompetenceCourse().getName())) {
                     nameSame.add(getDegrees(iter));
