@@ -1,3 +1,5 @@
+- Improvement: Add the academic period associated with enrolment in enrolment report [#qubIT-Fenix-7494]
+
 4.35.32 (10-09-2025)
 - Refactor: Changes in MarkSheetSettings to allow multiple instances [#qubIT-Fenix-7191]
 

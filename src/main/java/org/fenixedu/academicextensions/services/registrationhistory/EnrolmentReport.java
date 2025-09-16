@@ -25,6 +25,7 @@ import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.RegistrationServices;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumGroup;
 import org.fenixedu.academic.domain.time.calendarStructure.AcademicPeriod;
+import org.fenixedu.academic.domain.time.calendarStructure.AcademicPeriodOrder;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
@@ -195,5 +196,10 @@ public class EnrolmentReport {
     public String getOptionalCourseDegreeName() {
         Degree enrolmentDegree = this.enrolment.getCurricularCourse().getDegree();
         return enrolmentDegree.equals(this.getDegree()) ? "" : enrolmentDegree.getPresentationName();
+    }
+
+    public String getAcademicPeriodCode() {
+        return AcademicPeriodOrder.findBy(getAcademicPeriod(), getExecutionInterval().getChildOrder()).map(apo -> apo.getCode())
+                .orElse(null);
     }
 }
