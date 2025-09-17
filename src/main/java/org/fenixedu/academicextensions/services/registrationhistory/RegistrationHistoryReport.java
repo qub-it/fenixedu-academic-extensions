@@ -61,6 +61,8 @@ import org.fenixedu.academictreasury.domain.customer.PersonCustomer;
 import org.fenixedu.academictreasury.domain.event.AcademicTreasuryEvent;
 import org.fenixedu.academictreasury.services.TuitionServices;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
+import org.fenixedu.treasury.domain.document.DebitEntry;
+import org.fenixedu.treasury.domain.settings.TreasurySettings;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.YearMonthDay;
@@ -1109,6 +1111,18 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     public BigDecimal getRemainingAmountToPay() {
         final AcademicTreasuryEvent treasuryEvent = getTreasuryEventOfTuitionForRegistration();
         return treasuryEvent == null ? BigDecimal.ZERO : treasuryEvent.getRemainingAmountToPay();
+    }
+
+    public Long getNumberOfTuitionInstallments() {
+        final AcademicTreasuryEvent treasuryEvent = getTreasuryEventOfTuitionForRegistration();
+        if (treasuryEvent == null) {
+            return 0l;
+        }
+
+        return DebitEntry.findActive(treasuryEvent).map(de -> de.getProduct())
+                .filter(p -> p != TreasurySettings.getInstance().getInterestProduct())
+                .distinct()
+                .count();
     }
 
     public Integer getEnrolmentYears() {
