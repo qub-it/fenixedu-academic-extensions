@@ -28,6 +28,11 @@ relation MarkSheetSettingsBennuRoot {
     evaluation.config.MarkSheetSettings playsRole markSheetSettings { multiplicity 0..*; }
 }
 
+relation MarkSheetSettingsUnit {
+    evaluation.config.MarkSheetSettings playsRole markSheetSettings { multiplicity 0..1; }
+    .org.fenixedu.academic.domain.organizationalStructure.Unit playsRole unit { multiplicity 1; }
+}
+
 
 class evaluation.config.CompetenceCourseMarkSheetTemplateFile extends .org.fenixedu.bennu.io.domain.GenericFile {
 
