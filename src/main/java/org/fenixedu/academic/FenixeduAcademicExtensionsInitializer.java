@@ -225,6 +225,7 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
     private void registerDeletionListenerOnUnit() {
         FenixFramework.getDomainModel().registerDeletionListener(Unit.class, u -> {
             u.getAcademicAreasSet().clear();
+            u.setMarkSheetSettings(null);
         });
     }
 

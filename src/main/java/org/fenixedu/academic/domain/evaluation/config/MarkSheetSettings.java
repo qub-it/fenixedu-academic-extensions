@@ -20,30 +20,20 @@ public class MarkSheetSettings extends MarkSheetSettings_Base {
         setRoot(Bennu.getInstance());
     }
 
-    @Atomic
     public static void init() {
         if (findAll().findAny().isEmpty()) {
-            MarkSheetSettings markSheetSettings = new MarkSheetSettings();
-            markSheetSettings.setUnit(UnitUtils.readInstitutionUnit());
+            MarkSheetSettings.create(UnitUtils.readInstitutionUnit());
         }
     }
 
     @Deprecated
-    @Atomic
     public static MarkSheetSettings getInstance() {
-        return findAll().findFirst().orElseGet(MarkSheetSettings::new);
+        return findAll().findFirst().orElse(MarkSheetSettings.create(UnitUtils.readInstitutionUnit()));
     }
 
-    public static MarkSheetSettings create(boolean allowTeacherToChooseCertifier, int requiredNumberOfShifts,
-            boolean limitCertifierToResponsibleTeacher, boolean limitCreationToResponsibleTeacher, String markSheetTemplateCode,
-            Unit unit) {
+    @Atomic
+    public static MarkSheetSettings create(Unit unit) {
         MarkSheetSettings markSheetSettings = new MarkSheetSettings();
-
-        markSheetSettings.setAllowTeacherToChooseCertifier(allowTeacherToChooseCertifier);
-        markSheetSettings.setRequiredNumberOfShifts(requiredNumberOfShifts);
-        markSheetSettings.setLimitCertifierToResponsibleTeacher(limitCertifierToResponsibleTeacher);
-        markSheetSettings.setLimitCreationToResponsibleTeacher(limitCreationToResponsibleTeacher);
-        markSheetSettings.setMarkSheetTemplateCode(markSheetTemplateCode);
         markSheetSettings.setUnit(unit);
 
         return markSheetSettings;
@@ -133,19 +123,11 @@ public class MarkSheetSettings extends MarkSheetSettings_Base {
     }
 
     public static Optional<MarkSheetSettings> findByCompetenceCourse(CompetenceCourse competenceCourse) {
-        if (competenceCourse == null) {
-            return Optional.empty();
-        }
+        return Optional.ofNullable(competenceCourse).map(CompetenceCourse::getCompetenceCourseGroupUnit).map(groupUnit -> {
+            MarkSheetSettings settings = groupUnit.getMarkSheetSettings();
 
-        Unit groupUnit = competenceCourse.getCompetenceCourseGroupUnit();
-
-        if (groupUnit == null) {
-            return Optional.empty();
-        }
-
-        MarkSheetSettings settings = groupUnit.getMarkSheetSettings();
-
-        return settings != null ? Optional.of(settings) : groupUnit.getParentUnitsPath().stream().map(Unit::getMarkSheetSettings)
-                .filter(Objects::nonNull).findFirst();
+            return settings != null ? settings : groupUnit.getParentUnitsPath().stream().map(Unit::getMarkSheetSettings)
+                    .filter(Objects::nonNull).findFirst().orElse(null);
+        });
     }
 }
