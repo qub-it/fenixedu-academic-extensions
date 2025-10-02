@@ -48,16 +48,6 @@ public class MarkSheetSettings extends MarkSheetSettings_Base {
         super.setLimitCreationToResponsibleTeacher(limitCreationToResponsibleTeacher);
     }
 
-    @Atomic
-    public void editTemplateFile(final String filename, final byte[] content) {
-
-        if (getTemplateFile() != null) {
-            getTemplateFile().delete();
-        }
-
-        CompetenceCourseMarkSheetTemplateFile.create(filename, content, this);
-    }
-
     @Override
     public void setUnit(final Unit unit) {
         if (unit == null) {
@@ -81,37 +71,8 @@ public class MarkSheetSettings extends MarkSheetSettings_Base {
         super.deleteDomainObject();
     }
 
-    public boolean isRequiredNumberOfShifts(final int input) {
-        if (isUnspecifiedNumberOfShifts()) {
-            return true;
-        }
-
-        if (isNotAllowedShifts() && input != 0) {
-            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheet.shifts.not.allowed");
-        }
-
-        if (isRequiredAtLeastOneShift() && input <= 0) {
-            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheet.shift.required");
-        }
-
-        if (!isRequiredAtLeastOneShift() && getRequiredNumberOfShifts() != input) {
-            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheet.shifts.required",
-                    String.valueOf(getRequiredNumberOfShifts()));
-        }
-
-        return true;
-    }
-
-    public boolean isUnspecifiedNumberOfShifts() {
-        return getRequiredNumberOfShifts() < 0;
-    }
-
     public boolean isNotAllowedShifts() {
         return getRequiredNumberOfShifts() == 0;
-    }
-
-    public boolean isRequiredAtLeastOneShift() {
-        return getRequiredNumberOfShifts() >= 10;
     }
 
     public boolean isMarkSheetTemplateCodeDefined() {
