@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ import org.fenixedu.academic.domain.CompetenceCourse;
 import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.Enrolment;
+import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.Grade;
 import org.fenixedu.academic.domain.candidacy.IngressionType;
@@ -50,6 +52,7 @@ public class RegistrationHistoryReportService {
     private Set<ExecutionYear> enrolmentExecutionYears = Sets.newHashSet();
     private Set<DegreeType> degreeTypes = Sets.newHashSet();
     private Set<Degree> degrees = Sets.newHashSet();
+    private Set<ExecutionCourse> executionCourses = Sets.newHashSet();
     private Set<RegistrationRegimeType> regimeTypes = Sets.newHashSet();
     private Set<RegistrationProtocol> registrationProtocols = Sets.newHashSet();
     private Set<IngressionType> ingressionTypes = Sets.newHashSet();
@@ -121,6 +124,10 @@ public class RegistrationHistoryReportService {
 
     public void filterDegrees(Collection<Degree> degrees) {
         this.degrees.addAll(degrees);
+    }
+
+    public void filterExecutionCourses(Collection<ExecutionCourse> executionCourses) {
+        this.executionCourses.addAll(executionCourses);
     }
 
     public void filterRegimeTypes(Collection<RegistrationRegimeType> regimeTypes) {
@@ -371,6 +378,12 @@ public class RegistrationHistoryReportService {
         final Predicate<RegistrationHistoryReport> degreeFilter = r -> this.degrees.contains(r.getDegree());
         if (!this.degrees.isEmpty()) {
             result = result.and(degreeFilter);
+        }
+
+        final Predicate<RegistrationHistoryReport> executionCourseFilter = r -> !Collections.disjoint(this.executionCourses,
+                r.getRegistration().getAttendingExecutionCoursesFor(r.getExecutionYear()));
+        if (!this.executionCourses.isEmpty()) {
+            result = result.and(executionCourseFilter);
         }
 
         final Predicate<RegistrationHistoryReport> statuteTypeFilter =
