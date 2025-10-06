@@ -30,7 +30,7 @@ relation MarkSheetSettingsBennuRoot {
 
 relation MarkSheetSettingsUnit {
     evaluation.config.MarkSheetSettings playsRole markSheetSettings { multiplicity 0..1; }
-    .org.fenixedu.academic.domain.organizationalStructure.Unit playsRole unit { multiplicity 1; }
+    .org.fenixedu.academic.domain.organizationalStructure.Unit playsRole unit { multiplicity 1..1; }
 }
 
 
