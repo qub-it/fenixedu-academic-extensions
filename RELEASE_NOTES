@@ -1,3 +1,5 @@
+- Improvement: Block enrolment if lessons overlap in school class rule [#qubIT-Fenix-3926]
+
 4.35.34 (17-09-2025)
 - Improvement: Export the number of different installment create for registration tuition [#qubIT-Fenix-7446]
 

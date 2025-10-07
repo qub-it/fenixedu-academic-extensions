@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
+import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
 import org.fenixedu.academic.domain.curricularRules.executors.ruleExecutors.StudentSchoolClassCurricularRuleExecutor;
@@ -28,7 +29,8 @@ public class StudentSchoolClassCurricularRule extends StudentSchoolClassCurricul
     public StudentSchoolClassCurricularRule(final DegreeModule toApplyRule, final CourseGroup contextCourseGroup,
             final ExecutionInterval begin, final ExecutionInterval end, final Boolean schoolClassMustContainCourse,
             final Boolean courseMustHaveFreeShifts, final Boolean enrolInShiftIfUnique,
-            final Boolean allAvailableShiftsMustBeEnrolled, final String schoolClassNames) {
+            final Boolean allAvailableShiftsMustBeEnrolled, final boolean blockEnrolmentIfLessonsOverlap,
+            final String schoolClassNames) {
 
         this();
         init(toApplyRule, contextCourseGroup, begin, end, CurricularRuleType.CUSTOM);
@@ -36,17 +38,20 @@ public class StudentSchoolClassCurricularRule extends StudentSchoolClassCurricul
         setCourseMustHaveFreeShifts(courseMustHaveFreeShifts);
         setEnrolInShiftIfUnique(enrolInShiftIfUnique);
         setAllAvailableShiftsMustBeEnrolled(allAvailableShiftsMustBeEnrolled);
+        setBlockEnrolmentIfLessonsOverlap(blockEnrolmentIfLessonsOverlap);
         setSchoolClassNames(schoolClassNames);
     }
 
     public void edit(CourseGroup contextCourseGroup, final Boolean schoolClassMustContainCourse,
             final Boolean courseMustHaveFreeShifts, final Boolean enrolInShiftIfUnique,
-            final Boolean allAvailableShiftsMustBeEnrolled, final String schoolClassNames) {
+            final Boolean allAvailableShiftsMustBeEnrolled, final boolean blockEnrolmentIfLessonsOverlap,
+            final String schoolClassNames) {
         setContextCourseGroup(contextCourseGroup);
         setSchoolClassMustContainCourse(schoolClassMustContainCourse);
         setCourseMustHaveFreeShifts(courseMustHaveFreeShifts);
         setEnrolInShiftIfUnique(enrolInShiftIfUnique);
         setAllAvailableShiftsMustBeEnrolled(allAvailableShiftsMustBeEnrolled);
+        setBlockEnrolmentIfLessonsOverlap(blockEnrolmentIfLessonsOverlap);
         setSchoolClassNames(schoolClassNames);
     }
 
@@ -85,6 +90,9 @@ public class StudentSchoolClassCurricularRule extends StudentSchoolClassCurricul
         if (getAllAvailableShiftsMustBeEnrolled()) {
             labels.add(BundleUtil.getString(BUNDLE, "label.StudentSchoolClassCurricularRule.allAvailableShiftsMustBeEnrolled"));
         }
+        if (getBlockEnrolmentIfLessonsOverlap()) {
+            labels.add(BundleUtil.getString(BUNDLE, "label.StudentSchoolClassCurricularRule.blockEnrolmentIfLessonsOverlap"));
+        }
         if (StringUtils.isNotBlank(getSchoolClassNames())) {
             labels.add(BundleUtil.getString(BUNDLE, "label.StudentSchoolClassCurricularRule.schoolClassNames",
                     getSchoolClassNames()));
@@ -94,7 +102,7 @@ public class StudentSchoolClassCurricularRule extends StudentSchoolClassCurricul
             labels.add(BundleUtil.getString(BUNDLE, "label.inGroup") + " " + getContextCourseGroup().getOneFullName());
         }
 
-        return List.of(new GenericPair<>(labels.stream().collect(Collectors.joining(", ")), false));
+        return List.of(new GenericPair<>(String.join(", ", labels), false));
     }
 
     public Stream<String> getSchoolClassesSplitted() {
@@ -122,4 +130,14 @@ public class StudentSchoolClassCurricularRule extends StudentSchoolClassCurricul
         return super.getAllAvailableShiftsMustBeEnrolled() != null && super.getAllAvailableShiftsMustBeEnrolled();
     }
 
+    @Override
+    public Boolean getBlockEnrolmentIfLessonsOverlap() {
+        return super.getBlockEnrolmentIfLessonsOverlap() != null && super.getBlockEnrolmentIfLessonsOverlap();
+    }
+
+    public static Stream<StudentSchoolClassCurricularRule> findForEnrolment(final Enrolment enrolment,
+            final ExecutionInterval executionInterval) {
+        return enrolment.getCurricularRules(executionInterval).stream().filter(StudentSchoolClassCurricularRule.class::isInstance)
+                .map(StudentSchoolClassCurricularRule.class::cast);
+    }
 }

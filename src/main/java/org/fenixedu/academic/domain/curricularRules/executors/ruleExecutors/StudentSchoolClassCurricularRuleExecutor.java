@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
+import org.fenixedu.academic.domain.Attends;
 import org.fenixedu.academic.domain.CurricularCourse;
 import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionInterval;
@@ -132,6 +133,35 @@ public class StudentSchoolClassCurricularRuleExecutor extends CurricularRuleExec
         }
 
         return false;
+    }
+
+    /**
+     * Evaluates if the attends complies with allAvailableShiftsMustBeEnrolled rule.
+     *
+     * @param attends the attends to evaluate
+     * @return true if the attends complies with the rule or  false otherwise
+     */
+    public static boolean evaluateAllAvailableShiftsMustBeEnrolled(final Attends attends) {
+        if (attends == null || attends.getEnrolment() == null) {
+            return true;
+        }
+
+        final ExecutionInterval executionInterval = attends.getExecutionInterval();
+        boolean allAvailableShiftsMustBeEnrolled =
+                StudentSchoolClassCurricularRule.findForEnrolment(attends.getEnrolment(), executionInterval)
+                        .anyMatch(StudentSchoolClassCurricularRule::getAllAvailableShiftsMustBeEnrolled);
+
+        if (allAvailableShiftsMustBeEnrolled) {
+            final ExecutionCourse executionCourse = attends.getExecutionCourse();
+
+            final Registration registration = attends.getRegistration();
+            if (executionCourse.getShiftsSet().stream().map(Shift::getCourseLoadType).distinct()
+                    .anyMatch(clt -> registration.findEnrolledShiftFor(executionCourse, clt).isEmpty())) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
 }

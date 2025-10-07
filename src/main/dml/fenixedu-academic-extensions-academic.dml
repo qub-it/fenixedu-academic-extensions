@@ -980,6 +980,7 @@ class curricularRules.StudentSchoolClassCurricularRule extends .org.fenixedu.aca
 	Boolean courseMustHaveFreeShifts;
 	Boolean enrolInShiftIfUnique;
 	Boolean allAvailableShiftsMustBeEnrolled;
+	Boolean blockEnrolmentIfLessonsOverlap;
 }
 
 class curricularRules.CreditsLimitWithPreviousApprovals extends .org.fenixedu.academic.domain.curricularRules.Rule {
