@@ -31,6 +31,7 @@ import org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonServices;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.organizationalStructure.Party;
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
+import org.fenixedu.academic.domain.organizationalStructure.UnitUtils;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.RegistrationDataByExecutionYearExtendedInformation;
 import org.fenixedu.academic.domain.student.RegistrationExtendedInformation;
@@ -52,6 +53,8 @@ import org.fenixedu.bennu.core.signals.Signal;
 import org.fenixedu.bennu.core.util.CoreConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.qubit.terra.framework.services.logging.Log;
 
 import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.Atomic.TxMode;
@@ -125,6 +128,8 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
         UnavailableForEnrolmentRule.initializeDomainListenersAndExtensions();
 
         MergeExecutionCourses.registerMergeHandler(FenixeduAcademicExtensionsInitializer::mergeExecutionCoursesMarksheets);
+
+        setExistingMarksheetSettingsUnit();
     }
 
     private void setupListenersForStudentSchedule() {
@@ -225,6 +230,7 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
     private void registerDeletionListenerOnUnit() {
         FenixFramework.getDomainModel().registerDeletionListener(Unit.class, u -> {
             u.getAcademicAreasSet().clear();
+            u.setMarkSheetSettings(null);
         });
     }
 
@@ -282,4 +288,12 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
         return result;
     }
 
+    @Atomic(mode = TxMode.WRITE)
+    private void setExistingMarksheetSettingsUnit() {
+        MarkSheetSettings.findAll().filter(m -> m.getUnit() == null).findFirst().ifPresent(m -> {
+            Unit unit = UnitUtils.readInstitutionUnit();
+            m.setUnit(unit);
+            Log.warn("Set MarksheetSettings unit to: " + unit.getPresentationName());
+        });
+    }
 }
