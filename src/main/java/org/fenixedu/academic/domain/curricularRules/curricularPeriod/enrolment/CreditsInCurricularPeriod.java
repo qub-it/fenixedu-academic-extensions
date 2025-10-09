@@ -103,13 +103,18 @@ public class CreditsInCurricularPeriod extends CreditsInCurricularPeriod_Base {
             return false;
         }
 
-        if (getApplyToFlunkedStudents() != null && getApplyToFlunkedStudents().booleanValue() != RegistrationServices
-                .isFlunkedUsingCurricularYear(enrolmentContext.getRegistration(), enrolmentContext.getExecutionYear())) {
+        if (getApplyToFlunkedStudents() != null
+                && getApplyToFlunkedStudents().booleanValue() != RegistrationServices.isFlunkedUsingCurricularYear(
+                enrolmentContext.getRegistration(), enrolmentContext.getExecutionYear())) {
+            return false;
+        }
+
+        if (getApplyToPartialRegime() != null && getApplyToPartialRegime().booleanValue() != enrolmentContext.getRegistration()
+                .isPartialRegime(enrolmentContext.getExecutionYear())) {
             return false;
         }
 
         return true;
-
     }
 
 }

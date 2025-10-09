@@ -72,6 +72,12 @@
 			<groupId>com.qubit.solution.fenixedu</groupId>
 			<artifactId>fenixedu-academic-core</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.qubit.solution.fenixedu</groupId>
+			<artifactId>fenixedu-academic-core</artifactId>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
         <dependency>
             <groupId>org.fenixedu</groupId>
             <artifactId>fenixedu-commons</artifactId>
