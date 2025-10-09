@@ -28,7 +28,7 @@ public class MarkSheetSettings extends MarkSheetSettings_Base {
 
     @Deprecated
     public static MarkSheetSettings getInstance() {
-        return findAll().findFirst().orElse(MarkSheetSettings.create(UnitUtils.readInstitutionUnit()));
+        return findAll().findFirst().orElseGet(() -> MarkSheetSettings.create(UnitUtils.readInstitutionUnit()));
     }
 
     @Atomic
