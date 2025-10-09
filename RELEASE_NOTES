@@ -1,3 +1,4 @@
+- Improvement: Allow to restrict credits in curricular period rule to partial regime students [#ISCTE-FENIXEDU-1230]
 - Improvement: Implements MarkSheetSettings relation with Unit [#qubIT-Fenix-7005]
 
 4.35.35 (07-10-2025)
