@@ -1,5 +1,7 @@
 package org.fenixedu.academic.domain.evaluation.config;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -84,11 +86,11 @@ public class MarkSheetSettings extends MarkSheetSettings_Base {
     }
 
     public static Optional<MarkSheetSettings> findByCompetenceCourse(CompetenceCourse competenceCourse) {
-        return Optional.ofNullable(competenceCourse).map(CompetenceCourse::getCompetenceCourseGroupUnit).map(groupUnit -> {
-            MarkSheetSettings settings = groupUnit.getMarkSheetSettings();
-
-            return settings != null ? settings : groupUnit.getParentUnitsPath().stream().map(Unit::getMarkSheetSettings)
-                    .filter(Objects::nonNull).findFirst().orElse(null);
-        });
+        return Optional.ofNullable(competenceCourse).map(CompetenceCourse::getCompetenceCourseGroupUnit)
+                .flatMap(groupUnit -> Optional.ofNullable(groupUnit.getMarkSheetSettings()).or(() -> {
+                    List<Unit> parentUnits = groupUnit.getParentUnitsPath();
+                    Collections.reverse(parentUnits);
+                    return parentUnits.stream().map(Unit::getMarkSheetSettings).filter(Objects::nonNull).findFirst();
+                }));
     }
 }
