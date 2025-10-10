@@ -1,3 +1,5 @@
+- Bug fix: Corrected an issue where the wrong marksheet setting was being retrieved. [#qubIT-Fenix-7005]
+
 4.35.37 (09-10-2025)
 - Bug fix: Fixes error when retrieving a Marksheet's setting [#qubIT-Fenix-7005]
 
