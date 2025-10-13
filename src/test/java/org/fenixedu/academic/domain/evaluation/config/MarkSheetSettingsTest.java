@@ -33,10 +33,7 @@ public class MarkSheetSettingsTest {
 
     @After
     public void tearDown() {
-        FenixFramework.getTransactionManager().withTransaction(() -> {
-            MarkSheetSettings.findAll().forEach(MarkSheetSettings::delete);
-            return null;
-        });
+        MarkSheetSettings.findAll().forEach(MarkSheetSettings::delete);
     }
 
     @Test
