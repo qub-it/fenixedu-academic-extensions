@@ -26,6 +26,7 @@ public class MarkSheetSettingsTest {
     @BeforeClass
     public static void init() {
         FenixFramework.getTransactionManager().withTransaction(() -> {
+            // Initializes Units with the following hierarchy: E > PT > QU > QS > Courses > CC
             CompetenceCourseTest.initCompetenceCourse();
             return null;
         });
@@ -37,7 +38,7 @@ public class MarkSheetSettingsTest {
     }
 
     @Test
-    public void testFindByCompetenceCourse_Successful() {
+    public void testMarkSheetSettings_FindByCompetenceCourse() {
         CompetenceCourse competenceCourse = CompetenceCourse.find(CompetenceCourseTest.COURSE_A_CODE);
         MarkSheetSettings expected = MarkSheetSettings.create(competenceCourse.getCompetenceCourseGroupUnit());
 
@@ -45,7 +46,7 @@ public class MarkSheetSettingsTest {
     }
 
     @Test
-    public void testFindByCompetenceCourse_MultipleMarkSheetSettings_Successful() {
+    public void testMarkSheetSettings_FindByCompetenceCourse_MultipleMarkSheetSettings() {
         Unit schoolUnit = Unit.findInternalUnitByAcronymPath("QS").orElse(null);
         Unit coursesAgregatorUnit = Unit.findInternalUnitByAcronymPath("QS>Courses").orElse(null);
         CompetenceCourse competenceCourse = CompetenceCourse.find(CompetenceCourseTest.COURSE_A_CODE);
@@ -58,7 +59,7 @@ public class MarkSheetSettingsTest {
     }
 
     @Test
-    public void testFindByCompetenceCourse_GetParentUnitMarkSheetSettings_Successful() {
+    public void testMarkSheetSettings_FindByCompetenceCourse_GetParentUnitMarkSheetSettings() {
         Unit schoolUnit = Unit.findInternalUnitByAcronymPath("QS").orElse(null);
         Unit coursesAgregatorUnit = Unit.findInternalUnitByAcronymPath("QS>Courses").orElse(null);
         CompetenceCourse competenceCourse = CompetenceCourse.find(CompetenceCourseTest.COURSE_A_CODE);
@@ -70,7 +71,7 @@ public class MarkSheetSettingsTest {
     }
 
     @Test
-    public void testFindByCompetenceCourse_GetRootUnitMarkSheetSettings_Successful() {
+    public void testMarkSheetSettings_FindByCompetenceCourse_GetRootUnitMarkSheetSettings() {
         Unit schoolUnit = Unit.findInternalUnitByAcronymPath("QS").orElse(null);
         CompetenceCourse competenceCourse = CompetenceCourse.find(CompetenceCourseTest.COURSE_A_CODE);
 
@@ -80,14 +81,14 @@ public class MarkSheetSettingsTest {
     }
 
     @Test
-    public void testFindByCompetenceCourse_NoMarkSheetSettingsInstance_ReturnsEmptyOptional() {
+    public void testMarkSheetSettings_FindByCompetenceCourse_NoMarkSheetSettingsInstance() {
         CompetenceCourse competenceCourse = CompetenceCourse.find(CompetenceCourseTest.COURSE_A_CODE);
 
         assertEquals(Optional.empty(), MarkSheetSettings.findByCompetenceCourse(competenceCourse));
     }
 
     @Test
-    public void testFindByCompetenceCourse_MarkSheetSettingNotFound_ReturnsEmptyOptional() {
+    public void testMarkSheetSettings_FindByCompetenceCourse_MarkSheetSettingNotFound() {
         CompetenceCourse competenceCourse = CompetenceCourse.find(CompetenceCourseTest.COURSE_A_CODE);
 
         Unit unrelatedUnit =
