@@ -23,8 +23,10 @@ public class MarkSheetSettings extends MarkSheetSettings_Base {
     }
 
     public static void init() {
-        if (findAll().findAny().isEmpty()) {
-            MarkSheetSettings.create(UnitUtils.readInstitutionUnit());
+        final Unit unit = UnitUtils.readInstitutionUnit();
+
+        if (unit != null && findAll().findAny().isEmpty()) {
+            MarkSheetSettings.create(unit);
         }
     }
 

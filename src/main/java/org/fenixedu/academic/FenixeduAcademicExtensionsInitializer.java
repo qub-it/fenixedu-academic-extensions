@@ -128,8 +128,6 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
         UnavailableForEnrolmentRule.initializeDomainListenersAndExtensions();
 
         MergeExecutionCourses.registerMergeHandler(FenixeduAcademicExtensionsInitializer::mergeExecutionCoursesMarksheets);
-
-        setExistingMarksheetSettingsUnit();
     }
 
     private void setupListenersForStudentSchedule() {
@@ -286,14 +284,5 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
         }
 
         return result;
-    }
-
-    @Atomic(mode = TxMode.WRITE)
-    private void setExistingMarksheetSettingsUnit() {
-        MarkSheetSettings.findAll().filter(m -> m.getUnit() == null).findFirst().ifPresent(m -> {
-            Unit unit = UnitUtils.readInstitutionUnit();
-            m.setUnit(unit);
-            Log.warn("Set MarksheetSettings unit to: " + unit.getPresentationName());
-        });
     }
 }
