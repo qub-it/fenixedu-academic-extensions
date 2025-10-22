@@ -24,6 +24,7 @@ import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.Grade;
 import org.fenixedu.academic.domain.Person;
+import org.fenixedu.academic.domain.PhotoState;
 import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
 import org.fenixedu.academic.domain.candidacy.IngressionType;
@@ -57,6 +58,7 @@ import org.fenixedu.academic.domain.studentCurriculum.Dismissal;
 import org.fenixedu.academic.domain.studentCurriculum.ExternalCurriculumGroup;
 import org.fenixedu.academic.dto.student.RegistrationConclusionBean;
 import org.fenixedu.academic.util.Bundle;
+import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 import org.fenixedu.academictreasury.domain.customer.PersonCustomer;
 import org.fenixedu.academictreasury.domain.event.AcademicTreasuryEvent;
 import org.fenixedu.academictreasury.services.TuitionServices;
@@ -141,6 +143,8 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     private BigDecimal creditsFlunkedCoursesForExecutionYear;
 
     private AcademicTreasuryEvent treasuryEvent;
+
+    private String photographState;
 
     public RegistrationHistoryReport(final Registration registration, final ExecutionYear executionYear) {
         this.executionYear = executionYear;
@@ -1360,5 +1364,16 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 
     public Integer getMobilityOutCount() {
         return (int) getRegistration().getMobilityRegistrationInformationsSet().stream().filter(m -> !m.isIncoming()).count();
+    }
+
+    public String getPhotographState() {
+        return Optional.ofNullable(getPerson()).map(Person::getPhotographHistory).filter(p -> !p.isEmpty())
+                .map(photos -> photos.stream().anyMatch(p -> p.getState() == PhotoState.APPROVED) ? i18n(
+                        "label.RegistrationHistoryReport.Approved") : i18n("label.RegistrationHistoryReport.Pending"))
+                .orElse(i18n("label.RegistrationHistoryReport.NoPhotograph"));
+    }
+
+    private String i18n(String label) {
+        return AcademicExtensionsUtil.bundleI18N(label).getContent();
     }
 }

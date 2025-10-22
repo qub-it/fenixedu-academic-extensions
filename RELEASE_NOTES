@@ -1,3 +1,5 @@
+- Improvement: Adds Photograph State column to Registration History report [#UCP-FENIXEDU-515]
+
 4.35.38 (23-10-2025)
 - Bug fix: Fixes marksheet settings initialization problem [#qubIT-Fenix-7005]
 - Bug fix: Corrected an issue where the wrong marksheet setting was being retrieved. [#qubIT-Fenix-7005]
