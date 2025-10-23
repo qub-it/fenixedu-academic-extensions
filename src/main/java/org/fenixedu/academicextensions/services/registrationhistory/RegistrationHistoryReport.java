@@ -1373,8 +1373,7 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
                         return i18n("label.RegistrationHistoryReport.Pending");
                     }
                     return i18n("label.RegistrationHistoryReport.NoPhotograph");
-                })
-                .orElse(i18n("label.RegistrationHistoryReport.NoPhotograph"));
+                }).orElseGet(() -> i18n("label.RegistrationHistoryReport.NoPhotograph"));
     }
 
     private String i18n(String label) {
