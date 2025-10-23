@@ -144,8 +144,6 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 
     private AcademicTreasuryEvent treasuryEvent;
 
-    private String photographState;
-
     public RegistrationHistoryReport(final Registration registration, final ExecutionYear executionYear) {
         this.executionYear = executionYear;
         this.registration = registration;
@@ -1367,9 +1365,15 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     }
 
     public String getPhotographState() {
-        return Optional.ofNullable(getPerson()).map(Person::getPhotographHistory).filter(p -> !p.isEmpty())
-                .map(photos -> photos.stream().anyMatch(p -> p.getState() == PhotoState.APPROVED) ? i18n(
-                        "label.RegistrationHistoryReport.Approved") : i18n("label.RegistrationHistoryReport.Pending"))
+        return Optional.ofNullable(getPerson()).map(Person::getPhotographHistory).filter(photos -> !photos.isEmpty())
+                .map(photos -> {
+                    if (photos.stream().anyMatch(p -> p.getState() == PhotoState.APPROVED)) {
+                        return i18n("label.RegistrationHistoryReport.Approved");
+                    } else if (photos.stream().anyMatch(p -> p.getState() == PhotoState.PENDING)) {
+                        return i18n("label.RegistrationHistoryReport.Pending");
+                    }
+                    return i18n("label.RegistrationHistoryReport.NoPhotograph");
+                })
                 .orElse(i18n("label.RegistrationHistoryReport.NoPhotograph"));
     }
 
