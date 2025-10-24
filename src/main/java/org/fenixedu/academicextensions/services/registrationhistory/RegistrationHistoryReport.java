@@ -25,6 +25,7 @@ import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.Grade;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.PhotoState;
+import org.fenixedu.academic.domain.Photograph;
 import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
 import org.fenixedu.academic.domain.candidacy.IngressionType;
@@ -1365,18 +1366,12 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     }
 
     public String getPhotographState() {
-        return Optional.ofNullable(getPerson()).map(Person::getPhotographHistory).filter(photos -> !photos.isEmpty())
-                .map(photos -> {
-                    if (photos.stream().anyMatch(p -> p.getState() == PhotoState.APPROVED)) {
-                        return i18n("label.RegistrationHistoryReport.Approved");
-                    } else if (photos.stream().anyMatch(p -> p.getState() == PhotoState.PENDING)) {
-                        return i18n("label.RegistrationHistoryReport.Pending");
-                    }
-                    return i18n("label.RegistrationHistoryReport.NoPhotograph");
-                }).orElseGet(() -> i18n("label.RegistrationHistoryReport.NoPhotograph"));
-    }
-
-    private String i18n(String label) {
-        return AcademicExtensionsUtil.bundleI18N(label).getContent();
+        List<Photograph> photos = Optional.ofNullable(getPerson()).map(Person::getPhotographHistory).orElse(List.of());
+        if (photos.stream().anyMatch(p -> p.getState() == PhotoState.APPROVED)) {
+            return AcademicExtensionsUtil.bundle("label.RegistrationHistoryReport.Approved");
+        } else if (photos.stream().anyMatch(p -> p.getState() == PhotoState.PENDING)) {
+            return AcademicExtensionsUtil.bundle("label.RegistrationHistoryReport.Pending");
+        }
+        return AcademicExtensionsUtil.bundle("label.RegistrationHistoryReport.NoPhotograph");
     }
 }
