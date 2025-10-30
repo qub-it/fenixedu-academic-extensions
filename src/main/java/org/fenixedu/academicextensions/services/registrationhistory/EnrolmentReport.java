@@ -195,7 +195,7 @@ public class EnrolmentReport {
 
     public String getOptionalCourseDegreeName() {
         Degree enrolmentDegree = this.enrolment.getCurricularCourse().getDegree();
-        return enrolmentDegree.equals(this.getDegree()) ? "" : enrolmentDegree.getPresentationName();
+        return this.enrolment.isOptional() ? enrolmentDegree.getPresentationName() : "";
     }
 
     public String getAcademicPeriodCode() {
