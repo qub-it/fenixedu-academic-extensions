@@ -1,4 +1,4 @@
-- Improvement: Update optional course degree name to always show on student enrolments export [ISCTE-FENIXEDU-1262]
+- Improvement: Update optional course degree name to always show on student enrolments export [#ISCTE-FENIXEDU-1262]
 
 4.35.39 (24-10-2025)
 - Improvement: Adds Photograph State column to Registration History report [#UCP-FENIXEDU-515]
