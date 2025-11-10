@@ -1031,34 +1031,6 @@ class curricularRules.RecommendedRoute extends .org.fenixedu.academic.domain.cur
 	
 // ==================== END: CurricularRule ====================
 
-// ==================== BEGIN: CurricularRule Executor Logics ====================
-
-class curricularRules.AnyCurricularCourseExceptionsConfiguration {
-}
-    
-    relation AnyCurricularCourseExceptionsConfigurationBennu {
-
-		.org.fenixedu.bennu.core.domain.Bennu playsRole bennu {
-			multiplicity 1..1;
-		}
-		
-		curricularRules.AnyCurricularCourseExceptionsConfiguration playsRole anyCurricularCourseExceptionsConfiguration {
-    		multiplicity 0..1;
-    	}
-	}
-    
-    relation AnyCurricularCourseExceptionsCompetenceCourse {
-    	curricularRules.AnyCurricularCourseExceptionsConfiguration playsRole anyCurricularCourseExceptionsConfiguration {
-    		multiplicity *;
-    	}
-    	.org.fenixedu.academic.domain.CompetenceCourse playsRole competenceCourses {
-    		multiplicity *;
-    	}
-    }
-
-// ==================== END: CurricularRule Executor Logics ====================
-
-
 /* Prescriptions */
 class curricularRules.prescription.PrescriptionConfig {
 	String name;
