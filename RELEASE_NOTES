@@ -1,3 +1,5 @@
+- Refactor: Remove deprecated hardcoded fields from ExtendedDegreeInfo [#qubIT-Fenix-6512]
+
 4.35.40 (10-11-2025)
 - Refactor: Move AnyCurricularCourseExceptionsConfiguration to Academic-core [#UL-FBA-2009]
 - Improvement: Update optional course degree name to always show on student enrolments export [#ISCTE-FENIXEDU-1262]
