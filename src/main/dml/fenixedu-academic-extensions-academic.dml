@@ -1386,14 +1386,6 @@ relation CurriculumLineCurriculumLineExtendedInformation {
 // ====================== = ExtendeDegreeInfo = ========================
 
 class degree.ExtendedDegreeInfo {
-	LocalizedString scientificAreas;
-	LocalizedString studyProgrammeDuration;
-	LocalizedString studyRegime;
-	LocalizedString studyProgrammeRequirements;
-	LocalizedString higherEducationAccess;
-	LocalizedString professionalStatus;
-	LocalizedString supplementExtraInformation;
-	LocalizedString supplementOtherSources;
 }
 
 relation BennuExtendedDegreeInfo {
@@ -1409,7 +1401,7 @@ relation DegreeInfoExtendedDegreeInfo {
     .org.fenixedu.academic.domain.DegreeInfo playsRole degreeInfo;
     degree.ExtendedDegreeInfo playsRole extendedDegreeInfo;
 }
-	
+
 // ======================= Registration Observations =========================
 class student.RegistrationObservations{
 	String value;
