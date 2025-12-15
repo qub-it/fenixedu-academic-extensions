@@ -1,3 +1,5 @@
+- Refactor: Remove check if improvement enrolment evaluation is paid or not [#qubIT-Fenix-6552]
+
 4.35.41 (27-11-2025)
 - Refactor: Remove deprecated hardcoded fields from ExtendedDegreeInfo [#qubIT-Fenix-6512]
 

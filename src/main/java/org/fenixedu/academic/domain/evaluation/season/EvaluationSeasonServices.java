@@ -276,20 +276,6 @@ abstract public class EvaluationSeasonServices {
                 return true;
             }
 
-            if (season.isImprovement()) {
-                final EnrolmentEvaluation evaluation =
-                        enrolment.getEnrolmentEvaluation(season, interval, (Boolean) null).orElse(null);
-
-                if (evaluation != null) {
-                    final AcademicTreasuryEvent event =
-                            AcademicTreasuryEvent.findUniqueForImprovementTuition(registration, interval.getExecutionYear())
-                                    .orElse(null);
-
-                    if (event != null && event.isInDebt(evaluation)) {
-                        return true;
-                    }
-                }
-            }
         }
 
         return false;
