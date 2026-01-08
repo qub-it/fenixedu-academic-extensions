@@ -19,15 +19,12 @@ public abstract class ConclusionProcessListenersInitializer {
 
                         if (o1 != null && o2 != null && o2 instanceof ProgramConclusionProcess
                                 && RegistrationConclusionServices.hasProcessedProgramConclusionInOtherPlan(
-                                        o2.getGroup().getStudentCurricularPlan(),
-                                        o2.getGroup().getDegreeModule().getProgramConclusion())) {
+                                o2.getStudentCurricularPlan(), o2.getGroup().getDegreeModule().getProgramConclusion())) {
                             throw new DomainException(
                                     "error.ConclusionProcess.already.processed.program.conclusion.in.other.plan.of.this.registration");
                         }
                     }
-
                 });
-
     }
 
 }

@@ -68,10 +68,9 @@ public class EnrolmentServices extends org.fenixedu.academic.domain.student.serv
 
             throw new DomainException("error.conclusionProcess.revertion.required",
                     "\"" + registration.getNumber() + " - " + registration.getPerson().getPresentationName() + "\"",
-                    "\"" + getPresentationName(enrolment) + "\"",
-                    enrolment.getConclusionProcessVersionsSet().stream()
-                            .map(i -> "\"" + i.getConclusionProcess().getName().getContent() + "\"").distinct()
-                            .collect(Collectors.joining("; ")));
+                    "\"" + getPresentationName(enrolment) + "\"", enrolment.getConclusionProcessVersionsSet().stream()
+                    .map(i -> "\"" + i.getConclusionProcess().getGroup().getDegreeModule().getProgramConclusion().getName()
+                            .getContent() + "\"").distinct().collect(Collectors.joining("; ")));
         }
     }
 
