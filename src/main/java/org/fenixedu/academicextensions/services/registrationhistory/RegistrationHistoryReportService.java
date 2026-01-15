@@ -5,6 +5,7 @@ import static org.fenixedu.academic.domain.student.RegistrationDataServices.getR
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -63,6 +64,7 @@ public class RegistrationHistoryReportService {
     private Boolean dismissalsOnly;
     private Boolean improvementEnrolmentsOnly;
     private Integer studentNumber;
+    private Collection<Integer> studentNumbers = new HashSet<>();
     private Collection<ProgramConclusion> programConclusionsToFilter = Sets.newHashSet();
     private Set<ExecutionYear> graduatedExecutionYears = Sets.newHashSet();
     private LocalDate graduationPeriodStartDate;
@@ -79,7 +81,7 @@ public class RegistrationHistoryReportService {
     private Multimap<ExecutionYear, Registration> registrationsWithActiveEnrolmentsCache = HashMultimap.create();
 
     private List<Integer> getStudentNumbers() {
-        final List<Integer> result = Lists.newArrayList();
+        final List<Integer> result = new ArrayList<>(this.studentNumbers);
 
         if (this.studentNumber != null) {
             result.add(this.studentNumber);
@@ -92,15 +94,11 @@ public class RegistrationHistoryReportService {
         final Set<Registration> result = Sets.newHashSet();
 
         for (final Integer number : getStudentNumbers()) {
-
             result.addAll(Registration.readByNumber(number));
-            if (result.isEmpty()) {
 
-                final Student student = Student.readStudentByNumber(number);
-                if (student != null) {
-
-                    result.addAll(student.getRegistrationsSet());
-                }
+            final Student student = Student.readStudentByNumber(number);
+            if (student != null) {
+                result.addAll(student.getRegistrationsSet());
             }
         }
 
@@ -171,6 +169,11 @@ public class RegistrationHistoryReportService {
         this.improvementEnrolmentsOnly = improvementsEnrolmentsOnly;
     }
 
+    public void filterStudentNumbers(Collection<Integer> studentNumbers) {
+        this.studentNumbers.addAll(studentNumbers);
+    }
+
+    @Deprecated
     public void filterStudentNumber(Integer studentNumber) {
         this.studentNumber = studentNumber;
     }
