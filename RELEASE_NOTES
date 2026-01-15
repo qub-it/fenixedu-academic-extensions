@@ -1,3 +1,4 @@
+4.35.43 (15-01-2026)
 - Refactor: Change conclusion process student curricular access to direct relation [#qubIT-Fenix-6554]
 - Improvement: Support multiple student numbers as input of RegistrationHistoryReportService [#UCP-FENIXEDU-618]
 
