@@ -1,7 +1,9 @@
 package org.fenixedu.academicextensions.domain.person.dataShare;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -11,9 +13,15 @@ import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.commons.i18n.LocalizedString;
 
+import com.qubit.terra.framework.services.accessControl.Permission;
+import com.qubit.terra.framework.services.accessControl.Profile;
+import com.qubit.terra.framework.services.accessControl.ProfileBuilder;
+
 import pt.ist.fenixframework.Atomic;
 
 public class DataShareAuthorizationType extends DataShareAuthorizationType_Base {
+
+    private static final String PERSON_DATA_AUTHORIZATIONS = "PERSON_DATA_AUTHORIZATIONS";
 
     protected DataShareAuthorizationType() {
         super();
@@ -46,12 +54,23 @@ public class DataShareAuthorizationType extends DataShareAuthorizationType_Base 
         }
     }
 
+    @Deprecated
     protected void init(final String code, final LocalizedString name, final String groupExpression, final boolean active,
             final LocalizedString question) {
 
         setCode(code);
         setName(name);
         setGroupExpression(groupExpression);
+        setActive(active);
+        setQuestion(question);
+
+        checkRules();
+    }
+
+    protected void init(final String code, final LocalizedString name, final boolean active, final LocalizedString question) {
+
+        setCode(code);
+        setName(name);
         setActive(active);
         setQuestion(question);
 
@@ -68,10 +87,6 @@ public class DataShareAuthorizationType extends DataShareAuthorizationType_Base 
             throw new AcademicExtensionsDomainException("error.DataShareAuthorizationType.name.required");
         }
 
-        if (StringUtils.isBlank(getGroupExpression())) {
-            throw new AcademicExtensionsDomainException("error.DataShareAuthorizationType.groupExpression.required");
-        }
-
         if (getQuestion() == null || getQuestion().isEmpty()) {
             throw new AcademicExtensionsDomainException("error.DataShareAuthorizationType.question.required");
         }
@@ -79,6 +94,7 @@ public class DataShareAuthorizationType extends DataShareAuthorizationType_Base 
         findUnique(getCode());
     }
 
+    @Deprecated
     @Atomic
     static public DataShareAuthorizationType create(final String code, final LocalizedString name, final String groupExpression,
             final boolean active, final LocalizedString question) {
@@ -88,6 +104,16 @@ public class DataShareAuthorizationType extends DataShareAuthorizationType_Base 
     }
 
     @Atomic
+    public static DataShareAuthorizationType create(final String code, final LocalizedString name, final boolean active,
+            final LocalizedString question) {
+        final DataShareAuthorizationType result = new DataShareAuthorizationType();
+        result.init(code, name, active, question);
+        result.initAccessControlProfile();
+        return result;
+    }
+
+    @Deprecated
+    @Atomic
     public DataShareAuthorizationType edit(final String code, final LocalizedString name, final String groupExpression,
             final boolean active, final LocalizedString question) {
 
@@ -95,6 +121,15 @@ public class DataShareAuthorizationType extends DataShareAuthorizationType_Base 
         return this;
     }
 
+    @Atomic
+    public DataShareAuthorizationType edit(final String code, final LocalizedString name, final boolean active,
+            final LocalizedString question) {
+
+        this.init(code, name, active, question);
+        return this;
+    }
+
+    @Deprecated
     static public Set<DataShareAuthorizationType> find(final String code, final String name, final String groupExpression,
             final boolean active, final String question) {
 
@@ -114,8 +149,25 @@ public class DataShareAuthorizationType extends DataShareAuthorizationType_Base 
                 .collect(Collectors.toSet());
     }
 
+    static public Set<DataShareAuthorizationType> find(final String code, final String name, final boolean active,
+            final String question) {
+
+        final Stream<DataShareAuthorizationType> universe = Bennu.getInstance().getDataShareAuthorizationTypeSet().stream();
+        return universe
+
+                .filter(i -> i.isActive() == active)
+
+                .filter(i -> StringUtils.isBlank(code) || StringUtils.equalsIgnoreCase(i.getCode(), code))
+
+                .filter(i -> StringUtils.isBlank(name) || i.getName().anyMatch(c -> c.contains(name)))
+
+                .filter(i -> StringUtils.isBlank(question) || i.getQuestion().anyMatch(c -> c.contains(question)))
+
+                .collect(Collectors.toSet());
+    }
+
     static public DataShareAuthorizationType findUnique(final String code) {
-        final Set<DataShareAuthorizationType> found = find(code, (String) null, (String) null, true, (String) null);
+        final Set<DataShareAuthorizationType> found = find(code, (String) null, true, (String) null);
         if (found.size() > 1) {
             throw new AcademicExtensionsDomainException("error.DataShareAuthorizationType.duplicated");
         }
@@ -137,4 +189,21 @@ public class DataShareAuthorizationType extends DataShareAuthorizationType_Base 
         return getDataShareAuthorizationTypeParent() == null;
     }
 
+    private void initAccessControlProfile() {
+        String profileCode = getCode() + ":" + UUID.randomUUID();
+        com.qubit.terra.framework.tools.primitives.LocalizedString profileName =
+                new com.qubit.terra.framework.tools.primitives.LocalizedString().with(getCode() + " - " + getName().getContent());
+
+        ProfileBuilder profileBuilder = Profile.builder().code(profileCode).name(profileName)
+                .permissions(Permission.findPermissionByCode(PERSON_DATA_AUTHORIZATIONS).orElse(null)).autoGenerated(true)
+                .associate(DataShareAuthorizationType.class);
+
+        Profile autoGeneratedProfile = profileBuilder.build();
+        autoGeneratedProfile.addObject(this);
+    }
+
+    public Optional<Profile> getIdentifierAccessControlProfile() {
+        return Permission.findPermissionByCode(PERSON_DATA_AUTHORIZATIONS).stream().flatMap(p -> p.findProfilesContaining(this))
+                .filter(Profile::isAutoGenerated).findFirst();
+    }
 }
