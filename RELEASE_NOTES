@@ -1,3 +1,4 @@
+4.35.44 (23-01-2026)
 - Improvement: Add option to preload registration history report data to allow parallel generation [#qubIT-Fenix-3483]
 - Bug fix: Sort degree units field on registration history report [#ISCTE-FENIXEDU-471]
 
