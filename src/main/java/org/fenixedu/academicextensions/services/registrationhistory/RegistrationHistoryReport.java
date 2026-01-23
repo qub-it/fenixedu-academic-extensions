@@ -1374,4 +1374,21 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         }
         return AcademicExtensionsUtil.bundle("label.RegistrationHistoryReport.NoPhotograph");
     }
+
+    //Allow multithread processing to load data in parallel
+    public void preloadData() {
+        getCurricularYear();
+        isTuitionCharged(); //no internal cache
+        getPaidTuitionAmount(); //no internal cache
+        getTuitionAmount(); //no internal cache
+        getHasImprovementEvaluations(); //no internal cache
+        getHasPreviousReingressionIncludingPrecedentRegistrations(); //no internal cache
+        getHasEnrolmentsWithoutShifts(); //no internal cache
+        getLastEnrolmentUpdateDateTime(); //no internal cache
+        getLastEnrolmentExecutionYear(); //no internal cache
+        getAverage(); //no internal cache
+        getConclusionReports();
+        getNumberOfTuitionInstallments(); //no internal cache
+    }
+
 }
