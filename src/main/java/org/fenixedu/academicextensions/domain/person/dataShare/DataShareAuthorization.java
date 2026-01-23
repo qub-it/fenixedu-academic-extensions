@@ -14,6 +14,9 @@ import org.fenixedu.bennu.core.domain.exceptions.BennuCoreDomainException;
 import org.fenixedu.bennu.core.groups.Group;
 import org.joda.time.DateTime;
 
+import com.qubit.terra.framework.services.ServiceProvider;
+import com.qubit.terra.framework.services.accessControl.AccessControlService;
+
 public class DataShareAuthorization extends DataShareAuthorization_Base {
 
     protected DataShareAuthorization() {
@@ -121,6 +124,8 @@ public class DataShareAuthorization extends DataShareAuthorization_Base {
     }
 
     static public Set<DataShareAuthorizationType> findActiveAuthorizationTypes(final Person person) {
+        final AccessControlService accessControlService = ServiceProvider.getService(AccessControlService.class);
+
         return Bennu.getInstance().getDataShareAuthorizationTypeSet().stream().filter(type -> {
             DataShareAuthorizationType authorizationTypeParent = type.getDataShareAuthorizationTypeParent();
             if (authorizationTypeParent != null && !authorizationTypeParent.isActive()) {
@@ -128,11 +133,18 @@ public class DataShareAuthorization extends DataShareAuthorization_Base {
             }
 
             if (type.isActive()) {
-                try {
-                    final Group group = Group.parse(type.getGroupExpression());
-                    return group.isMember(person.getUser());
-                } catch (Error | BennuCoreDomainException e) { // prevent invalid expressions of preventing logins in system
-                }
+                return type.getIdentifierAccessControlProfile().map(p -> p.getParents().stream()
+                                .anyMatch(pp -> accessControlService.hasAccess(person.getUsername(), pp.getCustomExpression())))
+                        .orElseGet(() -> {
+                            try {
+                                final Group group = Group.parse(type.getGroupExpression());
+                                return group.isMember(person.getUser());
+                            } catch (Error |
+                                    BennuCoreDomainException e) { // prevent invalid expressions of preventing logins in system
+                            }
+                            
+                            return false;
+                        });
             }
 
             return false;
