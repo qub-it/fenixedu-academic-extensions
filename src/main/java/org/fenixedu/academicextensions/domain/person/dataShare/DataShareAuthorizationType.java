@@ -58,19 +58,6 @@ public class DataShareAuthorizationType extends DataShareAuthorizationType_Base 
         }
     }
 
-    @Deprecated
-    protected void init(final String code, final LocalizedString name, final String groupExpression, final boolean active,
-            final LocalizedString question) {
-
-        setCode(code);
-        setName(name);
-        setGroupExpression(groupExpression);
-        setActive(active);
-        setQuestion(question);
-
-        checkRules();
-    }
-
     protected void init(final String code, final LocalizedString name, final boolean active, final LocalizedString question) {
 
         setCode(code);
@@ -98,15 +85,6 @@ public class DataShareAuthorizationType extends DataShareAuthorizationType_Base 
         findUnique(getCode());
     }
 
-    @Deprecated
-    @Atomic
-    static public DataShareAuthorizationType create(final String code, final LocalizedString name, final String groupExpression,
-            final boolean active, final LocalizedString question) {
-        final DataShareAuthorizationType result = new DataShareAuthorizationType();
-        result.init(code, name, groupExpression, active, question);
-        return result;
-    }
-
     @Atomic
     public static DataShareAuthorizationType create(final String code, final LocalizedString name, final boolean active,
             final LocalizedString question) {
@@ -114,15 +92,6 @@ public class DataShareAuthorizationType extends DataShareAuthorizationType_Base 
         result.init(code, name, active, question);
         result.initAccessControlProfile();
         return result;
-    }
-
-    @Deprecated
-    @Atomic
-    public DataShareAuthorizationType edit(final String code, final LocalizedString name, final String groupExpression,
-            final boolean active, final LocalizedString question) {
-
-        this.init(code, name, groupExpression, active, question);
-        return this;
     }
 
     @Atomic
@@ -144,8 +113,6 @@ public class DataShareAuthorizationType extends DataShareAuthorizationType_Base 
                 .filter(i -> StringUtils.isBlank(code) || StringUtils.equalsIgnoreCase(i.getCode(), code))
 
                 .filter(i -> StringUtils.isBlank(name) || i.getName().anyMatch(c -> c.contains(name)))
-
-                .filter(i -> StringUtils.isBlank(groupExpression) || i.getGroupExpression().contains(groupExpression))
 
                 .filter(i -> StringUtils.isBlank(question) || i.getQuestion().anyMatch(c -> c.contains(question)))
 
