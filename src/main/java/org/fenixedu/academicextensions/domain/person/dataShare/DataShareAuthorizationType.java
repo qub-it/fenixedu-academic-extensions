@@ -1,6 +1,5 @@
 package org.fenixedu.academicextensions.domain.person.dataShare;
 
-import java.security.Permissions;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
@@ -132,6 +131,7 @@ public class DataShareAuthorizationType extends DataShareAuthorizationType_Base 
         return this;
     }
 
+    @Deprecated
     static public Set<DataShareAuthorizationType> find(final String code, final String name, final String groupExpression,
             final boolean active, final String question) {
 
@@ -151,8 +151,25 @@ public class DataShareAuthorizationType extends DataShareAuthorizationType_Base 
                 .collect(Collectors.toSet());
     }
 
+    static public Set<DataShareAuthorizationType> find(final String code, final String name, final boolean active,
+            final String question) {
+
+        final Stream<DataShareAuthorizationType> universe = Bennu.getInstance().getDataShareAuthorizationTypeSet().stream();
+        return universe
+
+                .filter(i -> i.isActive() == active)
+
+                .filter(i -> StringUtils.isBlank(code) || StringUtils.equalsIgnoreCase(i.getCode(), code))
+
+                .filter(i -> StringUtils.isBlank(name) || i.getName().anyMatch(c -> c.contains(name)))
+
+                .filter(i -> StringUtils.isBlank(question) || i.getQuestion().anyMatch(c -> c.contains(question)))
+
+                .collect(Collectors.toSet());
+    }
+
     static public DataShareAuthorizationType findUnique(final String code) {
-        final Set<DataShareAuthorizationType> found = find(code, (String) null, (String) null, true, (String) null);
+        final Set<DataShareAuthorizationType> found = find(code, (String) null, true, (String) null);
         if (found.size() > 1) {
             throw new AcademicExtensionsDomainException("error.DataShareAuthorizationType.duplicated");
         }
