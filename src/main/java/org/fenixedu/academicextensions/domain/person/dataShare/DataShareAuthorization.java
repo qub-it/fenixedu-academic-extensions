@@ -135,16 +135,7 @@ public class DataShareAuthorization extends DataShareAuthorization_Base {
             if (type.isActive()) {
                 return type.getIdentifierAccessControlProfile().map(p -> p.getParents().stream()
                                 .anyMatch(pp -> accessControlService.hasAccess(person.getUsername(), pp.getCustomExpression())))
-                        .orElseGet(() -> {
-                            try {
-                                final Group group = Group.parse(type.getGroupExpression());
-                                return group.isMember(person.getUser());
-                            } catch (Error |
-                                    BennuCoreDomainException e) { // prevent invalid expressions of preventing logins in system
-                            }
-                            
-                            return false;
-                        });
+                        .orElse(false);
             }
 
             return false;
