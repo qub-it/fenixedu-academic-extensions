@@ -32,10 +32,6 @@ public class RegistrationConclusionInformation {
     public ProgramConclusion getProgramConclusion() {
         return registrationConclusionBean.getProgramConclusion();
     }
-
-    public CurriculumGroup getCurriculumGroup() {
-        return registrationConclusionBean.getCurriculumGroup();
-    }
     
     public LocalDate getConclusionDate() {
         if(registrationConclusionBean.getConclusionDate() == null) {
@@ -55,11 +51,6 @@ public class RegistrationConclusionInformation {
 
     public boolean isScholarPart() {
         return !getProgramConclusion().isTerminal();
-    }
-
-    public boolean isIntegratedMasterFirstCycle() {
-        return getStudentCurricularPlan().getDegree().getDegreeType().isIntegratedMasterDegree()
-                && getCurriculumGroup().isCycleCurriculumGroup() && ((CycleCurriculumGroup) getCurriculumGroup()).isFirstCycle();
     }
 
 }

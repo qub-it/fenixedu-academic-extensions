@@ -26,6 +26,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
+//TODO: sort by program conclusion config order
 abstract public class RegistrationConclusionServices {
 
     public static final Comparator<RegistrationConclusionBean> CONCLUSION_BEAN_COMPARATOR_BY_OLDEST_PROCESSED = (x, y) -> {
@@ -55,9 +56,7 @@ abstract public class RegistrationConclusionServices {
                     StudentCurricularPlan.COMPARATOR_BY_START_EXECUTION_AND_DATE.thenComparing(DomainObjectUtil.COMPARATOR_BY_ID);
         }
 
-        return planComparator.compare(x.getCurriculumGroup().getStudentCurricularPlan(),
-                y.getCurriculumGroup().getStudentCurricularPlan());
-
+        return planComparator.compare(x.getStudentCurricularPlan(), y.getStudentCurricularPlan());
     };
 
     /**
@@ -67,28 +66,6 @@ abstract public class RegistrationConclusionServices {
     public static Set<RegistrationConclusionInformation> inferConclusion(final Registration registration) {
         return getConclusions(registration).values().stream().filter(c -> c.isConcluded())
                 .map(c -> new RegistrationConclusionInformation(c)).collect(Collectors.toSet());
-    }
-
-    /**
-     * Motivation: accumulated Registrations can't calculate conclusion date when starting on a root, since it is never concluded
-     *
-     * This is only used for a suggested conclusion date, it is not used by the domain
-     */
-    public static YearMonthDay calculateConclusionDate(final RegistrationConclusionBean input) {
-        YearMonthDay result = input.calculateConclusionDate();
-
-        if (result == null && input.getCurriculumGroup().isRoot()) {
-
-            for (final CurriculumGroup group : getCurriculumGroupsForConclusion(input.getCurriculumGroup())) {
-
-                final YearMonthDay calculated = CurriculumModuleServices.calculateLastAcademicActDate(group, true);
-                if (calculated != null && (result == null || calculated.isAfter(result))) {
-                    result = calculated;
-                }
-            }
-        }
-
-        return result;
     }
 
     public static Set<CurriculumGroup> getCurriculumGroupsForConclusion(final CurriculumGroup curriculumGroup) {
@@ -161,6 +138,7 @@ abstract public class RegistrationConclusionServices {
 
     }
 
+    //TODO: change to sorted hashmap
     //TODO: move to registration
     public static Map<ProgramConclusion, RegistrationConclusionBean> getConclusions(Registration registration) {
 

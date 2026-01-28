@@ -286,7 +286,7 @@ public class DegreeGradingTable extends DegreeGradingTable_Base {
                 continue;
             }
             for (RegistrationConclusionInformation info : RegistrationConclusionServices.inferConclusion(registration)) {
-                if (info.getCurriculumGroup() == null || !info.isConcluded()) {
+                if (!info.isConcluded()) {
                     continue;
                 }
                 
