@@ -47,7 +47,6 @@ import org.fenixedu.academic.domain.student.curriculum.Curriculum.CurriculumEntr
 import org.fenixedu.academic.domain.student.curriculum.Curriculum.CurriculumGradeCalculator;
 import org.fenixedu.academic.domain.student.curriculum.conclusion.RegistrationConclusionServices;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumGroup;
-import org.fenixedu.academic.domain.studentCurriculum.CurriculumGroup.ConclusionProcessEnabler;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumGroup.CurriculumSupplier;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumLine;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumModule;
@@ -69,7 +68,6 @@ abstract public class CurriculumConfigurationInitializer {
         Curriculum.setCurriculumGradeCalculator(CURRICULUM_GRADE_CALCULATOR);
         Curriculum.setCurriculumEntryPredicate(CURRICULUM_ENTRY_PREDICATE);
         CurriculumGroup.setCurriculumSupplier(GROUP_CURRICULUM_SUPPLIER);
-        CurriculumGroup.setConclusionProcessEnabler(GROUP_CONCLUSION_ENABLER);
     }
 
     /* ======================================================================================================
@@ -361,25 +359,6 @@ abstract public class CurriculumConfigurationInitializer {
             return result;
         }
 
-    };
-
-    /* ======================================================================================================
-     * 
-     * CurriculumGroup ConclusionProcessEnabler
-     * 
-     * ======================================================================================================
-     */
-
-    static private Supplier<ConclusionProcessEnabler> GROUP_CONCLUSION_ENABLER = () -> new ConclusionProcessEnabler() {
-
-        @Override
-        public boolean isAllowed(final CurriculumGroup input) {
-            if (input != null) {
-                return input.isConcluded() || RegistrationServices.isCurriculumAccumulated(input.getRegistration());
-            }
-
-            return false;
-        }
     };
 
 }
