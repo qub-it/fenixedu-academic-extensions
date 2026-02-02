@@ -488,6 +488,7 @@ class student.mobility.MobilityRegistrationInformation {
 	LocalDate beginDate;
 	LocalDate endDate;
 	String remarks;
+	LocalizedString externalRemarks;
 	boolean national;
 	boolean mainInformation;
 }
