@@ -1,3 +1,4 @@
+- Refactor: Removes deprecated methods from MobilityRegistrationInformation [#ISCTE-FENIXEDU-1403]
 - Improvement: Adds Mobility Information field for use in the Diploma Supplement [#ISCTE-FENIXEDU-1403]
 
 4.35.44 (23-01-2026)
