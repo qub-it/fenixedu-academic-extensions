@@ -139,14 +139,6 @@ public class DataShareAuthorization extends DataShareAuthorization_Base {
                         applicationUserProvider.provide(person.getUsername()))) {
                     return true;
                 }
-
-                try {
-                    final Group group = Group.parse(type.getGroupExpression());
-                    return group.isMember(person.getUser());
-                } catch (Error | BennuCoreDomainException e) { // prevent invalid expressions of preventing logins in system
-                }
-
-                return false;
             }
 
             return false;
