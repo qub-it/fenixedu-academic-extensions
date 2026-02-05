@@ -34,6 +34,7 @@ import java.text.Collator;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -334,9 +335,9 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
     }
 
     private void removeEnrolmentEvaluationData() {
-        for (final EnrolmentEvaluation evaluation : getEnrolmentEvaluationSet()) {
-            removeEnrolmentEvaluationData(evaluation);
-        }
+        final Set<EnrolmentEvaluation> enrolmentEvaluationsReference = new HashSet<>(getEnrolmentEvaluationSet());
+        getEnrolmentEvaluationSet().clear();
+        enrolmentEvaluationsReference.forEach(enrolmentEvaluation -> removeEnrolmentEvaluationData(enrolmentEvaluation));
     }
 
     public Set<EvaluationSeasonPeriod> getGradeSubmissionPeriods() {
