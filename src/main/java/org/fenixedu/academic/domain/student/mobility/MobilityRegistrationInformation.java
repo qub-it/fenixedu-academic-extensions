@@ -59,6 +59,7 @@ public class MobilityRegistrationInformation extends MobilityRegistrationInforma
         setBennu(Bennu.getInstance());
     }
 
+    @Deprecated
     public static MobilityRegistrationInformation createOutgoing(final Registration registration, boolean national,
             SchoolPeriodDuration programDuration, ExecutionInterval begin, ExecutionInterval end, LocalDate beginDate,
             LocalDate endDate, MobilityActivityType mobilityActivityType, MobilityProgramType mobilityProgramType,
@@ -71,10 +72,24 @@ public class MobilityRegistrationInformation extends MobilityRegistrationInforma
         return result;
     }
 
+    public static MobilityRegistrationInformation createOutgoing(final Registration registration, boolean national,
+            SchoolPeriodDuration programDuration, ExecutionInterval begin, ExecutionInterval end, LocalDate beginDate,
+            LocalDate endDate, MobilityActivityType mobilityActivityType, MobilityProgramType mobilityProgramType,
+            Unit countryUnit, Unit foreignInstitutionUnit, String remarks, LocalizedString externalRemarks) {
+
+        final MobilityRegistrationInformation result = new MobilityRegistrationInformation();
+        result.setRegistration(registration);
+        result.editOutgoing(national, programDuration, begin, end, beginDate, endDate, mobilityActivityType, mobilityProgramType,
+                countryUnit, foreignInstitutionUnit, remarks, externalRemarks);
+        return result;
+    }
+
+    @Deprecated
     public static MobilityRegistrationInformation createIncoming(final Registration registration, boolean national,
             SchoolPeriodDuration programDuration, ExecutionInterval begin, ExecutionInterval end, LocalDate beginDate,
             LocalDate endDate, MobilityActivityType mobilityActivityType, MobilityProgramType mobilityProgramType,
-            Unit countryUnit, Unit foreignInstitutionUnit, String remarks, MobilityProgrammeLevel originMobilityProgrammeLevel,
+            Unit countryUnit, Unit foreignInstitutionUnit, String remarks,
+            MobilityProgrammeLevel originMobilityProgrammeLevel,
             String otherOriginMobilityProgrammeLevel, boolean degreeBased, DegreeCurricularPlan degreeCurricularPlan,
             CourseGroup branchCourseGroup, MobilityScientificArea mobilityScientificArea,
             MobilityProgrammeLevel incomingMobilityProgrammeLevel, String otherIncomingMobilityProgrammeLevel) {
@@ -82,12 +97,32 @@ public class MobilityRegistrationInformation extends MobilityRegistrationInforma
         final MobilityRegistrationInformation result = new MobilityRegistrationInformation();
         result.setRegistration(registration);
         result.editIncoming(national, programDuration, begin, end, beginDate, endDate, mobilityActivityType, mobilityProgramType,
-                countryUnit, foreignInstitutionUnit, remarks, originMobilityProgrammeLevel, otherOriginMobilityProgrammeLevel,
+                countryUnit, foreignInstitutionUnit, remarks, originMobilityProgrammeLevel,
+                otherOriginMobilityProgrammeLevel,
                 degreeBased, degreeCurricularPlan, branchCourseGroup, mobilityScientificArea, incomingMobilityProgrammeLevel,
                 otherIncomingMobilityProgrammeLevel);
         return result;
     }
 
+    public static MobilityRegistrationInformation createIncoming(final Registration registration, boolean national,
+            SchoolPeriodDuration programDuration, ExecutionInterval begin, ExecutionInterval end, LocalDate beginDate,
+            LocalDate endDate, MobilityActivityType mobilityActivityType, MobilityProgramType mobilityProgramType,
+            Unit countryUnit, Unit foreignInstitutionUnit, String remarks, LocalizedString externalRemarks,
+            MobilityProgrammeLevel originMobilityProgrammeLevel, String otherOriginMobilityProgrammeLevel, boolean degreeBased,
+            DegreeCurricularPlan degreeCurricularPlan, CourseGroup branchCourseGroup,
+            MobilityScientificArea mobilityScientificArea, MobilityProgrammeLevel incomingMobilityProgrammeLevel,
+            String otherIncomingMobilityProgrammeLevel) {
+
+        final MobilityRegistrationInformation result = new MobilityRegistrationInformation();
+        result.setRegistration(registration);
+        result.editIncoming(national, programDuration, begin, end, beginDate, endDate, mobilityActivityType, mobilityProgramType,
+                countryUnit, foreignInstitutionUnit, remarks, externalRemarks, originMobilityProgrammeLevel,
+                otherOriginMobilityProgrammeLevel, degreeBased, degreeCurricularPlan, branchCourseGroup, mobilityScientificArea,
+                incomingMobilityProgrammeLevel, otherIncomingMobilityProgrammeLevel);
+        return result;
+    }
+
+    @Deprecated
     public void editOutgoing(boolean national, SchoolPeriodDuration programDuration, ExecutionInterval begin,
             ExecutionInterval end, LocalDate beginDate, LocalDate endDate, MobilityActivityType mobilityActivityType,
             MobilityProgramType mobilityProgramType, Unit countryUnit, Unit foreignInstitutionUnit, String remarks) {
@@ -109,6 +144,30 @@ public class MobilityRegistrationInformation extends MobilityRegistrationInforma
         checkRulesForOutgoing();
     }
 
+    public void editOutgoing(boolean national, SchoolPeriodDuration programDuration, ExecutionInterval begin,
+            ExecutionInterval end, LocalDate beginDate, LocalDate endDate, MobilityActivityType mobilityActivityType,
+            MobilityProgramType mobilityProgramType, Unit countryUnit, Unit foreignInstitutionUnit, String remarks,
+            LocalizedString externalRemarks) {
+
+        setIncoming(false);
+        setNational(national);
+        setProgramDuration(programDuration);
+        setBegin(begin);
+        setEnd(end);
+        setBeginDate(beginDate);
+        setEndDate(endDate);
+        setMobilityActivityType(mobilityActivityType);
+        setMobilityProgramType(mobilityProgramType);
+        setCountryUnit(countryUnit);
+        setForeignInstitutionUnit(foreignInstitutionUnit);
+        setRemarks(remarks);
+        setExternalRemarks(externalRemarks);
+
+        checkRules();
+        checkRulesForOutgoing();
+    }
+
+    @Deprecated
     public void editIncoming(boolean national, SchoolPeriodDuration programDuration, ExecutionInterval begin,
             ExecutionInterval end, LocalDate beginDate, LocalDate endDate, MobilityActivityType mobilityActivityType,
             MobilityProgramType mobilityProgramType, Unit countryUnit, Unit foreignInstitutionUnit, String remarks,
@@ -129,6 +188,55 @@ public class MobilityRegistrationInformation extends MobilityRegistrationInforma
         setCountryUnit(countryUnit);
         setForeignInstitutionUnit(foreignInstitutionUnit);
         setRemarks(remarks);
+
+        setOriginMobilityProgrammeLevel(originMobilityProgrammeLevel);
+        setOtherOriginMobilityProgrammeLevel(otherOriginMobilityProgrammeLevel);
+        setDegreeBased(degreeBased);
+
+        if (degreeBased) {
+            setDegree(degreeCurricularPlan != null ? degreeCurricularPlan.getDegree() : null);
+            setDegreeCurricularPlan(degreeCurricularPlan);
+            setBranchCourseGroup(branchCourseGroup);
+
+            setMobilityScientificArea(null);
+            setIncomingMobilityProgrammeLevel(null);
+            setOtherIncomingMobilityProgrammeLevel(null);
+
+        } else {
+            setDegree(null);
+            setDegreeCurricularPlan(null);
+            setBranchCourseGroup(null);
+
+            setMobilityScientificArea(mobilityScientificArea);
+            setIncomingMobilityProgrammeLevel(incomingMobilityProgrammeLevel);
+            setOtherIncomingMobilityProgrammeLevel(otherIncomingMobilityProgrammeLevel);
+        }
+
+        checkRules();
+        checkRulesForIncoming();
+    }
+
+    public void editIncoming(boolean national, SchoolPeriodDuration programDuration, ExecutionInterval begin,
+            ExecutionInterval end, LocalDate beginDate, LocalDate endDate, MobilityActivityType mobilityActivityType,
+            MobilityProgramType mobilityProgramType, Unit countryUnit, Unit foreignInstitutionUnit, String remarks,
+            LocalizedString externalRemarks, MobilityProgrammeLevel originMobilityProgrammeLevel,
+            String otherOriginMobilityProgrammeLevel, boolean degreeBased, DegreeCurricularPlan degreeCurricularPlan,
+            CourseGroup branchCourseGroup, MobilityScientificArea mobilityScientificArea,
+            MobilityProgrammeLevel incomingMobilityProgrammeLevel, String otherIncomingMobilityProgrammeLevel) {
+
+        setIncoming(true);
+        setNational(national);
+        setProgramDuration(programDuration);
+        setBegin(begin);
+        setEnd(end);
+        setBeginDate(beginDate);
+        setEndDate(endDate);
+        setMobilityActivityType(mobilityActivityType);
+        setMobilityProgramType(mobilityProgramType);
+        setCountryUnit(countryUnit);
+        setForeignInstitutionUnit(foreignInstitutionUnit);
+        setRemarks(remarks);
+        setExternalRemarks(externalRemarks);
 
         setOriginMobilityProgrammeLevel(originMobilityProgrammeLevel);
         setOtherOriginMobilityProgrammeLevel(otherOriginMobilityProgrammeLevel);
