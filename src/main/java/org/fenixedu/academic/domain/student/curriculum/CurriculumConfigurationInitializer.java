@@ -68,6 +68,7 @@ abstract public class CurriculumConfigurationInitializer {
         Curriculum.setCurriculumGradeCalculator(CURRICULUM_GRADE_CALCULATOR);
         Curriculum.setCurriculumEntryPredicate(CURRICULUM_ENTRY_PREDICATE);
         CurriculumGroup.setCurriculumSupplier(GROUP_CURRICULUM_SUPPLIER);
+        Registration.setConclusionProcessEnabler((bean) -> RegistrationServices.isCurriculumAccumulated(bean.getRegistration()));
     }
 
     /* ======================================================================================================
