@@ -8,7 +8,6 @@ external class .org.fenixedu.academic.domain.Person;
 class person.dataShare.DataShareAuthorizationType {
 	String code (REQUIRED);
 	LocalizedString name (REQUIRED);
-	String groupExpression;
 	boolean active;
 	LocalizedString question (REQUIRED);
 }
