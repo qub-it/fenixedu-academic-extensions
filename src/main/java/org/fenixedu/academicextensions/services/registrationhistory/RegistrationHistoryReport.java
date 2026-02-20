@@ -39,7 +39,7 @@ import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException
 import org.fenixedu.academic.domain.log.EnrolmentLog;
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
 import org.fenixedu.academic.domain.person.Gender;
-import org.fenixedu.academic.domain.person.IDDocumentType;
+import org.fenixedu.academic.domain.person.identificationDocument.IdentificationDocument;
 import org.fenixedu.academic.domain.student.PrecedentDegreeInformation;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.RegistrationDataByExecutionYear;
@@ -922,14 +922,12 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     }
 
     public String getIdDocumentType() {
-        final Person person = getPerson();
-        final IDDocumentType type = person.getIdDocumentType();
-        return type == null ? null : type.getLocalizedName();
+        return Optional.ofNullable(getPerson()).map(Person::getDefaultIdentificationDocument)
+                .map(IdentificationDocument::getIdentificationDocumentType).map(type -> type.getName().getContent()).orElse(null);
     }
 
     public String getDocumentIdNumber() {
-        final Person person = getPerson();
-        return person == null ? null : person.getDocumentIdNumber();
+        return Optional.ofNullable(getPerson()).map(person -> person.getDefaultIdentificationDocument().getValue()).orElse(null);
     }
 
     public LocalDate getDocumentIdExpirationDate() {
