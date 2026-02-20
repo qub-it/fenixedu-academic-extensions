@@ -1,6 +1,7 @@
+- Refactor: Update IDDocumentType references for RegistrationHistoryReport [#qubIT-Fenix-6491]
+
 4.36.3 (19-02-2026)
 - Refactor: Removes deprecated group expressions code from Data Share Authorization Type [#UL-REIT-4694]
-- Refactor: Update IDDocumentType references for RegistrationHistoryReport [#qubIT-Fenix-6491]
 
 4.36.2 (11-02-2026)
 - Improvement: Adds Mobility Information field for use in the Diploma Supplement [#ISCTE-FENIXEDU-1403]
