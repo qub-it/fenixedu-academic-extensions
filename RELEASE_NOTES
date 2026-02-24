@@ -1,3 +1,4 @@
+- Refactor: Removes deprecated methods from MobilityRegistrationInformation [#ISCTE-FENIXEDU-1403]
 - Refactor: Update IDDocumentType references for RegistrationHistoryReport [#qubIT-Fenix-6491]
 
 4.36.3 (19-02-2026)
