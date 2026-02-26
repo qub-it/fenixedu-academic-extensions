@@ -1,3 +1,4 @@
+4.36.5 (26-02-2026)
 - Improvement: Implements profile inheritance from parent DataShareAuthorizationType to subtype [#UL-REIT-4694]
 
 4.36.4 (24-02-2026)
