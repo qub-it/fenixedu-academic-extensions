@@ -315,15 +315,8 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     }
 
     public boolean getHasEnrolmentsWithoutShifts() {
-
-        for (final ExecutionCourse executionCourse : getRegistration().getAttendingExecutionCoursesFor(getExecutionYear())) {
-            if (!executionCourse.getAssociatedShifts().isEmpty() && registration.getShiftsFor(executionCourse).isEmpty()) {
-                return true;
-            }
-        }
-
-        return false;
-
+        return getRegistration().findValidAttendingExecutionCoursesFor(getExecutionYear())
+                .filter(ec -> !ec.getShiftsSet().isEmpty()).anyMatch(ec -> registration.getShiftsFor(ec).isEmpty());
     }
 
     public LocalDate getFirstRegistrationStateDate() {

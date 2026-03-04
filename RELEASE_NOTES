@@ -1,3 +1,5 @@
+- Improvement: On registrations report, consider only valid attends to check if has shifts [#UCP-FENIXEDU-713]
+
 4.36.5 (26-02-2026)
 - Improvement: Implements profile inheritance from parent DataShareAuthorizationType to subtype [#UL-REIT-4694]
 
