@@ -59,12 +59,14 @@ public class DataShareAuthorizationType extends DataShareAuthorizationType_Base 
         }
     }
 
-    protected void init(final String code, final LocalizedString name, final boolean active, final LocalizedString question) {
+    protected void init(final String code, final LocalizedString name, final boolean active, final LocalizedString question,
+            final boolean autoRedirect) {
 
         setCode(code);
         setName(name);
         setActive(active);
         setQuestion(question);
+        setAutoRedirect(autoRedirect);
 
         checkRules();
     }
@@ -90,17 +92,24 @@ public class DataShareAuthorizationType extends DataShareAuthorizationType_Base 
     public static DataShareAuthorizationType create(final String code, final LocalizedString name, final boolean active,
             final LocalizedString question) {
         final DataShareAuthorizationType result = new DataShareAuthorizationType();
-        result.init(code, name, active, question);
+        result.init(code, name, active, question, true);
         result.initAccessControlProfile();
         return result;
     }
 
     @Atomic
     public DataShareAuthorizationType edit(final String code, final LocalizedString name, final boolean active,
+            final LocalizedString question, final boolean autoRedirect) {
+
+        this.init(code, name, active, question, autoRedirect);
+        return this;
+    }
+
+    @Atomic
+    public DataShareAuthorizationType edit(final String code, final LocalizedString name, final boolean active,
             final LocalizedString question) {
 
-        this.init(code, name, active, question);
-        return this;
+        return edit(code, name, active, question, this.getAutoRedirect());
     }
 
     static public Set<DataShareAuthorizationType> find(final String code, final String name, final String groupExpression,
@@ -145,6 +154,10 @@ public class DataShareAuthorizationType extends DataShareAuthorizationType_Base 
 
     public boolean isActive() {
         return super.getActive();
+    }
+
+    public boolean shouldAutoRedirect() {
+        return Boolean.TRUE.equals(super.getAutoRedirect());
     }
 
     public boolean isRoot() {
