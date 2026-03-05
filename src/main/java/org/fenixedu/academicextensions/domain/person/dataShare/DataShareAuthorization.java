@@ -69,9 +69,8 @@ public class DataShareAuthorization extends DataShareAuthorization_Base {
     static private Set<DataShareAuthorization> find(final Person person, final DataShareAuthorizationType type,
             final DateTime when) {
 
-        final Stream<DataShareAuthorization> universe =
-                person != null ? person.getDataShareAuthorizationSet().stream() : type != null ? type.getAuthorizationSet()
-                        .stream() : Bennu.getInstance().getDataShareAuthorizationSet().stream();
+        final Stream<DataShareAuthorization> universe = person != null ? person.getDataShareAuthorizationSet().stream() :
+                type != null ? type.getAuthorizationSet().stream() : Bennu.getInstance().getDataShareAuthorizationSet().stream();
         return universe
 
                 .filter(i -> person == null || i.getPerson() == person)
@@ -101,10 +100,9 @@ public class DataShareAuthorization extends DataShareAuthorization_Base {
             DataShareAuthorizationType dataShareAuthorizationTypeParent = getType().getDataShareAuthorizationTypeParent();
             DataShareAuthorization parentAuthorization = findLatest(person, dataShareAuthorizationTypeParent);
             Optional<DataShareAuthorizationType> anyChildStillAllowed =
-                    dataShareAuthorizationTypeParent
-                            .getDataShareAuthorizationTypeChildrenSet().stream().filter(x -> x.isActive()
-                                    && findLatest(person, x) != null && Boolean.TRUE.equals(findLatest(person, x).getAllow()))
-                            .findAny();
+                    dataShareAuthorizationTypeParent.getDataShareAuthorizationTypeChildrenSet().stream()
+                            .filter(x -> x.isActive() && findLatest(person, x) != null && Boolean.TRUE.equals(
+                                    findLatest(person, x).getAllow())).findAny();
             // Parent authorization may not exist if the user has not yet answered the parent authorization
             // but only childs
             if (!anyChildStillAllowed.isPresent() && parentAuthorization != null) {

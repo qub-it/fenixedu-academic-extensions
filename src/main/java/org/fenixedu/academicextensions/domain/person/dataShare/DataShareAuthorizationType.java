@@ -33,7 +33,8 @@ public class DataShareAuthorizationType extends DataShareAuthorizationType_Base 
         setDataShareAuthorizationTypeParent(null);
 
         for (; !getDataShareAuthorizationTypeChildrenSet().isEmpty(); getDataShareAuthorizationTypeChildrenSet().iterator().next()
-                .delete());
+                .delete())
+            ;
 
         findIdentifierAccessControlProfile().forEach(p -> {
             p.getParents().forEach(pp -> pp.removeChildProfile(p));
@@ -45,8 +46,8 @@ public class DataShareAuthorizationType extends DataShareAuthorizationType_Base 
     }
 
     public boolean isDeletable() {
-        return getAuthorizationSet().isEmpty()
-                && !getDataShareAuthorizationTypeChildrenSet().stream().filter(x -> !x.isDeletable()).findAny().isPresent();
+        return getAuthorizationSet().isEmpty() && !getDataShareAuthorizationTypeChildrenSet().stream()
+                .filter(x -> !x.isDeletable()).findAny().isPresent();
     }
 
     @Override
