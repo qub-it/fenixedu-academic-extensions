@@ -10,8 +10,6 @@ import java.util.stream.Stream;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.bennu.core.domain.Bennu;
-import org.fenixedu.bennu.core.domain.exceptions.BennuCoreDomainException;
-import org.fenixedu.bennu.core.groups.Group;
 import org.joda.time.DateTime;
 
 import com.qubit.terra.framework.services.ServiceProvider;
@@ -144,8 +142,8 @@ public class DataShareAuthorization extends DataShareAuthorization_Base {
     }
 
     static public Set<DataShareAuthorizationType> findActiveAuthorizationTypesNotAnswered(final Person person) {
-        return findActiveAuthorizationTypes(person).stream().filter(type -> find(person, type, null).isEmpty())
-                .collect(Collectors.toSet());
+        return findActiveAuthorizationTypes(person).stream()
+                .filter(type -> type.shouldAutoRedirect() && find(person, type, null).isEmpty()).collect(Collectors.toSet());
     }
 
 }

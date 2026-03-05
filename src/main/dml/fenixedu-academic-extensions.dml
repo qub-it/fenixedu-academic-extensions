@@ -9,6 +9,7 @@ class person.dataShare.DataShareAuthorizationType {
 	String code (REQUIRED);
 	LocalizedString name (REQUIRED);
 	boolean active;
+	Boolean autoRedirect;
 	LocalizedString question (REQUIRED);
 }
 	relation DataShareAuthorizationTypeRoot {
