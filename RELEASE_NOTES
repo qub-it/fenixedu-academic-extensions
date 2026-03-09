@@ -1,3 +1,5 @@
+- Improvement: DataShareAuthorizationType support for redirect [#qubIT-Omnis-10736]
+
 4.36.6 (04-03-2026)
 - Improvement: On registrations report, consider only valid attends to check if has shifts [#UCP-FENIXEDU-713]
 
