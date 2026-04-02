@@ -33,7 +33,7 @@ public class CreditsTransferRemarksCollection {
         return x.getCode().compareTo(y.getCode());
     };
 
-    private char nextRemarkId = 'a';
+    private int nextRemarkId = 1;
 
     private Collection<CreditsTransferRemarkEntry> entries = new LinkedHashSet<>();
 
@@ -65,7 +65,21 @@ public class CreditsTransferRemarksCollection {
         };
 
         this.entries = this.entries.stream().sorted(comparator).collect(Collectors.toCollection(LinkedHashSet::new));
-        this.entries.forEach(e -> e.setRemarkId(String.valueOf(nextRemarkId++)));
+        this.entries.forEach(e -> e.setRemarkId(RemarkIdGenerator.numberToCode(nextRemarkId++)));
+    }
+
+    public static class RemarkIdGenerator {
+
+        public static String numberToCode(int number) {
+            StringBuilder result = new StringBuilder();
+            while (number > 0) {
+                number--;
+                char c = (char) ('a' + (number % 26));
+                result.append(c);
+                number /= 26;
+            }
+            return result.reverse().toString();
+        }
     }
 
     public String getRemarkIdsFor(ICurriculumEntry entry) {

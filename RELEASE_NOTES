@@ -1,3 +1,5 @@
+- Improvement: Remark Id now goes further than 'z', adding more letters [#UL-FA-2536]
+
 4.37.0 (09-03-2026)
 - Improvement: DataShareAuthorizationType support for redirect [#qubIT-Omnis-10736]
 
