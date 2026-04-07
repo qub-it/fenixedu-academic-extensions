@@ -2,12 +2,15 @@ package org.fenixedu.academic.domain.curricularRules;
 
 import java.util.List;
 
+import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.ExecutionInterval;
+import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.curricularPeriod.CurricularPeriod;
 import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
 import org.fenixedu.academic.domain.curricularRules.executors.ruleExecutors.StudentStatuteCurricularRuleExecutor;
 import org.fenixedu.academic.domain.curricularRules.executors.verifyExecutors.StudentStatuteCurricularRuleVerifier;
 import org.fenixedu.academic.domain.curricularRules.executors.verifyExecutors.VerifyRuleExecutor;
+import org.fenixedu.academic.domain.degreeStructure.Context;
 import org.fenixedu.academic.domain.degreeStructure.CourseGroup;
 import org.fenixedu.academic.domain.degreeStructure.DegreeModule;
 import org.fenixedu.academic.domain.enrolment.EnrolmentContext;
@@ -86,4 +89,19 @@ public class StudentStatuteCurricularRule extends StudentStatuteCurricularRule_B
         return false;
     }
 
+    @Override
+    public CurricularRule duplicate(DegreeModule targetModule, ExecutionYear targetExecutionYear) {
+        DegreeCurricularPlan targetDCP = targetModule.getParentDegreeCurricularPlan();
+
+        CourseGroup targetCourseGroup =
+                getContextCourseGroup() == null ? null : targetModule.getParentContextsSet().stream().findFirst()
+                        .map(Context::getParentCourseGroup).orElse(null);
+
+        CurricularPeriod sourceCurricularPeriod = getCurricularPeriod();
+        CurricularPeriod targetCurricularPeriod =
+                CurricularPeriod.findEquivalentCurricularPeriodForDegreeCurricularPlan(sourceCurricularPeriod, targetDCP);
+
+        return new StudentStatuteCurricularRule(targetModule, targetCourseGroup, targetExecutionYear.getFirstExecutionPeriod(),
+                null, getStatuteType(), targetCurricularPeriod);
+    }
 }

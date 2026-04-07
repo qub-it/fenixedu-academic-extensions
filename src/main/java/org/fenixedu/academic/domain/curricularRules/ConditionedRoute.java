@@ -3,9 +3,11 @@ package org.fenixedu.academic.domain.curricularRules;
 import java.util.List;
 
 import org.fenixedu.academic.domain.ExecutionInterval;
+import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
 import org.fenixedu.academic.domain.curricularRules.executors.ruleExecutors.ConditionedRouteExecutor;
 import org.fenixedu.academic.domain.curricularRules.executors.verifyExecutors.VerifyRuleExecutor;
+import org.fenixedu.academic.domain.degreeStructure.Context;
 import org.fenixedu.academic.domain.degreeStructure.CourseGroup;
 import org.fenixedu.academic.domain.degreeStructure.DegreeModule;
 import org.fenixedu.academic.domain.enrolment.EnrolmentContext;
@@ -65,5 +67,14 @@ public class ConditionedRoute extends ConditionedRoute_Base {
     @Override
     public boolean isRulePreventingAutomaticEnrolment() {
         return true;
+    }
+
+    @Override
+    public CurricularRule duplicate(DegreeModule targetModule, ExecutionYear targetExecutionYear) {
+        CourseGroup targetCourseGroup =
+                getContextCourseGroup() == null ? null : targetModule.getParentContextsSet().stream().findFirst()
+                        .map(Context::getParentCourseGroup).orElse(null);
+
+        return new ConditionedRoute(targetModule, targetCourseGroup, targetExecutionYear.getFirstExecutionPeriod(), null);
     }
 }
