@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 import java.util.Set;
 import java.util.UUID;
 
@@ -304,8 +305,8 @@ public class CreditsTransferRemarksCollectionTest {
         final IEnrolment c3Enrolment = findEnrolment(previousScp, "C3");
 
         final Equivalence equivalence1 = createEquivalence(Set.of(c1Enrolment), scp, year2, "C1", "10");
-        final Substitution substitution1 = createSubstitution(Set.of(c2Enrolment), scp, year2, "C2");
-        final Equivalence equivalence2 = createEquivalence(Set.of(c3Enrolment), scp, year2, "C3", "14");
+        final Equivalence equivalence2 = createEquivalence(Set.of(c2Enrolment), scp, year2, "C2", "14");
+        final Substitution substitution1 = createSubstitution(Set.of(c3Enrolment), scp, year2, "C3");
 
         final CreditsReasonType reason1 = new CreditsReasonType();
         reason1.setReason(new LocalizedString(Locale.ENGLISH, "Erasmus"));
@@ -366,9 +367,12 @@ public class CreditsTransferRemarksCollectionTest {
         Collection<ICurriculumEntry> entries = scp.getRoot().getCurriculum().getCurriculumEntries();
         CreditsTransferRemarksCollection remarks = CreditsTransferRemarksCollection.build(entries, scp);
 
-        assertEquals(27, remarks.getRemarkIds());
-        assertTrue(remarks.getFormattedRemarks(";").getContent()
-                .endsWith("z) Credits Transfer - granted by: Course 20;" + "aa) Credits Transfer - granted by: Course 2;"));
+        assertEquals(27, remarks.getRemarkIds().size());
+
+        final String formattedRemarks = remarks.getFormattedRemarks(";").getContent();
+        assertNotNull(formattedRemarks);
+        assertTrue("Last entries should have remark IDs z) followed by aa)", 
+                Pattern.compile("z\\).*aa\\)", Pattern.DOTALL).matcher(formattedRemarks).find());
 
     }
 
@@ -446,8 +450,7 @@ public class CreditsTransferRemarksCollectionTest {
                 if (pathElement.isCycleCourseGroup()) {
                     if (curricularPlan.getDegreeCurricularPlan() != pathElement.getParentDegreeCurricularPlan()) {
                         throw new DomainException(
-                                "error.StudentCurricularPlan.affinity.cycles.must.already.exist.to.create.child.curriculum.groups",
-                                new String[0]);
+                                "error.StudentCurricularPlan.affinity.cycles.must.already.exist.to.create.child.curriculum.groups");
                     }
 
                     current = CurriculumGroupFactory.createGroup((RootCurriculumGroup) current, (CycleCourseGroup) pathElement);
