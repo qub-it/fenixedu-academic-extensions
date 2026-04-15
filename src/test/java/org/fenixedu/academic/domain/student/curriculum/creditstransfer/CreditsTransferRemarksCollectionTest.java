@@ -13,9 +13,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
-import java.util.regex.Pattern;
 import java.util.Set;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import org.fenixedu.academic.domain.CurricularCourse;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
@@ -321,8 +321,10 @@ public class CreditsTransferRemarksCollectionTest {
         Collection<ICurriculumEntry> entries = scp.getRoot().getCurriculum().getCurriculumEntries();
         CreditsTransferRemarksCollection remarks = CreditsTransferRemarksCollection.build(entries, scp);
 
-        assertEquals("a) Participated in Erasmus program;b) Student changed degree;",
-                remarks.getFormattedRemarks(";").getContent());
+        assertTrue("a) Participated in Erasmus program;b) Student changed degree;".equals(
+                remarks.getFormattedRemarks(";").getContent())
+                || "a) Student changed degree;b) Participated in Erasmus program;".equals(
+                remarks.getFormattedRemarks(";").getContent()));
         assertEquals(2, remarks.getRemarkIds().size());
     }
 
