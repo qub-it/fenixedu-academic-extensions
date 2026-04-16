@@ -73,7 +73,7 @@ public class UnavailableForEnrolmentRule extends UnavailableForEnrolmentRule_Bas
                 getContextCourseGroup() == null ? null : targetModule.getParentContextsSet().stream().findFirst()
                         .map(Context::getParentCourseGroup).orElse(null);
 
-        return new UnavailableForEnrolmentRule(targetModule, targetCourseGroup, targetExecutionYear.getFirstExecutionPeriod(),
+        return new UnavailableForEnrolmentRule(targetModule, targetCourseGroup, targetExecutionYear,
                 null);
     }
 }

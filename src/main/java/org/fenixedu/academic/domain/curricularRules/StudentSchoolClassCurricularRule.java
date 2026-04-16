@@ -149,7 +149,7 @@ public class StudentSchoolClassCurricularRule extends StudentSchoolClassCurricul
                         .map(Context::getParentCourseGroup).orElse(null);
 
         return new StudentSchoolClassCurricularRule(targetModule, targetCourseGroup,
-                targetExecutionYear.getFirstExecutionPeriod(), null, getSchoolClassMustContainCourse(),
+                targetExecutionYear, null, getSchoolClassMustContainCourse(),
                 getCourseMustHaveFreeShifts(), getEnrolInShiftIfUnique(), getAllAvailableShiftsMustBeEnrolled(),
                 getBlockEnrolmentIfLessonsOverlap(), getSchoolClassNames());
     }

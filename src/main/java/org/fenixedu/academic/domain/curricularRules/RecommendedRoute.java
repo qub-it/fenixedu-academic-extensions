@@ -74,7 +74,7 @@ public class RecommendedRoute extends RecommendedRoute_Base {
                 CurricularPeriod.findEquivalentCurricularPeriodForDegreeCurricularPlan(sourceCurricularPeriod, targetDCP);
 
         final RecommendedRoute recommendedRoute =
-                new RecommendedRoute(targetModule, targetCourseGroup, targetExecutionYear.getFirstExecutionPeriod(), null);
+                new RecommendedRoute(targetModule, targetCourseGroup, targetExecutionYear, null);
 
         recommendedRoute.setCurricularPeriod(targetCurricularPeriod);
         return recommendedRoute;

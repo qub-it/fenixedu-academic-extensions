@@ -90,7 +90,7 @@ public class CreditsLimitWithPreviousApprovals extends CreditsLimitWithPreviousA
                         .map(Context::getParentCourseGroup).orElse(null);
 
         return new CreditsLimitWithPreviousApprovals(targetModule, targetCourseGroup,
-                targetExecutionYear.getFirstExecutionPeriod(), null, getPreviousGroupsSet());
+                targetExecutionYear, null, getPreviousGroupsSet());
     }
 
 }

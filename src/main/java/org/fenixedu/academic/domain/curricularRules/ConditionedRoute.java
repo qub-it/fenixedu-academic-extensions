@@ -75,6 +75,6 @@ public class ConditionedRoute extends ConditionedRoute_Base {
                 getContextCourseGroup() == null ? null : targetModule.getParentContextsSet().stream().findFirst()
                         .map(Context::getParentCourseGroup).orElse(null);
 
-        return new ConditionedRoute(targetModule, targetCourseGroup, targetExecutionYear.getFirstExecutionPeriod(), null);
+        return new ConditionedRoute(targetModule, targetCourseGroup, targetExecutionYear, null);
     }
 }

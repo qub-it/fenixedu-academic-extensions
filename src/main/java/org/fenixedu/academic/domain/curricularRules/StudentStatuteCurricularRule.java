@@ -101,7 +101,7 @@ public class StudentStatuteCurricularRule extends StudentStatuteCurricularRule_B
         CurricularPeriod targetCurricularPeriod =
                 CurricularPeriod.findEquivalentCurricularPeriodForDegreeCurricularPlan(sourceCurricularPeriod, targetDCP);
 
-        return new StudentStatuteCurricularRule(targetModule, targetCourseGroup, targetExecutionYear.getFirstExecutionPeriod(),
+        return new StudentStatuteCurricularRule(targetModule, targetCourseGroup, targetExecutionYear,
                 null, getStatuteType(), targetCurricularPeriod);
     }
 }
