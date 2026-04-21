@@ -90,18 +90,16 @@ public class StudentStatuteCurricularRule extends StudentStatuteCurricularRule_B
     }
 
     @Override
-    public CurricularRule duplicate(DegreeModule targetModule, ExecutionYear targetExecutionYear) {
+    public CurricularRule duplicate(DegreeModule targetModule, CourseGroup targetCourseGroup, ExecutionYear targetExecutionYear) {
         DegreeCurricularPlan targetDCP = targetModule.getParentDegreeCurricularPlan();
 
-        CourseGroup targetCourseGroup =
-                getContextCourseGroup() == null ? null : targetModule.getParentContextsSet().stream().findFirst()
-                        .map(Context::getParentCourseGroup).orElse(null);
+        CourseGroup contextCourseGroup = getContextCourseGroup() == null ? null : targetCourseGroup;
 
         CurricularPeriod sourceCurricularPeriod = getCurricularPeriod();
         CurricularPeriod targetCurricularPeriod =
                 CurricularPeriod.findEquivalentCurricularPeriodForDegreeCurricularPlan(sourceCurricularPeriod, targetDCP);
 
-        return new StudentStatuteCurricularRule(targetModule, targetCourseGroup, targetExecutionYear,
+        return new StudentStatuteCurricularRule(targetModule, contextCourseGroup, targetExecutionYear,
                 null, getStatuteType(), targetCurricularPeriod);
     }
 }

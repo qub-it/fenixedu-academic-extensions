@@ -62,19 +62,17 @@ public class RecommendedRoute extends RecommendedRoute_Base {
     }
 
     @Override
-    public CurricularRule duplicate(DegreeModule targetModule, ExecutionYear targetExecutionYear) {
+    public CurricularRule duplicate(DegreeModule targetModule, CourseGroup targetCourseGroup, ExecutionYear targetExecutionYear) {
         DegreeCurricularPlan targetDCP = targetModule.getParentDegreeCurricularPlan();
 
-        CourseGroup targetCourseGroup =
-                getContextCourseGroup() == null ? null : targetModule.getParentContextsSet().stream().findFirst()
-                        .map(Context::getParentCourseGroup).orElse(null);
+        CourseGroup contextCourseGroup = getContextCourseGroup() == null ? null : targetCourseGroup;
 
         CurricularPeriod sourceCurricularPeriod = getCurricularPeriod();
         CurricularPeriod targetCurricularPeriod =
                 CurricularPeriod.findEquivalentCurricularPeriodForDegreeCurricularPlan(sourceCurricularPeriod, targetDCP);
 
         final RecommendedRoute recommendedRoute =
-                new RecommendedRoute(targetModule, targetCourseGroup, targetExecutionYear, null);
+                new RecommendedRoute(targetModule, contextCourseGroup, targetExecutionYear, null);
 
         recommendedRoute.setCurricularPeriod(targetCurricularPeriod);
         return recommendedRoute;

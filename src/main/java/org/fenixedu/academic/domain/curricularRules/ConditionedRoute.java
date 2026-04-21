@@ -70,11 +70,8 @@ public class ConditionedRoute extends ConditionedRoute_Base {
     }
 
     @Override
-    public CurricularRule duplicate(DegreeModule targetModule, ExecutionYear targetExecutionYear) {
-        CourseGroup targetCourseGroup =
-                getContextCourseGroup() == null ? null : targetModule.getParentContextsSet().stream().findFirst()
-                        .map(Context::getParentCourseGroup).orElse(null);
-
-        return new ConditionedRoute(targetModule, targetCourseGroup, targetExecutionYear, null);
+    public CurricularRule duplicate(DegreeModule targetModule, CourseGroup targetCourseGroup, ExecutionYear targetExecutionYear) {
+        CourseGroup contextCourseGroup = getContextCourseGroup() == null ? null : targetCourseGroup;
+        return new ConditionedRoute(targetModule, contextCourseGroup, targetExecutionYear, null);
     }
 }

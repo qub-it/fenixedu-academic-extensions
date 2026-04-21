@@ -68,12 +68,9 @@ public class UnavailableForEnrolmentRule extends UnavailableForEnrolmentRule_Bas
     }
 
     @Override
-    public CurricularRule duplicate(DegreeModule targetModule, ExecutionYear targetExecutionYear) {
-        CourseGroup targetCourseGroup =
-                getContextCourseGroup() == null ? null : targetModule.getParentContextsSet().stream().findFirst()
-                        .map(Context::getParentCourseGroup).orElse(null);
-
-        return new UnavailableForEnrolmentRule(targetModule, targetCourseGroup, targetExecutionYear,
+    public CurricularRule duplicate(DegreeModule targetModule, CourseGroup targetCourseGroup, ExecutionYear targetExecutionYear) {
+        CourseGroup contextCourseGroup = getContextCourseGroup() == null ? null : targetCourseGroup;
+        return new UnavailableForEnrolmentRule(targetModule, contextCourseGroup, targetExecutionYear,
                 null);
     }
 }
