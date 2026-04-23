@@ -19,7 +19,6 @@ import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.EnrolmentEvaluation;
-import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.Grade;
@@ -878,6 +877,16 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 
     public String getQualificationCountry() {
         return getCountryFrom(getCompletedPrecedentInformation());
+    }
+
+    public String getQualificationConclusionGrade() {
+        return Optional.ofNullable(getCompletedPrecedentInformation()).map(PrecedentDegreeInformation::getConclusionGrade)
+                .orElse(null);
+    }
+
+    public Integer getQualificationConclusionYear() {
+        return Optional.ofNullable(getCompletedPrecedentInformation()).map(PrecedentDegreeInformation::getConclusionYear)
+                .orElse(null);
     }
 
     public String getOriginInstitutionName() {
