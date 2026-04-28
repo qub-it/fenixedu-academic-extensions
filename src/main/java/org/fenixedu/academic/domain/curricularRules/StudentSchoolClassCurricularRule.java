@@ -4,15 +4,16 @@ import static org.fenixedu.academicextensions.util.AcademicExtensionsUtil.BUNDLE
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.ExecutionInterval;
+import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
 import org.fenixedu.academic.domain.curricularRules.executors.ruleExecutors.StudentSchoolClassCurricularRuleExecutor;
 import org.fenixedu.academic.domain.curricularRules.executors.verifyExecutors.VerifyRuleExecutor;
+import org.fenixedu.academic.domain.degreeStructure.Context;
 import org.fenixedu.academic.domain.degreeStructure.CourseGroup;
 import org.fenixedu.academic.domain.degreeStructure.DegreeModule;
 import org.fenixedu.academic.domain.enrolment.EnrolmentContext;
@@ -139,5 +140,14 @@ public class StudentSchoolClassCurricularRule extends StudentSchoolClassCurricul
             final ExecutionInterval executionInterval) {
         return enrolment.getCurricularRules(executionInterval).stream().filter(StudentSchoolClassCurricularRule.class::isInstance)
                 .map(StudentSchoolClassCurricularRule.class::cast);
+    }
+
+    @Override
+    public CurricularRule duplicate(DegreeModule targetModule, CourseGroup targetCourseGroup, ExecutionYear targetExecutionYear) {
+        CourseGroup contextCourseGroup = getContextCourseGroup() == null ? null : targetCourseGroup;
+        return new StudentSchoolClassCurricularRule(targetModule, contextCourseGroup,
+                targetExecutionYear, null, getSchoolClassMustContainCourse(),
+                getCourseMustHaveFreeShifts(), getEnrolInShiftIfUnique(), getAllAvailableShiftsMustBeEnrolled(),
+                getBlockEnrolmentIfLessonsOverlap(), getSchoolClassNames());
     }
 }

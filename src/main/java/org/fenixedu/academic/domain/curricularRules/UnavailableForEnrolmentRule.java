@@ -4,12 +4,14 @@ import java.util.Collections;
 import java.util.List;
 
 import org.fenixedu.academic.domain.ExecutionInterval;
+import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
 import org.fenixedu.academic.domain.curricularRules.executors.ruleExecutors.CurricularRuleConfigurationInitializer;
 import org.fenixedu.academic.domain.curricularRules.executors.ruleExecutors.PreviousYearsEnrolmentByYearExecutor.SkipCollectCurricularCoursesPredicate;
 import org.fenixedu.academic.domain.curricularRules.executors.ruleExecutors.UnavailableForEnrolmentRuleExecutor;
 import org.fenixedu.academic.domain.curricularRules.executors.verifyExecutors.UnavailableForEnrolmentRuleVerifier;
 import org.fenixedu.academic.domain.curricularRules.executors.verifyExecutors.VerifyRuleExecutor;
+import org.fenixedu.academic.domain.degreeStructure.Context;
 import org.fenixedu.academic.domain.degreeStructure.CourseGroup;
 import org.fenixedu.academic.domain.degreeStructure.DegreeModule;
 import org.fenixedu.academic.domain.enrolment.EnrolmentContext;
@@ -65,4 +67,10 @@ public class UnavailableForEnrolmentRule extends UnavailableForEnrolmentRule_Bas
         CurricularRuleConfigurationInitializer.addPreviousYearsEnrolmentCoursesSkipPredicate(predicate);
     }
 
+    @Override
+    public CurricularRule duplicate(DegreeModule targetModule, CourseGroup targetCourseGroup, ExecutionYear targetExecutionYear) {
+        CourseGroup contextCourseGroup = getContextCourseGroup() == null ? null : targetCourseGroup;
+        return new UnavailableForEnrolmentRule(targetModule, contextCourseGroup, targetExecutionYear,
+                null);
+    }
 }
