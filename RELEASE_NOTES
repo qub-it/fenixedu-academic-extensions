@@ -1,3 +1,5 @@
+- Refactor: Deletes references to AnyCurricularCourseExceptions [#UL-FBA-2009]
+
 4.38.0 (28-04-2026)
 - Improvement: Expands support for copying curricular rules when duplicating study plans [#ISCTE-FENIXEDU-592]
 - Bug fix: Fix flacky test (unordered output) in CreditsTransferRemarksCollectionTest [#UL-REIT-4851]
