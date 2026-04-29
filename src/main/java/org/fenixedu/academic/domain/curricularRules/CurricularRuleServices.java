@@ -8,6 +8,7 @@ import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
 import org.fenixedu.academic.domain.curricularPeriod.CurricularPeriod;
+import org.fenixedu.academic.domain.curricularRules.executors.ruleExecutors.CreditsLimitExecutor;
 import org.fenixedu.academic.domain.degreeStructure.Context;
 import org.fenixedu.academic.domain.degreeStructure.CourseGroup;
 import org.fenixedu.academic.domain.degreeStructure.DegreeModule;
