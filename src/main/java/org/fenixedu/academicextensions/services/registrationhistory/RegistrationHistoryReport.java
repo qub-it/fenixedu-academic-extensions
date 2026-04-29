@@ -909,6 +909,16 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         return getCountryFrom(getPreviousPrecedentInformation());
     }
 
+    public String getOriginConclusionGrade() {
+        return Optional.ofNullable(getPreviousPrecedentInformation()).map(PrecedentDegreeInformation::getConclusionGrade)
+                .orElse(null);
+    }
+
+    public Integer getOriginConclusionYear() {
+        return Optional.ofNullable(getPreviousPrecedentInformation()).map(PrecedentDegreeInformation::getConclusionYear)
+                .orElse(null);
+    }
+
     private String getCountryFrom(PrecedentDegreeInformation info) {
         return Optional.ofNullable(info).map(i -> i.getCountry()).map(c -> c.getName()).orElse(null);
     }
