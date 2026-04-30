@@ -19,7 +19,6 @@ import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.EnrolmentEvaluation;
-import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.Grade;
@@ -925,8 +924,7 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 
     public LocalDate getDocumentIdExpirationDate() {
         final Person person = getPerson();
-        YearMonthDay expirationDate = person == null ? null : person.getExpirationDateOfDocumentIdYearMonthDay();
-        return expirationDate == null ? null : expirationDate.toLocalDate();
+        return person == null ? null : person.getDefaultIdentificationDocument().getExpirationDate();
     }
 
     public String getGender() {
