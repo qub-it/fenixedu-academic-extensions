@@ -14,7 +14,6 @@ import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.Qualification;
 import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.domain.curricularPeriod.CurricularPeriod;
-import org.fenixedu.academic.domain.curricularRules.AnyCurricularCourseExceptionsInitializer;
 import org.fenixedu.academic.domain.curricularRules.EnrolmentPeriodRestrictionsInitializer;
 import org.fenixedu.academic.domain.curricularRules.StudentScheduleListeners;
 import org.fenixedu.academic.domain.curricularRules.UnavailableForEnrolmentRule;
@@ -31,7 +30,6 @@ import org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonServices;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.organizationalStructure.Party;
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
-import org.fenixedu.academic.domain.organizationalStructure.UnitUtils;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.RegistrationDataByExecutionYearExtendedInformation;
 import org.fenixedu.academic.domain.student.RegistrationExtendedInformation;
@@ -53,8 +51,6 @@ import org.fenixedu.bennu.core.signals.Signal;
 import org.fenixedu.bennu.core.util.CoreConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.qubit.terra.framework.services.logging.Log;
 
 import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.Atomic.TxMode;
@@ -80,7 +76,6 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
         EnrolmentServices.initialize();
 
         CurricularRuleConfigurationInitializer.init();
-        AnyCurricularCourseExceptionsInitializer.init();
         ConclusionProcessListenersInitializer.init();
         CurriculumConfigurationInitializer.init();
         RegistrationRegimeVerifierInitializer.init();

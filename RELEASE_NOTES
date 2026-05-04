@@ -1,3 +1,4 @@
+- Refactor: Deletes references to AnyCurricularCourseExceptions [#UL-FBA-2009]
 - Improvement: Export precedent information grade and conclusion year [#UCP-FENIXEDU-769]
 
 4.38.1 (30-04-2026)
