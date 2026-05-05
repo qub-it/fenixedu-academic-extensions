@@ -100,6 +100,18 @@ public class CourseGradingTable extends CourseGradingTable_Base {
         return ectsGrade != null ? ectsGrade : "-";
     }
 
+    public static String getEctsGrade(final EnrolmentEvaluation enrolmentEvaluation) {
+        String ectsGrade = null;
+        CourseGradingTable table = find(enrolmentEvaluation.getExecutionInterval().getExecutionYear(),
+                enrolmentEvaluation.getEnrolment().getCurricularCourse().getCompetenceCourse());
+
+        final String gradeValue = enrolmentEvaluation.getGradeValue();
+        if (table != null && gradeValue != null) {
+            ectsGrade = table.getEctsGrade(gradeValue);
+        }
+        return ectsGrade != null ? ectsGrade : "-";
+    }
+
     public static boolean isApplicable(final CurriculumLine line) {
         return GradingTableSettings.getApplicableDegreeTypes().contains(line.getCurricularCourse().getDegreeType());
     }
