@@ -14,6 +14,7 @@ import java.util.SortedSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.fenixedu.academic.domain.Country;
 import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
@@ -931,6 +932,21 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     public String getPersonName() {
         final Person person = getPerson();
         return person == null ? null : person.getName();
+    }
+
+    public String getPersonFirstName() {
+        String[] nameParts = getPersonNameParts();
+        return nameParts.length > 0 ? nameParts[0] : "";
+    }
+
+    public String getPersonLastName() {
+        String[] nameParts = getPersonNameParts();
+        return nameParts.length > 1 ? nameParts[nameParts.length - 1] : "";
+    }
+
+    private String[] getPersonNameParts() {
+        return Optional.ofNullable(getPersonName()).map(String::trim).filter(StringUtils::isNotBlank)
+                .map(name -> name.split("\\s+")).orElse(new String[0]);
     }
 
     public String getIdDocumentType() {
