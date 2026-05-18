@@ -14,7 +14,6 @@ import java.util.SortedSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang3.StringUtils;
 import org.fenixedu.academic.domain.Country;
 import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
@@ -63,6 +62,7 @@ import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 import org.fenixedu.academictreasury.domain.customer.PersonCustomer;
 import org.fenixedu.academictreasury.domain.event.AcademicTreasuryEvent;
 import org.fenixedu.academictreasury.services.TuitionServices;
+import org.fenixedu.bennu.core.domain.UserProfile;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.fenixedu.treasury.domain.document.DebitEntry;
 import org.fenixedu.treasury.domain.settings.TreasurySettings;
@@ -934,19 +934,12 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         return person == null ? null : person.getName();
     }
 
-    public String getPersonFirstName() {
-        String[] nameParts = getPersonNameParts();
-        return nameParts.length > 0 ? nameParts[0] : "";
+    public String getPersonGivenNames() {
+        return Optional.ofNullable(getPerson()).map(Person::getProfile).map(UserProfile::getGivenNames).orElse("");
     }
 
-    public String getPersonLastName() {
-        String[] nameParts = getPersonNameParts();
-        return nameParts.length > 1 ? nameParts[nameParts.length - 1] : "";
-    }
-
-    private String[] getPersonNameParts() {
-        return Optional.ofNullable(getPersonName()).map(String::trim).filter(StringUtils::isNotBlank)
-                .map(name -> name.split("\\s+")).orElse(new String[0]);
+    public String getPersonFamilyNames() {
+        return Optional.ofNullable(getPerson()).map(Person::getProfile).map(UserProfile::getFamilyNames).orElse("");
     }
 
     public String getIdDocumentType() {

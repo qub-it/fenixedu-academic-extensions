@@ -1,4 +1,4 @@
-- Improvement: Adds first and last names to RegistrationHistoryReport [#ISCTE-FENIXEDU-1505]
+- Improvement: Adds given and family names to RegistrationHistoryReport [#ISCTE-FENIXEDU-1505]
 
 4.38.5 (11-05-2026)
 - Refactor: Registration conclusion API cleanup [#qubIT-Fenix-6554]
