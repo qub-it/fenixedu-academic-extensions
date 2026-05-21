@@ -62,6 +62,7 @@ import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 import org.fenixedu.academictreasury.domain.customer.PersonCustomer;
 import org.fenixedu.academictreasury.domain.event.AcademicTreasuryEvent;
 import org.fenixedu.academictreasury.services.TuitionServices;
+import org.fenixedu.bennu.core.domain.UserProfile;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.fenixedu.treasury.domain.document.DebitEntry;
 import org.fenixedu.treasury.domain.settings.TreasurySettings;
@@ -931,6 +932,14 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     public String getPersonName() {
         final Person person = getPerson();
         return person == null ? null : person.getName();
+    }
+
+    public String getPersonGivenNames() {
+        return Optional.ofNullable(getPerson()).map(Person::getProfile).map(UserProfile::getGivenNames).orElse("");
+    }
+
+    public String getPersonFamilyNames() {
+        return Optional.ofNullable(getPerson()).map(Person::getProfile).map(UserProfile::getFamilyNames).orElse("");
     }
 
     public String getIdDocumentType() {
