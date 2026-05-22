@@ -106,6 +106,47 @@ public class RegistrationServices {
     static final private Cache<String, ICurriculum> CACHE_CURRICULUMS =
             CacheBuilder.newBuilder().concurrencyLevel(4).maximumSize(10 * 1000).expireAfterWrite(2, TimeUnit.MINUTES).build();
 
+    /**
+     * Returns the curriculum for a given registration, optionally filtered to a
+     * specific execution year.
+     * <p>
+     * Results are cached for 2 minutes using cache (keyed by registration
+     * and execution year IDs). Cache misses delegate to
+     * {@link Registration#getCurriculum(ExecutionYear)}. On any exception the
+     * error is logged and {@code null} is returned.
+     * <p>
+     * <b>Null semantics for {@code executionYear}:</b>
+     * <ul>
+     *   <li><b>{@code null}</b> — returns the curriculum computed from the
+     *       registration <em>last</em> student curricular plan, including all
+     *       approved enrolments across all years as well as all dismissals
+     *       (credits transfer / equivalence).</li>
+     *   <li><b>non-null</b> — returns the curriculum as it stood <em>at the
+     *       start</em> of the given execution year. Approved enrolments whose
+     *       execution year <b>is strictly before</b> the requested year are
+     *       included; approved enrolments belonging to the requested year itself or after
+     *       are <b>not</b> included. Dismissals (credits transfer / equivalence)
+     *       are included if their year is before or equal to the
+     *       requested year. For Dismissals in the same year as requested,
+     *       they are included if they have no sources at all or if all sources are before the year.</li>
+     * </ul>
+     * <p>
+     * <b>Corner cases:</b>
+     * <ul>
+     *   <li>If {@code registration} is {@code null}, a
+     *       {@link NullPointerException} is thrown (no null-guard).</li>
+     *   <li>If the registration has no student curricular plans, or no plan is
+     *       found for the given year, an empty curriculum is returned.</li>
+     *   <li>If any exception occurs during computation, the error is logged and
+     *       {@code null} is returned.</li>
+     * </ul>
+     *
+     * @param registration the student registration (must not be null)
+     * @param executionYear the execution year to filter by, or {@code null}
+     *                      for the complete curriculum from the last plan
+     * @return the {@link ICurriculum} for the given registration and year, or
+     *         {@code null} if an error occurs
+     */
     static public ICurriculum getCurriculum(final Registration registration, final ExecutionYear executionYear) {
         final String key = getCacheKey(registration, executionYear);
 
@@ -423,9 +464,9 @@ public class RegistrationServices {
     }
 
     /**
-     * 
+     *
      * @param untilExecutionYear is inclusive. null does not apply any filtering
-     * 
+     *
      * @return
      */
     public static Collection<ExecutionYear> getEnrolmentYearsIncludingPrecedentRegistrations(final Registration registration,
@@ -449,7 +490,7 @@ public class RegistrationServices {
 
     /**
      * Returns the root registration.
-     * 
+     *
      * @return This registration if does not have precedent or the oldest precendent registration
      */
     public static Registration getRootRegistration(final Registration registration) {
