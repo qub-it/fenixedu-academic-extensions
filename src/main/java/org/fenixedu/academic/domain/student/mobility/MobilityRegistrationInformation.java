@@ -17,6 +17,8 @@ import org.fenixedu.academic.domain.organizationalStructure.Unit;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 import org.fenixedu.bennu.core.domain.Bennu;
+import org.fenixedu.bennu.core.signals.DomainObjectEvent;
+import org.fenixedu.bennu.core.signals.Signal;
 import org.fenixedu.commons.i18n.LocalizedString;
 import org.joda.time.LocalDate;
 
@@ -51,8 +53,11 @@ public class MobilityRegistrationInformation extends MobilityRegistrationInforma
 
     };
 
-    public static final Comparator<MobilityRegistrationInformation> COMPARATOR_BY_MOST_RECENT = COMPARATOR_BY_BEGIN
-            .thenComparing(COMPARATOR_BY_BEGIN_DATE).thenComparing(DomainObjectUtil.COMPARATOR_BY_ID).reversed();
+    public static final Comparator<MobilityRegistrationInformation> COMPARATOR_BY_MOST_RECENT =
+            COMPARATOR_BY_BEGIN.thenComparing(COMPARATOR_BY_BEGIN_DATE).thenComparing(DomainObjectUtil.COMPARATOR_BY_ID)
+                    .reversed();
+
+    public static final String MOBILITY_REGISTRATION_INFORMATION_EDITED = "fenixedu.academic.extentions.student.mobility.edited";
 
     protected MobilityRegistrationInformation() {
         super();
@@ -110,6 +115,8 @@ public class MobilityRegistrationInformation extends MobilityRegistrationInforma
 
         checkRules();
         checkRulesForOutgoing();
+
+        Signal.emit(MOBILITY_REGISTRATION_INFORMATION_EDITED, new DomainObjectEvent<>(this));
     }
 
     public void editIncoming(boolean national, SchoolPeriodDuration programDuration, ExecutionInterval begin,
@@ -159,6 +166,8 @@ public class MobilityRegistrationInformation extends MobilityRegistrationInforma
 
         checkRules();
         checkRulesForIncoming();
+
+        Signal.emit(MOBILITY_REGISTRATION_INFORMATION_EDITED, new DomainObjectEvent<>(this));
     }
 
     private void checkRules() {

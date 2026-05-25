@@ -1,4 +1,5 @@
 - Refactor: Add registration curriculum computation service documentation [#qubIT-Fenix-7408]
+- Improvement: Fire event signal when editing a mobility registration information [#ISCTE-FENIXEDU-1508]
 
 4.38.6 (21-05-2026)
 - Improvement: Adds given and family names to RegistrationHistoryReport [#ISCTE-FENIXEDU-1505]
