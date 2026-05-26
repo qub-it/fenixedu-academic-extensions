@@ -57,7 +57,7 @@ public class MobilityRegistrationInformation extends MobilityRegistrationInforma
             COMPARATOR_BY_BEGIN.thenComparing(COMPARATOR_BY_BEGIN_DATE).thenComparing(DomainObjectUtil.COMPARATOR_BY_ID)
                     .reversed();
 
-    public static final String MOBILITY_REGISTRATION_INFORMATION_EDITED = "fenixedu.academic.extentions.student.mobility.edited";
+    public static final String SIGNAL_EDITED = "fenixedu.academic.extentions.student.mobility.edited";
 
     protected MobilityRegistrationInformation() {
         super();
@@ -116,7 +116,7 @@ public class MobilityRegistrationInformation extends MobilityRegistrationInforma
         checkRules();
         checkRulesForOutgoing();
 
-        Signal.emit(MOBILITY_REGISTRATION_INFORMATION_EDITED, new DomainObjectEvent<>(this));
+        Signal.emit(SIGNAL_EDITED, new DomainObjectEvent<>(this));
     }
 
     public void editIncoming(boolean national, SchoolPeriodDuration programDuration, ExecutionInterval begin,
@@ -167,7 +167,7 @@ public class MobilityRegistrationInformation extends MobilityRegistrationInforma
         checkRules();
         checkRulesForIncoming();
 
-        Signal.emit(MOBILITY_REGISTRATION_INFORMATION_EDITED, new DomainObjectEvent<>(this));
+        Signal.emit(SIGNAL_EDITED, new DomainObjectEvent<>(this));
     }
 
     private void checkRules() {
