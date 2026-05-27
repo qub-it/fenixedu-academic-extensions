@@ -1,3 +1,4 @@
+- Refactor: Add new methods to analyze curriculum and unify cache expire policy in registration services [#qubIT-Fenix-7408]
 - Refactor: Add registration curriculum computation service documentation [#qubIT-Fenix-7408]
 
 4.38.6 (21-05-2026)

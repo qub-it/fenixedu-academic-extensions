@@ -103,14 +103,24 @@ public class RegistrationServices {
         return String.format("%s#%s", registration.getExternalId(), year == null ? "null" : year.getExternalId());
     }
 
+    private static String getCacheKey(final StudentCurricularPlan studentCurricularPlan) {
+        return studentCurricularPlan.getExternalId();
+    }
+
     static final private Cache<String, ICurriculum> CACHE_CURRICULUMS =
-            CacheBuilder.newBuilder().concurrencyLevel(4).maximumSize(10 * 1000).expireAfterWrite(2, TimeUnit.MINUTES).build();
+            CacheBuilder.newBuilder().concurrencyLevel(4).maximumSize(10 * 1000).expireAfterWrite(5, TimeUnit.MINUTES).build();
+
+    static final private Cache<String, ICurriculum> CACHE_CURRICULUM_AT_END_OF_YEAR =
+            CacheBuilder.newBuilder().concurrencyLevel(4).maximumSize(10 * 1000).expireAfterWrite(5, TimeUnit.MINUTES).build();
+
+    static final private Cache<String, ICurriculum> CACHE_CURRICULUM_FULL =
+            CacheBuilder.newBuilder().concurrencyLevel(4).maximumSize(10 * 1000).expireAfterWrite(5, TimeUnit.MINUTES).build();
 
     /**
      * Returns the curriculum for a given registration, optionally filtered to a
      * specific execution year.
      * <p>
-     * Results are cached for 2 minutes using cache (keyed by registration
+     * Results are cached for 5 minutes using cache (keyed by registration
      * and execution year IDs). Cache misses delegate to
      * {@link Registration#getCurriculum(ExecutionYear)}. On any exception the
      * error is logged and {@code null} is returned.
@@ -165,6 +175,80 @@ public class RegistrationServices {
         }
     }
 
+    /**
+     * Returns the curriculum as it stood <em>at the end</em> of the given
+     * execution year (i.e. including everything approved up to that year).
+     * <p>
+     * Internally uses {@code executionYear.getNextExecutionYear()} so that the
+     * curriculum reflects all approved enrolments and dismissals for the
+     * registration up to and including the given year.
+     * <p>
+     * Results are cached for 5 minutes (keyed by registration and execution
+     * year IDs). Cache misses delegate to
+     * {@link Registration#getCurriculum(ExecutionYear)} with the next
+     * execution year.
+     * <p>
+     * <b>Null is NOT allowed</b> for {@code executionYear} — an
+     * {@link IllegalArgumentException} is thrown if null is passed.
+     *
+     * @param registration the student registration (must not be null)
+     * @param executionYear the execution year (must not be null)
+     * @return the {@link ICurriculum} for the given registration at the end
+     *         of the given year, or {@code null} if an error occurs
+     */
+    public static ICurriculum getCurriculumAtEndOfYear(final Registration registration, final ExecutionYear executionYear) {
+        if (executionYear == null) {
+            throw new IllegalArgumentException("executionYear must not be null");
+        }
+
+        final String key = getCacheKey(registration, executionYear);
+
+        try {
+            return CACHE_CURRICULUM_AT_END_OF_YEAR.get(key, () -> {
+                logger.debug(String.format("Miss on CurriculumAtEndOfYear cache [%s %s]", new DateTime(), key));
+                return registration.getStudentCurricularPlan(executionYear)
+                        .getCurriculum(new DateTime(), executionYear.getNextExecutionYear());
+            });
+
+        } catch (final Throwable t) {
+            logger.error(String.format("Unable to get CurriculumAtEndOfYear [%s %s %s]", new DateTime(), key,
+                    t.getLocalizedMessage()));
+            return null;
+        }
+    }
+
+    /**
+     * Returns the full curriculum for a given student curricular plan (i.e.
+     * all approved enrolments and dismissals across all years).
+     * <p>
+     * Results are cached for 5 minutes (keyed by student curricular plan ID).
+     * <p>
+     * <b>Null is NOT allowed</b> — an {@link IllegalArgumentException} is
+     * thrown if null is passed.
+     *
+     * @param studentCurricularPlan the student curricular plan (must not be null)
+     * @return the full {@link ICurriculum} for the given plan, or {@code null}
+     *         if an error occurs
+     */
+    public static ICurriculum getFullCurriculum(final StudentCurricularPlan studentCurricularPlan) {
+        if (studentCurricularPlan == null) {
+            throw new IllegalArgumentException("studentCurricularPlan must not be null");
+        }
+
+        final String key = getCacheKey(studentCurricularPlan);
+
+        try {
+            return CACHE_CURRICULUM_FULL.get(key, () -> {
+                logger.debug(String.format("Miss on FullCurriculum cache [%s %s]", new DateTime(), key));
+                return studentCurricularPlan.getCurriculum(new DateTime(), (ExecutionYear) null);
+            });
+
+        } catch (final Throwable t) {
+            logger.error(String.format("Unable to get FullCurriculum [%s %s %s]", new DateTime(), key, t.getLocalizedMessage()));
+            return null;
+        }
+    }
+
     static final private int CACHE_CURRICULAR_YEAR_EXPIRE_MINUTES =
             FenixEduAcademicExtensionsConfiguration.getConfiguration().getCurricularYearCalculatorCached() ? 5 : 0;
 
@@ -195,6 +279,8 @@ public class RegistrationServices {
     static public void invalidateCaches(final Registration registration, final ExecutionYear executionYear) {
         CACHE_CURRICULAR_YEAR.invalidate(getCacheKey(registration, executionYear));
         CACHE_CURRICULUMS.invalidate(getCacheKey(registration, executionYear));
+        CACHE_CURRICULUM_AT_END_OF_YEAR.invalidate(getCacheKey(registration, executionYear));
+        CACHE_CURRICULUM_FULL.invalidate(getCacheKey(registration.getStudentCurricularPlan(executionYear)));
     }
 
     static public ExecutionYear getConclusionExecutionYear(final Registration registration) {
