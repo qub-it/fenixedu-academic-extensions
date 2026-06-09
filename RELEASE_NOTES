@@ -1,3 +1,5 @@
+- Improvement: Add shifts count to enrolment report [#UL-REIT-5060]
+
 4.39.0 (28-05-2026)
 - Refactor: Add new methods to analyze curriculum and unify cache expire policy in registration services [#qubIT-Fenix-7408]
 - Refactor: Add registration curriculum computation service documentation [#qubIT-Fenix-7408]
