@@ -68,6 +68,10 @@ public class EnrolmentReport {
         return getShifts().stream().map(s -> s.getName()).collect(Collectors.joining(", "));
     }
 
+    public Integer getShiftsCount() {
+        return getShifts().size();
+    }
+
     public Shift getTheoreticalShift() {
         return getShiftByLoadType(CourseLoadType.THEORETICAL);
     }
