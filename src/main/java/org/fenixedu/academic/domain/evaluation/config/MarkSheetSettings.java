@@ -43,13 +43,14 @@ public class MarkSheetSettings extends MarkSheetSettings_Base {
         return markSheetSettings;
     }
 
-    @Atomic
     public void edit(final boolean allowTeacherToChooseCertifier, final int requiredNumberOfShifts,
-            final boolean limitCertifierToResponsibleTeacher, final boolean limitCreationToResponsibleTeacher) {
+            final boolean limitCertifierToResponsibleTeacher, final boolean limitCreationToResponsibleTeacher,
+            boolean limitAccessToTeacherOwnShifts) {
         super.setAllowTeacherToChooseCertifier(allowTeacherToChooseCertifier);
         super.setRequiredNumberOfShifts(requiredNumberOfShifts);
         super.setLimitCertifierToResponsibleTeacher(limitCertifierToResponsibleTeacher);
         super.setLimitCreationToResponsibleTeacher(limitCreationToResponsibleTeacher);
+        super.setLimitAccessToTeacherOwnShifts(limitAccessToTeacherOwnShifts);
     }
 
     @Override

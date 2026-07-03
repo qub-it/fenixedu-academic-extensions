@@ -20,6 +20,7 @@ class evaluation.config.MarkSheetSettings {
 	int requiredNumberOfShifts;
 	boolean limitCertifierToResponsibleTeacher;
 	boolean limitCreationToResponsibleTeacher;
+	boolean limitAccessToTeacherOwnShifts;
 	String markSheetTemplateCode;
 }
 
