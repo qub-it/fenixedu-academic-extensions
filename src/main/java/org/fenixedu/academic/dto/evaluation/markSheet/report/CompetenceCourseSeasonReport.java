@@ -28,9 +28,12 @@ package org.fenixedu.academic.dto.evaluation.markSheet.report;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.fenixedu.academic.domain.CompetenceCourse;
+import org.fenixedu.academic.domain.CurricularCourse;
+import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionInterval;
@@ -146,6 +149,16 @@ public class CompetenceCourseSeasonReport extends AbstractSeasonReport {
         return executionInterval;
     }
 
+    public Collection<Degree> getDegrees() {
+        if (getCompetenceCourse() != null && getExecutionInterval() != null) {
+            return getCompetenceCourse().getExecutionCoursesByExecutionPeriod(getExecutionInterval()).stream()
+                    .flatMap(i -> i.getAssociatedCurricularCoursesSet().stream()).map(CurricularCourse::getDegree)
+                    .collect(Collectors.toSet());
+        }
+        return Set.of();
+    }
+
+    @Deprecated
     public String getExecutionCourses() {
 
         final List<String> nameSame = Lists.newLinkedList();

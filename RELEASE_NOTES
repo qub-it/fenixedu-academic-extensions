@@ -1,4 +1,5 @@
 - Improvement: Possibility to limit access to marksheets according to teacher shifts [#qubIT-Fenix-8869]
+- Improvement: On pending marksheets report, add degree name [#ISCTE-FENIXEDU-1535]
 
 4.39.1 (16-06-2026)
 - Improvement: Add shifts count to enrolment report [#UL-REIT-5060]
