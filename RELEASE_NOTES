@@ -1,5 +1,6 @@
-4.39.2 (03-07-2026)
 - Refactor: Improve profile deletion/dissociation for entities with auto-generated profiles [#qubIT-Omnis-11210]
+
+4.39.2 (03-07-2026)
 - Improvement: Possibility to limit access to marksheets according to teacher shifts [#qubIT-Fenix-8869]
 - Improvement: On pending marksheets report, add degree name [#ISCTE-FENIXEDU-1535]
 
