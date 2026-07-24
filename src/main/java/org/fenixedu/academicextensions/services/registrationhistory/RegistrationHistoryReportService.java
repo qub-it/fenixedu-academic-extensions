@@ -42,7 +42,6 @@ import org.fenixedu.academic.dto.student.RegistrationConclusionBean;
 import org.joda.time.LocalDate;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
@@ -149,7 +148,7 @@ public class RegistrationHistoryReportService {
         this.withEnrolments = input;
     }
 
-    public void filterWithActiveRegistrationDataByYear(Boolean input){
+    public void filterWithActiveRegistrationDataByYear(Boolean input) {
         this.withActiveRegistrationDataByYear = input;
     }
 
@@ -225,8 +224,9 @@ public class RegistrationHistoryReportService {
 
     private void prepareCaches() {
         this.enrolmentExecutionYears.forEach(ey -> {
-            final Set<Registration> withEnrolments = ey.getExecutionPeriodsSet().stream()
-                    .flatMap(ei -> ei.getEnrolmentsSet().stream()).map(e -> e.getRegistration()).collect(Collectors.toSet());
+            final Set<Registration> withEnrolments =
+                    ey.getExecutionPeriodsSet().stream().flatMap(ei -> ei.getEnrolmentsSet().stream())
+                            .map(e -> e.getRegistration()).collect(Collectors.toSet());
             this.registrationsWithEnrolmentsCache.putAll(ey, withEnrolments);
 
             final Set<Registration> withActiveEnrolments =
@@ -248,17 +248,16 @@ public class RegistrationHistoryReportService {
     }
 
     public Collection<EnrolmentReport> generateEnrolmentsReport() {
-        final Predicate<Enrolment> competenceCourseFilter = e -> this.competenceCourses.isEmpty()
-                || this.competenceCourses.contains(e.getCurricularCourse().getCompetenceCourse());
+        final Predicate<Enrolment> competenceCourseFilter =
+                e -> this.competenceCourses.isEmpty() || this.competenceCourses.contains(
+                        e.getCurricularCourse().getCompetenceCourse());
 
         final Set<EnrolmentReport> result = Sets.newHashSet();
         final Collection<RegistrationHistoryReport> historyReports = generateReport();
-        result.addAll(historyReports.stream().flatMap(
-                r -> (Boolean.TRUE.equals(this.withAnnuledEnrolments) ? r.getEnrolmentsIncludingAnnuled() : r.getEnrolments())
-                        .stream().filter(competenceCourseFilter))
-                .map(e -> new EnrolmentReport(e)).collect(Collectors.toSet()));
-        result.addAll(historyReports.stream()
-                .flatMap(r -> r.getImprovementEvaluations().stream()
+        result.addAll(historyReports.stream().flatMap(r -> (Boolean.TRUE.equals(
+                this.withAnnuledEnrolments) ? r.getEnrolmentsIncludingAnnuled() : r.getEnrolments()).stream()
+                .filter(competenceCourseFilter)).map(e -> new EnrolmentReport(e)).collect(Collectors.toSet()));
+        result.addAll(historyReports.stream().flatMap(r -> r.getImprovementEvaluations().stream()
                         .filter(ev -> ev.getExecutionInterval() != ev.getEnrolment().getExecutionInterval()
                                 && competenceCourseFilter.test(ev.getEnrolment())))
                 .map(ev -> new EnrolmentReport(ev.getEnrolment(), ev.getExecutionInterval())).collect(Collectors.toSet()));
@@ -274,7 +273,7 @@ public class RegistrationHistoryReportService {
 
     public Collection<CurriculumEntryReport> generateApprovalsReport() {
         final Collection<ICurriculum> curriculums =
-                generateReport().stream().map(r -> RegistrationServices.getCurriculum(r.getRegistration(), (ExecutionYear) null))
+                generateReport().stream().map(r -> RegistrationServices.getFullCurriculum(r.getStudentCurricularPlan()))
                         .distinct().collect(Collectors.toList());
 
         final Collection<CurriculumEntryReport> result = Sets.newHashSet();
@@ -386,8 +385,8 @@ public class RegistrationHistoryReportService {
             Predicate<RegistrationHistoryReport> lastStateFilter = null;
 
             if (Boolean.TRUE.equals(this.registrationStateLastInExecutionYear)) {
-                lastStateFilter = r -> r.getLastRegistrationState() != null
-                        && this.registrationStateTypes.contains(r.getLastRegistrationState().getType());
+                lastStateFilter = r -> r.getLastRegistrationState() != null && this.registrationStateTypes.contains(
+                        r.getLastRegistrationState().getType());
             } else {
                 lastStateFilter = r -> checkRegistrationStatesIntersection(r);
             }
@@ -398,7 +397,7 @@ public class RegistrationHistoryReportService {
 
                 final Predicate<RegistrationHistoryReport> registrationStateFilter = r -> r.getAllLastRegistrationStates()
                         .stream().filter(state -> state.getExecutionInterval().getExecutionYear() == r.getExecutionYear())
-                        .anyMatch(st -> this.registrationStateTypes.contains(st.getType()));
+                                .anyMatch(st -> this.registrationStateTypes.contains(st.getType()));
 
                 result = result.and(registrationStateFilter);
             }
@@ -410,8 +409,9 @@ public class RegistrationHistoryReportService {
         }
 
         if (this.curricularYear != null) {
-            Predicate<RegistrationHistoryReport> curricularYearFilter = r -> RegistrationServices
-                    .getCurricularYear(r.getRegistration(), r.getExecutionYear()).getResult() == curricularYear;
+            Predicate<RegistrationHistoryReport> curricularYearFilter =
+                    r -> RegistrationServices.getCurricularYear(r.getRegistration(), r.getExecutionYear()).getResult()
+                            == curricularYear;
             result = result.and(curricularYearFilter);
         }
 
@@ -437,8 +437,9 @@ public class RegistrationHistoryReportService {
     }
 
     private boolean checkRegistrationStatesIntersection(RegistrationHistoryReport r) {
-        return !Sets.intersection(this.registrationStateTypes, r.getAllLastRegistrationStates().stream().map(b -> b.getType())
-                .filter(Objects::nonNull).collect(Collectors.toSet())).isEmpty();
+        return !Sets.intersection(this.registrationStateTypes,
+                r.getAllLastRegistrationStates().stream().map(b -> b.getType()).filter(Objects::nonNull)
+                        .collect(Collectors.toSet())).isEmpty();
     }
 
     private boolean hasActiveEnrolments(final RegistrationHistoryReport report) {
@@ -503,8 +504,9 @@ public class RegistrationHistoryReportService {
         final Predicate<Registration> registrationCompetenceCourseFilter =
                 this.competenceCourses.isEmpty() ? r -> true : r -> r.getEnrolments(executionYear).stream()
                         .anyMatch(e -> this.competenceCourses.contains(e.getCurricularCourse().getCompetenceCourse()));
-        final Predicate<Enrolment> enrolmentCompetenceCourseFilter = this.competenceCourses
-                .isEmpty() ? e -> true : e -> this.competenceCourses.contains(e.getCurricularCourse().getCompetenceCourse());
+        final Predicate<Enrolment> enrolmentCompetenceCourseFilter =
+                this.competenceCourses.isEmpty() ? e -> true : e -> this.competenceCourses.contains(
+                        e.getCurricularCourse().getCompetenceCourse());
 
         if (this.dismissalsOnly != null && this.dismissalsOnly.booleanValue()) {
             result.addAll(executionYear.getExecutionPeriodsSet().stream().flatMap(ep -> ep.getCreditsSet().stream())
@@ -521,8 +523,9 @@ public class RegistrationHistoryReportService {
         final boolean withEnrolments = this.withEnrolments != null && this.withEnrolments.booleanValue();
 
         if (this.withEnrolments == null || withEnrolments) {
-            Stream<Enrolment> stream = executionYear.getExecutionPeriodsSet().stream()
-                    .flatMap(semester -> semester.getEnrolmentsSet().stream()).filter(enrolmentCompetenceCourseFilter);
+            Stream<Enrolment> stream =
+                    executionYear.getExecutionPeriodsSet().stream().flatMap(semester -> semester.getEnrolmentsSet().stream())
+                            .filter(enrolmentCompetenceCourseFilter);
 
             if (withEnrolments && !Boolean.TRUE.equals(this.withAnnuledEnrolments)) {
                 stream = stream.filter(e -> !e.isAnnulled());
@@ -538,8 +541,9 @@ public class RegistrationHistoryReportService {
             // @formatter:on
 
         } else if (!this.withEnrolments && Boolean.TRUE.equals(this.withAnnuledEnrolments)) {
-            Stream<Enrolment> stream = executionYear.getExecutionPeriodsSet().stream()
-                    .flatMap(semester -> semester.getEnrolmentsSet().stream()).filter(enrolmentCompetenceCourseFilter);
+            Stream<Enrolment> stream =
+                    executionYear.getExecutionPeriodsSet().stream().flatMap(semester -> semester.getEnrolmentsSet().stream())
+                            .filter(enrolmentCompetenceCourseFilter);
 
             stream = stream.filter(e -> e.isAnnulled());
 
@@ -554,8 +558,9 @@ public class RegistrationHistoryReportService {
         }
 
         if (this.firstTimeOnly != null && this.firstTimeOnly) {
-            result.addAll(executionYear.getStudentsSet().stream()
-                    .filter(studentNumberFilter.and(registrationCompetenceCourseFilter)).collect(Collectors.toSet()));
+            result.addAll(
+                    executionYear.getStudentsSet().stream().filter(studentNumberFilter.and(registrationCompetenceCourseFilter))
+                            .collect(Collectors.toSet()));
         }
 
         if (this.registrationStateTypes != null && !this.registrationStateTypes.isEmpty()) {
@@ -652,12 +657,12 @@ public class RegistrationHistoryReportService {
             total++;
         }
 
-        return gradesSum.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : gradesSum
-                .divide(BigDecimal.valueOf(total), MathContext.DECIMAL128).setScale(3, RoundingMode.HALF_UP);
+        return gradesSum.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : gradesSum.divide(BigDecimal.valueOf(total),
+                MathContext.DECIMAL128).setScale(3, RoundingMode.HALF_UP);
     }
 
-    static protected BigDecimal calculateAverage(Registration registration) {
-        final Curriculum curriculum = (Curriculum) RegistrationServices.getCurriculum(registration, null);
+    static protected BigDecimal calculateCurrentAverage(RegistrationHistoryReport report) {
+        final Curriculum curriculum = (Curriculum) RegistrationServices.getFullCurriculum(report.getStudentCurricularPlan());
         final Grade grade = curriculum.getUnroundedGrade();
 
         return grade.isNumeric() ? grade.getNumericValue().setScale(5, RoundingMode.DOWN) : BigDecimal.ZERO;

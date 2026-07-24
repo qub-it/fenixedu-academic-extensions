@@ -1,3 +1,5 @@
+- Refactor: Make calls to curriculum computation compliant with new API [#qubIT-Fenix-7408]
+
 4.39.3 (17-07-2026)
 - Refactor: Improve profile deletion/dissociation for entities with auto-generated profiles [#qubIT-Omnis-11210]
 

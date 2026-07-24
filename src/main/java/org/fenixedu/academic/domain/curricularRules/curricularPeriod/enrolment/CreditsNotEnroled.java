@@ -7,7 +7,7 @@
  *  - Copyright © 2015 Universidade de Lisboa (after any Go-Live phase)
  *
  *
- * 
+ *
  * This file is part of FenixEdu fenixedu-ulisboa-specifications.
  *
  * FenixEdu Specifications is free software: you can redistribute it and/or modify
@@ -87,7 +87,8 @@ public class CreditsNotEnroled extends CreditsNotEnroled_Base {
             return createFalseConfiguration();
         }
 
-        final ICurriculum curriculum = RegistrationServices.getCurriculum(enrolmentContext.getRegistration(), null);
+        final ICurriculum curriculum =
+                RegistrationServices.getFullCurriculum(enrolmentContext.getRegistration().getLastStudentCurricularPlan());
 
         BigDecimal approved = getCreditsApproved(curriculum, configured);
         BigDecimal enroledAndEnroling = getCreditsEnroledAndEnroling(enrolmentContext, configured);
