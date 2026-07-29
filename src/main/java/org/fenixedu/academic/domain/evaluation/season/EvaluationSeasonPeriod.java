@@ -97,6 +97,27 @@ public class EvaluationSeasonPeriod extends EvaluationSeasonPeriod_Base {
         setIntervalsRaw(intervalsGson.toJsonTree(intervals));
     }
 
+    public EvaluationSeasonPeriod copyTo(final ExecutionInterval targetInterval) {
+        final EvaluationSeasonPeriod result = new EvaluationSeasonPeriod();
+        result.setExecutionSemester(targetInterval);
+        result.setSeason(getSeason());
+        result.setPeriodType(getPeriodType());
+
+        for (final Interval interval : getIntervals()) {
+            result.addInterval(interval.getStart().toLocalDate(), interval.getEnd().toLocalDate());
+        }
+
+        final ExecutionYear targetYear = targetInterval.getExecutionYear();
+        for (final ExecutionDegree ed : getExecutionDegreesSet()) {
+            targetYear.getExecutionDegreesSet().stream()
+                    .filter(targetEd -> targetEd.getDegree() == ed.getDegree())
+                    .findFirst()
+                    .ifPresent(result.getExecutionDegreesSet()::add);
+        }
+
+        return result;
+    }
+
     public void delete() {
         super.setExecutionSemester(null);
         super.setSeason(null);
