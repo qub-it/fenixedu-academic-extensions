@@ -1149,6 +1149,15 @@ relation GradingTableBennu {
     }
 }
 
+relation DefaultGradingTableBennu {
+	protected .org.fenixedu.bennu.core.domain.Bennu playsRole defaultBennu {
+        multiplicity 0..1;
+    }
+    public student.gradingTable.DefaultGradingTable playsRole defaultGradingTable {
+    	multiplicity 0..1;
+    }
+}
+
 relation GradingTableExecutionYear {
 	.org.fenixedu.academic.domain.ExecutionYear playsRole executionYear {
         multiplicity 0..1;

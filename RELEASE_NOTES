@@ -1,3 +1,5 @@
+- Refactor: Add direct domain relation from root to DefaultGradingTable to improve performance [#qubIT-Fenix-8974]
+
 4.39.4 (24-07-2026)
 - Refactor: Make calls to curriculum computation compliant with new API [#qubIT-Fenix-7408]
 
