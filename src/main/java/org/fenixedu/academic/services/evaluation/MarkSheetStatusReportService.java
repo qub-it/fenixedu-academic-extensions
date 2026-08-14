@@ -146,8 +146,7 @@ abstract public class MarkSheetStatusReportService {
         result.setNotEvaluatedStudents(notEvaluatedStudents.get());
 
         final Set<Enrolment> enrolments = Sets.newHashSet();
-        toProcess.getAssociatedCurricularCoursesSet()
-                .forEach(i -> enrolments.addAll(i.getEnrolmentsByAcademicInterval(interval.getAcademicInterval())));
+        toProcess.getAssociatedCurricularCoursesSet().forEach(i -> enrolments.addAll(i.getEnrolmentsByExecutionPeriod(interval)));
 
         // improvement of evaluations approved in previous years
         for (final EnrolmentEvaluation evaluation : interval.getEnrolmentEvaluationsSet()) {
