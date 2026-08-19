@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.Callable;
@@ -353,8 +352,7 @@ public class RegistrationServices {
 
     private static BiFunction<Registration, ExecutionInterval, Collection<SchoolClass>> defaultInitialSchoolClassesService() {
         return (r, ei) -> {
-            final ExecutionDegree executionDegree =
-                    Objects.requireNonNull(r.getActiveDegreeCurricularPlan()).findExecutionDegree(ei).orElse(null);
+            final ExecutionDegree executionDegree = r.getActiveDegreeCurricularPlan().findExecutionDegree(ei).orElse(null);
             if (executionDegree != null) {
                 int curricularYear = getCurricularYear(r, ei.getExecutionYear()).getResult();
                 return executionDegree.getSchoolClassesSet().stream().filter(sc -> sc.getCurricularYear().equals(curricularYear))
