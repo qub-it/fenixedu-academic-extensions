@@ -38,6 +38,7 @@ import org.fenixedu.academic.domain.curricularRules.executors.ruleExecutors.Abst
 import org.fenixedu.academic.domain.degreeStructure.CurricularPeriodServices;
 import org.fenixedu.academic.domain.degreeStructure.DegreeModule;
 import org.fenixedu.academic.domain.exceptions.DomainException;
+import org.fenixedu.academic.domain.time.calendarStructure.AcademicPeriod;
 import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.slf4j.Logger;
@@ -175,8 +176,8 @@ abstract public class CurricularPeriodRule extends CurricularPeriodRule_Base {
 
         final DegreeCurricularPlan dcp = getDegreeCurricularPlan();
         for (int i = yearMin; i <= yearMax; i++) {
-            final CurricularPeriod curricularPeriod = semesterAware ? CurricularPeriodServices.getCurricularPeriod(dcp, i,
-                    getSemester()) : CurricularPeriodServices.getCurricularPeriod(dcp, i);
+            final CurricularPeriod curricularPeriod = semesterAware ? dcp.getCurricularPeriodFor(i, getSemester(),
+                    AcademicPeriod.SEMESTER) : CurricularPeriodServices.getCurricularPeriod(dcp, i);
 
             if (curricularPeriod == null) {
                 // if even one is not found, return false

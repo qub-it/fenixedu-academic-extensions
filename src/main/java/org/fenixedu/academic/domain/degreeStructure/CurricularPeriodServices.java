@@ -48,28 +48,6 @@ public class CurricularPeriodServices {
 
     static private final Logger logger = LoggerFactory.getLogger(CurricularPeriodServices.class);
 
-    /**
-     * @deprecated
-     *             use {@link DegreeCurricularPlan#getCurricularPeriodFor(int, int, AcademicPeriod)}
-     */
-    @Deprecated
-    public static CurricularPeriod getCurricularPeriod(final DegreeCurricularPlan dcp, final int year, final Integer semester) {
-        final CurricularPeriod result;
-
-        if (semester == null) {
-            result = getCurricularPeriod(dcp, year);
-
-        } else {
-            result = dcp.getCurricularPeriodFor(year, semester);
-
-            if (result == null) {
-                logger.debug("Unsupported Curricular Period [Y{},S{}], DCP [{}] ", year, semester, dcp.getPresentationName());
-            }
-        }
-
-        return result;
-    }
-
     public static CurricularPeriod getCurricularPeriod(final DegreeCurricularPlan dcp, final int year) {
         CurricularPeriod result = null;
 
