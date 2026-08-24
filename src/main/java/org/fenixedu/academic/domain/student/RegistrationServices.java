@@ -352,8 +352,7 @@ public class RegistrationServices {
 
     private static BiFunction<Registration, ExecutionInterval, Collection<SchoolClass>> defaultInitialSchoolClassesService() {
         return (r, ei) -> {
-            final ExecutionDegree executionDegree =
-                    r.getActiveDegreeCurricularPlan().getExecutionDegreeByYear(ei.getExecutionYear());
+            final ExecutionDegree executionDegree = r.getActiveDegreeCurricularPlan().findExecutionDegree(ei).orElse(null);
             if (executionDegree != null) {
                 int curricularYear = getCurricularYear(r, ei.getExecutionYear()).getResult();
                 return executionDegree.getSchoolClassesSet().stream().filter(sc -> sc.getCurricularYear().equals(curricularYear))

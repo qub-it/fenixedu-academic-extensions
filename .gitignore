@@ -5,3 +5,4 @@
 /.tern-project
 /src/main/java/test
 /pom.xml.versionsBackup
+.factorypath

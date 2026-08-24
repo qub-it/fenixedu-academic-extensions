@@ -1,4 +1,5 @@
 - Refactor: Replaces deprecated DegreeCurricularPlan#getCurricularPeriodFor reference [#qubIT-Fenix-9223]
+- Refactor: Replaces deprecated AcademicInterval method references with ExecutionInterval [#qubIT-Fenix-9217]
 
 4.39.6 (31-07-2026)
 - Refactor: Read DefaultGradingTable directly from root domain relation [#qubIT-Fenix-8974]
