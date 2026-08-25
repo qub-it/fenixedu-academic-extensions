@@ -1,3 +1,4 @@
+4.39.7 (25-08-2026)
 - Refactor: Replaces deprecated DegreeCurricularPlan#getCurricularPeriodFor reference [#qubIT-Fenix-9223]
 - Refactor: Replaces deprecated AcademicInterval method references with ExecutionInterval [#qubIT-Fenix-9217]
 
