@@ -77,6 +77,7 @@ import org.fenixedu.academic.domain.evaluation.services.EnrolmentEvaluationServi
 import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
 import org.fenixedu.academic.domain.student.Registration;
+import org.fenixedu.academic.domain.student.curriculum.ConclusionProcess;
 import org.fenixedu.academic.domain.student.services.EnrolmentServices;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumModule;
 import org.fenixedu.academic.util.EnrolmentEvaluationState;
@@ -948,6 +949,8 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
             return;
         }
 
+        checkActiveTerminalConclusionProcess(evaluation);
+
         // grade available date is set upon mark sheet confirmation
         evaluation.setEnrolmentEvaluationState(EnrolmentEvaluationState.TEMPORARY_OBJ);
 
@@ -964,6 +967,27 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
         EnrolmentEvaluationServices.onStateChange(evaluation);
         EnrolmentServices.updateState(evaluation.getEnrolment());
 //        enrolmentEvaluationChangeListener.accept(evaluation);
+    }
+
+    private static void checkActiveTerminalConclusionProcess(final EnrolmentEvaluation evaluation) {
+        // 0 - check is marksheet is not improvement
+        if (evaluation.getEvaluationSeason().isImprovement()) {
+            return;
+        }
+
+        // 1 - if not, check if student has any active terminal conclusion process
+        final Registration registration = evaluation.getRegistration();
+        final boolean hasActiveTerminalConclusionProcess =
+                registration.getStudentCurricularPlansSet().stream().flatMap(scp -> scp.getConclusionProcessesSet().stream())
+                        .filter(cp -> cp.getProgramConclusionConfig().getProgramConclusion().isTerminal())
+                        .anyMatch(ConclusionProcess::isActive);
+
+        // 2 - if it has, and the grad is being changed, throw an exception
+        if (hasActiveTerminalConclusionProcess) {
+            throw new AcademicExtensionsDomainException(
+                    "error.CompetenceCourseMarkSheet.registration.with.active.terminal.conclusion.process",
+                    String.valueOf(registration.getNumber()), registration.getPerson().getName());
+        }
     }
 
     static public void removeEnrolmentEvaluationData(final EnrolmentEvaluation evaluation) {
