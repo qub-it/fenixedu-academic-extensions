@@ -71,7 +71,7 @@ public class CourseGradingTable extends CourseGradingTable_Base {
             final EnrolmentEvaluation evaluation = ((Enrolment) line).getFinalEnrolmentEvaluation();
 
             if (evaluation != null) {
-                year = evaluation.getExecutionPeriod().getExecutionYear();
+                year = evaluation.getExecutionInterval().getExecutionYear();
             }
         }
 
