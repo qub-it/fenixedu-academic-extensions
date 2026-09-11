@@ -1,3 +1,4 @@
+4.39.10 (11-09-2026)
 - Refactor: Replaces deprecated EnrolmentEvaluation#getExecutionPeriod method by getExecutionInterval [#qubIT-Fenix-9300]
 - Bug fix: On registration history report, exclude credits transfer granted in previous execution years when sources are empty [#UCP-FENIXEDU-956]
 
