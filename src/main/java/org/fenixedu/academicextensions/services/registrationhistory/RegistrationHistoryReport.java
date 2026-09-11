@@ -646,9 +646,11 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     private boolean isApprovalInYear(ICurriculumEntry entry, ExecutionYear executionYear) {
         if (entry instanceof Dismissal dismissal) {
             final Credits credits = dismissal.getCredits();
-            return (credits.getIEnrolments().isEmpty() && entry.getExecutionYear() == executionYear) || credits.getIEnrolments()
-                    .stream().allMatch(e -> e.getExecutionYear() == executionYear);
+            if (!credits.getIEnrolments().isEmpty()) {
+                return credits.getIEnrolments().stream().allMatch(e -> e.getExecutionYear() == executionYear);
+            }
         }
+
         return entry.getExecutionYear() == executionYear;
     }
 
