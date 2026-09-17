@@ -73,7 +73,7 @@ public class CustomEvaluationConfiguration extends CustomEvaluationConfiguration
     @Override
     public Optional<EnrolmentEvaluation> getCurrentEnrolmentEvaluation(Enrolment enrolment, EvaluationSeason season) {
         Predicate<EnrolmentEvaluation> isSeason = e -> e.getEvaluationSeason().equals(season);
-        return enrolment.getEvaluationsSet().stream().filter(isSeason).max(EnrolmentEvaluation.COMPARATORY_BY_WHEN);
+        return enrolment.getEvaluationsSet().stream().filter(isSeason).max(EnrolmentEvaluation.COMPARATOR_BY_WHEN);
     }
 
 }
