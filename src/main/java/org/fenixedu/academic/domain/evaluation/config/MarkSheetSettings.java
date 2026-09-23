@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.fenixedu.academic.domain.CompetenceCourse;
 import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
-import org.fenixedu.academic.domain.organizationalStructure.UnitUtils;
 import org.fenixedu.bennu.core.domain.Bennu;
 
 import pt.ist.fenixframework.Atomic;
@@ -23,7 +22,7 @@ public class MarkSheetSettings extends MarkSheetSettings_Base {
     }
 
     public static void init() {
-        final Unit unit = UnitUtils.readInstitutionUnit();
+        final Unit unit = Unit.getInstitutionUnit();
 
         if (unit != null && findAll().findAny().isEmpty()) {
             MarkSheetSettings.create(unit);
@@ -32,7 +31,7 @@ public class MarkSheetSettings extends MarkSheetSettings_Base {
 
     @Deprecated
     public static MarkSheetSettings getInstance() {
-        return findAll().findFirst().orElseGet(() -> MarkSheetSettings.create(UnitUtils.readInstitutionUnit()));
+        return findAll().findFirst().orElseGet(() -> MarkSheetSettings.create(Unit.getInstitutionUnit()));
     }
 
     @Atomic

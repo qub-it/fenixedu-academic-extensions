@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.IEnrolment;
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
-import org.fenixedu.academic.domain.organizationalStructure.UnitUtils;
 import org.fenixedu.academic.domain.student.curriculum.CreditsReasonType;
 import org.fenixedu.academic.domain.student.curriculum.ICurriculumEntry;
 import org.fenixedu.academic.domain.studentCurriculum.Dismissal;
@@ -78,7 +77,7 @@ class EquivalenceRemarkEntry extends CreditsTransferRemarkEntry {
 
             final Map<Unit, Collection<IEnrolment>> sourcesByUnitMap = sourcesByUnit.asMap();
             final String institutionSources = sourcesByUnitMap.keySet().stream().sorted((x, y) -> {
-                if (x == UnitUtils.readInstitutionUnit()) {
+                if (x == Unit.getInstitutionUnit()) {
                     return -1;
                 }
 
@@ -86,10 +85,10 @@ class EquivalenceRemarkEntry extends CreditsTransferRemarkEntry {
                         .orElse(x.getNameI18n().getContent(Locale.getDefault()));
                 final String rightInstitutionName = Optional.ofNullable(y.getNameI18n().getContent(locale))
                         .orElse(y.getNameI18n().getContent(Locale.getDefault()));
-                return x == UnitUtils.readInstitutionUnit() ? -1 : leftInstitutionName.compareTo(rightInstitutionName);
+                return x == Unit.getInstitutionUnit() ? -1 : leftInstitutionName.compareTo(rightInstitutionName);
             }).map(k -> {
                 final StringBuilder sourcesBlock = new StringBuilder();
-                if (k != UnitUtils.readInstitutionUnit()) {
+                if (k != Unit.getInstitutionUnit()) {
                     sourcesBlock.append(getFormattedUnit(k, locale, getReasonType().getInfoExplainedWithCountry(),
                             getReasonType().getInfoExplainedWithInstitution())).append(": ");
                 }
