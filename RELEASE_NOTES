@@ -1,3 +1,4 @@
+- Refactor: Replace deprecated UnitUtils references [#qubIT-Fenix-9003]
 - Refactor: Corrects typo in reference to EnrolmentEvaluation [#qubIT-Fenix-9300]
 
 4.39.10 (11-09-2026)
