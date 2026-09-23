@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="RemoteRepositoriesConfiguration">
+    <remote-repository>
+      <option name="id" value="gdsi-repo-releases" />
+      <option name="name" value="Reposilite Repository Releases - GDSI" />
+      <option name="url" value="https://maven.iscte-iul.pt/releases" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="central" />
+      <option name="name" value="Central Repository" />
+      <option name="url" value="https://repo.maven.apache.org/maven2" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="ulisboa-repo" />
+      <option name="name" value="ulisboa-repo" />
+      <option name="url" value="http://nexjen.ulisboa.pt/nexus/content/groups/public/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="central" />
+      <option name="name" value="Maven Central repository" />
+      <option name="url" value="https://repo1.maven.org/maven2" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="jvnet-nexus-releases" />
+      <option name="name" value="Disable dead maven.java.net" />
+      <option name="url" value="https://maven.java.net/content/repositories/releases" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="qubIT-repo-public" />
+      <option name="name" value="qubIT-repo-public" />
+      <option name="url" value="https://repository.qub-it.com/nexus/content/groups/public" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="fenixedu-maven-repository" />
+      <option name="name" value="fenixedu-maven-repository" />
+      <option name="url" value="https://repo.fenixedu.org/fenixedu-maven-repository" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="fenix-ashes-maven-repository" />
+      <option name="name" value="disable dead Fenix ashes" />
+      <option name="url" value="https://fenix-ashes.ist.utl.pt/nexus/content/groups/fenix-ashes-maven-repository" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="qubIT-oss" />
+      <option name="name" value="qubIT-oss" />
+      <option name="url" value="https://repository-oss.omnis.cloud/nexus/repository/releases/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="qubIT-repo" />
+      <option name="name" value="qubIT-repo" />
+      <option name="url" value="https://repository.qub-it.com/nexus/content/groups/qubITRepo" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="releases.java.net" />
+      <option name="name" value="Disable dead maven.java.net" />
+      <option name="url" value="http://maven.java.net/content/repositories/releases" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="jvnet-nexus-staging" />
+      <option name="name" value="Disable dead maven.java.net" />
+      <option name="url" value="http://maven.java.net/content/repositories/staging" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="jboss.community" />
+      <option name="name" value="JBoss Community repository" />
+      <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="jaspersoft-third-party" />
+      <option name="name" value="Disable dead maven.java.net" />
+      <option name="url" value="http://jaspersoft.artifactoryonline.com/jaspersoft/third-party-ce-artifacts" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="fenix-ashes-repository" />
+      <option name="name" value="fenix-ashes-repository" />
+      <option name="url" value="https://fenix-ashes.ist.utl.pt/nexus/content/groups/fenix-ashes-maven-repository" />
+    </remote-repository>
+  </component>
+</project>
