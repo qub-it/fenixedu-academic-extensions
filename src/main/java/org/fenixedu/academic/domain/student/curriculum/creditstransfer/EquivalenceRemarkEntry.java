@@ -77,7 +77,7 @@ class EquivalenceRemarkEntry extends CreditsTransferRemarkEntry {
 
             final Map<Unit, Collection<IEnrolment>> sourcesByUnitMap = sourcesByUnit.asMap();
             final String institutionSources = sourcesByUnitMap.keySet().stream().sorted((x, y) -> {
-                if (x == Unit.getInstitutionUnit()) {
+                if (x == Unit.findInstitutionUnit()) {
                     return -1;
                 }
 
@@ -85,10 +85,10 @@ class EquivalenceRemarkEntry extends CreditsTransferRemarkEntry {
                         .orElse(x.getNameI18n().getContent(Locale.getDefault()));
                 final String rightInstitutionName = Optional.ofNullable(y.getNameI18n().getContent(locale))
                         .orElse(y.getNameI18n().getContent(Locale.getDefault()));
-                return x == Unit.getInstitutionUnit() ? -1 : leftInstitutionName.compareTo(rightInstitutionName);
+                return x == Unit.findInstitutionUnit() ? -1 : leftInstitutionName.compareTo(rightInstitutionName);
             }).map(k -> {
                 final StringBuilder sourcesBlock = new StringBuilder();
-                if (k != Unit.getInstitutionUnit()) {
+                if (k != Unit.findInstitutionUnit()) {
                     sourcesBlock.append(getFormattedUnit(k, locale, getReasonType().getInfoExplainedWithCountry(),
                             getReasonType().getInfoExplainedWithInstitution())).append(": ");
                 }
