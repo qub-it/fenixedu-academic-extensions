@@ -22,7 +22,7 @@ public class MarkSheetSettings extends MarkSheetSettings_Base {
     }
 
     public static void init() {
-        final Unit unit = Unit.getInstitutionUnit();
+        final Unit unit = Unit.findInstitutionUnit();
 
         if (unit != null && findAll().findAny().isEmpty()) {
             MarkSheetSettings.create(unit);
@@ -31,7 +31,7 @@ public class MarkSheetSettings extends MarkSheetSettings_Base {
 
     @Deprecated
     public static MarkSheetSettings getInstance() {
-        return findAll().findFirst().orElseGet(() -> MarkSheetSettings.create(Unit.getInstitutionUnit()));
+        return findAll().findFirst().orElseGet(() -> MarkSheetSettings.create(Unit.findInstitutionUnit()));
     }
 
     @Atomic
