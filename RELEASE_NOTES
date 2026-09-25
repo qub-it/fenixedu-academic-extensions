@@ -1,3 +1,5 @@
+- Refactor: Replaces Registration deprecated methods references [#qubIT-Fenix-9383]
+
 4.39.11 (23-09-2026)
 - Refactor: Corrects typo in reference to EnrolmentEvaluation [#qubIT-Fenix-9300]
 
