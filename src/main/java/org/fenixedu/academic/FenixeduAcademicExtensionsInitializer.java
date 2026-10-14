@@ -18,7 +18,6 @@ import org.fenixedu.academic.domain.curricularRules.EnrolmentPeriodRestrictionsI
 import org.fenixedu.academic.domain.curricularRules.StudentScheduleListeners;
 import org.fenixedu.academic.domain.curricularRules.UnavailableForEnrolmentRule;
 import org.fenixedu.academic.domain.curricularRules.executors.ruleExecutors.CurricularRuleConfigurationInitializer;
-import org.fenixedu.academic.domain.degree.ExtendedDegreeInfo;
 import org.fenixedu.academic.domain.degreeStructure.CompetenceCourseInformation;
 import org.fenixedu.academic.domain.degreeStructure.DegreeModule;
 import org.fenixedu.academic.domain.degreeStructure.OptionalCurricularCourse;
@@ -89,9 +88,6 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
         CurriculumLineExtendedInformation.setupDeleteListener();
 
         RegistrationObservations.setupDeleteListener();
-
-        ExtendedDegreeInfo.setupDeleteListener();
-        ExtendedDegreeInfo.setupCreationListener();
 
         EnrolmentEvaluationExtendedInformation.setupDeleteListener();
 
