@@ -18,7 +18,6 @@ import org.fenixedu.academic.domain.curricularRules.EnrolmentPeriodRestrictionsI
 import org.fenixedu.academic.domain.curricularRules.StudentScheduleListeners;
 import org.fenixedu.academic.domain.curricularRules.UnavailableForEnrolmentRule;
 import org.fenixedu.academic.domain.curricularRules.executors.ruleExecutors.CurricularRuleConfigurationInitializer;
-import org.fenixedu.academic.domain.degree.ExtendedDegreeInfo;
 import org.fenixedu.academic.domain.degreeStructure.CompetenceCourseInformation;
 import org.fenixedu.academic.domain.degreeStructure.DegreeModule;
 import org.fenixedu.academic.domain.degreeStructure.OptionalCurricularCourse;
@@ -90,9 +89,6 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
 
         RegistrationObservations.setupDeleteListener();
 
-        ExtendedDegreeInfo.setupDeleteListener();
-        ExtendedDegreeInfo.setupCreationListener();
-
         EnrolmentEvaluationExtendedInformation.setupDeleteListener();
 
         MarkSheetSettings.init();
@@ -100,8 +96,9 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
         EnrolmentPeriodRestrictionsInitializer.init();
 
         EvaluationSeasonServices.initialize();
-        EvaluationSeasonServices.setEnrolmentsInEvaluationsDependOnAcademicalActsBlocked(FenixEduAcademicExtensionsConfiguration
-                .getConfiguration().getEnrolmentsInEvaluationsDependOnAcademicalActsBlocked());
+        EvaluationSeasonServices.setEnrolmentsInEvaluationsDependOnAcademicalActsBlocked(
+                FenixEduAcademicExtensionsConfiguration.getConfiguration()
+                        .getEnrolmentsInEvaluationsDependOnAcademicalActsBlocked());
 
         EvaluationConfiguration.setEnrolmentEvaluationOrder(new EvaluationComparator());
 
@@ -130,8 +127,8 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
     }
 
     private void setupListenerForCurricularPeriodDelete() {
-        FenixFramework.getDomainModel().registerDeletionListener(CurricularPeriod.class,
-                (final CurricularPeriod curricularPeriod) -> {
+        FenixFramework.getDomainModel()
+                .registerDeletionListener(CurricularPeriod.class, (final CurricularPeriod curricularPeriod) -> {
                     if (curricularPeriod.getConfiguration() != null) {
                         curricularPeriod.getConfiguration().delete();
                     }
@@ -168,7 +165,7 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
             public void beforeAdd(final Dismissal dismissal, final Credits credits) {
                 if (credits != null && dismissal != null && (dismissal.isCreditsDismissal() || dismissal.isOptional())
                         && credits.isEquivalence() && FenixEduAcademicExtensionsConfiguration.getConfiguration()
-                                .getRestrictEquivalencesToCurricularCourses()) {
+                        .getRestrictEquivalencesToCurricularCourses()) {
                     throw new DomainException("error.Equivalence.can.only.be.applied.to.curricular.courses");
 
                 }
@@ -229,8 +226,8 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
 
     private void registerDeletionListenersForDynamicFields() {
 
-        FenixFramework.getDomainModel().registerDeletionListener(CompetenceCourseInformation.class,
-                cci -> cci.getDynamicFieldSet().forEach(df -> {
+        FenixFramework.getDomainModel()
+                .registerDeletionListener(CompetenceCourseInformation.class, cci -> cci.getDynamicFieldSet().forEach(df -> {
                     df.setCompetenceCourseInformation(null);
                     df.delete();
                 }));

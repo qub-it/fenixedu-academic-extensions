@@ -1,5 +1,6 @@
 - Refactor: Replace deprecated UnitUtils references [#qubIT-Fenix-9003]
 - Refactor: Replaces Registration deprecated methods references [#qubIT-Fenix-9383]
+- Refactor: Remove Extended Degree Info entity [#qubIT-Fenix-9533]
 
 4.39.11 (23-09-2026)
 - Refactor: Corrects typo in reference to EnrolmentEvaluation [#qubIT-Fenix-9300]
