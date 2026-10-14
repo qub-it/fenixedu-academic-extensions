@@ -425,7 +425,7 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     public Integer getPreviousYearCurricularYear() {
 
         final ExecutionYear previous = getExecutionYear().getPreviousExecutionYear();
-        if (registration.getStartExecutionYear().isAfterOrEquals(getExecutionYear())
+        if (registration.getRegistrationYear().isAfterOrEquals(getExecutionYear())
                 || registration.getStudentCurricularPlan(previous) == null
                 || registration.getStudentCurricularPlan(getExecutionYear()) == null) {
 

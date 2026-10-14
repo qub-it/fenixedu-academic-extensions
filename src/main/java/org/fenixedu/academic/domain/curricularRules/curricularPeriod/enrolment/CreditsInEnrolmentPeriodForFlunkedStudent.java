@@ -35,7 +35,7 @@ public class CreditsInEnrolmentPeriodForFlunkedStudent extends CreditsInEnrolmen
         final Registration registration = enrolmentContext.getRegistration();
 
         final ExecutionYear year = enrolmentContext.getExecutionYear();
-        if (registration.getStartExecutionYear() == year) {
+        if (registration.getRegistrationYear() == year) {
             return createNA();
         }
 

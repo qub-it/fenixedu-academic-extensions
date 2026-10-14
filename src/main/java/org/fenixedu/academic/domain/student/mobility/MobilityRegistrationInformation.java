@@ -187,8 +187,8 @@ public class MobilityRegistrationInformation extends MobilityRegistrationInforma
             throw new AcademicExtensionsDomainException("error.MobilityRegistrationInformation.end.must.be.after.begin");
         }
 
-        if (getBegin().getExecutionYear().isBefore(getRegistration().getStartExecutionYear())
-                || getEnd().getExecutionYear().isBefore(getRegistration().getStartExecutionYear())) {
+        if (getBegin().getExecutionYear().isBefore(getRegistration().getRegistrationYear()) || getEnd().getExecutionYear()
+                .isBefore(getRegistration().getRegistrationYear())) {
             throw new AcademicExtensionsDomainException(
                     "error.MobilityRegistrationInformation.begin.and.end.must.be.after.registration.begin");
         }

@@ -301,7 +301,7 @@ public class RegistrationServices {
 
     static public boolean isFlunkedUsingCurricularYear(final Registration registration, final ExecutionYear executionYear) {
 
-        if (registration.getStartExecutionYear().isAfterOrEquals(executionYear)
+        if (registration.getRegistrationYear().isAfterOrEquals(executionYear)
                 || getStudentCurricularPlan(registration, executionYear) == null) {
             return false;
         }
