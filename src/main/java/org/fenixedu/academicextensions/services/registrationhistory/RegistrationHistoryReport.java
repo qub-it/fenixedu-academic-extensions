@@ -466,11 +466,13 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     }
 
     public Collection<EnrolmentEvaluation> getImprovementEvaluations() {
-        return RegistrationServices.getImprovementEvaluations(getRegistration(), getExecutionYear(), ev -> !ev.isAnnuled());
+        return executionYear.getExecutionPeriodsSet().stream().flatMap(ei -> ei.getEnrolmentEvaluationsSet().stream())
+                .filter(ee -> ee.getEvaluationSeason().isImprovement() && ee.getRegistration() == registration && !ee.isAnnuled())
+                .collect(Collectors.toSet());
     }
 
     public boolean getHasImprovementEvaluations() {
-        return RegistrationServices.hasImprovementEvaluations(getRegistration(), getExecutionYear(), ev -> !ev.isAnnuled());
+        return !getImprovementEvaluations().isEmpty();
     }
 
     public boolean getHasAnnulledEnrolments() {

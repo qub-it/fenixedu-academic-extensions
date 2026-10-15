@@ -18,7 +18,6 @@ import org.fenixedu.academic.FenixEduAcademicExtensionsConfiguration;
 import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.Enrolment;
-import org.fenixedu.academic.domain.EnrolmentEvaluation;
 import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionYear;
@@ -28,7 +27,6 @@ import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
 import org.fenixedu.academic.domain.degreeStructure.CurricularPeriodServices;
 import org.fenixedu.academic.domain.degreeStructure.DegreeModule;
-import org.fenixedu.academic.domain.degreeStructure.ProgramConclusion;
 import org.fenixedu.academic.domain.student.curriculum.CreditsReasonType;
 import org.fenixedu.academic.domain.student.curriculum.Curriculum;
 import org.fenixedu.academic.domain.student.curriculum.CurriculumConfigurationInitializer;
@@ -36,12 +34,9 @@ import org.fenixedu.academic.domain.student.curriculum.CurriculumConfigurationIn
 import org.fenixedu.academic.domain.student.curriculum.CurriculumLineServices;
 import org.fenixedu.academic.domain.student.curriculum.ICurriculum;
 import org.fenixedu.academic.domain.student.curriculum.ICurriculumEntry;
-import org.fenixedu.academic.domain.studentCurriculum.Credits;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumLine;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumModule;
 import org.fenixedu.academic.domain.studentCurriculum.Dismissal;
-import org.fenixedu.academic.domain.studentCurriculum.EnrolmentWrapper;
-import org.fenixedu.academic.dto.student.RegistrationConclusionBean;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
@@ -283,22 +278,6 @@ public class RegistrationServices {
         CACHE_CURRICULUM_FULL.invalidate(getCacheKey(registration.getStudentCurricularPlan(executionYear)));
     }
 
-    static public ExecutionYear getConclusionExecutionYear(final Registration registration) {
-        try {
-            final StudentCurricularPlan lastCurricularPlan = registration.getLastStudentCurricularPlan();
-
-            final ProgramConclusion conclusion =
-                    ProgramConclusion.conclusionsFor(lastCurricularPlan).filter(i -> i.isTerminal()).findFirst().get();
-
-            final RegistrationConclusionBean bean = new RegistrationConclusionBean(lastCurricularPlan, conclusion);
-            return bean.getConclusionYear();
-        } catch (final Throwable t) {
-            logger.error("Error trying to determine ConclusionYear: {}", t.getMessage());
-        }
-
-        return null;
-    }
-
     static public boolean isFlunkedUsingCurricularYear(final Registration registration, final ExecutionYear executionYear) {
 
         if (registration.getStartExecutionYear().isAfterOrEquals(executionYear)
@@ -373,59 +352,11 @@ public class RegistrationServices {
         return schoolClass.findShiftsFor(registration).collect(Collectors.toList());
     }
 
-    public static Collection<EnrolmentEvaluation> getImprovementEvaluations(final Registration registration,
-            final ExecutionYear executionYear, final Predicate<EnrolmentEvaluation> predicate) {
-
-        final Collection<EnrolmentEvaluation> result = Sets.newHashSet();
-
-        for (final ExecutionInterval executionInterval : executionYear.getExecutionPeriodsSet()) {
-            for (final EnrolmentEvaluation evaluation : executionInterval.getEnrolmentEvaluationsSet()) {
-
-                if (evaluation.getEvaluationSeason().isImprovement() && evaluation.getRegistration() == registration
-                        && (predicate == null || predicate.test(evaluation))) {
-                    result.add(evaluation);
-                }
-            }
-        }
-
-        return result;
-    }
-
-    public static boolean hasImprovementEvaluations(final Registration registration, final ExecutionYear executionYear,
-            final Predicate<EnrolmentEvaluation> predicate) {
-
-        for (final ExecutionInterval executionInterval : executionYear.getExecutionPeriodsSet()) {
-            for (final EnrolmentEvaluation evaluation : executionInterval.getEnrolmentEvaluationsSet()) {
-
-                if (evaluation.getEvaluationSeason().isImprovement() && evaluation.getRegistration() == registration
-                        && (predicate == null || predicate.test(evaluation))) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    public static boolean hasCreditsBetweenPlans(final Registration registration) {
-        for (final StudentCurricularPlan scp : registration.getStudentCurricularPlansSet()) {
-            for (final Credits credits : scp.getCreditsSet()) {
-                for (EnrolmentWrapper wrapper : credits.getEnrolmentsSet()) {
-                    if (wrapper.getIEnrolment().isExternalEnrolment()) {
-                        continue;
-                    }
-
-                    final Enrolment e = (Enrolment) wrapper.getIEnrolment();
-
-                    if (registration.getStudentCurricularPlansSet().contains(e.getStudentCurricularPlan())) {
-                        return true;
-                    }
-                }
-            }
-
-        }
-
-        return false;
+    private static boolean hasCreditsBetweenPlans(final Registration registration) {
+        return registration.getStudentCurricularPlanStream().flatMap(scp -> scp.getCreditsSet().stream())
+                .flatMap(c -> c.getEnrolmentsSet().stream()).filter(ew -> !ew.getIEnrolment().isExternalEnrolment())
+                .map(ew -> (Enrolment) ew.getIEnrolment())
+                .anyMatch(e -> registration.getStudentCurricularPlansSet().contains(e.getStudentCurricularPlan()));
     }
 
     public static final boolean canCollectAllPlansForCurriculum(final Registration registration) {
