@@ -3,7 +3,6 @@ package org.fenixedu.academic.domain.student;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
@@ -12,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.fenixedu.academic.FenixEduAcademicExtensionsConfiguration;
 import org.fenixedu.academic.domain.Degree;
@@ -25,7 +23,6 @@ import org.fenixedu.academic.domain.IEnrolment;
 import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
-import org.fenixedu.academic.domain.degreeStructure.CurricularPeriodServices;
 import org.fenixedu.academic.domain.degreeStructure.DegreeModule;
 import org.fenixedu.academic.domain.student.curriculum.CreditsReasonType;
 import org.fenixedu.academic.domain.student.curriculum.Curriculum;
@@ -33,7 +30,6 @@ import org.fenixedu.academic.domain.student.curriculum.CurriculumConfigurationIn
 import org.fenixedu.academic.domain.student.curriculum.CurriculumConfigurationInitializer.CurricularYearResult;
 import org.fenixedu.academic.domain.student.curriculum.CurriculumLineServices;
 import org.fenixedu.academic.domain.student.curriculum.ICurriculum;
-import org.fenixedu.academic.domain.student.curriculum.ICurriculumEntry;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumLine;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumModule;
 import org.fenixedu.academic.domain.studentCurriculum.Dismissal;
@@ -372,21 +368,6 @@ public class RegistrationServices {
         return curriculumSum;
     }
 
-    static public Curriculum filterCurricularYearEntriesBySemester(final Curriculum input, final Integer semester) {
-
-        final Curriculum result = Curriculum.createEmpty(input.getCurriculumModule(), input.getExecutionYear());
-        result.add(input);
-
-        for (final Iterator<ICurriculumEntry> iterator = result.getCurricularYearEntries().iterator(); iterator.hasNext();) {
-            final ICurriculumEntry iter = iterator.next();
-            if (semester.intValue() != CurricularPeriodServices.getCurricularSemester((CurriculumLine) iter)) {
-                iterator.remove();
-            }
-        }
-
-        return result;
-    }
-
     public static void setIngressionGradeA(Registration registration, BigDecimal grade) {
         RegistrationExtendedInformation.findOrCreate(registration).setIngressionGradeA(grade);
     }
@@ -447,17 +428,6 @@ public class RegistrationServices {
     public static Collection<ExecutionYear> getEnrolmentYears(Registration registration) {
         return registration.getRegistrationDataByExecutionYearSet().stream().filter(rd -> rd.getActive())
                 .map(rd -> rd.getExecutionYear()).collect(Collectors.toSet());
-    }
-
-    public static ExecutionYear getLastReingressionYear(final Registration registration) {
-        return registration.getReingressions().stream().map(ri -> ri.getExecutionYear())
-                .sorted(ExecutionYear.COMPARATOR_BY_BEGIN_DATE.reversed()).findFirst().orElse(null);
-    }
-
-    public static ExecutionYear getLastReingressionYearIncludingPrecedentRegistrations(final Registration registration) {
-        return Stream.concat(Stream.of(registration), getPrecedentDegreeRegistrations(registration).stream())
-                .flatMap(r -> r.getReingressions().stream()).map(ri -> ri.getExecutionYear())
-                .sorted(ExecutionYear.COMPARATOR_BY_BEGIN_DATE.reversed()).findFirst().orElse(null);
     }
 
     public static void setManuallyAssignedNumber(final Registration input, boolean value) {
