@@ -1025,6 +1025,10 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
             throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheet.must.be.edition.to.confirm");
         }
 
+        if (new LocalDate().isBefore(getEvaluationDate())) {
+            throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheet.submitDateCannotBeBeforeEvaluationDate");
+        }
+
         final CompetenceCourseMarkSheetStateChange stateChange =
                 CompetenceCourseMarkSheetStateChange.createSubmitedState(this, byTeacher, null);
 
