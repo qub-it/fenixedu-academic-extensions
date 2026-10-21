@@ -1402,19 +1402,6 @@ relation RegistrationObservationRegistration{
 }
 // ======================= Registration Observations end =========================
 
-
-/* Precedent Degrees */
-
-relation DegreePrecedentDegree {
-	.org.fenixedu.academic.domain.Degree playsRole precedentDegrees {
-		multiplicity *;
-	}
-	
-	.org.fenixedu.academic.domain.Degree playsRole subsequentDegrees {
-		multiplicity *;
-	}
-}
-
 // ======================= = Enrolment in Scool Classes begin = =========================
 
 
