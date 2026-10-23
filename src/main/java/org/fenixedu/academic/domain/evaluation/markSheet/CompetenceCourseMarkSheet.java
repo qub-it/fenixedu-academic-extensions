@@ -78,7 +78,7 @@ import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.curriculum.ConclusionProcess;
-import org.fenixedu.academic.domain.student.services.EnrolmentServices;
+import org.fenixedu.academic.domain.enrolment.EnrolmentServices;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumModule;
 import org.fenixedu.academic.util.EnrolmentEvaluationState;
 import org.fenixedu.bennu.core.security.Authenticate;
@@ -657,7 +657,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
                 continue;
             }
 
-            if (!shifts.isEmpty() && !EnrolmentServices.containsAnyShift(enrolment, interval, shifts)) {
+            if (!shifts.isEmpty() && enrolment.findShiftsEnroledFor(interval).noneMatch(shifts::contains)) {
                 continue;
             }
 
