@@ -8,7 +8,6 @@ import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.curricularRules.curricularPeriod.CurricularPeriodConfiguration;
 import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
 import org.fenixedu.academic.domain.student.Registration;
-import org.fenixedu.academic.domain.student.RegistrationServices;
 import org.fenixedu.academic.domain.student.curriculum.Curriculum;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 
@@ -46,7 +45,7 @@ public class EnrolmentYears extends EnrolmentYears_Base {
         final ExecutionYear executionYear = curriculum.getExecutionYear() == null ? ExecutionYear
                 .findCurrent(registration.getDegree().getCalendar()) : curriculum.getExecutionYear();
 
-        final Collection<ExecutionYear> enrolmentYears = RegistrationServices.getEnrolmentYears(registration).stream()
+        final Collection<ExecutionYear> enrolmentYears = registration.findActiveRegistrationExecutionYears()
                 .filter(x -> x.isBefore(executionYear)).collect(Collectors.toSet());
 
         return enrolmentYears.size() >= getValue().intValue() ? createTrue() : createFalseLabelled(getValue());

@@ -10,7 +10,6 @@ import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.RegistrationDataByExecutionYear;
-import org.fenixedu.academic.domain.student.RegistrationServices;
 import org.fenixedu.academic.domain.student.StatuteType;
 import org.fenixedu.bennu.core.domain.Bennu;
 
@@ -93,7 +92,7 @@ public class PrescriptionConfig extends PrescriptionConfig_Base {
     }
 
     private static ExecutionYear getLastReingressionYearIncludingPrecedentRegistrations(Registration registration) {
-        return Stream.concat(Stream.of(registration), RegistrationServices.getPrecedentDegreeRegistrations(registration).stream())
+        return Stream.concat(Stream.of(registration), registration.findPrecedentDegreeRegistrations())
                 .flatMap(r -> r.getReingressions().stream()).map(RegistrationDataByExecutionYear::getExecutionYear)
                 .max(ExecutionYear.COMPARATOR_BY_BEGIN_DATE).orElse(null);
     }
