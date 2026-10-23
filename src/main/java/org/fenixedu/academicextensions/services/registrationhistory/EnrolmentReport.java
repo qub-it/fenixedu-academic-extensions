@@ -20,7 +20,6 @@ import org.fenixedu.academic.domain.curriculum.EnrollmentState;
 import org.fenixedu.academic.domain.degreeStructure.CompetenceCourseServices;
 import org.fenixedu.academic.domain.degreeStructure.CourseLoadType;
 import org.fenixedu.academic.domain.degreeStructure.CurricularPeriodServices;
-import org.fenixedu.academic.domain.enrolment.EnrolmentServices;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.RegistrationServices;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumGroup;
@@ -61,7 +60,7 @@ public class EnrolmentReport {
     }
 
     public Collection<Shift> getShifts() {
-        return EnrolmentServices.getShiftsFor(this.enrolment, this.executionInterval);
+        return enrolment.findShiftsEnroledFor(executionInterval).collect(Collectors.toList());
     }
 
     public String getShiftsAsString() {
