@@ -1,26 +1,30 @@
 package org.fenixedu.academic.domain.enrolment;
 
-import org.apache.commons.lang.StringUtils;
-import org.fenixedu.academic.domain.CurricularCourse;
-import org.fenixedu.academic.domain.Enrolment;
-import org.fenixedu.academic.domain.ExecutionCourse;
-import org.fenixedu.academic.domain.ExecutionInterval;
-import org.fenixedu.academic.domain.OptionalEnrolment;
-import org.fenixedu.academic.domain.degreeStructure.DegreeModule;
-import org.fenixedu.academic.domain.exceptions.DomainException;
-import org.fenixedu.academic.domain.student.Registration;
-import org.fenixedu.academic.domain.student.curriculum.ConclusionProcessVersion;
-import org.fenixedu.academic.domain.studentCurriculum.CurriculumModule;
-import pt.ist.fenixframework.dml.runtime.RelationAdapter;
-import pt.ist.fenixframework.dml.runtime.RelationListener;
-
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class EnrolmentServices extends org.fenixedu.academic.domain.student.services.EnrolmentServices {
+import org.apache.commons.lang.StringUtils;
+import org.fenixedu.academic.domain.CurricularCourse;
+import org.fenixedu.academic.domain.Enrolment;
+import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.ExecutionInterval;
+import org.fenixedu.academic.domain.Grade;
+import org.fenixedu.academic.domain.OptionalEnrolment;
+import org.fenixedu.academic.domain.Shift;
+import org.fenixedu.academic.domain.curriculum.EnrollmentState;
+import org.fenixedu.academic.domain.degreeStructure.DegreeModule;
+import org.fenixedu.academic.domain.exceptions.DomainException;
+import org.fenixedu.academic.domain.student.Registration;
+import org.fenixedu.academic.domain.student.curriculum.ConclusionProcessVersion;
+import org.fenixedu.academic.domain.studentCurriculum.CurriculumModule;
+
+import pt.ist.fenixframework.dml.runtime.RelationAdapter;
+import pt.ist.fenixframework.dml.runtime.RelationListener;
+
+public class EnrolmentServices {
 
     static private RelationListener<DegreeModule, CurriculumModule> ON_ENROLMENT_DELETION =
             new RelationAdapter<DegreeModule, CurriculumModule>() {
@@ -117,4 +121,14 @@ public class EnrolmentServices extends org.fenixedu.academic.domain.student.serv
         return null;
     }
 
+    public static void updateState(final Enrolment enrolment) {
+        if (!enrolment.isAnnulled()) {
+            final Grade finalGrade = enrolment.getGrade();
+            enrolment.setEnrollmentState(finalGrade.isEmpty() ? EnrollmentState.ENROLLED : finalGrade.getEnrolmentState());
+        }
+    }
+
+    public static String getShiftsDescription(final Enrolment enrolment, final ExecutionInterval executionInterval) {
+        return enrolment.findShiftsEnroledFor(executionInterval).map(Shift::getName).collect(Collectors.joining(", "));
+    }
 }
