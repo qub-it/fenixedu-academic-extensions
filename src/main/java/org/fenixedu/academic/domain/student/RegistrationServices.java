@@ -3,9 +3,7 @@ package org.fenixedu.academic.domain.student;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
@@ -13,7 +11,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.fenixedu.academic.FenixEduAcademicExtensionsConfiguration;
-import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.ExecutionDegree;
@@ -21,7 +18,6 @@ import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.IEnrolment;
 import org.fenixedu.academic.domain.SchoolClass;
-import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
 import org.fenixedu.academic.domain.degreeStructure.DegreeModule;
 import org.fenixedu.academic.domain.student.curriculum.CreditsReasonType;
@@ -40,7 +36,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.Sets;
 
 import pt.ist.fenixframework.dml.runtime.RelationAdapter;
 
@@ -337,17 +332,6 @@ public class RegistrationServices {
         };
     }
 
-    @Deprecated
-    public static void replaceSchoolClass(final Registration registration, final SchoolClass schoolClass,
-            final ExecutionInterval executionInterval) {
-        SchoolClass.replaceSchoolClass(registration, schoolClass, executionInterval);
-    }
-
-    @Deprecated
-    public static List<Shift> getAttendingShifts(final SchoolClass schoolClass, final Registration registration) {
-        return schoolClass.findShiftsFor(registration).collect(Collectors.toList());
-    }
-
     private static boolean hasCreditsAcrossOwnPlans(final Registration registration) {
         return registration.getStudentCurricularPlanStream().flatMap(scp -> scp.getCreditsSet().stream())
                 .flatMap(c -> c.getEnrolmentsSet().stream()).filter(ew -> !ew.getIEnrolment().isExternalEnrolment())
@@ -425,11 +409,6 @@ public class RegistrationServices {
         return input.getExtendedInformation() != null && input.getExtendedInformation().getCurriculumAccumulated();
     }
 
-    public static Collection<ExecutionYear> getEnrolmentYears(Registration registration) {
-        return registration.getRegistrationDataByExecutionYearSet().stream().filter(rd -> rd.getActive())
-                .map(rd -> rd.getExecutionYear()).collect(Collectors.toSet());
-    }
-
     public static void setManuallyAssignedNumber(final Registration input, boolean value) {
         RegistrationExtendedInformation.findOrCreate(input).setManuallyAssignedNumber(value);
     }
@@ -443,81 +422,6 @@ public class RegistrationServices {
                 RegistrationDataServices.getRegistrationData(registration, executionYear);
 
         return dataByExecutionYear == null ? null : dataByExecutionYear.getEnrolmentDate();
-    }
-
-    public static Collection<ExecutionYear> getEnrolmentYearsIncludingPrecedentRegistrations(final Registration registration) {
-        return getEnrolmentYearsIncludingPrecedentRegistrations(registration, null);
-    }
-
-    /**
-     *
-     * @param untilExecutionYear is inclusive. null does not apply any filtering
-     *
-     * @return
-     */
-    public static Collection<ExecutionYear> getEnrolmentYearsIncludingPrecedentRegistrations(final Registration registration,
-            final ExecutionYear untilExecutionYear) {
-
-        final Set<Registration> registrations = Sets.newHashSet();
-        registrations.add(registration);
-        registrations.addAll(getPrecedentDegreeRegistrations(registration));
-
-        final Set<ExecutionYear> result = Sets.newHashSet();
-        for (final Registration it : registrations) {
-            result.addAll(RegistrationServices.getEnrolmentYears(it));
-        }
-
-        if (untilExecutionYear == null) {
-            return result;
-        }
-
-        return result.stream().filter(e -> e.isBeforeOrEquals(untilExecutionYear)).collect(Collectors.toSet());
-    }
-
-    /**
-     * Returns the root registration.
-     *
-     * @return This registration if does not have precedent or the oldest precendent registration
-     */
-    public static Registration getRootRegistration(final Registration registration) {
-        final SortedSet<Registration> registrations = Sets.newTreeSet(Registration.COMPARATOR_BY_START_DATE);
-        registrations.add(registration);
-        registrations.addAll(getPrecedentDegreeRegistrations(registration));
-
-        return registrations.first();
-    }
-
-    public static Collection<Registration> getPrecedentDegreeRegistrations(final Registration registration) {
-
-        final Set<Degree> precedentDegreesUntilRoot = getPrecedentDegreesUntilRoot(registration.getDegree());
-        final Set<Registration> result = Sets.newHashSet();
-        for (final Registration it : registration.getStudent().getRegistrationsSet()) {
-
-            if (registration == it) {
-                continue;
-            }
-
-            if (it.isConcluded() || it.hasConcluded()) {
-                continue;
-            }
-
-            if (precedentDegreesUntilRoot.contains(it.getDegree())) {
-                result.add(it);
-            }
-        }
-
-        return result;
-    }
-
-    private static Set<Degree> getPrecedentDegreesUntilRoot(final Degree degree) {
-        final Set<Degree> result = Sets.newHashSet();
-        result.addAll(degree.getPrecedentDegreesSet());
-
-        for (final Degree it : degree.getPrecedentDegreesSet()) {
-            result.addAll(getPrecedentDegreesUntilRoot(it));
-        }
-
-        return result;
     }
 
     static public Set<CurriculumLine> getNormalEnroledCurriculumLines(Registration registration, ExecutionYear executionYear,
