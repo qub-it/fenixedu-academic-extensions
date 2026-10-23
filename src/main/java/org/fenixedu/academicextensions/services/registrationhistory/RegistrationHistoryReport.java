@@ -239,7 +239,7 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     }
 
     public boolean getHasPreviousReingressionIncludingPrecedentRegistrations() {
-        return Stream.concat(Stream.of(registration), RegistrationServices.getPrecedentDegreeRegistrations(registration).stream())
+        return Stream.concat(Stream.of(registration), registration.findPrecedentDegreeRegistrations())
                 .flatMap(r -> r.getReingressions().stream()).filter(ri -> ri.getExecutionYear().isBefore(getExecutionYear()))
                 .count() > 0;
     }
@@ -1214,12 +1214,12 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     }
 
     private Set<ExecutionYear> getEnrolmentExecutionYears() {
-        return RegistrationServices.getEnrolmentYears(registration).stream().filter(ey -> ey.isBeforeOrEquals(getExecutionYear()))
+        return registration.findActiveRegistrationExecutionYears().filter(ey -> ey.isBeforeOrEquals(getExecutionYear()))
                 .collect(Collectors.toSet());
     }
 
     private Set<ExecutionYear> getEnrolmentExecutionYearsIncludingPrecedentRegistrations() {
-        return RegistrationServices.getEnrolmentYearsIncludingPrecedentRegistrations(registration).stream()
+        return registration.findActiveRegistrationExecutionYearsIncludingPrecedentRegistrations()
                 .filter(ey -> ey.isBeforeOrEquals(getExecutionYear())).collect(Collectors.toSet());
     }
 
@@ -1234,7 +1234,7 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
 
                     final SortedSet<ExecutionYear> executionYears =
                             Sets.newTreeSet(ExecutionYear.COMPARATOR_BY_BEGIN_DATE.reversed());
-                    executionYears.addAll(RegistrationServices.getEnrolmentYears(r));
+                    r.findActiveRegistrationExecutionYears().forEach(executionYears::add);
 
                     if (!executionYears.isEmpty()) {
                         result.append(executionYears.first().getQualifiedName()).append('|');
