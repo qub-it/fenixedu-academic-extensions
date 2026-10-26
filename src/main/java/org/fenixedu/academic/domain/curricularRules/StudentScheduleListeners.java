@@ -26,7 +26,7 @@ public class StudentScheduleListeners {
         public void accept(DomainObjectEvent<Enrolment> event) {
             final Enrolment enrolment = event.getInstance();
             final ExecutionInterval executionInterval = enrolment.getExecutionInterval();
-            final Attends attends = enrolment.getAttendsFor(executionInterval);
+            final Attends attends = enrolment.findAttends(executionInterval).orElse(null);
 
             if (attends == null) {
                 return;
