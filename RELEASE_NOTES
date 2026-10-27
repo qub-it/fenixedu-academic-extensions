@@ -1,3 +1,4 @@
+- Refactor: Moves DegreePrecedentDegree relation from this module to academic-core [#qubIT-Fenix-9588]
 - Refactor: Remove Extended Degree Info entity [#qubIT-Fenix-9533]
 
 5.0.0 (20-10-2026)
