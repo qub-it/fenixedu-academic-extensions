@@ -61,7 +61,7 @@ public class RegistrationServicesTest {
             registration = createRegistration(student, degreeCurricularPlan, executionYear);
             studentCurricularPlan = registration.getLastStudentCurricularPlan();
 
-            enrol(studentCurricularPlan, executionYear, curricularCourse);
+            enrol(studentCurricularPlan, firstSemester, curricularCourse);
             enrolment = studentCurricularPlan.getEnrolmentsSet().iterator().next();
 
             return null;
@@ -69,28 +69,27 @@ public class RegistrationServicesTest {
     }
 
 //    @Test
-//    public void testRegistrationServices_hasCreditsBetweenPlans() {
-//        assertFalse(RegistrationServices.hasCreditsBetweenPlans(registration));
+//    public void testRegistrationServices_hasCreditsAcrossOwnPlans() {
+//        assertFalse(RegistrationServices.hasCreditsAcrossOwnPlans(registration));
 //
 //        // Credits sourced from an enrolment of the registration's own plan
 //        newCredits(studentCurricularPlan, firstSemester, enrolment);
-//        assertTrue(RegistrationServices.hasCreditsBetweenPlans(registration));
+//        assertTrue(RegistrationServices.hasCreditsAcrossOwnPlans(registration));
 //
 //        // Credits of another registration, sourced from a plan that doesn't belong to it
 //        Student otherStudent = StudentTest.createStudent("Other Student", "otherStudent");
 //        Registration otherRegistration = createRegistration(otherStudent, degreeCurricularPlan, executionYear);
 //        newCredits(otherRegistration.getLastStudentCurricularPlan(), firstSemester, enrolment);
 //
-//        assertFalse(RegistrationServices.hasCreditsBetweenPlans(otherRegistration));
+//        assertFalse(RegistrationServices.hhasCreditsAcrossOwnPlans(otherRegistration));
 //    }
 
     // Helpers
 
-    public static void enrol(StudentCurricularPlan studentCurricularPlan, ExecutionYear executionYear, CurricularCourse curricularCourse) {
+    public static void enrol(StudentCurricularPlan studentCurricularPlan, ExecutionInterval executionInterval,
+            CurricularCourse curricularCourse) {
         Context context = curricularCourse.getParentContextsSet().iterator().next();
-        ExecutionInterval interval = executionYear.getChildInterval(context.getCurricularPeriod().getChildOrder(),
-                context.getCurricularPeriod().getAcademicPeriod());
-        EnrolmentTest.createEnrolment(studentCurricularPlan, interval, context, "admin");
+        EnrolmentTest.createEnrolment(studentCurricularPlan, executionInterval, context, "admin");
     }
 
 //    private static Credits newCredits(StudentCurricularPlan studentCurricularPlan, ExecutionInterval executionInterval,

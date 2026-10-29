@@ -352,7 +352,7 @@ public class RegistrationServices {
         return schoolClass.findShiftsFor(registration).collect(Collectors.toList());
     }
 
-    private static boolean hasCreditsBetweenPlans(final Registration registration) {
+    private static boolean hasCreditsAcrossOwnPlans(final Registration registration) {
         return registration.getStudentCurricularPlanStream().flatMap(scp -> scp.getCreditsSet().stream())
                 .flatMap(c -> c.getEnrolmentsSet().stream()).filter(ew -> !ew.getIEnrolment().isExternalEnrolment())
                 .map(ew -> (Enrolment) ew.getIEnrolment())
@@ -360,7 +360,7 @@ public class RegistrationServices {
     }
 
     public static final boolean canCollectAllPlansForCurriculum(final Registration registration) {
-        return registration.getStudentCurricularPlansSet().size() > 1 && !hasCreditsBetweenPlans(registration);
+        return registration.getStudentCurricularPlansSet().size() > 1 && !hasCreditsAcrossOwnPlans(registration);
     }
 
     public static Curriculum getAllPlansCurriculum(final Registration registration, final ExecutionYear executionYear) {
