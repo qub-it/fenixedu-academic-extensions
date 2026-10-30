@@ -29,6 +29,7 @@ import java.math.BigDecimal;
 import java.util.Collection;
 
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
+import org.fenixedu.academic.domain.curricularPeriod.CurricularPeriod;
 import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
 import org.fenixedu.academic.domain.degreeStructure.CurricularPeriodServices;
 import org.fenixedu.academic.domain.exceptions.DomainException;
@@ -141,8 +142,10 @@ abstract public class RuleTransition extends RuleTransition_Base {
         final Curriculum result = Curriculum.createEmpty(input.getCurriculumModule(), input.getExecutionYear());
         result.add(input);
 
-        result.getCurricularYearEntries()
-                .removeIf(entry -> semester != CurricularPeriodServices.getCurricularSemester((CurriculumLine) entry));
+        result.getCurricularYearEntries().removeIf(entry -> {
+            final CurricularPeriod period = CurricularPeriodServices.getCurricularPeriod((CurriculumLine) entry);
+            return period == null || !semester.equals(period.getChildOrder());
+        });
 
         return result;
     }
