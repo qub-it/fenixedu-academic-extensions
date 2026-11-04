@@ -96,9 +96,149 @@ public class EvaluationSeasonInformation extends EvaluationSeasonInformation_Bas
         return result;
     }
 
+    // just for refactor/data migration purposes
+    @Deprecated
     @Override
     public Boolean getAllowsMarksheets() {
-        return super.getAllowsMarksheets() != null ? super.getAllowsMarksheets() : Boolean.TRUE; // this should be a primitive boolean but we're avoiding migration of existing data
+        return getSeason().getAllowsMarksheets();
     }
 
+    @Deprecated
+    @Override
+    public void setAllowsMarksheets(final Boolean allowsMarksheets) {
+        super.setAllowsMarksheets(allowsMarksheets);
+        getSeason().setAllowsMarksheets(allowsMarksheets != null ? allowsMarksheets : Boolean.TRUE);
+    }
+
+    @Deprecated
+    public Boolean getSuperAllowsMarksheets() {
+        return super.getAllowsMarksheets()
+                != null ? super.getAllowsMarksheets() : Boolean.TRUE; // this should be a primitive boolean but we're avoiding migration of existing data
+    }
+
+    @Deprecated
+    @Override
+    public Integer getSeasonOrder() {
+        return getSeason().getSeasonOrder();
+    }
+
+    @Deprecated
+    @Override
+    public void setSeasonOrder(final Integer seasonOrder) {
+        super.setSeasonOrder(seasonOrder);
+        getSeason().setSeasonOrder(seasonOrder);
+    }
+
+    @Deprecated
+    public Integer getSuperSeasonOrder() {
+        return super.getSeasonOrder();
+    }
+
+    @Deprecated
+    @Override
+    public boolean getActive() {
+        return getSeason().getActive();
+    }
+
+    @Deprecated
+    @Override
+    public void setActive(final boolean active) {
+        super.setActive(active);
+        getSeason().setActive(active);
+    }
+
+    @Deprecated
+    public boolean getSuperActive() {
+        return super.getActive();
+    }
+
+    @Deprecated
+    @Override
+    public boolean getRequiresEnrolmentEvaluation() {
+        return getSeason().getRequiresEnrolmentEvaluation();
+    }
+
+    @Deprecated
+    @Override
+    public void setRequiresEnrolmentEvaluation(final boolean requiresEnrolmentEvaluation) {
+        super.setRequiresEnrolmentEvaluation(requiresEnrolmentEvaluation);
+        getSeason().setRequiresEnrolmentEvaluation(requiresEnrolmentEvaluation);
+    }
+
+    @Deprecated
+    public boolean getSuperRequiresEnrolmentEvaluation() {
+        return super.getRequiresEnrolmentEvaluation();
+    }
+
+    @Deprecated
+    @Override
+    public boolean getSupportsEmptyGrades() {
+        return getSeason().getSupportsEmptyGrades();
+    }
+
+    @Deprecated
+    @Override
+    public void setSupportsEmptyGrades(final boolean supportsEmptyGrades) {
+        super.setSupportsEmptyGrades(supportsEmptyGrades);
+        getSeason().setSupportsEmptyGrades(supportsEmptyGrades);
+    }
+
+    @Deprecated
+    public boolean getSuperSupportsEmptyGrades() {
+        return super.getSupportsEmptyGrades();
+    }
+
+    @Deprecated
+    @Override
+    public boolean getSupportsTeacherConfirmation() {
+        return getSeason().getSupportsTeacherConfirmation();
+    }
+
+    @Deprecated
+    @Override
+    public void setSupportsTeacherConfirmation(final boolean supportsTeacherConfirmation) {
+        super.setSupportsTeacherConfirmation(supportsTeacherConfirmation);
+        getSeason().setSupportsTeacherConfirmation(supportsTeacherConfirmation);
+    }
+
+    @Deprecated
+    public boolean getSuperSupportsTeacherConfirmation() {
+        return super.getSupportsTeacherConfirmation();
+    }
+
+    @Deprecated
+    @Override
+    public Integer getMinPastYearsToAcceptImprovementEnrolments() {
+        return getSeason().getMinPastYearsToAcceptImprovementEnrolments();
+    }
+
+    @Deprecated
+    @Override
+    public void setMinPastYearsToAcceptImprovementEnrolments(final Integer minPastYearsToAcceptImprovementEnrolments) {
+        super.setMinPastYearsToAcceptImprovementEnrolments(minPastYearsToAcceptImprovementEnrolments);
+        getSeason().setMinPastYearsToAcceptImprovementEnrolments(minPastYearsToAcceptImprovementEnrolments);
+    }
+
+    @Deprecated
+    public Integer getSuperMinPastYearsToAcceptImprovementEnrolments() {
+        return super.getMinPastYearsToAcceptImprovementEnrolments();
+    }
+
+    @Deprecated
+    @Override
+    public Integer getMaxPastYearsToAcceptImprovementEnrolments() {
+        return getSeason().getMaxPastYearsToAcceptImprovementEnrolments();
+    }
+
+    @Deprecated
+    @Override
+    public void setMaxPastYearsToAcceptImprovementEnrolments(final Integer maxPastYearsToAcceptImprovementEnrolments) {
+        super.setMaxPastYearsToAcceptImprovementEnrolments(maxPastYearsToAcceptImprovementEnrolments);
+        getSeason().setMaxPastYearsToAcceptImprovementEnrolments(maxPastYearsToAcceptImprovementEnrolments);
+    }
+
+    @Deprecated
+    public Integer getSuperMaxPastYearsToAcceptImprovementEnrolments() {
+        return super.getMaxPastYearsToAcceptImprovementEnrolments();
+    }
 }
