@@ -81,7 +81,7 @@ public class RegistrationServicesTest {
 //        Registration otherRegistration = createRegistration(otherStudent, degreeCurricularPlan, executionYear);
 //        newCredits(otherRegistration.getLastStudentCurricularPlan(), firstSemester, enrolment);
 //
-//        assertFalse(RegistrationServices.hhasCreditsAcrossOwnPlans(otherRegistration));
+//        assertFalse(RegistrationServices.hasCreditsAcrossOwnPlans(otherRegistration));
 //    }
 
     // Helpers
