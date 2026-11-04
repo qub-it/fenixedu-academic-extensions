@@ -1,3 +1,4 @@
+- Refactor: Add migration code for EvaluationSeason information fields [#qubIT-Fenix-5018]
 - Refactor: Improves RegistrationServices methods and moves specific ones [#qubIT-Fenix-9573]
 
 5.1.1 (06-11-2026)
