@@ -71,7 +71,7 @@ public class RegistrationHistoryReportTest {
             registration = createRegistration(student, degreeCurricularPlan, executionYear);
             studentCurricularPlan = registration.getLastStudentCurricularPlan();
 
-            enrol(studentCurricularPlan, executionYear, curricularCourse);
+            enrol(studentCurricularPlan, firstSemester, curricularCourse);
             enrolment = studentCurricularPlan.getEnrolments(curricularCourse).iterator().next();
 
             report = new RegistrationHistoryReport(registration, executionYear);
@@ -115,7 +115,7 @@ public class RegistrationHistoryReportTest {
         Registration otherRegistration = createRegistration(otherStudent, degreeCurricularPlan, executionYear);
         StudentCurricularPlan otherStudentCurricularPlan = otherRegistration.getLastStudentCurricularPlan();
 
-        enrol(otherStudentCurricularPlan, executionYear, curricularCourse);
+        enrol(otherStudentCurricularPlan, firstSemester, curricularCourse);
         Enrolment otherEnrolment = otherStudentCurricularPlan.getEnrolments(curricularCourse).iterator().next();
 
         return createImprovementEvaluation(otherEnrolment);
