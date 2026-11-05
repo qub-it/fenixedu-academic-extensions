@@ -3,15 +3,12 @@ package org.fenixedu.academic.domain.student;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.fenixedu.academic.FenixEduAcademicExtensionsConfiguration;
-import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.ExecutionInterval;
@@ -20,13 +17,11 @@ import org.fenixedu.academic.domain.IEnrolment;
 import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
 import org.fenixedu.academic.domain.degreeStructure.DegreeModule;
-import org.fenixedu.academic.domain.student.curriculum.CreditsReasonType;
 import org.fenixedu.academic.domain.student.curriculum.Curriculum;
 import org.fenixedu.academic.domain.student.curriculum.CurriculumConfigurationInitializer;
 import org.fenixedu.academic.domain.student.curriculum.CurriculumConfigurationInitializer.CurricularYearResult;
 import org.fenixedu.academic.domain.student.curriculum.CurriculumLineServices;
 import org.fenixedu.academic.domain.student.curriculum.ICurriculum;
-import org.fenixedu.academic.domain.studentCurriculum.CurriculumLine;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumModule;
 import org.fenixedu.academic.domain.studentCurriculum.Dismissal;
 import org.joda.time.DateTime;
@@ -271,8 +266,8 @@ public class RegistrationServices {
 
     static public boolean isFlunkedUsingCurricularYear(final Registration registration, final ExecutionYear executionYear) {
 
-        if (registration.getRegistrationYear().isAfterOrEquals(executionYear)
-                || getStudentCurricularPlan(registration, executionYear) == null) {
+        if (registration.getRegistrationYear().isAfterOrEquals(executionYear) || registration.findStudentCurricularPlan(
+                executionYear).isEmpty()) {
             return false;
         }
 
@@ -292,7 +287,7 @@ public class RegistrationServices {
     }
 
     static private Integer getEnrolmentsCount(final RegistrationDataByExecutionYear data) {
-        final StudentCurricularPlan plan = getStudentCurricularPlan(data.getRegistration(), data.getExecutionYear());
+        final StudentCurricularPlan plan = data.getRegistration().findStudentCurricularPlan(data.getExecutionYear()).orElse(null);
         return plan == null ? 0 : Long
                 .valueOf(plan.getEnrolmentsByExecutionYear(data.getExecutionYear()).stream().filter(i -> !i.isAnnulled()).count())
                 .intValue();
@@ -300,15 +295,6 @@ public class RegistrationServices {
 
     private static BiFunction<Registration, ExecutionInterval, Collection<SchoolClass>> initialSchoolClassesService =
             defaultInitialSchoolClassesService();
-
-    public static Set<SchoolClass> getSchoolClassesToEnrolBy(final Registration registration,
-            final DegreeCurricularPlan degreeCurricularPlan, final ExecutionInterval executionInterval) {
-
-        return registration.getAssociatedAttendsSet().stream()
-                .filter(attends -> attends.getExecutionInterval() == executionInterval)
-                .flatMap(attends -> attends.getExecutionCourse().getSchoolClassesBy(degreeCurricularPlan).stream())
-                .collect(Collectors.toSet());
-    }
 
     public static void registerInitialSchoolClassesService(
             final BiFunction<Registration, ExecutionInterval, Collection<SchoolClass>> service) {
@@ -416,74 +402,4 @@ public class RegistrationServices {
     public static boolean isManuallyAssignedNumber(final Registration input) {
         return input.getExtendedInformation() != null && input.getExtendedInformation().getManuallyAssignedNumber();
     }
-
-    public static LocalDate getEnrolmentDate(final Registration registration, final ExecutionYear executionYear) {
-        final RegistrationDataByExecutionYear dataByExecutionYear =
-                RegistrationDataServices.getRegistrationData(registration, executionYear);
-
-        return dataByExecutionYear == null ? null : dataByExecutionYear.getEnrolmentDate();
-    }
-
-    static public Set<CurriculumLine> getNormalEnroledCurriculumLines(Registration registration, ExecutionYear executionYear,
-            boolean applyDismissalFilter, Collection<CreditsReasonType> dismissalTypesToInclude) {
-        return getEnroledCurriculumLines(registration, executionYear, l -> CurriculumLineServices.isNormal(l),
-                applyDismissalFilter, dismissalTypesToInclude);
-    }
-
-    static public Set<CurriculumLine> getEnroledCurriculumLines(Registration registration, ExecutionYear executionYear,
-            Predicate<CurriculumLine> lineTypePredicate, boolean filterDismissalByReason,
-            Collection<CreditsReasonType> reasonsToInclude) {
-
-        final Predicate<CurriculumLine> isForYear = line -> line.getExecutionYear() == executionYear;
-
-        final Predicate<CurriculumLine> isValid = line -> {
-
-            if (line.isDismissal()) {
-
-                final Dismissal dismissal = (Dismissal) line;
-
-                //dismissals candidate to be considered as enroled (e.g. Erasmus and similar)
-                final boolean canBeAccountedAsEnroled = dismissal.getCredits().getIEnrolments().isEmpty()
-                        || dismissal.getCredits().getIEnrolments().stream().allMatch(e -> e.getExecutionYear() == executionYear);
-
-                if (!canBeAccountedAsEnroled) {
-                    return false;
-                }
-
-                return !filterDismissalByReason || (dismissal.getCredits().getReason() != null
-                        && reasonsToInclude.contains(dismissal.getCredits().getReason()));
-
-            }
-
-            return !((Enrolment) line).isAnnulled();
-        };
-
-        final Set<CurriculumLine> candidateLines = getStudentCurricularPlan(registration, executionYear).getAllCurriculumLines()
-                .stream().filter(isForYear.and(lineTypePredicate).and(isValid)).collect(Collectors.toSet());
-
-        final Set<DegreeModule> dismissalDegreeModules =
-                candidateLines.stream().filter(line -> line.isDismissal() && line.getDegreeModule() != null)
-                        .map(line -> line.getDegreeModule()).collect(Collectors.toSet());
-
-        return candidateLines.stream().filter(
-                line -> line.isDismissal() || (line.isEnrolment() && !dismissalDegreeModules.contains(line.getDegreeModule())))
-                .collect(Collectors.toSet());
-    }
-
-    static public StudentCurricularPlan getStudentCurricularPlan(final Registration registration,
-            final ExecutionYear executionYear) {
-
-        if (registration.getStudentCurricularPlansSet().size() == 1) {
-            return registration.getLastStudentCurricularPlan();
-        }
-
-        final StudentCurricularPlan curricularPlan = registration.getStudentCurricularPlan(executionYear);
-        if (curricularPlan != null) {
-            return curricularPlan;
-        }
-
-        final StudentCurricularPlan firstCurricularPlan = registration.getFirstStudentCurricularPlan();
-        return firstCurricularPlan.getStartExecutionYear().isAfterOrEquals(executionYear) ? firstCurricularPlan : null;
-    }
-
 }
