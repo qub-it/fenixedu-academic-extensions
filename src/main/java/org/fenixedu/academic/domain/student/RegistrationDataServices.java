@@ -17,10 +17,7 @@ public class RegistrationDataServices {
     }
 
     static public void setCurricularYear(final RegistrationDataByExecutionYear data, final Integer update) {
-        final RegistrationDataByExecutionYearExtendedInformation info =
-                RegistrationDataByExecutionYearExtendedInformation.findOrCreate(data);
-
-        final Integer overriden = info.getCurricularYear();
+        final Integer overriden = data.getCurricularYear();
         if ((overriden == null && update != null) || (overriden != null && !overriden.equals(update))) {
 
             final Registration registration = data.getRegistration();
@@ -39,30 +36,16 @@ public class RegistrationDataServices {
                     String.valueOf(current.getResult()), current.getJustificationPresentation());
             observation.setValue(value);
 
-            info.setCurricularYear(update);
+            data.setCurricularYear(update);
             RegistrationServices.invalidateCaches(registration, data.getExecutionYear());
         }
     }
 
-    static private Integer getCurricularYear(final RegistrationDataByExecutionYear data) {
-        return data == null || data.getExtendedInformation() == null ? null : data.getExtendedInformation().getCurricularYear();
-    }
-
     static public Integer getOverridenCurricularYear(Registration registration, ExecutionYear executionYear) {
+        final RegistrationDataByExecutionYear data =
+                executionYear == null ? null : getRegistrationData(registration, executionYear);
 
-        final RegistrationDataByExecutionYear data;
-        if (executionYear != null) {
-            data = getRegistrationData(registration, executionYear);
-        } else {
-            data = null;
-        }
-
-        final Integer curricularYear = getCurricularYear(data);
-        if (curricularYear != null) {
-            return curricularYear;
-        }
-
-        return null;
+        return data == null ? null : data.getCurricularYear();
     }
 
     static public RegistrationDataByExecutionYear getRegistrationData(final Registration registration, final ExecutionYear year) {
