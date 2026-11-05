@@ -1,8 +1,7 @@
 package org.fenixedu.academic;
 
-import jakarta.servlet.ServletContextEvent;
-import jakarta.servlet.ServletContextListener;
-import jakarta.servlet.annotation.WebListener;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.Attends;
@@ -30,6 +29,7 @@ import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.organizationalStructure.Party;
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
 import org.fenixedu.academic.domain.student.Registration;
+import org.fenixedu.academic.domain.student.RegistrationDataByExecutionYear;
 import org.fenixedu.academic.domain.student.RegistrationDataByExecutionYearExtendedInformation;
 import org.fenixedu.academic.domain.student.RegistrationExtendedInformation;
 import org.fenixedu.academic.domain.student.RegistrationObservations;
@@ -45,12 +45,16 @@ import org.fenixedu.academic.domain.studentCurriculum.CurriculumLine;
 import org.fenixedu.academic.domain.studentCurriculum.Dismissal;
 import org.fenixedu.academic.service.services.manager.MergeExecutionCourses;
 import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
+import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.fenixedu.bennu.core.signals.Signal;
 import org.fenixedu.bennu.core.util.CoreConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
+import jakarta.servlet.annotation.WebListener;
 import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.Atomic.TxMode;
 import pt.ist.fenixframework.FenixFramework;
@@ -81,6 +85,7 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
 
         RegistrationExtendedInformation.setupDeleteListener();
         RegistrationDataByExecutionYearExtendedInformation.setupDeleteListener();
+        migrateCurricularYearToRegistrationDataByExecutionYear();
         EctsAndWeightProviders.init();
 
         setupListenersForStudentSchedule();
@@ -246,6 +251,39 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
     private static void mergeExecutionCoursesMarksheets(final ExecutionCourse from, final ExecutionCourse to) {
         to.getCompetenceCourseMarkSheetSet().addAll(from.getCompetenceCourseMarkSheetSet());
         from.getCompetenceCourseMarkSheetSet().clear();
+    }
+
+    @Atomic(mode = TxMode.WRITE)
+    private void migrateCurricularYearToRegistrationDataByExecutionYear() {
+        logger.info("---------------------------------------");
+        logger.info(
+                "Migrating RegistrationDataByExecutionYearExtendedInformation 'curricularYear' field to RegistrationDataByExecutionYear");
+
+        Set<RegistrationDataByExecutionYearExtendedInformation> entries =
+                Bennu.getInstance().getRegistrationDataByExecutionYearExtendedInformationsSet();
+
+        int totalEntries = entries.size();
+        final AtomicInteger migratedEntries = new AtomicInteger();
+        final AtomicInteger nullEntries = new AtomicInteger();
+
+        entries.forEach(info -> {
+            final RegistrationDataByExecutionYear data = info.getDataByExecutionYear();
+            final Integer stored = info.getStoredCurricularYearForMigration();
+            if (data.getCurricularYear() == null && stored != null) {
+                data.setCurricularYear(stored);
+                migratedEntries.incrementAndGet();
+            }
+            if (stored == null) {
+                nullEntries.incrementAndGet();
+            }
+        });
+
+        logger.info("Migrated curricular year for {}/{} RegistrationDataByExecutionYear instances.", migratedEntries.get(),
+                totalEntries);
+        logger.info("Entries with null curricular year: {}", nullEntries.get());
+        logger.info("Validation: {} + {} = {} -> {}", migratedEntries.get(), nullEntries.get(), totalEntries,
+                migratedEntries.get() + nullEntries.get() == totalEntries);
+        logger.info("---------------------------------------");
     }
 
     @SuppressWarnings("unchecked")
