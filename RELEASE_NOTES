@@ -1,3 +1,4 @@
+- Refactor: Migrates curricularYear field from RegistrationDataByExecutionYearExtendedInformation to domain entity and syncs setters [#qubIT-Fenix-9854]
 - Refactor: Improves RegistrationServices methods and moves specific ones [#qubIT-Fenix-9573]
 
 5.1.0 (27-10-2026)
