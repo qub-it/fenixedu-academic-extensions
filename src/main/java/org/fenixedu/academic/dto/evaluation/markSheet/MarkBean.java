@@ -31,8 +31,6 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.fenixedu.academic.domain.Enrolment;
@@ -42,17 +40,18 @@ import org.fenixedu.academic.domain.Grade;
 import org.fenixedu.academic.domain.accessControl.AcademicAuthorizationGroup;
 import org.fenixedu.academic.domain.accessControl.academicAdministration.AcademicOperationType;
 import org.fenixedu.academic.domain.curriculum.grade.GradeScale;
+import org.fenixedu.academic.domain.enrolment.EnrolmentServices;
 import org.fenixedu.academic.domain.evaluation.markSheet.CompetenceCourseMarkSheet;
 import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.StatuteType;
-import org.fenixedu.academic.domain.student.services.EnrolmentServices;
 import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 import org.fenixedu.bennu.IBean;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.joda.time.LocalDate;
 import org.joda.time.YearMonthDay;
 
+import jakarta.servlet.http.HttpServletRequest;
 import pt.ist.fenixWebFramework.servlets.filters.contentRewrite.GenericChecksumRewriter;
 import pt.ist.fenixframework.Atomic;
 
