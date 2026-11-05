@@ -1,3 +1,4 @@
+- Refactor: Remove EvaluationSeasonInformation entity and replace deprecated references [#qubIT-Fenix-5018]
 - Refactor: Add migration code for EvaluationSeason information fields [#qubIT-Fenix-5018]
 
 5.1.1 (06-11-2026)
