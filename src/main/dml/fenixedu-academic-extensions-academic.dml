@@ -75,27 +75,6 @@ relation EvaluationSeasonPeriodExecutionDegree {
     evaluation.season.EvaluationSeasonPeriod playsRole evaluationSeasonPeriods { multiplicity *; }	
 }
 
-class evaluation.season.EvaluationSeasonInformation {
-	Integer seasonOrder;
-	boolean active;
-	boolean requiresEnrolmentEvaluation;
-	boolean supportsEmptyGrades;
-	boolean supportsTeacherConfirmation;
-	Boolean allowsMarksheets;
-	Integer minPastYearsToAcceptImprovementEnrolments;
-	Integer maxPastYearsToAcceptImprovementEnrolments;	
-}
-
-relation EvaluationSeasonInformationRelation {
-    evaluation.season.EvaluationSeasonInformation playsRole information {
-        multiplicity 1..1;
-    }
-
-    .org.fenixedu.academic.domain.EvaluationSeason playsRole season {
-        multiplicity 1..1;
-    }
-}
-
 class evaluation.season.rule.EvaluationSeasonRule {
 }
 
