@@ -92,7 +92,7 @@ public class PrescriptionConfig extends PrescriptionConfig_Base {
     }
 
     private static ExecutionYear getLastReingressionYearIncludingPrecedentRegistrations(Registration registration) {
-        return Stream.concat(Stream.of(registration), registration.findPrecedentDegreeRegistrations())
+        return Stream.concat(Stream.of(registration), registration.findNonConcludedPrecedentDegreeRegistrations())
                 .flatMap(r -> r.getReingressions().stream()).map(RegistrationDataByExecutionYear::getExecutionYear)
                 .max(ExecutionYear.COMPARATOR_BY_BEGIN_DATE).orElse(null);
     }
