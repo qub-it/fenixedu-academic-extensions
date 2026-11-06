@@ -239,7 +239,7 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     }
 
     public boolean getHasPreviousReingressionIncludingPrecedentRegistrations() {
-        return Stream.concat(Stream.of(registration), registration.findPrecedentDegreeRegistrations())
+        return Stream.concat(Stream.of(registration), registration.findNonConcludedPrecedentDegreeRegistrations())
                 .flatMap(r -> r.getReingressions().stream()).filter(ri -> ri.getExecutionYear().isBefore(getExecutionYear()))
                 .count() > 0;
     }
