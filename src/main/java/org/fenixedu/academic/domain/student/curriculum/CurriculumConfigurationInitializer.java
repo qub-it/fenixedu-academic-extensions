@@ -40,7 +40,7 @@ import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
 import org.fenixedu.academic.domain.degreeStructure.CurricularPeriodServices;
 import org.fenixedu.academic.domain.degreeStructure.CycleType;
 import org.fenixedu.academic.domain.student.Registration;
-import org.fenixedu.academic.domain.student.RegistrationDataServices;
+import org.fenixedu.academic.domain.student.RegistrationDataByExecutionYear;
 import org.fenixedu.academic.domain.student.RegistrationServices;
 import org.fenixedu.academic.domain.student.curriculum.Curriculum.CurricularYearCalculator;
 import org.fenixedu.academic.domain.student.curriculum.Curriculum.CurriculumEntryPredicate;
@@ -210,7 +210,9 @@ abstract public class CurriculumConfigurationInitializer {
         }
         calculated.setJustification(justification);
 
-        final Integer curricularYear = RegistrationDataServices.getOverridenCurricularYear(registration, executionYear);
+        final Integer curricularYear =
+                registration.findDataByExecutionYear(executionYear).map(RegistrationDataByExecutionYear::getCurricularYear)
+                        .orElse(null);
         if (curricularYear != null) {
             final CurricularYearResult overriden = new CurricularYearResult(executionYear);
             overriden.setResult(curricularYear);

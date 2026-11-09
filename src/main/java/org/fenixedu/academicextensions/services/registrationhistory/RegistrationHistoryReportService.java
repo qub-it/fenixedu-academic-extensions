@@ -1,7 +1,5 @@
 package org.fenixedu.academicextensions.services.registrationhistory;
 
-import static org.fenixedu.academic.domain.student.RegistrationDataServices.getRegistrationData;
-
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -537,7 +535,7 @@ public class RegistrationHistoryReportService {
 
             // @formatter:off
             result.addAll(stream.map(enrolment -> enrolment.getRegistration()).filter(studentNumberFilter)
-                    .filter(reg -> getRegistrationData(reg, executionYear) != null).collect(Collectors.toSet()));
+                    .filter(reg -> reg.findDataByExecutionYear(executionYear).isPresent()).collect(Collectors.toSet()));
             // @formatter:on
 
         } else if (!this.withEnrolments && Boolean.TRUE.equals(this.withAnnuledEnrolments)) {
