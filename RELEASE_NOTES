@@ -1,3 +1,4 @@
+- Refactor: Replaces deprecated RegistrationDataServices references [#qubIT-Fenix-9864]
 - Refactor: Deletes deprecated RegistrationDataByExecutionYearExtendedInformation entity [#qubIT-Fenix-9854]
 - Refactor: Migrates curricularYear field from RegistrationDataByExecutionYearExtendedInformation to domain entity and syncs setters [#qubIT-Fenix-9854]
 - Refactor: Improves RegistrationServices methods and moves specific ones [#qubIT-Fenix-9573]
