@@ -24,6 +24,7 @@ import org.fenixedu.academic.domain.student.curriculum.CurriculumLineServices;
 import org.fenixedu.academic.domain.student.curriculum.ICurriculum;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumModule;
 import org.fenixedu.academic.domain.studentCurriculum.Dismissal;
+import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
@@ -254,6 +255,30 @@ public class RegistrationServices {
             logger.error(String.format("Unable to get Registration CurricularYear [%s %s %s]", new DateTime(), key,
                     t.getLocalizedMessage()));
             return null;
+        }
+    }
+
+    static public void setCurricularYear(final RegistrationDataByExecutionYear data, final Integer update) {
+        final Integer overriden = data.getCurricularYear();
+        if ((overriden == null && update != null) || (overriden != null && !overriden.equals(update))) {
+            final Registration registration = data.getRegistration();
+            final CurricularYearResult current = getCurricularYear(registration, data.getExecutionYear());
+
+            final RegistrationObservations observation = new RegistrationObservations(registration);
+
+            String value;
+            if (update == null) {
+                value = AcademicExtensionsUtil.bundle("label.curricularYear.overriden.observation.removed");
+            } else {
+                value = AcademicExtensionsUtil.bundle("label.curricularYear.overriden.observation.updated", update.toString(),
+                        String.valueOf(current.getResult()), current.getJustificationPresentation());
+            }
+            value = value + " " + AcademicExtensionsUtil.bundle("label.curricularYear.overriden.observation.suffix",
+                    String.valueOf(current.getResult()), current.getJustificationPresentation());
+            observation.setValue(value);
+
+            data.setCurricularYear(update);
+            invalidateCaches(registration, data.getExecutionYear());
         }
     }
 
