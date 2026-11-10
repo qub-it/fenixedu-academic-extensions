@@ -31,7 +31,7 @@ import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
 import org.fenixedu.academic.domain.degreeStructure.CourseGroup;
 import org.fenixedu.academic.domain.degreeStructure.DegreeModule;
 import org.fenixedu.academic.domain.enrolment.EnrolmentContext;
-import org.fenixedu.academic.domain.student.services.StatuteServices;
+import org.fenixedu.academic.domain.student.StatuteType;
 
 public class StudentStatuteCurricularRuleVerifier extends VerifyRuleExecutor {
 
@@ -41,8 +41,8 @@ public class StudentStatuteCurricularRuleVerifier extends VerifyRuleExecutor {
 
         final StudentStatuteCurricularRule rule = (StudentStatuteCurricularRule) curricularRule;
 
-        if (!StatuteServices.findStatuteTypes(enrolmentContext.getRegistration(), enrolmentContext.getExecutionPeriod())
-                .contains(rule.getStatuteType())) {
+        if (StatuteType.findforRegistration(enrolmentContext.getRegistration(), enrolmentContext.getExecutionPeriod())
+                .noneMatch(st -> st == rule.getStatuteType())) {
             return RuleResult.createFalse(degreeModuleToVerify);
         }
 

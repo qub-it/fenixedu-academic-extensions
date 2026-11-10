@@ -9,7 +9,6 @@ import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.StatuteType;
 import org.fenixedu.academic.domain.student.curriculum.Curriculum;
-import org.fenixedu.academic.domain.student.services.StatuteServices;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 
 import pt.ist.fenixframework.Atomic;
@@ -67,13 +66,8 @@ public class StudentStatuteExecutiveRule extends StudentStatuteExecutiveRule_Bas
         final ExecutionYear executionYear = curriculum.getExecutionYear() == null ? ExecutionYear
                 .findCurrent(registration.getDegree().getCalendar()) : curriculum.getExecutionYear();
 
-        for (final StatuteType iter : StatuteServices.findStatuteTypes(registration, executionYear)) {
-            if (getStatuteType() == iter) {
-                return createTrue();
-            }
-        }
-
-        return createFalseLabelled(
+        return StatuteType.findforRegistration(registration, executionYear)
+                .anyMatch(st -> st == getStatuteType()) ? createTrue() : createFalseLabelled(
                 getMessagesSuffix("label." + this.getClass().getSimpleName() + ".suffix", executionYear.getQualifiedName()));
     }
 

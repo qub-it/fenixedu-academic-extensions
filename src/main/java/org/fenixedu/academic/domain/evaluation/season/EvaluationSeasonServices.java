@@ -44,9 +44,7 @@ import org.fenixedu.academic.domain.evaluation.season.rule.PreviousSeasonMinimum
 import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.StatuteType;
-import org.fenixedu.academic.domain.student.services.StatuteServices;
 import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
-import org.fenixedu.academictreasury.domain.event.AcademicTreasuryEvent;
 import org.fenixedu.academictreasury.services.PersonServices;
 import org.fenixedu.commons.i18n.LocalizedString;
 import org.fenixedu.treasury.util.LocalizedStringUtil;
@@ -288,8 +286,9 @@ abstract public class EvaluationSeasonServices {
 
             for (final EvaluationSeasonStatuteType rule : EvaluationSeasonRule.find(season, EvaluationSeasonStatuteType.class)) {
                 final Set<StatuteType> blocking = rule.getStatuteTypesSet();
-                final Set<StatuteType> inspect = Sets.newHashSet(
-                        StatuteServices.findStatuteTypes(enrolment.getRegistration(), enrolment.getExecutionPeriod()));
+                final Set<StatuteType> inspect =
+                        StatuteType.findforRegistration(enrolment.getRegistration(), enrolment.getExecutionInterval())
+                                .collect(Collectors.toSet());
 
                 if (!Sets.intersection(blocking, inspect).isEmpty()) {
                     return true;

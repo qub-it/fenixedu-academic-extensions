@@ -46,13 +46,13 @@ import org.fenixedu.academic.domain.student.RegistrationProtocol;
 import org.fenixedu.academic.domain.student.RegistrationRegimeType;
 import org.fenixedu.academic.domain.student.RegistrationServices;
 import org.fenixedu.academic.domain.student.ResearchArea;
+import org.fenixedu.academic.domain.student.StatuteType;
 import org.fenixedu.academic.domain.student.Student;
 import org.fenixedu.academic.domain.student.StudentStatute;
 import org.fenixedu.academic.domain.student.curriculum.CurriculumConfigurationInitializer.CurricularYearResult;
 import org.fenixedu.academic.domain.student.curriculum.ICurriculum;
 import org.fenixedu.academic.domain.student.curriculum.ICurriculumEntry;
 import org.fenixedu.academic.domain.student.registrationStates.RegistrationState;
-import org.fenixedu.academic.domain.student.services.StatuteServices;
 import org.fenixedu.academic.domain.studentCurriculum.Credits;
 import org.fenixedu.academic.domain.studentCurriculum.Dismissal;
 import org.fenixedu.academic.domain.studentCurriculum.ExternalCurriculumGroup;
@@ -1172,8 +1172,9 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
         BigDecimal result = new BigDecimal(executionYears.size());
         BigDecimal bonification = BigDecimal.ZERO;
         for (final ExecutionYear iter : executionYears) {
-            bonification = bonification.add(config.getBonification(StatuteServices.findStatuteTypes(getRegistration(), iter),
-                    getRegistration().isPartialRegime(iter)));
+            bonification = bonification.add(
+                    config.getBonification(StatuteType.findforRegistration(getRegistration(), iter).collect(Collectors.toSet()),
+                            getRegistration().isPartialRegime(iter)));
         }
 
         return BigDecimal.ZERO.max(result.subtract(bonification));

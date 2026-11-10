@@ -12,7 +12,6 @@ import org.fenixedu.academic.domain.degreeStructure.CurricularPeriodServices;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.StatuteType;
 import org.fenixedu.academic.domain.student.curriculum.Curriculum;
-import org.fenixedu.academic.domain.student.services.StatuteServices;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 
 import pt.ist.fenixframework.Atomic;
@@ -72,7 +71,7 @@ public class FlunkedCredits extends FlunkedCredits_Base {
 
             final ExecutionYear executionYear = input.getExecutionYear() == null ? ExecutionYear
                     .findCurrent(registration.getDegree().getCalendar()) : input.getExecutionYear();
-            if (StatuteServices.findStatuteTypes(registration, executionYear).stream().noneMatch(i -> getStatuteType() == i)) {
+            if (StatuteType.findforRegistration(registration, executionYear).noneMatch(i -> getStatuteType() == i)) {
                 return createFalseLabelled(getMessagesSuffix(getStatuteType()));
             }
         }
