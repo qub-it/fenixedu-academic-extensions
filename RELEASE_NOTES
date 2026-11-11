@@ -1,3 +1,6 @@
+- Refactor: Deletes deprecated DynamicFieldServices [#qubIT-Fenix-9882]
+- Refactor: Deletes deprecated StatuteServices and respective references [#qubIT-Fenix-9883]
+
 5.1.1 (06-11-2026)
 - Refactor: Delete EnrolmentServices and delegate methods [#qubIT-Fenix-9581]
 

@@ -5,7 +5,7 @@ import org.fenixedu.academic.domain.curricularRules.StudentStatuteCurricularRule
 import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
 import org.fenixedu.academic.domain.enrolment.EnrolmentContext;
 import org.fenixedu.academic.domain.enrolment.IDegreeModuleToEvaluate;
-import org.fenixedu.academic.domain.student.services.StatuteServices;
+import org.fenixedu.academic.domain.student.StatuteType;
 import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 
 public class StudentStatuteCurricularRuleExecutor extends CurricularRuleExecutor {
@@ -28,8 +28,8 @@ public class StudentStatuteCurricularRuleExecutor extends CurricularRuleExecutor
 
         final StudentStatuteCurricularRule rule = (StudentStatuteCurricularRule) curricularRule;
 
-        if (!StatuteServices.findStatuteTypes(enrolmentContext.getRegistration(), enrolmentContext.getExecutionPeriod())
-                .contains(rule.getStatuteType())) {
+        if (StatuteType.findforRegistration(enrolmentContext.getRegistration(), enrolmentContext.getExecutionPeriod())
+                .noneMatch(st -> st == rule.getStatuteType())) {
             return RuleResult.createFalseWithLiteralMessage(sourceDegreeModuleToEvaluate.getDegreeModule(),
                     AcademicExtensionsUtil.bundle(
                             "curricularRules.ruleExecutors.StudentStatuteCurricularRuleExecutor.statutes.is.required.to.enrol",

@@ -41,7 +41,7 @@ import org.fenixedu.academic.domain.enrolment.IDegreeModuleToEvaluate;
 import org.fenixedu.academic.domain.enrolment.OptionalDegreeModuleToEnrol;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.student.RegistrationRegimeType;
-import org.fenixedu.academic.domain.student.services.StatuteServices;
+import org.fenixedu.academic.domain.student.StatuteType;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 
@@ -139,9 +139,8 @@ abstract public class RuleEnrolment extends RuleEnrolment_Base {
     }
 
     protected boolean hasValidStatute(final EnrolmentContext enrolmentContext) {
-        return getStatuteTypesSet().isEmpty()
-                || StatuteServices.findStatuteTypes(enrolmentContext.getRegistration(), enrolmentContext.getExecutionYear())
-                        .stream().anyMatch(s -> getStatuteTypesSet().contains(s));
+        return getStatuteTypesSet().isEmpty() || StatuteType.findforRegistration(enrolmentContext.getRegistration(),
+                enrolmentContext.getExecutionYear()).anyMatch(s -> getStatuteTypesSet().contains(s));
     }
 
     protected boolean hasValidRegistrationProtocol(final EnrolmentContext enrolmentContext) {
