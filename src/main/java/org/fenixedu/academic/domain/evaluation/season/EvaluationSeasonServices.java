@@ -27,7 +27,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.EnrolmentEvaluation;
@@ -60,30 +59,6 @@ import pt.ist.fenixframework.core.AbstractDomainObjectServices;
 abstract public class EvaluationSeasonServices {
 
     private static final Logger logger = LoggerFactory.getLogger(EvaluationSeasonServices.class);
-
-    static public Stream<EvaluationSeason> findAll() {
-        return EvaluationSeason.all();
-    }
-
-    static public Stream<EvaluationSeason> findByCode(final String code) {
-        return findAll().filter(i -> code.equalsIgnoreCase(i.getCode()));
-    }
-
-    static public Stream<EvaluationSeason> findByAcronym(final LocalizedString acronym) {
-        return findAll().filter(i -> acronym.equals(i.getAcronym()));
-    }
-
-    static public Stream<EvaluationSeason> findByName(final LocalizedString name) {
-        return findAll().filter(i -> name.equals(i.getName()));
-    }
-
-    static public Stream<EvaluationSeason> findBySeasonOrder(final Integer seasonOrder) {
-        return findAll().filter(i -> seasonOrder.equals(getSeasonOrder(i)));
-    }
-
-    static public Stream<EvaluationSeason> findByActive(final boolean active) {
-        return findAll().filter(i -> active == getActive(i));
-    }
 
     static public LocalizedString getDescriptionI18N(final EvaluationSeason input) {
         LocalizedString result = new LocalizedString();
@@ -213,7 +188,7 @@ abstract public class EvaluationSeasonServices {
     static private EvaluationSeason getPreviousSeason(final EvaluationSeason input, final boolean onlyActive) {
         EvaluationSeason result = null;
 
-        for (final EvaluationSeason iter : findByActive(onlyActive).collect(Collectors.toSet())) {
+        for (final EvaluationSeason iter : EvaluationSeason.findByActive(onlyActive).collect(Collectors.toSet())) {
             if (iter == input) {
                 continue;
             }
@@ -243,7 +218,7 @@ abstract public class EvaluationSeasonServices {
     static private EvaluationSeason getNextSeason(final EvaluationSeason input, final boolean onlyActive) {
         EvaluationSeason result = null;
 
-        for (final EvaluationSeason iter : findByActive(onlyActive).collect(Collectors.toSet())) {
+        for (final EvaluationSeason iter : EvaluationSeason.findByActive(onlyActive).collect(Collectors.toSet())) {
             if (iter == input) {
                 continue;
             }
@@ -391,7 +366,8 @@ abstract public class EvaluationSeasonServices {
 
     @Atomic
     static public void initialize() {
-        final List<EvaluationSeason> seasons = findAll().sorted(SEASON_ORDER_COMPARATOR).collect(Collectors.toList());
+        final List<EvaluationSeason> seasons =
+                EvaluationSeason.all().sorted(SEASON_ORDER_COMPARATOR).collect(Collectors.toList());
 
         for (int i = 0; i < seasons.size(); i++) {
             final EvaluationSeason iter = seasons.get(i);

@@ -22,7 +22,6 @@ import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.evaluation.markSheet.CompetenceCourseMarkSheet;
-import org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonServices;
 import org.fenixedu.academic.dto.evaluation.markSheet.report.CompetenceCourseSeasonReport;
 import org.fenixedu.academic.dto.evaluation.markSheet.report.ExecutionCourseSeasonReport;
 import org.joda.time.LocalDate;
@@ -46,7 +45,7 @@ abstract public class MarkSheetStatusReportService {
 
         final List<ExecutionCourseSeasonReport> result = Lists.newArrayList();
 
-        for (final EvaluationSeason season : EvaluationSeasonServices.findByActive(true).collect(Collectors.toList())) {
+        for (final EvaluationSeason season : EvaluationSeason.findByActive(true).collect(Collectors.toList())) {
 
             final Multimap<LocalDate, CompetenceCourseSeasonReport> reportsByEvaluationDate = ArrayListMultimap.create();
             for (final CompetenceCourseSeasonReport report : iterateCompetenceCourses(executionCourse.getExecutionPeriod(),
@@ -70,8 +69,7 @@ abstract public class MarkSheetStatusReportService {
     }
 
     static public List<CompetenceCourseSeasonReport> getReportsForCompetenceCourses(final ExecutionInterval executionInterval) {
-        return getReportsForCompetenceCourses(executionInterval,
-                EvaluationSeasonServices.findByActive(true).collect(Collectors.toSet()));
+        return getReportsForCompetenceCourses(executionInterval, EvaluationSeason.findByActive(true).collect(Collectors.toSet()));
     }
 
     static public List<CompetenceCourseSeasonReport> getReportsForCompetenceCourses(final ExecutionInterval executionInterval,

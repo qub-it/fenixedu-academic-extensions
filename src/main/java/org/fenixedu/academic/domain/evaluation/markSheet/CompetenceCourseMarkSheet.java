@@ -683,14 +683,14 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
                         continue;
                     }
 
-                    if (EvaluationSeasonServices.isRequiredEnrolmentEvaluation(season)) {
+                    if (season.getRequiresEnrolmentEvaluation()) {
                         // is manual, enrolment must be included
                         result.add(enrolment);
                         continue;
                     }
                 }
 
-            } else if (EvaluationSeasonServices.isRequiredEnrolmentEvaluation(season)) {
+            } else if (season.getRequiresEnrolmentEvaluation()) {
                 // is manual, evaluation should exist
                 continue;
             }
