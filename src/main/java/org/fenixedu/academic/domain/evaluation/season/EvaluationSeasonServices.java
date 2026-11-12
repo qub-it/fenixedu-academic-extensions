@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -46,7 +47,6 @@ import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.StatuteType;
 import org.fenixedu.academic.domain.student.services.StatuteServices;
 import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
-import org.fenixedu.academictreasury.domain.event.AcademicTreasuryEvent;
 import org.fenixedu.academictreasury.services.PersonServices;
 import org.fenixedu.commons.i18n.LocalizedString;
 import org.fenixedu.treasury.util.LocalizedStringUtil;
@@ -521,6 +521,39 @@ abstract public class EvaluationSeasonServices {
                 EvaluationSeasonInformation.create(iter, false, false, true, false, true).setSeasonOrder(i);
             }
         }
+
+        migrateInformationFieldsToSeason();
+    }
+
+    @Atomic
+    public static void migrateInformationFieldsToSeason() {
+        logger.info("---------------------------------------");
+        logger.info("Starting migration of EvaluationSeasonInformation fields to EvaluationSeason");
+
+        final long start = System.currentTimeMillis();
+        final AtomicInteger migrated = new AtomicInteger(0);
+
+        findAll().forEach(season -> {
+            final EvaluationSeasonInformation information = season.getInformation();
+            if (information == null || season.getSeasonOrder() != null) {
+                return;
+            }
+
+            season.setSeasonOrder(information.getSuperSeasonOrder());
+            season.setActive(information.getSuperActive());
+            season.setRequiresEnrolmentEvaluation(information.getSuperRequiresEnrolmentEvaluation());
+            season.setSupportsEmptyGrades(information.getSuperSupportsEmptyGrades());
+            season.setSupportsTeacherConfirmation(information.getSuperSupportsTeacherConfirmation());
+            season.setAllowsMarksheets(information.getSuperAllowsMarksheets());
+            season.setMinPastYearsToAcceptImprovementEnrolments(information.getSuperMinPastYearsToAcceptImprovementEnrolments());
+            season.setMaxPastYearsToAcceptImprovementEnrolments(information.getSuperMaxPastYearsToAcceptImprovementEnrolments());
+
+            migrated.incrementAndGet();
+        });
+
+        logger.info("Finished migration of EvaluationSeasonInformation fields to EvaluationSeason. "
+                + "Migrated {} EvaluationSeason instances in {} ms", migrated.get(), System.currentTimeMillis() - start);
+        logger.info("---------------------------------------");
     }
 
     static public Integer maxOrder() {
