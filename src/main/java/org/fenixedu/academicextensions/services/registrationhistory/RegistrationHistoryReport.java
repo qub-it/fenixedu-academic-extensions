@@ -221,7 +221,7 @@ public class RegistrationHistoryReport implements Comparable<RegistrationHistory
     }
 
     public StudentCurricularPlan getStudentCurricularPlan() {
-        return RegistrationServices.getStudentCurricularPlan(registration, getExecutionYear());
+        return registration.findStudentCurricularPlan(getExecutionYear()).orElse(registration.getLastStudentCurricularPlan());
     }
 
     private DegreeCurricularPlan getDegreeCurricularPlan() {
