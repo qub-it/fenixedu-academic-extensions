@@ -29,11 +29,14 @@ import java.math.BigDecimal;
 import java.util.Collection;
 
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
+import org.fenixedu.academic.domain.curricularPeriod.CurricularPeriod;
 import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
+import org.fenixedu.academic.domain.degreeStructure.CurricularPeriodServices;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.RegistrationServices;
 import org.fenixedu.academic.domain.student.curriculum.Curriculum;
+import org.fenixedu.academic.domain.studentCurriculum.CurriculumLine;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 
@@ -129,8 +132,20 @@ abstract public class RuleTransition extends RuleTransition_Base {
         }
 
         if (getSemester() != null) {
-            result = RegistrationServices.filterCurricularYearEntriesBySemester(result, getSemester());
+            result = filterCurricularYearEntriesBySemester(result, getSemester());
         }
+
+        return result;
+    }
+
+    private static Curriculum filterCurricularYearEntriesBySemester(final Curriculum input, final Integer semester) {
+        final Curriculum result = Curriculum.createEmpty(input.getCurriculumModule(), input.getExecutionYear());
+        result.add(input);
+
+        result.getCurricularYearEntries().removeIf(entry -> {
+            final CurricularPeriod period = CurricularPeriodServices.getCurricularPeriod((CurriculumLine) entry);
+            return period == null || !semester.equals(period.getChildOrder());
+        });
 
         return result;
     }

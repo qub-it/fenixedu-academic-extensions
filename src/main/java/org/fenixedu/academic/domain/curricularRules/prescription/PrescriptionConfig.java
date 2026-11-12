@@ -3,11 +3,13 @@ package org.fenixedu.academic.domain.curricularRules.prescription;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.academic.domain.student.Registration;
+import org.fenixedu.academic.domain.student.RegistrationDataByExecutionYear;
 import org.fenixedu.academic.domain.student.RegistrationServices;
 import org.fenixedu.academic.domain.student.StatuteType;
 import org.fenixedu.bennu.core.domain.Bennu;
@@ -80,16 +82,20 @@ public class PrescriptionConfig extends PrescriptionConfig_Base {
     }
 
     public Collection<ExecutionYear> filterExecutionYears(Registration registration, Collection<ExecutionYear> executionYears) {
-
-        final ExecutionYear lastReingressionYear = getReingressionRestartsYearCount() ? RegistrationServices
-                .getLastReingressionYearIncludingPrecedentRegistrations(registration) : null;
+        final ExecutionYear lastReingressionYear =
+                getReingressionRestartsYearCount() ? getLastReingressionYearIncludingPrecedentRegistrations(registration) : null;
         final ExecutionYear minExecutionYear = getBeginExecutionYear();
 
         return executionYears.stream()
                 .filter(ey -> (minExecutionYear == null || ey.isAfterOrEquals(minExecutionYear))
                         && (lastReingressionYear == null || ey.isAfterOrEquals(lastReingressionYear)))
                 .collect(Collectors.toSet());
+    }
 
+    private static ExecutionYear getLastReingressionYearIncludingPrecedentRegistrations(Registration registration) {
+        return Stream.concat(Stream.of(registration), RegistrationServices.getPrecedentDegreeRegistrations(registration).stream())
+                .flatMap(r -> r.getReingressions().stream()).map(RegistrationDataByExecutionYear::getExecutionYear)
+                .max(ExecutionYear.COMPARATOR_BY_BEGIN_DATE).orElse(null);
     }
 
     public BigDecimal getBonification(Collection<StatuteType> statuteTypes, boolean partialRegime) {
