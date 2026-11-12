@@ -535,7 +535,7 @@ abstract public class EvaluationSeasonServices {
 
         findAll().forEach(season -> {
             final EvaluationSeasonInformation information = season.getInformation();
-            if (information == null) {
+            if (information == null || season.getSeasonOrder() != null) {
                 return;
             }
 
