@@ -26,7 +26,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -49,12 +48,10 @@ import org.fenixedu.academic.domain.student.services.StatuteServices;
 import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 import org.fenixedu.academictreasury.services.PersonServices;
 import org.fenixedu.commons.i18n.LocalizedString;
-import org.fenixedu.treasury.util.LocalizedStringUtil;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
 import pt.ist.fenixframework.Atomic;
@@ -63,121 +60,6 @@ import pt.ist.fenixframework.core.AbstractDomainObjectServices;
 abstract public class EvaluationSeasonServices {
 
     private static final Logger logger = LoggerFactory.getLogger(EvaluationSeasonServices.class);
-
-    static private void init(final EvaluationSeason evaluationSeason, final boolean active,
-            final boolean requiresEnrolmentEvaluation, final boolean supportsEmptyGrades,
-            final boolean supportsTeacherConfirmation, final boolean allowsMarksheets) {
-
-        EvaluationSeasonInformation.create(evaluationSeason, active, requiresEnrolmentEvaluation, supportsEmptyGrades,
-                supportsTeacherConfirmation, allowsMarksheets);
-        checkRules(evaluationSeason);
-    }
-
-    static private void checkRules(final EvaluationSeason season) {
-        if (season.getInformation() == null) {
-            throw new AcademicExtensionsDomainException("error.EvaluationSeason.evaluationSeasonInformation.required");
-        }
-
-        if (Strings.isNullOrEmpty(season.getCode())) {
-            throw new AcademicExtensionsDomainException("error.EvaluationSeason.code.required");
-        }
-
-        if (LocalizedStringUtil.isTrimmedEmpty(season.getAcronym())) {
-            throw new AcademicExtensionsDomainException("error.EvaluationSeason.acronym.required");
-        }
-
-        if (LocalizedStringUtil.isTrimmedEmpty(season.getName())) {
-            throw new AcademicExtensionsDomainException("error.EvaluationSeason.name.required");
-        }
-
-        if (!checkNTrue(1, season.getNormal(), season.getImprovement(),
-                season.getSpecial()) && !season.getSpecialAuthorization()) {
-            throw new AcademicExtensionsDomainException("error.EvaluationSeason.type.not.unique");
-        }
-
-        checkSeasonExistsForName(season, season.getName());
-    }
-
-    static private void checkSeasonExistsForName(final EvaluationSeason evaluationSeason, final LocalizedString name) {
-
-        for (final EvaluationSeason season : findByName(name).collect(Collectors.toSet())) {
-            if (season != evaluationSeason) {
-                throw new AcademicExtensionsDomainException("error.EvaluationSeason.duplicated.name");
-            }
-        }
-    }
-
-    static private boolean checkNTrue(int n, boolean... args) {
-        assert args.length > 0;
-        int count = 0;
-        for (boolean b : args) {
-            if (b) {
-                count++;
-            }
-            if (count > n) {
-                return false;
-            }
-        }
-        return count == n;
-    }
-
-    @Atomic
-    static public void edit(final EvaluationSeason evaluationSeason, final String code, final LocalizedString acronym,
-            final LocalizedString name, final boolean normal, final boolean improvement, final boolean special,
-            final boolean specialAuthorization, final boolean active, final boolean requiresEnrolmentEvaluation,
-            final boolean supportsEmptyGrades, final boolean supportsTeacherConfirmation, final boolean allowsMarksheets) {
-
-        checkSeasonExistsForName(evaluationSeason, name);
-
-        evaluationSeason.setCode(code);
-        evaluationSeason.setAcronym(acronym);
-        evaluationSeason.setName(name);
-        evaluationSeason.setNormal(normal);
-        evaluationSeason.setImprovement(improvement);
-        evaluationSeason.setSpecial(special);
-        evaluationSeason.setSpecialAuthorization(specialAuthorization);
-
-        evaluationSeason.getInformation()
-                .edit(active, requiresEnrolmentEvaluation, supportsEmptyGrades, supportsTeacherConfirmation, allowsMarksheets);
-        checkRules(evaluationSeason);
-    }
-
-    @Deprecated
-    @Atomic
-    static public void edit(final EvaluationSeason evaluationSeason, final String code, final LocalizedString acronym,
-            final LocalizedString name, final boolean normal, final boolean improvement, final boolean special,
-            final boolean specialAuthorization, final boolean active, final boolean requiresEnrolmentEvaluation,
-            final boolean supportsEmptyGrades, final boolean supportsTeacherConfirmation) {
-
-        edit(evaluationSeason, code, acronym, name, normal, improvement, special, specialAuthorization, active,
-                requiresEnrolmentEvaluation, supportsEmptyGrades, supportsTeacherConfirmation, true);
-    }
-
-    @Atomic
-    static public EvaluationSeason create(final String code, final LocalizedString acronym, final LocalizedString name,
-            final boolean normal, final boolean improvement, final boolean special, final boolean specialAuthorization,
-            final boolean active, final boolean requiresEnrolmentEvaluation, final boolean supportsEmptyGrades,
-            final boolean supportsTeacherConfirmation, final boolean allowsMarksheets) {
-
-        final EvaluationSeason evaluationSeason =
-                new EvaluationSeason(acronym, name, normal, improvement, specialAuthorization, special);
-        evaluationSeason.setCode(code);
-
-        init(evaluationSeason, active, requiresEnrolmentEvaluation, supportsEmptyGrades, supportsTeacherConfirmation,
-                allowsMarksheets);
-        return evaluationSeason;
-    }
-
-    @Deprecated
-    @Atomic
-    static public EvaluationSeason create(final String code, final LocalizedString acronym, final LocalizedString name,
-            final boolean normal, final boolean improvement, final boolean special, final boolean specialAuthorization,
-            final boolean active, final boolean requiresEnrolmentEvaluation, final boolean supportsEmptyGrades,
-            final boolean supportsTeacherConfirmation) {
-
-        return create(code, acronym, name, normal, improvement, special, specialAuthorization, active,
-                requiresEnrolmentEvaluation, supportsEmptyGrades, supportsTeacherConfirmation, true);
-    }
 
     static public Stream<EvaluationSeason> findAll() {
         return EvaluationSeason.all();
@@ -305,15 +187,15 @@ abstract public class EvaluationSeasonServices {
     }
 
     static public boolean isRequiredEnrolmentEvaluation(final EvaluationSeason input) {
-        return input != null && input.getInformation() != null && input.getInformation().getRequiresEnrolmentEvaluation();
+        return input != null && input.getRequiresEnrolmentEvaluation();
     }
 
     static public boolean isSupportsEmptyGrades(final EvaluationSeason input) {
-        return input != null && input.getInformation() != null && input.getInformation().getSupportsEmptyGrades();
+        return input != null && input.getSupportsEmptyGrades();
     }
 
     static public boolean isSupportsTeacherConfirmation(final EvaluationSeason input) {
-        return input != null && input.getInformation() != null && input.getInformation().getSupportsTeacherConfirmation();
+        return input != null && input.getSupportsTeacherConfirmation();
     }
 
     static public boolean isForApprovedEnrolments(final EvaluationSeason season) {
@@ -405,18 +287,16 @@ abstract public class EvaluationSeasonServices {
     }
 
     static public boolean getActive(final EvaluationSeason input) {
-        return input != null && input.getInformation() != null && input.getInformation().getActive();
+        return input != null && input.getActive();
     }
 
     static public Integer getSeasonOrder(final EvaluationSeason input) {
-        final EvaluationSeasonInformation information = input.getInformation();
-
         // bulletproof in order to be bootstrap-safe
-        return information == null || information.getSeasonOrder() == null ? 0 : information.getSeasonOrder();
+        return input.getSeasonOrder() == null ? 0 : input.getSeasonOrder();
     }
 
     static public void setSeasonOrder(final EvaluationSeason evaluationSeason, final Integer order) {
-        evaluationSeason.getInformation().setSeasonOrder(order);
+        evaluationSeason.setSeasonOrder(order);
     }
 
     @Atomic
@@ -516,44 +396,11 @@ abstract public class EvaluationSeasonServices {
         for (int i = 0; i < seasons.size(); i++) {
             final EvaluationSeason iter = seasons.get(i);
 
-            if (iter.getInformation() == null) {
+            if (iter.getSeasonOrder() == null) {
                 logger.info("Init " + iter.getName().getContent());
-                EvaluationSeasonInformation.create(iter, false, false, true, false, true).setSeasonOrder(i);
+                iter.setProperties(i, false, false, true, false, true);
             }
         }
-
-        migrateInformationFieldsToSeason();
-    }
-
-    @Atomic
-    public static void migrateInformationFieldsToSeason() {
-        logger.info("---------------------------------------");
-        logger.info("Starting migration of EvaluationSeasonInformation fields to EvaluationSeason");
-
-        final long start = System.currentTimeMillis();
-        final AtomicInteger migrated = new AtomicInteger(0);
-
-        findAll().forEach(season -> {
-            final EvaluationSeasonInformation information = season.getInformation();
-            if (information == null) {
-                return;
-            }
-
-            season.setSeasonOrder(information.getSuperSeasonOrder());
-            season.setActive(information.getSuperActive());
-            season.setRequiresEnrolmentEvaluation(information.getSuperRequiresEnrolmentEvaluation());
-            season.setSupportsEmptyGrades(information.getSuperSupportsEmptyGrades());
-            season.setSupportsTeacherConfirmation(information.getSuperSupportsTeacherConfirmation());
-            season.setAllowsMarksheets(information.getSuperAllowsMarksheets());
-            season.setMinPastYearsToAcceptImprovementEnrolments(information.getSuperMinPastYearsToAcceptImprovementEnrolments());
-            season.setMaxPastYearsToAcceptImprovementEnrolments(information.getSuperMaxPastYearsToAcceptImprovementEnrolments());
-
-            migrated.incrementAndGet();
-        });
-
-        logger.info("Finished migration of EvaluationSeasonInformation fields to EvaluationSeason. "
-                + "Migrated {} EvaluationSeason instances in {} ms", migrated.get(), System.currentTimeMillis() - start);
-        logger.info("---------------------------------------");
     }
 
     static public Integer maxOrder() {
