@@ -38,7 +38,6 @@ import org.fenixedu.academic.domain.evaluation.season.rule.BlockingTreasuryEvent
 import org.fenixedu.academic.domain.evaluation.season.rule.EvaluationSeasonRule;
 import org.fenixedu.academic.domain.evaluation.season.rule.EvaluationSeasonStatuteType;
 import org.fenixedu.academic.domain.evaluation.season.rule.PreviousSeasonBlockingGrade;
-import org.fenixedu.academic.domain.evaluation.season.rule.PreviousSeasonEvaluation;
 import org.fenixedu.academic.domain.evaluation.season.rule.PreviousSeasonMinimumGrade;
 import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.academic.domain.student.Registration;
@@ -155,30 +154,6 @@ abstract public class EvaluationSeasonServices {
         }
 
         return false;
-    }
-
-    static public boolean isRequiredPreviousSeasonEvaluation(final EvaluationSeason season) {
-        return !EvaluationSeasonRule.find(season, PreviousSeasonEvaluation.class).isEmpty();
-    }
-
-    static public boolean isRequiredEnrolmentEvaluation(final EvaluationSeason input) {
-        return input != null && input.getRequiresEnrolmentEvaluation();
-    }
-
-    static public boolean isSupportsEmptyGrades(final EvaluationSeason input) {
-        return input != null && input.getSupportsEmptyGrades();
-    }
-
-    static public boolean isSupportsTeacherConfirmation(final EvaluationSeason input) {
-        return input != null && input.getSupportsTeacherConfirmation();
-    }
-
-    static public boolean isForApprovedEnrolments(final EvaluationSeason season) {
-        return season != null && season.isImprovement();
-    }
-
-    static public boolean isDifferentEvaluationSemesterAccepted(final EvaluationSeason season) {
-        return season != null && season.isImprovement();
     }
 
     static public EvaluationSeason getPreviousSeason(final EvaluationSeason input) {

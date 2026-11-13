@@ -73,6 +73,7 @@ import org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonPeriod;
 import org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonServices;
 import org.fenixedu.academic.domain.evaluation.season.rule.EvaluationSeasonRule;
 import org.fenixedu.academic.domain.evaluation.season.rule.GradeScaleValidator;
+import org.fenixedu.academic.domain.evaluation.season.rule.PreviousSeasonEvaluation;
 import org.fenixedu.academic.domain.evaluation.services.EnrolmentEvaluationServices;
 import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
@@ -366,7 +367,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
         result.init(interval, competence, execution, season, courseEvaluation, evaluationDate, gradeScale, certifier, shifts,
                 null);
 
-        if (byTeacher && !EvaluationSeasonServices.isSupportsEmptyGrades(season)
+        if (byTeacher && !season.isSupportsEmptyGrades()
                 && findBy(interval, competence, execution, season, result.getEvaluationDateTime(), shifts,
                         (CompetenceCourseMarkSheetStateEnum) null, (CompetenceCourseMarkSheetChangeRequestStateEnum) null)
                                 .anyMatch(i -> i != result)) {
@@ -653,7 +654,8 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
                 continue;
             }
 
-            if (!EvaluationSeasonServices.isDifferentEvaluationSemesterAccepted(season) && !enrolment.isValid(interval)) {
+            // improvement seasons accept enrolments from a different semester
+            if (!season.isImprovement() && !enrolment.isValid(interval)) {
                 continue;
             }
 
@@ -716,12 +718,12 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
         final boolean isApproved = latestEvaluation != null && latestEvaluation.isApproved();
 
         // this evaluation season is for not approved enrolments
-        if (!EvaluationSeasonServices.isForApprovedEnrolments(season) && isApproved) {
+        if (!season.isImprovement() && isApproved) {
             return false;
         }
 
         // this evaluation season is for approved enrolments
-        if (EvaluationSeasonServices.isForApprovedEnrolments(season) && !isApproved) {
+        if (season.isImprovement() && !isApproved) {
             return false;
         }
 
@@ -737,7 +739,8 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
             return false;
         }
 
-        if (EvaluationSeasonServices.isRequiredPreviousSeasonEvaluation(season)) {
+        // this evaluation season requires an evaluation in the previous season
+        if (!EvaluationSeasonRule.find(season, PreviousSeasonEvaluation.class).isEmpty()) {
             if (latestEvaluation == null) {
                 return false;
             }
@@ -918,7 +921,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
     }
 
     public boolean getSupportsTeacherConfirmation() {
-        if (EvaluationSeasonServices.isSupportsTeacherConfirmation(getEvaluationSeason())) {
+        if (getEvaluationSeason().isSupportsEmptyGrades()) {
             return true;
         }
 
