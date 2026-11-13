@@ -22,35 +22,23 @@
 
 package org.fenixedu.academic.domain.evaluation.season;
 
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.fenixedu.academic.domain.Enrolment;
-import org.fenixedu.academic.domain.EnrolmentEvaluation;
 import org.fenixedu.academic.domain.EvaluationSeason;
-import org.fenixedu.academic.domain.ExecutionInterval;
-import org.fenixedu.academic.domain.Grade;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.evaluation.season.rule.BlockingTreasuryEventInDebt;
 import org.fenixedu.academic.domain.evaluation.season.rule.EvaluationSeasonRule;
-import org.fenixedu.academic.domain.evaluation.season.rule.EvaluationSeasonStatuteType;
-import org.fenixedu.academic.domain.evaluation.season.rule.PreviousSeasonBlockingGrade;
-import org.fenixedu.academic.domain.evaluation.season.rule.PreviousSeasonMinimumGrade;
 import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.academic.domain.student.Registration;
-import org.fenixedu.academic.domain.student.StatuteType;
-import org.fenixedu.academic.domain.student.services.StatuteServices;
 import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 import org.fenixedu.academictreasury.services.PersonServices;
 import org.fenixedu.commons.i18n.LocalizedString;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Sets;
 
 import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.core.AbstractDomainObjectServices;
@@ -76,51 +64,7 @@ abstract public class EvaluationSeasonServices {
         return getEnrolmentEvaluationType(input).getDescriptionI18N();
     }
 
-    static public boolean hasPreviousSeasonBlockingGrade(final EvaluationSeason season, final EnrolmentEvaluation evaluation) {
-        if (evaluation != null) {
-
-            for (final PreviousSeasonBlockingGrade rule : EvaluationSeasonRule.find(season, PreviousSeasonBlockingGrade.class)) {
-                final Grade blocking = rule.getBlocking();
-                final Grade inspect = evaluation.getGrade();
-
-                if (blocking.toString().equals(inspect.toString())) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    static public boolean hasRequiredPreviousSeasonMinimumGrade(final EvaluationSeason season,
-            final Collection<EnrolmentEvaluation> evaluations) {
-
-        if (evaluations != null) {
-
-            final EvaluationSeason previousSeason = EvaluationSeasonServices.getPreviousSeason(season);
-            if (previousSeason != null) {
-
-                for (final PreviousSeasonMinimumGrade rule : EvaluationSeasonRule.find(season,
-                        PreviousSeasonMinimumGrade.class)) {
-                    for (final EnrolmentEvaluation evaluation : evaluations) {
-                        if (evaluation.getEvaluationSeason() == previousSeason) {
-
-                            final Grade minimum = rule.getMinimum();
-                            final Grade grade = evaluation.getGrade();
-                            if (minimum.compareTo(grade) < 0) {
-                                return false;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return true;
-    }
-
-    static public boolean isBlockingTreasuryEventInDebt(final EvaluationSeason season, final Enrolment enrolment,
-            final ExecutionInterval interval) {
+    static public boolean isBlockingTreasuryEventInDebt(final EvaluationSeason season, final Enrolment enrolment) {
 
         if (enrolment != null && !EvaluationSeasonRule.find(season, BlockingTreasuryEventInDebt.class).isEmpty()) {
 
@@ -132,25 +76,6 @@ abstract public class EvaluationSeasonServices {
                 return true;
             }
 
-        }
-
-        return false;
-    }
-
-    static public boolean hasStudentStatuteBlocking(final EvaluationSeason season, final Enrolment enrolment,
-            final ExecutionInterval interval) {
-
-        if (enrolment != null) {
-
-            for (final EvaluationSeasonStatuteType rule : EvaluationSeasonRule.find(season, EvaluationSeasonStatuteType.class)) {
-                final Set<StatuteType> blocking = rule.getStatuteTypesSet();
-                final Set<StatuteType> inspect = Sets.newHashSet(
-                        StatuteServices.findStatuteTypes(enrolment.getRegistration(), enrolment.getExecutionPeriod()));
-
-                if (!Sets.intersection(blocking, inspect).isEmpty()) {
-                    return true;
-                }
-            }
         }
 
         return false;
