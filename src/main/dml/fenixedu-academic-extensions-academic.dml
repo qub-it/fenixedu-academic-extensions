@@ -1270,31 +1270,6 @@ relation RegistrationRegistrationExtendedInformation {
 // ======================= END: RegistrationExtendedInformation =========================
 
 
-// ======================= BEGIN: RegistrationDataByExecutionYearExtendedInformation =========================
-
-class student.RegistrationDataByExecutionYearExtendedInformation {
-	Integer curricularYear;
-}
-
-relation BennuRegistrationDataByExecutionYearExtendedInformation {
-	student.RegistrationDataByExecutionYearExtendedInformation playsRole registrationDataByExecutionYearExtendedInformations {
-		multiplicity *;
-	}
-	protected .org.fenixedu.bennu.core.domain.Bennu playsRole bennu {
-        multiplicity 1..1;
-    }
-}
-
-relation RegistrationDataByExecutionYearWithExtendedInformation {
-    .org.fenixedu.academic.domain.student.RegistrationDataByExecutionYear playsRole dataByExecutionYear {
-    	multiplicity 1..1;
-    }
-    
-    student.RegistrationDataByExecutionYearExtendedInformation playsRole extendedInformation;
-}
-
-// ======================= END: RegistrationDataByExecutionYearExtendedInformation =========================
-
 class student.ResearchArea {
 	String code;
 	LocalizedString name;
