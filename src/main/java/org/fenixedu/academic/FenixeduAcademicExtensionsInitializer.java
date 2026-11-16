@@ -263,26 +263,27 @@ public class FenixeduAcademicExtensionsInitializer implements ServletContextList
                 Bennu.getInstance().getRegistrationDataByExecutionYearExtendedInformationsSet();
 
         int totalEntries = entries.size();
-        final AtomicInteger migratedEntries = new AtomicInteger();
         final AtomicInteger nullEntries = new AtomicInteger();
+        final AtomicInteger migratedEntries = new AtomicInteger();
+        final AtomicInteger alreadyMigratedEntries = new AtomicInteger();
 
         entries.forEach(info -> {
             final RegistrationDataByExecutionYear data = info.getDataByExecutionYear();
             final Integer stored = info.getStoredCurricularYearForMigration();
-            if (data.getCurricularYear() == null && stored != null) {
-                data.setCurricularYear(stored);
-                migratedEntries.incrementAndGet();
-            }
             if (stored == null) {
                 nullEntries.incrementAndGet();
+            } else if (data.getCurricularYear() == null) {
+                data.setCurricularYear(stored);
+                migratedEntries.incrementAndGet();
+            } else {
+                alreadyMigratedEntries.incrementAndGet();
             }
         });
 
         logger.info("Migrated curricular year for {}/{} RegistrationDataByExecutionYear instances.", migratedEntries.get(),
                 totalEntries);
-        logger.info("Entries with null curricular year: {}", nullEntries.get());
-        logger.info("Validation: {} + {} = {} -> {}", migratedEntries.get(), nullEntries.get(), totalEntries,
-                migratedEntries.get() + nullEntries.get() == totalEntries);
+        logger.info("Validation: {} migrated + {} already migrated + {} without curricular year = {} total",
+                migratedEntries.get(), alreadyMigratedEntries.get(), nullEntries.get(), totalEntries);
         logger.info("---------------------------------------");
     }
 
