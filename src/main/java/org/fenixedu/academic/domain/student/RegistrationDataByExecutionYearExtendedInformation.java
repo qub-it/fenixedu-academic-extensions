@@ -37,6 +37,25 @@ public class RegistrationDataByExecutionYearExtendedInformation extends Registra
         });
     }
 
+    @Override
+    public Integer getCurricularYear() {
+        return getDataByExecutionYear().getCurricularYear();
+    }
+
+    // Pre-merge slot. Only the one-time migration should read it. Will be deleted afterward.
+    public Integer getStoredCurricularYearForMigration() {
+        return super.getCurricularYear();
+    }
+
+    @Override
+    public void setCurricularYear(final Integer curricularYear) {
+        super.setCurricularYear(curricularYear);
+        RegistrationDataByExecutionYear dataByExecutionYear = getDataByExecutionYear();
+        if (dataByExecutionYear != null) {
+            dataByExecutionYear.setCurricularYear(curricularYear);
+        }
+    }
+
     private void delete() {
 
         super.setDataByExecutionYear(null);
