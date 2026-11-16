@@ -511,6 +511,8 @@ abstract public class EvaluationSeasonServices {
 
     @Atomic
     static public void initialize() {
+        migrateInformationFieldsToSeason();
+
         final List<EvaluationSeason> seasons = findAll().sorted(SEASON_ORDER_COMPARATOR).collect(Collectors.toList());
 
         for (int i = 0; i < seasons.size(); i++) {
@@ -521,8 +523,6 @@ abstract public class EvaluationSeasonServices {
                 EvaluationSeasonInformation.create(iter, false, false, true, false, true).setSeasonOrder(i);
             }
         }
-
-        migrateInformationFieldsToSeason();
     }
 
     @Atomic
