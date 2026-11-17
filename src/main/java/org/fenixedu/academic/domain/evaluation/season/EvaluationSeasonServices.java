@@ -81,74 +81,6 @@ abstract public class EvaluationSeasonServices {
         return false;
     }
 
-    static public EvaluationSeason getPreviousSeason(final EvaluationSeason input) {
-        return getPreviousSeason(input, true);
-    }
-
-    static private EvaluationSeason getPreviousSeason(final EvaluationSeason input, final boolean onlyActive) {
-        EvaluationSeason result = null;
-
-        for (final EvaluationSeason iter : EvaluationSeason.findByActive(onlyActive).collect(Collectors.toSet())) {
-            if (iter == input) {
-                continue;
-            }
-
-            if (getEnrolmentEvaluationType(iter) != getEnrolmentEvaluationType(input)) {
-                continue;
-            }
-
-            if (getSeasonOrder(iter) > getSeasonOrder(input)) {
-                continue;
-            }
-
-            if (result != null && getSeasonOrder(result) > getSeasonOrder(iter)) {
-                continue;
-            }
-
-            result = iter;
-        }
-
-        return result;
-    }
-
-    static public EvaluationSeason getNextSeason(final EvaluationSeason input) {
-        return getNextSeason(input, true);
-    }
-
-    static private EvaluationSeason getNextSeason(final EvaluationSeason input, final boolean onlyActive) {
-        EvaluationSeason result = null;
-
-        for (final EvaluationSeason iter : EvaluationSeason.findByActive(onlyActive).collect(Collectors.toSet())) {
-            if (iter == input) {
-                continue;
-            }
-
-            if (getEnrolmentEvaluationType(iter) != getEnrolmentEvaluationType(input)) {
-                continue;
-            }
-
-            if (getSeasonOrder(iter) < getSeasonOrder(input)) {
-                continue;
-            }
-
-            if (result != null && getSeasonOrder(result) < getSeasonOrder(iter)) {
-                continue;
-            }
-
-            result = iter;
-        }
-
-        return result;
-    }
-
-    static public boolean isFirst(final EvaluationSeason input) {
-        return getPreviousSeason(input) == null;
-    }
-
-    static public boolean isLast(final EvaluationSeason input) {
-        return getNextSeason(input) == null;
-    }
-
     static public boolean isDeletable(final EvaluationSeason evaluationSeason) {
         return evaluationSeason.getEvaluationSet().size() == 0;
     }
@@ -164,30 +96,6 @@ abstract public class EvaluationSeasonServices {
 
     static public void setSeasonOrder(final EvaluationSeason evaluationSeason, final Integer order) {
         evaluationSeason.setSeasonOrder(order);
-    }
-
-    @Atomic
-    static public void orderUp(final EvaluationSeason input) {
-        if (isFirst(input)) {
-            return;
-        }
-
-        final EvaluationSeason neighbour = getPreviousSeason(input, false);
-        final Integer temp = getSeasonOrder(neighbour);
-        setSeasonOrder(neighbour, getSeasonOrder(input));
-        setSeasonOrder(input, temp);
-    }
-
-    @Atomic
-    static public void orderDown(final EvaluationSeason input) {
-        if (isLast(input)) {
-            return;
-        }
-
-        final EvaluationSeason neighbour = getNextSeason(input, false);
-        final Integer temp = getSeasonOrder(neighbour);
-        setSeasonOrder(neighbour, getSeasonOrder(input));
-        setSeasonOrder(input, temp);
     }
 
     @Atomic
