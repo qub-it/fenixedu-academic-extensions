@@ -752,9 +752,9 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
 
             boolean exclude = true;
 
-            final EvaluationSeason previousSeason = EvaluationSeasonServices.getPreviousSeason(season);
-            if (previousSeason != null) {
-
+            final Optional<EvaluationSeason> optPreviousSeason = season.findPreviousSeason(true);
+            if (optPreviousSeason.isPresent()) {
+                final EvaluationSeason previousSeason = optPreviousSeason.get();
                 // WARNING: we should be using EnrolmentEvaluation.find API, but for simplicity reasons we're dealing with this "manually" 
                 for (final EnrolmentEvaluation iter : evaluations) {
                     if (iter.getEvaluationSeason() == previousSeason) {
@@ -819,9 +819,9 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
 
         if (evaluations != null) {
 
-            final EvaluationSeason previousSeason = EvaluationSeasonServices.getPreviousSeason(season);
-            if (previousSeason != null) {
-
+            final Optional<EvaluationSeason> optPreviousSeason = season.findPreviousSeason(true);
+            if (optPreviousSeason.isPresent()) {
+                final EvaluationSeason previousSeason = optPreviousSeason.get();
                 for (final PreviousSeasonMinimumGrade rule : EvaluationSeasonRule.find(season,
                         PreviousSeasonMinimumGrade.class)) {
                     for (final EnrolmentEvaluation evaluation : evaluations) {

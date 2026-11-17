@@ -141,14 +141,6 @@ abstract public class EvaluationSeasonServices {
         return result;
     }
 
-    static public EvaluationSeason getFirstSeasonInChain(final EvaluationSeason input) {
-        if (isFirst(input)) {
-            return input;
-        }
-
-        return getFirstSeasonInChain(getPreviousSeason(input));
-    }
-
     static public boolean isFirst(final EvaluationSeason input) {
         return getPreviousSeason(input) == null;
     }
