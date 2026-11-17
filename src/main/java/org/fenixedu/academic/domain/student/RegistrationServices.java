@@ -320,8 +320,7 @@ public class RegistrationServices {
 
     private static boolean hasCreditsAcrossOwnPlans(final Registration registration) {
         return registration.getStudentCurricularPlanStream().flatMap(scp -> scp.getCreditsSet().stream())
-                .flatMap(c -> c.getEnrolmentsSet().stream()).filter(ew -> !ew.getIEnrolment().isExternalEnrolment())
-                .map(ew -> (Enrolment) ew.getIEnrolment())
+                .flatMap(c -> c.getIEnrolments().stream()).filter(Enrolment.class::isInstance).map(Enrolment.class::cast)
                 .anyMatch(e -> registration.getStudentCurricularPlansSet().contains(e.getStudentCurricularPlan()));
     }
 

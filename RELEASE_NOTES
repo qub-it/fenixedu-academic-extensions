@@ -1,3 +1,4 @@
+- Refactor: Replace EnrolmentWrapper references with CreditsSource [#qubIT-Fenix-9898]
 - Refactor: Improves RegistrationServices methods and moves specific ones [#qubIT-Fenix-9573]
 
 5.1.1 (06-11-2026)
