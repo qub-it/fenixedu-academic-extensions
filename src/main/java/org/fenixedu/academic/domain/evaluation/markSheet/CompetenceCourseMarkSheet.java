@@ -66,19 +66,25 @@ import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.curriculum.EnrolmentEvaluationContext;
 import org.fenixedu.academic.domain.curriculum.grade.GradeScale;
 import org.fenixedu.academic.domain.degree.DegreeType;
+import org.fenixedu.academic.domain.enrolment.EnrolmentServices;
 import org.fenixedu.academic.domain.evaluation.EvaluationComparator;
 import org.fenixedu.academic.domain.evaluation.EvaluationServices;
 import org.fenixedu.academic.domain.evaluation.config.MarkSheetSettings;
 import org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonPeriod;
 import org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonServices;
 import org.fenixedu.academic.domain.evaluation.season.rule.EvaluationSeasonRule;
+import org.fenixedu.academic.domain.evaluation.season.rule.EvaluationSeasonStatuteType;
 import org.fenixedu.academic.domain.evaluation.season.rule.GradeScaleValidator;
+import org.fenixedu.academic.domain.evaluation.season.rule.PreviousSeasonBlockingGrade;
+import org.fenixedu.academic.domain.evaluation.season.rule.PreviousSeasonEvaluation;
+import org.fenixedu.academic.domain.evaluation.season.rule.PreviousSeasonMinimumGrade;
 import org.fenixedu.academic.domain.evaluation.services.EnrolmentEvaluationServices;
 import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
 import org.fenixedu.academic.domain.student.Registration;
+import org.fenixedu.academic.domain.student.StatuteType;
 import org.fenixedu.academic.domain.student.curriculum.ConclusionProcess;
-import org.fenixedu.academic.domain.enrolment.EnrolmentServices;
+import org.fenixedu.academic.domain.student.services.StatuteServices;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumModule;
 import org.fenixedu.academic.util.EnrolmentEvaluationState;
 import org.fenixedu.bennu.core.security.Authenticate;
@@ -366,7 +372,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
         result.init(interval, competence, execution, season, courseEvaluation, evaluationDate, gradeScale, certifier, shifts,
                 null);
 
-        if (byTeacher && !EvaluationSeasonServices.isSupportsEmptyGrades(season)
+        if (byTeacher && !season.isSupportsEmptyGrades()
                 && findBy(interval, competence, execution, season, result.getEvaluationDateTime(), shifts,
                         (CompetenceCourseMarkSheetStateEnum) null, (CompetenceCourseMarkSheetChangeRequestStateEnum) null)
                                 .anyMatch(i -> i != result)) {
@@ -653,7 +659,8 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
                 continue;
             }
 
-            if (!EvaluationSeasonServices.isDifferentEvaluationSemesterAccepted(season) && !enrolment.isValid(interval)) {
+            // improvement seasons accept enrolments from a different semester
+            if (!season.isImprovement() && !enrolment.isValid(interval)) {
                 continue;
             }
 
@@ -683,14 +690,14 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
                         continue;
                     }
 
-                    if (EvaluationSeasonServices.isRequiredEnrolmentEvaluation(season)) {
+                    if (season.getRequiresEnrolmentEvaluation()) {
                         // is manual, enrolment must be included
                         result.add(enrolment);
                         continue;
                     }
                 }
 
-            } else if (EvaluationSeasonServices.isRequiredEnrolmentEvaluation(season)) {
+            } else if (season.getRequiresEnrolmentEvaluation()) {
                 // is manual, evaluation should exist
                 continue;
             }
@@ -716,28 +723,29 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
         final boolean isApproved = latestEvaluation != null && latestEvaluation.isApproved();
 
         // this evaluation season is for not approved enrolments
-        if (!EvaluationSeasonServices.isForApprovedEnrolments(season) && isApproved) {
+        if (!season.isImprovement() && isApproved) {
             return false;
         }
 
         // this evaluation season is for approved enrolments
-        if (EvaluationSeasonServices.isForApprovedEnrolments(season) && !isApproved) {
+        if (season.isImprovement() && !isApproved) {
             return false;
         }
 
-        if (EvaluationSeasonServices.hasStudentStatuteBlocking(season, enrolment, interval)) {
+        if (hasStudentStatuteBlocking(season, enrolment)) {
             return false;
         }
 
-        if (EvaluationSeasonServices.hasPreviousSeasonBlockingGrade(season, latestEvaluation)) {
+        if (hasPreviousSeasonBlockingGrade(season, latestEvaluation)) {
             return false;
         }
 
-        if (!EvaluationSeasonServices.hasRequiredPreviousSeasonMinimumGrade(season, evaluations)) {
+        if (!hasRequiredPreviousSeasonMinimumGrade(season, evaluations)) {
             return false;
         }
 
-        if (EvaluationSeasonServices.isRequiredPreviousSeasonEvaluation(season)) {
+        // this evaluation season requires an evaluation in the previous season
+        if (!EvaluationSeasonRule.find(season, PreviousSeasonEvaluation.class).isEmpty()) {
             if (latestEvaluation == null) {
                 return false;
             }
@@ -761,13 +769,73 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
             }
         }
 
-        if (EvaluationSeasonServices.isBlockingTreasuryEventInDebt(season, enrolment, interval)) {
+        if (EvaluationSeasonServices.isBlockingTreasuryEventInDebt(season, enrolment)) {
             return false;
         }
 
         if (enrolmentCandidateForEvaluationExtensionPredicate != null
                 && !enrolmentCandidateForEvaluationExtensionPredicate.test(season, enrolment)) {
             return false;
+        }
+
+        return true;
+    }
+
+    private static boolean hasStudentStatuteBlocking(final EvaluationSeason season, final Enrolment enrolment) {
+        if (enrolment != null) {
+
+            for (final EvaluationSeasonStatuteType rule : EvaluationSeasonRule.find(season, EvaluationSeasonStatuteType.class)) {
+                final Set<StatuteType> blocking = rule.getStatuteTypesSet();
+                final Set<StatuteType> inspect = Sets.newHashSet(
+                        StatuteServices.findStatuteTypes(enrolment.getRegistration(), enrolment.getExecutionPeriod()));
+
+                if (!Sets.intersection(blocking, inspect).isEmpty()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean hasPreviousSeasonBlockingGrade(final EvaluationSeason season, final EnrolmentEvaluation evaluation) {
+        if (evaluation != null) {
+
+            for (final PreviousSeasonBlockingGrade rule : EvaluationSeasonRule.find(season, PreviousSeasonBlockingGrade.class)) {
+                final Grade blocking = rule.getBlocking();
+                final Grade inspect = evaluation.getGrade();
+
+                if (blocking.toString().equals(inspect.toString())) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean hasRequiredPreviousSeasonMinimumGrade(final EvaluationSeason season,
+            final Collection<EnrolmentEvaluation> evaluations) {
+
+        if (evaluations != null) {
+
+            final EvaluationSeason previousSeason = EvaluationSeasonServices.getPreviousSeason(season);
+            if (previousSeason != null) {
+
+                for (final PreviousSeasonMinimumGrade rule : EvaluationSeasonRule.find(season,
+                        PreviousSeasonMinimumGrade.class)) {
+                    for (final EnrolmentEvaluation evaluation : evaluations) {
+                        if (evaluation.getEvaluationSeason() == previousSeason) {
+
+                            final Grade minimum = rule.getMinimum();
+                            final Grade grade = evaluation.getGrade();
+                            if (minimum.compareTo(grade) < 0) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         return true;
@@ -918,7 +986,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
     }
 
     public boolean getSupportsTeacherConfirmation() {
-        if (EvaluationSeasonServices.isSupportsTeacherConfirmation(getEvaluationSeason())) {
+        if (getEvaluationSeason().isSupportsEmptyGrades()) {
             return true;
         }
 
