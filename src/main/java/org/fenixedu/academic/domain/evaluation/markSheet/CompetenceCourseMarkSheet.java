@@ -221,7 +221,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
         if (periods.isEmpty()) {
             throw new AcademicExtensionsDomainException(
                     "error.CompetenceCourseMarkSheet.evaluationDateNotInExamsPeriod.undefined",
-                    EvaluationSeasonServices.getDescriptionI18N(getEvaluationSeason()).getContent(),
+                    getEvaluationSeason().getDescriptionI18N().getContent(),
                     getExecutionInterval().getQualifiedName());
         }
 
@@ -250,7 +250,7 @@ public class CompetenceCourseMarkSheet extends CompetenceCourseMarkSheet_Base {
 
         if (periods.isEmpty()) {
             throw new AcademicExtensionsDomainException("error.CompetenceCourseMarkSheet.notInGradeSubmissionPeriod.undefined",
-                    EvaluationSeasonServices.getDescriptionI18N(getEvaluationSeason()).getContent(),
+                    getEvaluationSeason().getDescriptionI18N().getContent(),
                     getExecutionInterval().getQualifiedName());
         }
 

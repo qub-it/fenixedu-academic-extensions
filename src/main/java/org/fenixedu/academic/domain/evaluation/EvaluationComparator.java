@@ -4,8 +4,8 @@ import java.util.Comparator;
 
 import org.fenixedu.academic.FenixEduAcademicExtensionsConfiguration;
 import org.fenixedu.academic.domain.EnrolmentEvaluation;
+import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.academic.domain.curriculum.EnrollmentState;
-import org.fenixedu.academic.domain.evaluation.season.EvaluationSeasonServices;
 
 /*
  * Based on original EvaluationConfiguration.EnrolmentComparator
@@ -97,7 +97,7 @@ public class EvaluationComparator implements Comparator<EnrolmentEvaluation> {
             }
         }
 
-        result = EvaluationSeasonServices.SEASON_ORDER_COMPARATOR.compare(left.getEvaluationSeason(),
+        result = EvaluationSeason.SEASON_ORDER_COMPARATOR.compare(left.getEvaluationSeason(),
                 right.getEvaluationSeason());
         if (result != 0) {
             return result;

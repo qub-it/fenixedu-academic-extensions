@@ -22,10 +22,6 @@
 
 package org.fenixedu.academic.domain.evaluation.season;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.academic.domain.Person;
@@ -33,36 +29,13 @@ import org.fenixedu.academic.domain.evaluation.season.rule.BlockingTreasuryEvent
 import org.fenixedu.academic.domain.evaluation.season.rule.EvaluationSeasonRule;
 import org.fenixedu.academic.domain.exceptions.AcademicExtensionsDomainException;
 import org.fenixedu.academic.domain.student.Registration;
-import org.fenixedu.academicextensions.util.AcademicExtensionsUtil;
 import org.fenixedu.academictreasury.services.PersonServices;
-import org.fenixedu.commons.i18n.LocalizedString;
 import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.core.AbstractDomainObjectServices;
 
 abstract public class EvaluationSeasonServices {
-
-    private static final Logger logger = LoggerFactory.getLogger(EvaluationSeasonServices.class);
-
-    static public LocalizedString getDescriptionI18N(final EvaluationSeason input) {
-        LocalizedString result = new LocalizedString();
-
-        if (input != null) {
-            result = result.append(input.getName());
-            result = result.append(" [");
-            result = result.append(getTypeDescriptionI18N(input));
-            result = result.append("]");
-        }
-
-        return result;
-    }
-
-    static public LocalizedString getTypeDescriptionI18N(final EvaluationSeason input) {
-        return getEnrolmentEvaluationType(input).getDescriptionI18N();
-    }
 
     static public boolean isBlockingTreasuryEventInDebt(final EvaluationSeason season, final Enrolment enrolment) {
 
@@ -105,78 +78,6 @@ abstract public class EvaluationSeasonServices {
         }
 
         AbstractDomainObjectServices.deleteDomainObject(evaluationSeason);
-    }
-
-    static private enum EnrolmentEvaluationType {
-
-        NORMAL("label.EvaluationSeason.normal"),
-
-        SPECIAL_SEASON("label.EvaluationSeason.special"),
-
-        IMPROVEMENT("label.EvaluationSeason.improvement"),
-
-        SPECIAL_AUTHORIZATION("label.EvaluationSeason.specialAuthorization");
-
-        private String descriptionKey;
-
-        private EnrolmentEvaluationType(final String descriptionKey) {
-            this.descriptionKey = descriptionKey;
-        }
-
-        public LocalizedString getDescriptionI18N() {
-            return AcademicExtensionsUtil.bundleI18N(this.descriptionKey);
-        }
-    }
-
-    static private EnrolmentEvaluationType getEnrolmentEvaluationType(final EvaluationSeason input) {
-        if (input.isSpecialAuthorization()) {
-            return EnrolmentEvaluationType.SPECIAL_AUTHORIZATION;
-        } else if (input.isNormal()) {
-            return EnrolmentEvaluationType.NORMAL;
-        } else if (input.isSpecial()) {
-            return EnrolmentEvaluationType.SPECIAL_SEASON;
-        } else if (input.isImprovement()) {
-            return EnrolmentEvaluationType.IMPROVEMENT;
-        }
-
-        throw new AcademicExtensionsDomainException("error.EvaluationSeason.missing.type");
-    }
-
-    static private Integer getEnrolmentEvaluationTypePrecedence(final EvaluationSeason input) {
-        return getEnrolmentEvaluationType(input).ordinal();
-    }
-
-    public static Comparator<EvaluationSeason> SEASON_ORDER_COMPARATOR = new Comparator<EvaluationSeason>() {
-
-        @Override
-        public int compare(EvaluationSeason o1, EvaluationSeason o2) {
-            int result = getEnrolmentEvaluationTypePrecedence(o1).compareTo(getEnrolmentEvaluationTypePrecedence(o2));
-
-            if (result == 0) {
-                result = getSeasonOrder(o1).compareTo(getSeasonOrder(o2));
-            }
-
-            if (result == 0) {
-                result = o1.compareTo(o2);
-            }
-
-            return result;
-        }
-    };
-
-    @Atomic
-    static public void initialize() {
-        final List<EvaluationSeason> seasons =
-                EvaluationSeason.all().sorted(SEASON_ORDER_COMPARATOR).collect(Collectors.toList());
-
-        for (int i = 0; i < seasons.size(); i++) {
-            final EvaluationSeason iter = seasons.get(i);
-
-            if (iter.getSeasonOrder() == null) {
-                logger.info("Init " + iter.getName().getContent());
-                iter.setProperties(i, false, false, true, false, true);
-            }
-        }
     }
 
     private static boolean enrolmentsInEvaluationsDependOnAcademicalActsBlocked = true;
